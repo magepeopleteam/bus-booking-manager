@@ -83,7 +83,7 @@ class MAGE_WBBM_Setting_Controls {
                 array(
                     'name' => 'wbbm_search_result_page',
                     'label' => __( 'Search Result Page', 'wedevs' ),
-                    'desc' => __( 'Please select page where you want to show the search result page, By default search result page is bus-search', 'wedevs' ),
+                    'desc' => __( 'Please select page where you want to show the search result page, By default search result page is bus-search. You can also set any page as search result page by put the page slug into the shortcode. Ex: [bus-search-form result-page="CUSTOM-PAGE-SLUG-HERE"]', 'wedevs' ),
                     'type' => 'select',
                     'default' => 'bus-search',
                     'options' => wbbm_get_page_list()
