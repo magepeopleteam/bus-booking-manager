@@ -1,0 +1,324 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Multipurpose Ticket Booking Manager "
+"(Bus/Train/Ferry/Boat/Shuttle)\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-08 06:04+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: \n"
+"Language: \n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Loco https://localise.biz/\n"
+"X-Loco-Version: 2.2.2; wp-4.9.10"
+
+#: inc/wbbm_bus_ticket_meta.php:12
+msgid " Information"
+msgstr ""
+
+#: inc/wbbm_bus_ticket_meta.php:11
+msgid " Pricing"
+msgstr ""
+
+#: inc/wbbm_bus_ticket_meta.php:10
+msgid " Stops Info"
+msgstr ""
+
+#. Description of the plugin
+msgid "A Complete Bus Ticketig System for WordPress & WooCommerce"
+msgstr ""
+
+#: inc/wbbm_bus_ticket_meta.php:99
+msgid "Add More Boarding Point"
+msgstr ""
+
+#: inc/wbbm_bus_ticket_meta.php:135
+msgid "Add More Droping Point"
+msgstr ""
+
+#: inc/wbbm_bus_ticket_meta.php:228
+msgid "Add More Price"
+msgstr ""
+
+#: inc/wbbm_extra_price.php:138
+msgid "Adult"
+msgstr ""
+
+#: inc/wbbm_bus_ticket_meta.php:189
+msgid "Adult Fare"
+msgstr ""
+
+#: inc/wbbm_shortcode.php:192
+msgid "Available Seat:"
+msgstr ""
+
+#: inc/wbbm_bus_ticket_meta.php:68 inc/wbbm_bus_ticket_meta.php:187
+#: templates/single-bus.php:81
+msgid "Boarding Point"
+msgstr ""
+
+#: inc/wbbm_extra_price.php:136
+msgid "Boarding Point:"
+msgstr ""
+
+#: templates/single-bus.php:36
+msgid "Boarding Ponints"
+msgstr ""
+
+#: inc/wbbm_shortcode.php:68 inc/wbbm_shortcode.php:211
+#: inc/wbbm_shortcode.php:313 inc/wbbm_shortcode.php:475
+#: templates/taxonomy-category.php:47 templates/taxonomy-organozer.php:48
+#: templates/single-bus.php:177
+msgid "Book Now"
+msgstr ""
+
+#: inc/wbbm_bus_ticket_meta.php:7 inc/wbbm_cpt.php:9
+msgid "Bus"
+msgstr ""
+
+#: inc/wbbm_bus_ticket_meta.php:8 inc/wbbm_cpt.php:10
+msgid "bus"
+msgstr ""
+
+#: inc/wbbm_shortcode.php:62 templates/taxonomy-category.php:41
+#: templates/taxonomy-organozer.php:42 templates/single-bus.php:32
+msgid "Bus No:"
+msgstr ""
+
+#: woocommerce-bus.php:873
+msgid ""
+"Bus Ticket Booking with Seat Reservation Plugin is Dependent on WooCommerce, "
+"But currently WooCommerce is not Active. Please Active WooCommerce plugin "
+"first"
+msgstr ""
+
+#: inc/wbbm_shortcode.php:577
+msgid "BUY TICKET"
+msgstr ""
+
+#: inc/wbbm_tax.php:10
+msgid "Category"
+msgstr ""
+
+#: inc/wbbm_extra_price.php:140
+msgid "Child"
+msgstr ""
+
+#: inc/wbbm_bus_ticket_meta.php:190
+msgid "Child Fare"
+msgstr ""
+
+#: inc/wbbm_bus_ticket_meta.php:402
+msgid "Coach No"
+msgstr ""
+
+#: inc/wbbm_admin_settings.php:61
+msgid "CPT Name"
+msgstr ""
+
+#: templates/single-bus.php:156
+msgid "Date"
+msgstr ""
+
+#: woocommerce-bus.php:532
+msgid "Date of Journey:"
+msgstr ""
+
+#: inc/wbbm_shortcode.php:152 inc/wbbm_shortcode.php:398
+msgid "Date:"
+msgstr ""
+
+#: inc/wbbm_bus_ticket_meta.php:445
+msgid "Dropdown List"
+msgstr ""
+
+#: inc/wbbm_bus_ticket_meta.php:104 inc/wbbm_bus_ticket_meta.php:188
+#: templates/single-bus.php:97
+msgid "Dropping Point"
+msgstr ""
+
+#: inc/wbbm_extra_price.php:137
+msgid "Dropping Point:"
+msgstr ""
+
+#: templates/single-bus.php:49
+msgid "Dropping Ponints"
+msgstr ""
+
+#: inc/wbbm_shortcode.php:65 templates/taxonomy-category.php:44
+#: templates/taxonomy-organozer.php:45
+msgid "End at:"
+msgstr ""
+
+#: inc/wbbm_shortcode.php:194
+msgid "End Time:"
+msgstr ""
+
+#: inc/wbbm_admin_settings.php:62
+msgid ""
+"Enter the name you want to display as post type name. Default name is Bus"
+msgstr ""
+
+#: inc/wbbm_shortcode.php:66 templates/taxonomy-category.php:45
+#: templates/taxonomy-organozer.php:46
+msgid "Fare:"
+msgstr ""
+
+#: woocommerce-bus.php:518
+msgid "From"
+msgstr ""
+
+#: inc/wbbm_admin_settings.php:33 inc/wbbm_admin_settings.php:41
+msgid "General Settings"
+msgstr ""
+
+#. URI of the plugin
+msgid "http://mage-people.com"
+msgstr ""
+
+#. Author URI of the plugin
+msgid "http://www.mage-people.com/"
+msgstr ""
+
+#: inc/wbbm_bus_ticket_meta.php:444
+msgid "Input Box"
+msgstr ""
+
+#: inc/wbbm_extra_price.php:134
+msgid "Journey Date:"
+msgstr ""
+
+#: inc/wbbm_extra_price.php:135
+msgid "Journey Time:"
+msgstr ""
+
+#. Author of the plugin
+msgid "MagePeople Team"
+msgstr ""
+
+#. Name of the plugin
+msgid "Multipurpose Ticket Booking Manager (Bus/Train/Ferry/Boat/Shuttle)"
+msgstr ""
+
+#: templates/single-bus.php:142
+msgid "No of Passenger"
+msgstr ""
+
+#: inc/wbbm_shortcode.php:213 inc/wbbm_shortcode.php:315
+#: inc/wbbm_shortcode.php:477
+msgid "No Seat Available"
+msgstr ""
+
+#: woocommerce-bus.php:553
+msgid "One Way"
+msgstr ""
+
+#: inc/wbbm_admin_settings.php:70
+msgid ""
+"Pease enter your SEO Friendly slug name. Default slug is bus, Please save "
+"your permalink settings after change this slug."
+msgstr ""
+
+#: woocommerce-bus.php:375 woocommerce-bus.php:413 woocommerce-bus.php:448
+msgid "Please Select"
+msgstr ""
+
+#: inc/wbbm_shortcode.php:233 inc/wbbm_shortcode.php:333
+#: inc/wbbm_shortcode.php:495
+msgid "Please Select Destination Location To Place Order."
+msgstr ""
+
+#: inc/wbbm_shortcode.php:228
+msgid "Please Select From Location To Place Order"
+msgstr ""
+
+#: inc/wbbm_shortcode.php:328 inc/wbbm_shortcode.php:490
+msgid "Please Select From Location To Place Order."
+msgstr ""
+
+#: inc/wbbm_bus_ticket_meta.php:81 inc/wbbm_bus_ticket_meta.php:95
+#: inc/wbbm_bus_ticket_meta.php:117 inc/wbbm_bus_ticket_meta.php:131
+#: inc/wbbm_bus_ticket_meta.php:208 inc/wbbm_bus_ticket_meta.php:224
+#: inc/wbbm_bus_ticket_meta.php:448
+msgid "Remove"
+msgstr ""
+
+#: woocommerce-bus.php:554
+msgid "Return"
+msgstr ""
+
+#: woocommerce-bus.php:540
+msgid "Return Date:"
+msgstr ""
+
+#: inc/wbbm_shortcode.php:151 templates/single-bus.php:149
+msgid "Route"
+msgstr ""
+
+#: woocommerce-bus.php:556 templates/single-bus.php:118
+msgid "Search"
+msgstr ""
+
+#: inc/wbbm_shortcode.php:298 inc/wbbm_shortcode.php:460
+msgid "Seat Available"
+msgstr ""
+
+#: templates/single-bus.php:83
+msgid "Select Boarding Point"
+msgstr ""
+
+#: templates/single-bus.php:99
+msgid "Select Droping Point"
+msgstr ""
+
+#: templates/single-bus.php:113
+msgid "Select Journey Date"
+msgstr ""
+
+#: inc/wbbm_admin_settings.php:69
+msgid "Slug"
+msgstr ""
+
+#: templates/single-bus.php:163
+msgid "Start & Arrival Time"
+msgstr ""
+
+#: inc/wbbm_shortcode.php:64 templates/taxonomy-category.php:43
+#: templates/taxonomy-organozer.php:44
+msgid "Start From:"
+msgstr ""
+
+#: inc/wbbm_shortcode.php:193
+msgid "Start Time:"
+msgstr ""
+
+#: inc/wbbm_bus_ticket_meta.php:69 inc/wbbm_bus_ticket_meta.php:105
+msgid "Time"
+msgstr ""
+
+#: woocommerce-bus.php:524
+msgid "To:"
+msgstr ""
+
+#: inc/wbbm_shortcode.php:207 inc/wbbm_shortcode.php:309
+#: inc/wbbm_shortcode.php:471
+msgid "Total Passenger:"
+msgstr ""
+
+#: inc/wbbm_bus_ticket_meta.php:408
+msgid "Total Seat"
+msgstr ""
+
+#: inc/wbbm_shortcode.php:63 templates/taxonomy-category.php:42
+#: templates/taxonomy-organozer.php:43 templates/single-bus.php:33
+msgid "Total Seat:"
+msgstr ""
+
+#: inc/wbbm_shortcode.php:61 inc/wbbm_shortcode.php:191
+#: templates/taxonomy-category.php:40 templates/taxonomy-organozer.php:41
+msgid "Type:"
+msgstr ""

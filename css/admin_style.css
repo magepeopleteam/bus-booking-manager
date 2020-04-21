@@ -1,0 +1,230 @@
+
+.inside .sec {
+    display: block;
+    font-size: 15px;
+    font-weight: normal;
+    margin: 15px 0;
+}
+.sec label {
+    font-size: 16px;
+    font-weight: bold;
+}
+.wbbm_status .active {
+  background: green none repeat scroll 0 0;
+  color: #fff;
+  padding: 6px 10px;
+}
+.wbbm_status .err {
+  background: red none repeat scroll 0 0;
+  color: #fff;
+  padding: 6px 10px;
+}
+#wbbm_uid {
+  width: 65px;
+}
+.inside .sec input {
+  border: 1px solid #ddd;
+  padding: 5px;
+  width: 100%;
+  color: #000;
+}
+.inside .sec label {
+  font-weight: normal;
+  display: block;
+}
+table.atendee-info {
+    display: block;
+    overflow: hidden;
+    width: 100%;
+}
+
+/* Always set the map height explicitly to define the size of the div
+ * element that contains the map. */
+#map {
+  height: 250px;
+}
+
+
+#infowindow-content .title {
+  font-weight: bold;
+}
+
+#infowindow-content {
+  display: none;
+}
+
+#map #infowindow-content {
+  display: inline;
+}
+
+.pac-card {
+  margin: 10px 10px 0 0;
+  border-radius: 2px 0 0 2px;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  outline: none;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  background-color: #fff;
+  font-family: Roboto;
+}
+
+#pac-container {
+  padding-bottom: 12px;
+  margin-right: 12px;
+}
+
+.pac-controls {
+  display: inline-block;
+  padding: 5px 11px;
+}
+
+.pac-controls label {
+  font-family: Roboto;
+  font-size: 13px;
+  font-weight: 300;
+}
+
+#pac-input {
+  background-color: #fff;
+  font-family: Roboto;
+  font-size: 15px;
+  font-weight: 300;
+  margin-left: 12px;
+  padding: 0 11px 0 13px;
+  text-overflow: ellipsis;
+  width: 400px;
+}
+
+#pac-input:focus {
+  border-color: #4d90fe;
+}
+
+div#wbbm_event_faq_r {
+    display: block;
+    width: 94%;
+    border: 1px solid #ddd;
+    padding: 20px;
+}
+
+.mep-faq-input {
+    width: 100%;
+    display: block;
+    border: 1px solid #8a8a8a;
+    padding: 5px;
+    margin: 15px 0;
+}
+
+div#mep-event-faq-box {
+    overflow: hidden;
+}
+
+a.button.remove-faq-row {
+    /* float: right; */
+    overflow: hidden;
+    display: inline-block;
+}
+.settings_page_wbbm_event_settings_page h2 {
+    padding-left: 10px;
+}
+.mep-attendee-sec-details span {
+    border: 1px solid #ddd;
+    padding: 10px;
+    display: inline-block;
+}
+
+.mep-attendee-sec-details .ea-label {
+    width: 200px!important;
+    font-weight: bold;
+}
+
+.mep-attendee-sec-details .ea-value {
+    width: 68%!important;
+}
+
+.mep-attendee-sec-details .sec {
+    margin: 0;
+}
+div#wbbm-bus-ticket-type {
+    overflow: auto;
+}
+tbody#seat_panel tr td {
+    text-align: center;
+    border: 1px solid #ddd;
+}
+
+tbody#seat_panel tr td select {
+    display: block;
+        margin: 0 auto;
+}
+
+
+/*Tickets*/
+.wbbm-ticket-body {
+    background: #fff;
+    padding: 10px;
+    margin: 40px auto;
+    width: 600px;
+}
+
+.wbbm-ticket-body table {
+    width: 100%;
+}
+
+.wbbm-ticket-body table tr {
+    border: 1px solid #fbfbfb!important;
+}
+
+.wbbm-ticket-body table tr td {
+    padding: 6px;
+    font-size: 15px;
+    border-bottom: 1px solid #ddd;
+}
+
+.wbbm-ticket-body table tr td h3 {
+    padding: 10px 0;
+    margin: 0;
+    font-size: 25px;
+}
+.ticket-search {
+    width: 400px;
+    background: #fff;
+    text-align: center;
+    padding: 20px;
+    margin: 30px auto;
+}
+
+.ticket-search h2 {
+    margin: 0;
+    padding: 0 0 20px 0;
+}
+
+.ticket-search input {
+    display: block;
+    width: 100%;
+    padding: 7px;
+    margin-bottom: 10px;
+}
+
+.ticket-search button {
+    background: #676fec;
+    color: #fff;
+    border: 0;
+    padding: 10px 20px;
+    font-size: 15px;
+}
+
+span.wbbm-ticket-hold {
+    background: #d0d0d0;
+    padding: 5px 20px;
+}
+span.wbbm-ticket-cancelled {
+    background: #FF0000;
+    padding: 5px 10px;
+    color: #fff;
+}
+
+span.wbbm-ticket-confirm {
+    background: #02792f;
+    padding: 5px 10px;
+    color: #fff;
+}
