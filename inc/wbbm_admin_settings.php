@@ -1,10 +1,4 @@
 <?php
-/**
- * 2AM Awesome loginbar Settings Controls
- *
- * @version 1.0
- *
- */
 if ( !class_exists('MAGE_WBBM_Setting_Controls' ) ):
 class MAGE_WBBM_Setting_Controls {
 
@@ -12,7 +6,6 @@ class MAGE_WBBM_Setting_Controls {
 
     function __construct() {
         $this->settings_api = new MAGE_Setting_API;
-
         add_action( 'admin_init', array($this, 'admin_init') );
         add_action( 'admin_menu', array($this, 'admin_menu') );
     }
@@ -29,12 +22,10 @@ class MAGE_WBBM_Setting_Controls {
  
     function admin_menu() {
         //add_options_page( 'Event Settings', 'Event Settings', 'delete_posts', 'mep_event_settings_page', array($this, 'plugin_page') );
-
          add_submenu_page('edit.php?post_type=wbbm_bus', __('General Settings','bus-booking-manager'), __('General Settings','bus-booking-manager'), 'manage_options', 'wbbm_gen_settings_page', array($this, 'plugin_page'));
     }
 
     function get_settings_sections() {
-
         $sections = array(
             array(
                 'id' => 'wbbm_general_setting_sec',
@@ -49,10 +40,7 @@ class MAGE_WBBM_Setting_Controls {
                 'title' => __( 'Style Settings', 'bus-booking-manager' )
             ) 
         );
-
-
-
-        return $sections;
+        return apply_filters('wbbm_settings_sec_reg',$sections);
     }
 
     /**
@@ -387,23 +375,16 @@ class MAGE_WBBM_Setting_Controls {
         ),
         
          'wbbm_style_setting_sec' => array(
-
                 array(
                     'name' => 'wbbm_base_color',
                     'label' => __( 'Chose Base Color', 'bus-booking-manager' ),
                     'desc' => __( 'Chose Base color that will match your website color', 'bus-booking-manager' ),
                     'type' => 'color',
-                ),
-
-                         
+                ),                         
             ),
-
-
-
-
         );
 
-        return $settings_fields;
+        return apply_filters('wbbm_settings_sec_fields',$settings_fields);
     }
 
     function plugin_page() {
@@ -443,7 +424,6 @@ function wbbm_get_option( $option, $section, $default = '' ) {
 
     if ( isset( $options[$option] ) ) {
         return $options[$option];
-    }
-    
+    }    
     return $default;
 }

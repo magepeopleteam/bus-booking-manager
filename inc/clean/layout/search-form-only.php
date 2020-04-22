@@ -1,7 +1,7 @@
 <?php
-add_action('mage_search_from_only', 'search_from_only');
+add_action('mage_search_from_only', 'search_from_only',10,2);
 function search_from_only($single_bus,$target) {
-    ?>
+?>
     <form action="<?php echo $single_bus ? '' : get_site_url() .'/'. $target.'/'; ?>" method="get" class="mage_form">
         <div class="mage_form_list">
             <label for="bus_start_route">

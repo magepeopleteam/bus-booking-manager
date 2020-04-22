@@ -1,14 +1,17 @@
 <?php
 function mage_search_page_vertical()
 {
+    $target = '';
+    
     if (isset($_GET['bus_start_route']) && ($_GET['bus_end_route']) && ($_GET['j_date'])) {
+        
         ?>
         <div class="mage_container">
             <div class="mage_row">
                 <div class="mage_search_box_sidebar">
                     <div class="mage_sidebar_search_form">
                         <h2><?php _e('BUY TICKET', 'bus-booking-manager'); ?></h2>
-                        <?php do_action('mage_search_from_only'); ?>
+                        <?php do_action('mage_search_from_only',$target); ?>
                     </div>
                 </div>
                 <div class="mage_search_area">
@@ -18,6 +21,6 @@ function mage_search_page_vertical()
         </div>
         <?php
     } else {
-        mage_search_form_vertical();
+        mage_search_form_vertical($target);
     }
 }

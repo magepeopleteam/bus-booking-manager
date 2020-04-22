@@ -13,7 +13,7 @@ function mage_bus_search_form($atts){
     $target = $params['result-page'] ? $params['result-page'] : $global_target;
     ob_start();
     if($params['style']=='vertical'){
-        mage_search_form_vertical($target);
+       mage_search_form_vertical($target);
     }
     else{
         mage_search_form_horizontal(false,$target);
