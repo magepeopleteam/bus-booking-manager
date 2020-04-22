@@ -92,7 +92,7 @@ $off_day = mage_off_day_check(false);
                                         <div>
                                             <p>
                                                 <strong><?php _e('Fare : ', 'bus-booking-manager'); ?></strong>
-                                                <strong><?php echo get_woocommerce_currency_symbol() . $seat_price_adult; ?></strong>/
+                                                <strong><?php echo wc_price($seat_price_adult); ?></strong>/
                                                 <small><?php _e('Ticket', 'bus-booking-manager'); ?></small>
                                             </p>
                                         </div>
