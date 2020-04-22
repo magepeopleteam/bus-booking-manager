@@ -1175,3 +1175,12 @@ table.bus-search-list {
     z-index: 99;
 }
 }
+.wbbm-bus-list-sec.wbbm-bus-grid{display: -webkit-flex;display: flex;
+-webkit-flex-wrap: wrap;flex-wrap: wrap;}
+.wbbm-bus-grid .wbbm-bus-lists{width:calc(33.3333% - 10px);-webkit-flex-flow: column;flex-flow: column;-webkit-justify-content: space-between;justify-content: space-between;display: -webkit-flex;display: flex;}
+@media only screen and (max-width: 850px) {
+.wbbm-bus-grid .wbbm-bus-lists{width:calc(50% - 10px);}
+}
+@media only screen and (max-width: 500px) {
+.wbbm-bus-grid .wbbm-bus-lists{width:100%;margin:0 0 10px 0;}
+}
