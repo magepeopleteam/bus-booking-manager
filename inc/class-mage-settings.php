@@ -124,7 +124,8 @@ class MAGE_Setting_API {
             foreach ( $field as $option ) {
 
                 $type = isset( $option['type'] ) ? $option['type'] : 'text';
-
+                $label = isset( $option['label'] ) ? $option['label'] : '';
+                $desc = isset( $option['desc'] ) ? $option['desc'] : '';
                 $args = array(
                     'id' => $option['name'],
                     'desc' => isset( $option['desc'] ) ? $option['desc'] : '',
@@ -134,8 +135,10 @@ class MAGE_Setting_API {
                     'options' => isset( $option['options'] ) ? $option['options'] : '',
                     'std' => isset( $option['default'] ) ? $option['default'] : '',
                     'sanitize_callback' => isset( $option['sanitize_callback'] ) ? $option['sanitize_callback'] : '',
+                    'placeholder' => isset( $option['placeholder'] ) ? $option['placeholder'] : '',
                 );
-                add_settings_field( $section . '[' . $option['name'] . ']', $option['label'], array( $this, 'callback_' . $type ), $section, $section, $args );
+                $label .= sprintf( '<span class="description"> %s</span>', $desc );
+                add_settings_field( $section . '[' . $option['name'] . ']', $label, array( $this, 'callback_' . $type ), $section, $section, $args );
             }
         }
 
@@ -154,9 +157,9 @@ class MAGE_Setting_API {
 
         $value = esc_attr( $this->get_option( $args['id'], $args['section'], $args['std'] ) );
         $size = isset( $args['size'] ) && !is_null( $args['size'] ) ? $args['size'] : 'regular';
-
-        $html = sprintf( '<input type="text" class="%1$s-text" id="%2$s[%3$s]" name="%2$s[%3$s]" value="%4$s"/>', $size, $args['section'], $args['id'], $value );
-        $html .= sprintf( '<span class="description"> %s</span>', $args['desc'] );
+        $placeholder = isset( $args['placeholder'] ) && !is_null( $args['placeholder'] ) ? $args['placeholder'] : '';
+        $html = sprintf( '<input type="text" class="%1$s-text" id="%2$s[%3$s]" name="%2$s[%3$s]" value="%4$s" placeholder="%5$s"/>', $size, $args['section'], $args['id'], $value, $placeholder);
+        // $html .= sprintf( '<span class="description"> %s</span>', $args['desc'] );
 
         echo $html;
     }
@@ -192,7 +195,7 @@ class MAGE_Setting_API {
             $html .= sprintf( '<input type="checkbox" class="checkbox" id="wpuf-%1$s[%2$s][%3$s]" name="%1$s[%2$s][%3$s]" value="%3$s"%4$s />', $args['section'], $args['id'], $key, checked( $checked, $key, false ) );
             $html .= sprintf( '<label for="wpuf-%1$s[%2$s][%4$s]"> %3$s</label><br>', $args['section'], $args['id'], $label, $key );
         }
-        $html .= sprintf( '<span class="description"> %s</label>', $args['desc'] );
+        // $html .= sprintf( '<span class="description"> %s</label>', $args['desc'] );
 
         echo $html;
     }
@@ -211,7 +214,7 @@ class MAGE_Setting_API {
             $html .= sprintf( '<input type="radio" class="radio" id="wpuf-%1$s[%2$s][%3$s]" name="%1$s[%2$s]" value="%3$s"%4$s />', $args['section'], $args['id'], $key, checked( $value, $key, false ) );
             $html .= sprintf( '<label for="wpuf-%1$s[%2$s][%4$s]"> %3$s</label><br>', $args['section'], $args['id'], $label, $key );
         }
-        $html .= sprintf( '<span class="description"> %s</label>', $args['desc'] );
+        // $html .= sprintf( '<span class="description"> %s</label>', $args['desc'] );
 
         echo $html;
     }
@@ -231,7 +234,7 @@ class MAGE_Setting_API {
             $html .= sprintf( '<option value="%s"%s>%s</option>', $key, selected( $value, $key, false ), $label );
         }
         $html .= sprintf( '</select>' );
-        $html .= sprintf( '<span class="description"> %s</span>', $args['desc'] );
+        // $html .= sprintf( '<span class="description"> %s</span>', $args['desc'] );
 
         echo $html;
     }
@@ -247,7 +250,7 @@ class MAGE_Setting_API {
         $size = isset( $args['size'] ) && !is_null( $args['size'] ) ? $args['size'] : 'regular';
 
         $html = sprintf( '<textarea rows="5" cols="55" class="%1$s-text" id="%2$s[%3$s]" name="%2$s[%3$s]">%4$s</textarea>', $size, $args['section'], $args['id'], $value );
-        $html .= sprintf( '<br><span class="description"> %s</span>', $args['desc'] );
+        // $html .= sprintf( '<br><span class="description"> %s</span>', $args['desc'] );
 
         echo $html;
     }
@@ -277,7 +280,7 @@ class MAGE_Setting_API {
 
         echo '</div>';
 
-        echo sprintf( '<br><span class="description"> %s</span>', $args['desc'] );
+        // echo sprintf( '<br><span class="description"> %s</span>', $args['desc'] );
     }
 
     /**
@@ -311,11 +314,50 @@ class MAGE_Setting_API {
             });
         });
         </script>';
-        $html .= sprintf( '<span class="description"> %s</span>', $args['desc'] );
+        // $html .= sprintf( '<span class="description"> %s</span>', $args['desc'] );
 
         echo $html;
     }
+	function callback_media( $args ){
 
+		$id			= isset( $args['id'] ) ? $args['id'] : "";
+		$value = esc_attr( $this->get_option( $args['id'], $args['section'], $args['std'] ) );
+		$media_url	= wp_get_attachment_url( $value );
+		$media_type	= get_post_mime_type( $value );
+		$media_title= get_the_title( $value );
+		wp_enqueue_media();
+		
+		echo "<div class='media_preview'>";
+		
+		if( "audio/mpeg" == $media_type ){			
+			esc_html_e('Audio/Video format not supported.','bus-booking-manager');
+		}
+		else {
+			echo "<img id='media_preview_$id' src='$media_url'/>";
+		}
+
+		echo "</div>";
+        echo sprintf( '<input type="hidden" id="media_input_%1$s" name="%2$s[%1$s]" value="%3$s"/>', $id, $args['section'], $value);
+		echo "<div class='wbbm_green_btn' id='media_upload_$id' style='margin-right:5px'>".__('Upload','bus-booking-manager')."</div>";
+		echo "<div class='wbbm_red_btn' id='media_remove_$id'>".__('Remove','bus-booking-manager')."</div>";
+		
+		echo "<script>jQuery(document).ready(function($){
+		$('#media_upload_$id').click(function() {
+			var send_attachment_bkp = wp.media.editor.send.attachment;
+			wp.media.editor.send.attachment = function(props, attachment) {
+				$('#media_preview_$id').attr('src', attachment.url);
+				$('#media_input_$id').val(attachment.id);
+				wp.media.editor.send.attachment = send_attachment_bkp;
+			}
+			wp.media.editor.open($(this));
+			return false;
+		});
+        $('#media_remove_$id').click(function() {
+            $('#media_preview_$id').attr('src','');
+            $('#media_input_$id').val('');
+        });	
+		});	</script>";
+	}
     /**
      * Displays a password field for a settings field
      *
@@ -327,7 +369,7 @@ class MAGE_Setting_API {
         $size = isset( $args['size'] ) && !is_null( $args['size'] ) ? $args['size'] : 'regular';
 
         $html = sprintf( '<input type="password" class="%1$s-text" id="%2$s[%3$s]" name="%2$s[%3$s]" value="%4$s"/>', $size, $args['section'], $args['id'], $value );
-        $html .= sprintf( '<span class="description"> %s</span>', $args['desc'] );
+        // $html .= sprintf( '<span class="description"> %s</span>', $args['desc'] );
 
         echo $html;
     }
@@ -343,7 +385,7 @@ class MAGE_Setting_API {
         $size = isset( $args['size'] ) && !is_null( $args['size'] ) ? $args['size'] : 'regular';
 
         $html = sprintf( '<input type="text" class="%1$s-text wp-color-picker-field" id="%2$s[%3$s]" name="%2$s[%3$s]" value="%4$s" data-default-color="%5$s" />', $size, $args['section'], $args['id'], $value, $args['std'] );
-        $html .= sprintf( '<span class="description" style="display:block;"> %s</span>', $args['desc'] );
+        // $html .= sprintf( '<span class="description" style="display:block;"> %s</span>', $args['desc'] );
 
         echo $html;
     }
@@ -352,16 +394,17 @@ class MAGE_Setting_API {
      * Sanitize callback for Settings API
      */
     function sanitize_options( $options ) {
-        foreach( $options as $option_slug => $option_value ) {
-            $sanitize_callback = $this->get_sanitize_callback( $option_slug );
+        if(is_array($options)):
+            foreach( $options as $option_slug => $option_value ) {
+                $sanitize_callback = $this->get_sanitize_callback( $option_slug );
 
-            // If callback is set, call it
-            if ( $sanitize_callback ) {
-                $options[ $option_slug ] = call_user_func( $sanitize_callback, $option_value );
-                continue;
+                // If callback is set, call it
+                if ( $sanitize_callback ) {
+                    $options[ $option_slug ] = call_user_func( $sanitize_callback, $option_value );
+                    continue;
+                }
             }
-        }
-
+        endif;
         return $options;
     }
 
@@ -517,7 +560,6 @@ class MAGE_Setting_API {
             #wpbody-content .metabox-holder { padding-top: 5px; }
 			.form-wrap p, p.description, p.help, span.description {
 			  font-size: 13px;
-			  font-style: italic;
 			  display: block;
 			}
 			.wp-picker-container input[type=text].wp-color-picker {

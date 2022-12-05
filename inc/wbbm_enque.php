@@ -8,12 +8,15 @@ function wbbm_bus_admin_scripts() {
     wp_enqueue_script('jquery-ui-core');   
     wp_enqueue_style('wbbm-clocklet-style',plugin_dir_url( __DIR__ ).'css/clocklet.css',array());
     wp_enqueue_style('mep-admin-style',plugin_dir_url( __DIR__ ).'css/admin_style.css',array());
-    wp_enqueue_style('mep-jquery-ui-style',plugin_dir_url( __DIR__ ).'css/jquery-ui.css',array());    
-
- wp_enqueue_script('wbbm-select2-lib',plugin_dir_url( __DIR__ ).'js/select2.full.min.js',array('jquery','jquery-ui-core'),1,true); 
-
- wp_enqueue_script('wbbm-clocklet-lib',plugin_dir_url( __DIR__ ).'js/clocklet.js',array('jquery','jquery-ui-core'),1,true);
+    wp_enqueue_style('mep-jquery-ui-style',plugin_dir_url( __DIR__ ).'css/jquery-ui.css',array());
+    wp_enqueue_style('font-awesome-css-cdn', "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.2.0/css/all.min.css", null, 1);
+    wp_enqueue_script('wbbm-select2-lib',plugin_dir_url( __DIR__ ).'js/select2.full.min.js',array('jquery','jquery-ui-core'),1,true); 
+    wp_register_script('multidatepicker-wbbm', 'https://cdn.rawgit.com/dubrox/Multiple-Dates-Picker-for-jQuery-UI/master/jquery-ui.multidatespicker.js', array('jquery'), 1, true);
+    wp_enqueue_script('multidatepicker-wbbm');
+    wp_enqueue_script('wbbm-clocklet-lib',plugin_dir_url( __DIR__ ).'js/clocklet.js',array('jquery','jquery-ui-core'),1,true);
     wp_enqueue_script('gmap-scripts',plugin_dir_url( __DIR__ ).'js/mkb-admin.js',array('jquery','jquery-ui-core'),1,true);
+    wp_enqueue_script('wbbm-single-datatabs',plugin_dir_url( __DIR__ ).'js/wbbm-single-datatabs.js',array('jquery'),1,true);
+    wp_enqueue_style('mep-ra-admin-style',plugin_dir_url( __DIR__ ).'css/ra-style.css',array());
 }
 
 
@@ -41,12 +44,12 @@ function wbbm_admin_footer_script(){
 jQuery(document).ready(function($){
   
       jQuery( "#j_date" ).datepicker({
-        dateFormat: "yy-mm-dd",
+        dateFormat: "<?php echo wbbm_convert_datepicker_dateformat(); ?>",
         minDate:0
       });  
       
       jQuery( "#r_date" ).datepicker({
-        dateFormat: "yy-mm-dd",
+        dateFormat: "<?php echo wbbm_convert_datepicker_dateformat(); ?>",
         minDate:0
       });
 
@@ -57,6 +60,8 @@ jQuery(document).ready(function($){
 </script>
   <?php
 }
+
+
 
 
 
@@ -90,11 +95,24 @@ function wbbm_bus_enqueue_scripts() {
 
    wp_enqueue_style('wbbm-bus-style',plugin_dir_url( __DIR__ ).'css/style.css',array());
 
+    wp_enqueue_style('wbbm-ra-bus-style',plugin_dir_url( __DIR__ ).'css/ra-style.css',array());
 
-   wp_enqueue_style ('font-awesome-css-cdn',"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css",null,1); 
+
+   wp_enqueue_style ('font-awesome-css-cdn',"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css",null,1);
 
    wp_enqueue_style ('wbbm-select2-style-cdn',"https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css",null,1);
 
     wp_enqueue_script('mage_style',plugin_dir_url( __DIR__ ).'js/mage_style.js',array('jquery'),1,true);
     wp_enqueue_style('mage_css',plugin_dir_url( __DIR__ ).'css/mage_css.css',array());
+}
+
+// Ajax Issue
+add_action('wp_head','wbbm_ajax_url',5);
+add_action('admin_head','wbbm_ajax_url',5);
+function wbbm_ajax_url() {
+    ?>
+    <script type="text/javascript">
+        var wbtm_ajaxurl = "<?php echo admin_url('admin-ajax.php'); ?>";
+    </script>
+    <?php
 }

@@ -21,14 +21,14 @@ function mage_bus_search_form($atts){
     return ob_get_clean();
 }
 
-
-
-
 function mage_bus_search($atts){
     $defaults = array(
-        "style" => false
+        "style" => false,
+        "theme" => false,
     );
     $params         = shortcode_atts($defaults, $atts);
+    global $mage_bus_search_theme;
+    $mage_bus_search_theme = $params['theme'];
     //ob_clean();
     ob_start();
 
@@ -49,19 +49,88 @@ function mage_search_bus_list($return){
         $start = $return?'bus_end_route':'bus_start_route';
         $end = $return?'bus_start_route':'bus_end_route';
         $loop = new WP_Query(mage_bus_list_query($start,$end));
-        while ($loop->have_posts()) {
-            $loop->the_post();
-            if (mage_odd_list_check(false) && mage_off_day_check(false) && !$return) {
-                $j_time = strtotime(mage_get_isset('j_date').' '. boarding_dropping_time(false,false));
-                if( $c_time < $j_time){
-                    mage_search_item(false);
+        if($loop->post_count == 0){
+            ?>
+            <div class='wbbm_error' style='text-align:center'>
+                <span><?php _e('Sorry, No Bus Found','bus-booking-manager'); ?></span>
+            </div>
+            <?php
+        } else {
+
+            $j_date = $return ? $_GET['r_date'] : $_GET['j_date'];
+            $j_date = mage_wp_date($j_date, 'Y-m-d');
+
+            while ($loop->have_posts()) {
+                $loop->the_post();
+                
+                $is_on_date = false;
+                $bus_on_dates = array();
+                $bus_on_date = get_post_meta(get_the_ID(), 'wbtm_bus_on_date', true);
+                if( $bus_on_date != null ) {
+                    $bus_on_dates = explode( ', ', $bus_on_date );
+                    $is_on_date = true;
                 }
-            }
-            if (mage_odd_list_check(true) && mage_off_day_check(true) && $_GET['r_date'] && $return) {
-                $j_time = strtotime(mage_get_isset('j_date').' '. boarding_dropping_time(false,false));
-                $r_time = strtotime(mage_get_isset('r_date').' '. boarding_dropping_time(false,true));
-                if( $j_time < $r_time){
-                    mage_search_item(true);
+                
+                if( $is_on_date ) {
+                    // echo $j_date;
+                    // echo '<pre>';print_r($bus_on_dates);
+                    if( in_array( $j_date, $bus_on_dates ) ) {
+                        mage_search_item($return);
+                    }
+                } else {
+
+                    // Offday schedule check
+                    $bus_stops_times = get_post_meta(get_the_ID(), 'wbbm_bus_bp_stops', true);
+                    $bus_offday_schedules = get_post_meta(get_the_ID(), 'wbtm_offday_schedule', true);
+                    
+                    $start_time = '';
+                    foreach($bus_stops_times as $stop) {
+                        if($stop['wbbm_bus_bp_stops_name'] == $_GET[$start]) {
+                            $start_time = $stop['wbbm_bus_bp_start_time'];
+                        }
+                    }
+
+                    $start_time = wbbm_time_24_to_12($start_time);
+
+                    $offday_current_bus = false;
+                    if(!empty($bus_offday_schedules)) {
+                        $s_datetime = new DateTime( $j_date.' '.$start_time );
+
+                        foreach($bus_offday_schedules as $item) {
+
+                            $c_iterate_date_from = wbbm_convert_date_to_php($item['from_date']);
+                            $c_iterate_datetime_from = new DateTime( $c_iterate_date_from.' '.$item['from_time'] );
+
+                            $c_iterate_date_to = wbbm_convert_date_to_php($item['to_date']);
+                            $c_iterate_datetime_to = new DateTime( $c_iterate_date_to.' '.$item['to_time'] );
+
+                            if( $s_datetime >= $c_iterate_datetime_from && $s_datetime <= $c_iterate_datetime_to ) {
+                                $offday_current_bus = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    // Check Offday and date
+                    if(!$offday_current_bus && mage_off_day_check($return)) {
+                        mage_search_item($return);
+                    }
+
+                    // Offday schedule check END
+
+                    // if (mage_odd_list_check(false) && mage_off_day_check(false) && !$return) {
+                    //     $j_time = strtotime(wbbm_convert_date_to_php(mage_get_isset('j_date')).' '. boarding_dropping_time(`false`,false));
+                    //     if( $c_time < $j_time){
+                    //         mage_search_item(false);
+                    //     }
+                    // }
+                    // if (mage_odd_list_check(true) && mage_off_day_check(true) && wbbm_convert_date_to_php($_GET['r_date']) && $return) {
+                    //     $j_time = strtotime(wbbm_convert_date_to_php(mage_get_isset('j_date')).' '. boarding_dropping_time(false,false));
+                    //     $r_time = strtotime(wbbm_convert_date_to_php(mage_get_isset('r_date')).' '. boarding_dropping_time(false,true));
+                    //     if( $j_time < $r_time){
+                    //         mage_search_item(true);
+                    //     }
+                    // }
                 }
             }
         }

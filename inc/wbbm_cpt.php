@@ -8,8 +8,12 @@ function wbbm_bus_cpt() {
 
 $cpt_label = wbbm_get_option( 'wbbm_cpt_label', 'wbbm_general_setting_sec', __('Bus','bus-booking-manager'));
 $cpt_slug = wbbm_get_option( 'wbbm_cpt_slug', 'wbbm_general_setting_sec', __('bus','bus-booking-manager'));
-
-
+$general_setting = get_option('wbbm_general_setting_sec') ? maybe_unserialize(get_option('wbbm_general_setting_sec')) : array();
+if(isset($general_setting['wbbm_gutenbug_switch']) && $general_setting['wbbm_gutenbug_switch'] == 'on'){
+    $editor = true;
+} else {
+    $editor = false;
+}
 
     $labels = array(
         'name'                  => _x( $cpt_label, 'bus-booking-manager' ),
@@ -23,6 +27,7 @@ $cpt_slug = wbbm_get_option( 'wbbm_cpt_slug', 'wbbm_general_setting_sec', __('bu
         'public'                => true,
         'labels'                => $labels,
         'menu_icon'             => 'dashicons-tickets-alt',
+        'show_in_rest'          => $editor,
         'supports'              => array('title','editor','thumbnail'),
         'rewrite'               => array('slug' => $cpt_slug)
 

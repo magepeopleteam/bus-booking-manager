@@ -47,9 +47,16 @@ $loop = new WP_Query( $args_search_qqq );
 	$dp_arr = get_post_meta(get_the_id(),'wbbm_bus_next_stops',true);
 	$price_arr = get_post_meta(get_the_id(),'wbbm_bus_prices',true);
 	$total_dp = count($dp_arr)-1;
-	$term = get_the_terms(get_the_id(),'wbbm_bus_cat');
+	//$term = get_the_terms(get_the_id(),'wbbm_bus_cat');
 	$start = $bp_arr[0]['wbbm_bus_bp_stops_name'];
-        $end = $dp_arr[$total_dp]['wbbm_bus_next_stops_name'];
+    $end = $dp_arr[$total_dp]['wbbm_bus_next_stops_name'];
+    $type_id = get_post_meta(get_the_id(), 'wbbm_bus_category', true);
+    if($type_id != ''){
+        $type_array = get_term_by('term_id', $type_id, 'wbbm_bus_cat');
+        $type_name = $type_array->name;
+    } else {
+        $type_name = '';
+    }	
 ?>
 
 <div class="wbbm-bus-lists">
@@ -60,29 +67,25 @@ $loop = new WP_Query( $args_search_qqq );
 	<h2><?php the_title(); ?></h2>
 	<ul>
 		<li><strong>
-		<?php echo wbbm_get_option('wbbm_type_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_type_text', 'wbbm_label_setting_sec') : _e('Type:','bus-booking-manager'); ?>
-		</strong> <?php echo $term[0]->name; ?></li>
+		<?php echo wbbm_get_option('wbbm_type_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_type_text', 'wbbm_label_setting_sec') : _e('Type','bus-booking-manager'); echo ':'; ?>
+		</strong> <?php echo $type_name; ?></li>
 		<li><strong>
-		<?php echo wbbm_get_option('wbbm_bus_no_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_bus_no_text', 'wbbm_label_setting_sec') : _e('Bus No:','bus-booking-manager'); ?>
+		<?php echo wbbm_get_option('wbbm_bus_no_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_bus_no_text', 'wbbm_label_setting_sec') : _e('Bus No','bus-booking-manager'); echo ':'; ?>
 		</strong> <?php echo get_post_meta(get_the_id(),'wbbm_bus_no',true); ?></li>
 		<li><strong>
 		
-		<?php echo wbbm_get_option('wbbm_total_seat_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_total_seat_text', 'wbbm_label_setting_sec') : _e('Total Seat:','bus-booking-manager'); ?>
+		<?php echo wbbm_get_option('wbbm_total_seat_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_total_seat_text', 'wbbm_label_setting_sec') : _e('Total Seat','bus-booking-manager'); echo ':'; ?>
 
 		</strong> <?php echo get_post_meta(get_the_id(),'wbbm_total_seat',true); ?> </li>
 		<li><strong>
-		<?php _e('Start From:','bus-booking-manager'); ?>
-		<?php echo wbbm_get_option('wbbm_boarding_points_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_boarding_points_text', 'wbbm_label_setting_sec') : _e('Start From:','bus-booking-manager'); ?>
-			
+		<?php echo wbbm_get_option('wbbm_start_from_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_start_from_text', 'wbbm_label_setting_sec') : _e('Start From','bus-booking-manager'); echo ':'; ?>	
 		</strong> <?php echo $start; ?> </li>
 		<li><strong>
-		<?php echo wbbm_get_option('wbbm_dropping_points_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_dropping_points_text', 'wbbm_label_setting_sec') : _e('End at:','bus-booking-manager'); ?>	
-
-	  </strong> <?php echo $end; ?> </li>
+		<?php echo wbbm_get_option('wbbm_end_to_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_end_to_text', 'wbbm_label_setting_sec') : _e('End at','bus-booking-manager'); echo ':'; ?>
+	  	</strong> <?php echo $end; ?> </li>
 		<li><strong>
-		<?php echo wbbm_get_option('wbbm_fare_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_fare_text', 'wbbm_label_setting_sec') : _e('Fare:','bus-booking-manager'); 
-		?>	
-		</strong> <?php echo wc_price(mage_seat_price(get_the_id(),$start,$end,true)); ?> 
+		<?php echo wbbm_get_option('wbbm_fare_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_fare_text', 'wbbm_label_setting_sec') : _e('Fare','bus-booking-manager'); echo ':'; ?>	
+		</strong> <?php echo wc_price(mage_seat_price(get_the_id(),$start,$end,'adult')); ?> 
 	  </li>
 	</ul>
 <a href="<?php the_permalink(); ?>" class="btn wbbm-btn">

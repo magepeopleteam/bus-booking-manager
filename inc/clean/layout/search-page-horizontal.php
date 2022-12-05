@@ -7,7 +7,7 @@ function mage_search_page_horizontal(){
         ?>
         <div class="mage_container">
             <div class="mage_row">
-                <div>
+                <div style="width:100%">
                     <?php mage_search_list(); ?>
                 </div>
             </div>
