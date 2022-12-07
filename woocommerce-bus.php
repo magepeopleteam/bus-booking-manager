@@ -677,7 +677,7 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
         if (!empty($terms) && !is_wp_error($terms)) {
             ob_start();
             ?>
-            <select name="<?php echo $name; ?>" class='seat_type select2'>
+            <select name="<?php echo $name; ?>" class='seat_type select2 bus_stop_add_option'>
                 <option value=""><?php _e('Please Select', 'bus-booking-manager'); ?></option>
                 <?php
                 foreach ($terms as $term) {
@@ -713,7 +713,7 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
         if (!empty($terms) && !is_wp_error($terms)) {
             ob_start();
             ?>
-            <select name="<?php echo $name; ?>" class='seat_type select2'>
+            <select name="<?php echo $name; ?>" class='seat_type select2 bus_stop_add_option'>
                 <option value=""><?php _e('Please Select', 'bus-booking-manager'); ?></option>
                 <?php
                 foreach ($terms as $term) {

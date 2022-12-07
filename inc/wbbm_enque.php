@@ -16,7 +16,10 @@ function wbbm_bus_admin_scripts() {
     wp_enqueue_script('wbbm-clocklet-lib',plugin_dir_url( __DIR__ ).'js/clocklet.js',array('jquery','jquery-ui-core'),1,true);
     wp_enqueue_script('gmap-scripts',plugin_dir_url( __DIR__ ).'js/mkb-admin.js',array('jquery','jquery-ui-core'),1,true);
     wp_enqueue_script('wbbm-single-datatabs',plugin_dir_url( __DIR__ ).'js/wbbm-single-datatabs.js',array('jquery'),1,true);
+    wp_enqueue_script('mp_script',plugin_dir_url( __DIR__ ).'js/mp_script.js',array('jquery'),1,true);
+    wp_enqueue_script('ra_script',plugin_dir_url( __DIR__ ).'js/ra_script.js',array('jquery'),1,true);
     wp_enqueue_style('mep-ra-admin-style',plugin_dir_url( __DIR__ ).'css/ra-style.css',array());
+    wp_enqueue_style('mp-style',plugin_dir_url( __DIR__ ).'css/mp_style.css',array());
 }
 
 
@@ -103,7 +106,10 @@ function wbbm_bus_enqueue_scripts() {
    wp_enqueue_style ('wbbm-select2-style-cdn',"https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css",null,1);
 
     wp_enqueue_script('mage_style',plugin_dir_url( __DIR__ ).'js/mage_style.js',array('jquery'),1,true);
+
     wp_enqueue_style('mage_css',plugin_dir_url( __DIR__ ).'css/mage_css.css',array());
+
+
 }
 
 // Ajax Issue
