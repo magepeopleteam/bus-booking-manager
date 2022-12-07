@@ -4,6 +4,8 @@ if (!defined('ABSPATH')) exit;  // if direct access
 class WBBMMetaBox{
     public function __construct()
     {
+
+
         // WBBM Metabox
         add_action('add_meta_boxes', array($this, 'wbbm_add_meta_box_func')); 
 
@@ -58,6 +60,16 @@ class WBBMMetaBox{
 
     public function wbbm_add_meta_box_func()
     {
+  /*     global $post;
+       $values = maybe_unserialize(get_post_meta($post->ID, 'wbbm_bus_next_stops', true));
+       echo '<pre>';
+       print_r($values);
+       echo '</pre>';
+
+        exit;*/
+
+
+
         $cpt_label = wbbm_get_option('wbbm_cpt_label', 'wbbm_general_setting_sec', __('Bus', 'bus-booking-manager'));
         add_meta_box('wbbm-single-settings-meta', $cpt_label.' '. __('Settings','bus-booking-manager'), array($this, 'wbbm_meta_box_cb'), 'wbbm_bus', 'normal', 'high');
     }
@@ -82,6 +94,8 @@ class WBBMMetaBox{
     // Tab lists
     public function wbbm_add_meta_box_tab_label($post_id)
     {
+
+
         $cpt_label = wbbm_get_option('wbbm_cpt_label', 'wbbm_general_setting_sec', __('Bus', 'bus-booking-manager'));
         ?>
         <li data-target-tabs="#wbtm_ticket_panel" class="active"><span
@@ -118,38 +132,21 @@ class WBBMMetaBox{
     }
     
     public function wbbm_add_meta_box_tab_content($post_id){
-
         $cpt_label = wbbm_get_option('wbbm_cpt_label', 'wbbm_general_setting_sec', __('Bus', 'bus-booking-manager'));
         wp_nonce_field('wbbm_single_bus_settings_nonce', 'wbbm_single_bus_settings_nonce');
-
-
         $this->wbbm_bus_configuration();
-
         $this->wbbm_bus_routing($cpt_label);
-
         $this->wbbm_bus_pricing($post_id,$cpt_label);
-
         $this->wbbm_bus_pickuppoint($post_id);
-
         $this->wbbm_bus_ondayoffday()
-
         ?>
-
-
-
-
-
         <!-- Partial Payment Setting -->
         <div class="mp_tab_item tab-content" data-tab-item="#wbtm_bus_partial_payment">
             <h3><?php echo $cpt_label.' '. __('Partial Payment:', 'bus-booking-manager'); ?></h3>
             <hr />
             <?php $this->wbbm_partial_payment_setting(); ?>
         </div>
-
-        <?php
-        /*Hook:  wbbm_after_meta_box_tab_content */
-        do_action('wbbm_after_meta_box_tab_content'); 
-        ?>
+        <?php do_action('wbbm_after_meta_box_tab_content'); ?>
         <?php
     }
 
@@ -172,7 +169,12 @@ class WBBMMetaBox{
 
     public function wbbm_bus_routing($cpt_label){
         global $post;
-        $wbbm_event_faq = get_post_meta($post->ID, 'wbbm_bus_next_stops', true);
+
+
+        $wbtm_bus_next_stops = maybe_unserialize(get_post_meta($post->ID, 'wbbm_bus_next_stops', true));
+
+
+
         $wbbm_bus_bp = get_post_meta($post->ID, 'wbbm_bus_bp_stops', true);
         $values = get_post_custom($post->ID);
 
@@ -195,26 +197,21 @@ class WBBMMetaBox{
             'taxonomy' => 'wbbm_bus_stops',
             'hide_empty' => false
         );
-
         require_once(dirname(__FILE__) . "/clean/layout/bus_pricing.php");
-
     }
 
 
 
     public function wbbm_bus_pickuppoint($cpt_label){
         global $post;
-
         $bus_stops = get_terms(array(
             'taxonomy' => 'wbbm_bus_stops',
             'hide_empty' => false
         ));
-
         $bus_pickpoints = get_terms(array(
             'taxonomy' => 'wbbm_bus_pickpoint',
             'hide_empty' => false
         ));
-
         if ($bus_pickpoints) {
             $pickpoints = '';
             foreach ($bus_pickpoints as $points) {
@@ -228,31 +225,27 @@ class WBBMMetaBox{
 
 
 
-    public function wbbm_bus_ondayoffday(){
-                global $post;
-                $values = get_post_custom($post->ID);
-                $cpt_label = wbbm_get_option('wbbm_cpt_label', 'wbbm_general_setting_sec', __('Bus', 'bus-booking-manager'));
 
+    public function wbbm_bus_ondayoffday(){
+        global $post;
+        $values = get_post_custom($post->ID);
+        $cpt_label = wbbm_get_option('wbbm_cpt_label', 'wbbm_general_setting_sec', __('Bus', 'bus-booking-manager'));
         require_once(dirname(__FILE__) . "/clean/layout/bus_ondayoffday.php");
     }
 
 
     public function wbbm_single_settings_meta_save($post_id){
         global $post;
-
         if (!isset($_POST['wbbm_single_bus_settings_nonce']) ||
         !wp_verify_nonce($_POST['wbbm_single_bus_settings_nonce'], 'wbbm_single_bus_settings_nonce')){
             return;
         }
-        
         if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE){
             return;
         }
-               
         if (!current_user_can('edit_post', $post_id)){
             return;
         }
-                           
         /* Bus Price Zero Allow */
         if (isset($_POST['wbbm_price_zero_allow'])) {
             $wbbm_price_zero_allow = strip_tags($_POST['wbbm_price_zero_allow']);
@@ -260,7 +253,6 @@ class WBBMMetaBox{
             $wbbm_price_zero_allow = 'off';
         }
         $update_seat = update_post_meta($post_id, 'wbbm_price_zero_allow', $wbbm_price_zero_allow);
-
         /* Bus Sell Off */
         if (isset($_POST['wbbm_sell_off'])) {
             $wbbm_sell_off = strip_tags($_POST['wbbm_sell_off']);
@@ -288,77 +280,54 @@ class WBBMMetaBox{
         $update_virtual = update_post_meta($post_id, '_virtual', 'yes');
         $update_bus_category = update_post_meta($post_id, 'wbbm_bus_category', $wbbm_bus_category);
 
-        /* Bus Boarding Point */
-        $old = get_post_meta($post_id, 'wbbm_bus_bp_stops', true);
-        $new = array();
-        $bp_stops = $_POST['wbbm_bus_bp_stops_name'];
-        $start_t = $_POST['wbbm_bus_bp_start_time'];   
-        $order_id = 0;
-        if(!empty($bp_stops)){
-            $count = count($bp_stops);
-        }else{
-            $count = 0;
+
+
+
+
+
+        // Routing
+        $bus_boarding_points = array();
+        $bus_dropping_points = array();
+        $boarding_points = $_POST['wbbm_bus_bp_stops_name'];
+        $boarding_time = isset($_POST['wbbm_bus_bp_start_time']) ? $_POST['wbbm_bus_bp_start_time'] : '';
+        $dropping_points = $_POST['wbbm_bus_next_stops_name'];
+        $dropping_time = isset($_POST['wbbm_bus_next_end_time']) ? $_POST['wbbm_bus_next_end_time'] : '';
+
+        if (!empty($boarding_points)) {
+            $i = 0;
+            foreach ($boarding_points as $point) {
+                if ($point != '') {
+                    $bus_bus_bp_stops[$i]['wbbm_bus_bp_stops_name'] = $point;
+                    $bus_bus_start_time[$i]['wbbm_bus_bp_start_time'] = $boarding_time[$i];
+                }
+                $i++;
+            }
         }
-        
-    
-        for ($i = 0; $i < $count; $i++) {
-    
-            if ($bp_stops[$i] != '') :
-                $new[$i]['wbbm_bus_bp_stops_name'] = stripslashes(strip_tags($bp_stops[$i]));
-            endif;
-    
-            if ($start_t[$i] != '') :
-                $new[$i]['wbbm_bus_bp_start_time'] = stripslashes(strip_tags($start_t[$i]));
-            endif;
+
+        if (!empty($dropping_points)) {
+            $i = 0;
+            foreach ($dropping_points as $point) {
+                if ($point != '') {
+                    $bus_dropping_points[$i]['wbbm_bus_next_stops_name'] = $point;
+                    $bus_dropping_points[$i]['wbbm_bus_next_end_time'] = $dropping_time[$i];
+                }
+                $i++;
+            }
         }
-    
-        $bstart_time = $start_t[0];
-        update_post_meta($post_id, 'wbbm_bus_start_time', $bstart_time);
-        if (!empty($new) && $new != $old) {
-            update_post_meta($post_id, 'wbbm_bus_bp_stops', $new);
-        } elseif (empty($new) && $old) {
-            delete_post_meta($post_id, 'wbbm_bus_bp_stops', $old);
-            update_post_meta($post_id, 'wbbm_bus_start_time', '');
-        }
-        
-        /* Bus Dropping Point */
-        $old = get_post_meta($post_id, 'wbbm_bus_next_stops', true);
-        $new = array();
-    
-        $stops = $_POST['wbbm_bus_next_stops_name'];
-        $end_t = $_POST['wbbm_bus_next_end_time'];
-    
-    
-        $order_id = 0;
-        if(!empty($stops)){
-            $count = count($stops);
-        }
-        else{
-            $count = 0; 
-        }
-        
-    
-        for ($i = 0; $i < $count; $i++) {
-    
-            if ($stops[$i] != '') :
-                $new[$i]['wbbm_bus_next_stops_name'] = stripslashes(strip_tags($stops[$i]));
-            endif;
-    
-            if ($end_t[$i] != '') :
-                $new[$i]['wbbm_bus_next_end_time'] = stripslashes(strip_tags($end_t[$i]));
-            endif;
-    
-            $opt_name = $post_id . str_replace(' ', '', $names[$i]);
-    
-            // update_post_meta( $post_id, "wbbm_xtra_$opt_name",0 );
-    
-        }
-    
-        if (!empty($new) && $new != $old){
-            update_post_meta($post_id, 'wbbm_bus_next_stops', $new);
-        } elseif (empty($new) && $old){
-            delete_post_meta($post_id, 'wbbm_bus_next_stops', $old);
-        }
+
+        update_post_meta($post_id, 'wbbm_bus_bp_stops', $bus_bus_bp_stops);
+        update_post_meta($post_id, 'wbbm_bus_start_time', $bus_bus_start_time);
+
+        update_post_meta($post_id, 'wbbm_bus_next_stops', $bus_dropping_points);
+
+
+
+
+        // Routing END
+
+
+
+
 
         /* Bus Pricing */    
         $old = get_post_meta($post_id, 'wbbm_bus_prices', true);

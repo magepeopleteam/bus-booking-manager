@@ -700,7 +700,7 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
     function wbbm_get_next_bus_stops_list($name, $data, $list, $coun)
     {
         global $post;
-        $values = get_post_custom($post->ID);
+
         $nxt_arr = get_post_meta($post->ID, $list, true);
         $seat_name = $name;
         $type_name = isset($nxt_arr[$coun]) ? $nxt_arr[$coun][$data] : null;

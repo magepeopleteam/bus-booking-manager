@@ -106,12 +106,22 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <?php if ($wbbm_event_faq) :
-                            $coun = 0;
-                        foreach ($wbbm_event_faq as $field) { ?>
+                    <?php
+                    if ($wbtm_bus_next_stops) :
+                    $count = 0;
+                    foreach ($wbtm_bus_next_stops as $field) {
+                    ?>
                         <tr>
                             <td align="center">
-                                <?php echo wbbm_get_next_bus_stops_list('wbbm_bus_next_stops_name[]', 'wbbm_bus_next_stops_name', 'wbbm_bus_next_stops', $coun); ?>
+
+                                <select name="wbbm_bus_next_stops_name[]" class='seat_type bus_stop_add_option'>
+                                    <option value=""><?php _e('Please Select', 'bus-ticket-booking-with-seat-reservation'); ?></option>
+                                    <?php foreach ($terms as $term) {?>
+                                        <option data-term_id="<?php echo $term->term_id; ?>" value="<?php echo $term->name; ?>" <?php echo ($term->name == $field['wbbm_bus_next_stops_name'])?'Selected':'' ?>><?php echo $term->name; ?></option>
+                                    <?php } ?>
+                                </select>
+
+                                <?php //echo wbbm_get_next_bus_stops_list('wbbm_bus_next_stops_name[]', 'wbbm_bus_next_stops_name', 'wbbm_bus_next_stops', $coun); ?>
                             </td>
                             <td align="center"><input type="text" data-clocklet name='wbbm_bus_next_end_time[]'
                                     value="<?php if (isset($field['wbbm_bus_next_end_time']) && $field['wbbm_bus_next_end_time'] != '') echo esc_attr($field['wbbm_bus_next_end_time']); ?>"
@@ -120,9 +130,7 @@
                                     <?php _e('Remove', 'bus-booking-manager'); ?>
                                 </a></td>
                         </tr>
-                        <?php $coun++; }
-                                        else :
-                                            // show a blank one
+                        <?php }
                                         endif;
                                         ?>
 
