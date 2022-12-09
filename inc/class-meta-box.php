@@ -4,8 +4,6 @@ if (!defined('ABSPATH')) exit;  // if direct access
 class WBBMMetaBox{
     public function __construct()
     {
-
-
         // WBBM Metabox
         add_action('add_meta_boxes', array($this, 'wbbm_add_meta_box_func')); 
 
@@ -60,8 +58,8 @@ class WBBMMetaBox{
 
     public function wbbm_add_meta_box_func()
     {
-  /*     global $post;
-       $values = maybe_unserialize(get_post_meta($post->ID, 'wbbm_bus_next_stops', true));
+      global $post;
+     /*  $values = maybe_unserialize(get_post_meta($post->ID, 'wbbm_bus_next_stops', true));
        echo '<pre>';
        print_r($values);
        echo '</pre>';
@@ -102,15 +100,15 @@ class WBBMMetaBox{
                 class="dashicons dashicons-admin-settings"></span><?php echo $cpt_label.' '. __('Configuration','bus-booking-manager'); ?>
         </li>
 
-        <li data-target-tabs="#wbtm_routing"><span
-                class="dashicons dashicons-location-alt"></span><?php echo $cpt_label.' '.__('Routing', 'bus-booking-manager'); ?>
+        <li data-target-tabs="#wbtm_routing" class="wbtm_routing_tab">
+            <span class="dashicons dashicons-location-alt"></span><?php echo $cpt_label.' '.__('Routing', 'bus-booking-manager'); ?>
         </li>
 
-        <li data-target-tabs="#wbtm_seat_price"><span
-                class="dashicons dashicons-money-alt"></span><?php echo $cpt_label.' '.__('Seat Price', 'bus-booking-manager'); ?>
+        <li data-target-tabs="#wbtm_seat_price" class="ra_seat_price">
+            <span class="dashicons dashicons-money-alt"></span><?php echo $cpt_label.' '.__('Seat Price', 'bus-booking-manager'); ?>
         </li>
 
-        <li data-target-tabs="#wbtm_pickuppoint"><span
+        <li class="ra_pickuppoint_tab" data-target-tabs="#wbtm_pickuppoint"><span
                 class="dashicons dashicons-flag"></span><?php echo $cpt_label.' '.__('Pickup Point', 'bus-booking-manager'); ?>
         </li>
 
@@ -208,6 +206,23 @@ class WBBMMetaBox{
             'taxonomy' => 'wbbm_bus_stops',
             'hide_empty' => false
         ));
+
+
+        $boarding_points = maybe_unserialize(get_post_meta($post->ID, 'wbbm_bus_bp_stops', true));
+
+
+        $boarding_points_array = array();
+        if ($boarding_points) {
+            $boarding_points = array_column($boarding_points, 'wbbm_bus_bp_stops_name');
+            foreach ($boarding_points as $item) {
+                $boarding_points_array[] = $item;
+            }
+        }
+        $boarding_points_class = ($boarding_points_array == array())?'ra-display-button':'ra-display-boarding-point';
+
+
+
+
         $bus_pickpoints = get_terms(array(
             'taxonomy' => 'wbbm_bus_pickpoint',
             'hide_empty' => false
@@ -230,6 +245,15 @@ class WBBMMetaBox{
         global $post;
         $values = get_post_custom($post->ID);
         $cpt_label = wbbm_get_option('wbbm_cpt_label', 'wbbm_general_setting_sec', __('Bus', 'bus-booking-manager'));
+
+
+        $weekly_offday = array_key_exists('weekly_offday', $values) ? maybe_unserialize($values['weekly_offday'][0]) : '';
+
+        if(!is_array($weekly_offday)){
+            $weekly_offday = array();
+        }
+
+
         require_once(dirname(__FILE__) . "/clean/layout/bus_ondayoffday.php");
     }
 
@@ -298,6 +322,7 @@ class WBBMMetaBox{
             foreach ($boarding_points as $point) {
                 if ($point != '') {
                     $bus_bus_bp_stops[$i]['wbbm_bus_bp_stops_name'] = $point;
+                    $bus_bus_bp_stops[$i]['wbbm_bus_bp_start_time'] = $boarding_time[$i];
                     $bus_bus_start_time[$i]['wbbm_bus_bp_start_time'] = $boarding_time[$i];
                 }
                 $i++;
@@ -316,7 +341,6 @@ class WBBMMetaBox{
         }
 
         update_post_meta($post_id, 'wbbm_bus_bp_stops', $bus_bus_bp_stops);
-        update_post_meta($post_id, 'wbbm_bus_start_time', $bus_bus_start_time);
 
         update_post_meta($post_id, 'wbbm_bus_next_stops', $bus_dropping_points);
 
@@ -515,6 +539,15 @@ class WBBMMetaBox{
         $wbtm_od_start = strip_tags($_POST['wbtm_od_start']);
         $wbtm_od_end = strip_tags($_POST['wbtm_od_end']);
         $wbtm_bus_on_date = $_POST['wbtm_bus_on_date'];
+
+
+        $od = isset($_POST['weekly_offday']) ? $_POST['weekly_offday'] : '';
+
+
+        update_post_meta($post_id, 'weekly_offday', $od);
+
+
+
         $od_sun = strip_tags($_POST['od_sun']);
         $od_mon = strip_tags($_POST['od_mon']);
         $od_tue = strip_tags($_POST['od_tue']);

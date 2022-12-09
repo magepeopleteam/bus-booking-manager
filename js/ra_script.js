@@ -150,12 +150,13 @@
 		return false;
 	});
 
-	$(document).on('click','.wbtm_pickuppoint_tab',function (e){
+	$(document).on('click','.ra_pickuppoint_tab',function (e){
 		e.preventDefault();
-		$('.wbtm_pick_boarding').html("<option value=''>Select Boarding Point</option>");
+		$('.ra_pick_boarding').html("<option value=''>Select Boarding Point</option>");
 		let options = '';
 		$( ".boarding-point tr" ).each(function( index ) {
-			console.log( index + ": " + $(this).find(":selected").val() );
+
+			let pick_name = $(this).find(":selected").val()
 
 			options = options+$(this).find(":selected").val();
 
@@ -168,7 +169,7 @@
 			}
 			let term_id = $(this).find(':selected').data('term_id');
 			if(term_id){
-				$('.wbtm_pick_boarding').append("<option value="+term_id+">"+$(this).find(":selected").val()+"</option>")
+				$('.ra_pick_boarding').append("<option value="+pick_name+">"+pick_name+"</option>")
 			}
 		});
 
@@ -196,6 +197,11 @@
 
 		return false;
 	});
+
+
+
+
+
 
 
 

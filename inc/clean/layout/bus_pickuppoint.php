@@ -1,36 +1,64 @@
-
 <div class="mp_tab_item" data-tab-item="#wbtm_pickuppoint">
     <h3><?php echo $cpt_label.' '. __('Pickup Point:', 'bus-booking-manager'); ?></h3>
     <hr />
 
+    <div class="mpStyle">
+        <div class="mpPopup" data-popup="#wbtm_pickup_popup">
+            <div class="popupMainArea">
+                <div class="popupHeader">
+                    <h4>
+                        <?php esc_html_e( 'Add new Pickup', 'bus-ticket-booking-with-seat-reservation' ); ?>
+                    </h4>
+                    <span class="fas fa-times popupClose"></span>
+                </div>
+                <div class="popupBody pickup-form">
+                    <h6 class="textSuccess success_text" style="display: none;"><?php esc_html_e( 'Added Succesfully', 'bus-ticket-booking-with-seat-reservation' ); ?></h6>
+                    <label>
+                        <span class="w_200"><?php esc_html_e( 'Name:', 'bus-ticket-booking-with-seat-reservation' ); ?></span>
+                        <input type="text"  class="formControl" id="pickup_name">
+                    </label>
+                    <p class="name_required"><?php esc_html_e( 'Name is required', 'bus-ticket-booking-with-seat-reservation' ); ?></p>
 
+                    <label class="mT">
+                        <span class="w_200"><?php esc_html_e( 'Description:', 'bus-ticket-booking-with-seat-reservation' ); ?></span>
+                        <textarea  id="pickup_description" rows="5" cols="50" class="formControl"></textarea>
+                    </label>
+
+                </div>
+                <div class="popupFooter">
+                    <div class="buttonGroup">
+                        <button class="_themeButton submit-pickup" type="button"><?php esc_html_e( 'Save', 'bus-ticket-booking-with-seat-reservation' ); ?></button>
+                        <button class="_warningButton submit-pickup close_popup" type="button"><?php esc_html_e( 'Save & Close', 'bus-ticket-booking-with-seat-reservation' ); ?></button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="ra-text-center">
+            <button type="button" class="_dButton_xs_bgBlue ra-picup-point-button" data-target-popup="#wbtm_pickup_popup">
+                <span class="fas fa-plus-square"></span>
+                Add new pickup point
+            </button>
+            <p class="ra-stopage-desc"><?php esc_html_e( "", 'bus-ticket-booking-with-seat-reservation' ); ?></p>
+        </div>
+
+    </div>
 
     <div class="wbbm_bus_pickpint_wrapper">
         <div class="wbbm_left_col">
-            <div class="wbbm_field_group">
-                <select name="wbbm_pick_boarding" id="wbbm_pick_boarding">
-                    <option value=""><?php _e('Select Boarding Point', 'bus-booking-manager'); ?></option>
-                    <?php foreach ($bus_stops as $stop) :
-                        $stop_slug = $stop->name;
-                        $stop_slug = strtolower($stop_slug);
-                        $stop_slug = preg_replace('/[^A-Za-z0-9-]/', '_', $stop_slug);
-                        ?>
-                        <option value="<?php echo $stop_slug ?>"><?php echo $stop->name ?></option>
-                    <?php endforeach; ?>
+            <div class="wbbm_field_group <?php echo $boarding_points_class ?>">
+                <select name="wbbm_pick_boarding" id="wbbm_pick_boarding" class="ra_pick_boarding" style="border: 1px solid rgb(126, 137, 147); color: rgb(138, 195, 74);">
                 </select>
-                <button class="wbbm_add_pickpoint_this_city"
-                        id="wbbm_add_pickpoint_this_city"><?php _e('Add Pickup point', 'bus-booking-manager'); ?> <i
-                            class="fas fa-arrow-right"></i></button>
+                <button class="wbbm_add_pickpoint_this_city" id="wbbm_add_pickpoint_this_city">
+                    <?php _e('Add Pickup point', 'bus-booking-manager'); ?> <i class="fas fa-arrow-right"></i>
+                </button>
             </div>
         </div>
         <?php $selected_city_pickpoints = get_post_meta($post->ID, 'wbbm_pickpoint_selected_city', true); ?>
+
         <div class="wbbm_right_col <?php echo($selected_city_pickpoints == '' ? 'all-center' : ''); ?>">
             <div id="wbbm_pickpoint_selected_city">
-
-                <?php
-
-                if ($selected_city_pickpoints != '') {
-
+                <?php if ($selected_city_pickpoints != '') {
                     $selected_city_pickpoints = explode(',', $selected_city_pickpoints);
                     foreach ($selected_city_pickpoints as $single) {
                         $get_pickpoints_data = get_post_meta($post->ID, 'wbbm_selected_pickpoint_name_' . $single, true); ?>
@@ -40,15 +68,12 @@
                             <input type="hidden" name="wbbm_pickpoint_selected_city[]" value="<?php echo $single; ?>">
                             <div class="pickpoint-adding-wrap">
                                 <?php
-
                                 if ($get_pickpoints_data) {
                                     $get_pickpoints_data = unserialize($get_pickpoints_data);
-
                                     foreach ($get_pickpoints_data as $pickpoint) : ?>
 
-
                                         <div class="pickpoint-adding">
-                                            <select name="wbbm_selected_pickpoint_name_<?php echo $single; ?>[]">
+                                            <select class="pickup_add_option" name="wbbm_selected_pickpoint_name_<?php echo $single; ?>[]">
                                                 <?php
                                                 if ($bus_pickpoints) {
                                                     foreach ($bus_pickpoints as $bus_pickpoint) {
@@ -117,7 +142,7 @@
                     '<input type="hidden" name="wbbm_pickpoint_selected_city[]" value="' + get_boarding_point +
                     '">' +
                     '<div class="pickpoint-adding-wrap"><div class="pickpoint-adding">' +
-                    '<select name="wbbm_selected_pickpoint_name_' + get_boarding_point + '[]">' +
+                    '<select class="pickup_add_option" name="wbbm_selected_pickpoint_name_' + get_boarding_point + '[]">' +
                     '<?php echo $pickpoints; ?>' +
                     '</select>' +
                     '<input type="text" name="wbbm_selected_pickpoint_time_' + get_boarding_point +

@@ -2,8 +2,7 @@
     <h3><?php echo $cpt_label.' '. __('Seat Price:', 'bus-booking-manager'); ?></h3>
     <hr />
 
-<?php
-
+    <?php
     $terms = get_terms($get_terms_default_attributes);
     if ($terms) {
     ?>
@@ -31,10 +30,22 @@
                 foreach ($wbbm_bus_prices as $field) {
                     ?>
                     <tr>
-                        <td><?php echo wbbm_get_next_bus_stops_list('wbbm_bus_bp_price_stop[]', 'wbbm_bus_bp_price_stop', 'wbbm_bus_prices', $coun); ?>
+                        <td>
+                            <select name="wbbm_bus_bp_price_stop[]" class='seat_type'>
+                                <option value=""><?php _e('Please Select', 'bus-ticket-booking-with-seat-reservation'); ?></option>
+                                <?php foreach ($terms as $term) { ?>
+                                    <option data-term_id="<?php echo $term->term_id; ?>" value="<?php echo $term->name; ?>" <?php echo ($term->name == $field['wbbm_bus_bp_price_stop'])?'Selected':'' ?>><?php echo $term->name; ?></option>
+                                <?php } ?>
+                            </select>
                         </td>
 
-                        <td><?php echo wbbm_get_next_bus_stops_list('wbbm_bus_dp_price_stop[]', 'wbbm_bus_dp_price_stop', 'wbbm_bus_prices', $coun); ?>
+                        <td>
+                            <select name="wbbm_bus_dp_price_stop[]" class='seat_type'>
+                                <option value=""><?php _e('Please Select', 'bus-ticket-booking-with-seat-reservation'); ?></option>
+                                <?php foreach ($terms as $term) { ?>
+                                    <option data-term_id="<?php echo $term->term_id; ?>" value="<?php echo $term->name; ?>" <?php echo ($term->name == $field['wbbm_bus_dp_price_stop'])?'Selected':'' ?>><?php echo $term->name; ?></option>
+                                <?php } ?>
+                            </select>
                         </td>
 
                         <td class="wbbm-price-col">
@@ -108,8 +119,8 @@
 
             <!-- empty hidden one for jQuery -->
             <tr class="empty-row-price screen-reader-text">
-                <td><?php echo wbbm_get_bus_stops_list('wbbm_bus_bp_price_stop[]'); ?></td>
-                <td><?php echo wbbm_get_bus_stops_list('wbbm_bus_dp_price_stop[]'); ?></td>
+                <td><?php echo wbbm_get_bus_stops_list('wbbm_bus_bp_price_stop[]','ra_bus_bp_price_stop'); ?></td>
+                <td><?php echo wbbm_get_bus_stops_list('wbbm_bus_dp_price_stop[]','ra_bus_dp_price_stop'); ?></td>
                 <td class="wbbm-price-col">
                     <input step="0.01" type="number" name='wbbm_bus_price[]' value="" class="text">
                     <input step="0.01" type="number" name='wbbm_bus_price_roundtrip[]'
