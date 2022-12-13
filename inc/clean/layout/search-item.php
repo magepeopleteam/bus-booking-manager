@@ -6,8 +6,10 @@ function mage_search_item($return)
     $search_date = (isset($_GET['j_date']) ? $_GET['j_date'] : '');
     $current_date = date('Y-m-d');
 
-    $boarding_time = get_wbbm_datetime(boarding_dropping_time(false, $return), 'time');
-    $dropping_time = get_wbbm_datetime(boarding_dropping_time(true, $return), 'time');
+//    $boarding_time = get_wbbm_datetime(boarding_dropping_time(false, $return), 'time');
+//    $dropping_time = get_wbbm_datetime(boarding_dropping_time(true, $return), 'time');
+    $boarding_time = boarding_dropping_time(false, $return);
+    $dropping_time = boarding_dropping_time(true, $return);
     $style = !empty($style) ? $style : '';
     // If Current time is greater than bus time
     // Bus should not be shown in search result
@@ -83,8 +85,8 @@ function mage_search_item($return)
                             <span><?php echo $coach_no; ?></span>
                         </div>
                         <div>
-                            <?php echo '<p class="mage-bus-stopage"><span class="dashicons dashicons-location"></span> '. wbbm_get_option('wbbm_from_text', 'wbbm_label_setting_sec', __('From: ', 'bus-booking-manager')) . $boarding . ' ( ' . $boarding_time . ' )</p>'; ?>
-                            <?php echo '<p class="mage-bus-stopage"><span class="dashicons dashicons-location"></span> '. wbbm_get_option('wbbm_to_text', 'wbbm_label_setting_sec', __('To: ', 'bus-booking-manager')) . $dropping . ' ( ' . $dropping_time . ' )</p>'; ?>
+                            <?php echo '<p class="mage-bus-stopage"><span class="dashicons dashicons-location"></span> '. wbbm_get_option('wbbm_from_text', 'wbbm_label_setting_sec', __('From: ', 'bus-booking-manager')) . $boarding . ' ( ' . get_wbbm_datetime($boarding_time, 'time') . ' )</p>'; ?>
+                            <?php echo '<p class="mage-bus-stopage"><span class="dashicons dashicons-location"></span> '. wbbm_get_option('wbbm_to_text', 'wbbm_label_setting_sec', __('To: ', 'bus-booking-manager')) . $dropping . ' ( ' . get_wbbm_datetime($dropping_time, 'time') . ' )</p>'; ?>
                         </div>
                     </div>
                     <div class="mage-search-res-header--right">

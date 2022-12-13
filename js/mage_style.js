@@ -154,6 +154,7 @@
     });
     $(document).on({
         keyup: function () {
+            console.log('kkkdk')
             let input = $(this).val().toLowerCase();
             $(this).parents('.mage_input_select').find('.mage_input_select_list').find('li').filter(function () {
                 $(this).toggle($(this).attr('data-route').toLowerCase().indexOf(input) > -1);
