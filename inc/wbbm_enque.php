@@ -33,6 +33,21 @@ function wbbm_add_admin_scripts( $hook ) {
         }
     }
 }
+
+function displayDates($date1, $date2, $format = 'd-m-Y' ) {
+    $dates = array();
+    $current = strtotime($date1);
+    $date2 = strtotime($date2);
+    $stepVal = '+1 day';
+    while( $current <= $date2 ) {
+        $dates[] = date($format, $current);
+        $current = strtotime($stepVal, $current);
+    }
+    return  $dates;
+}
+
+
+
 add_action( 'admin_enqueue_scripts', 'wbbm_add_admin_scripts', 10, 1 );
 
 
@@ -42,27 +57,159 @@ add_action( 'admin_enqueue_scripts', 'wbbm_add_admin_scripts', 10, 1 );
 add_action('admin_footer','wbbm_admin_footer_script',10,99);
 add_action('wp_footer','wbbm_admin_footer_script',10,99);
 function wbbm_admin_footer_script(){
-  ?>
-<script type="text/javascript">
-jQuery(document).ready(function($){
-  
-      jQuery( "#j_date" ).datepicker({
-        dateFormat: "<?php echo wbbm_convert_datepicker_dateformat(); ?>",
-        minDate:0
-      });  
-      
-      jQuery( "#r_date" ).datepicker({
-        dateFormat: "<?php echo wbbm_convert_datepicker_dateformat(); ?>",
-        minDate:0
-      });
 
-      jQuery( "#ja_date" ).datepicker({
-        dateFormat: "yy-mm-dd"
-      });
-    });
-</script>
-  <?php
-}
+    global $post;
+    ob_start();
+
+    ?>
+
+    <script type="text/javascript">
+
+        jQuery(document).ready(function($){
+
+
+            <?php
+            if (is_single()) {
+
+            $wbtm_bus_on_dates = get_post_meta($post->ID, 'wbtm_bus_on_date', true) ? maybe_unserialize(get_post_meta($post->ID, 'wbtm_bus_on_date', true)) : [];
+            $wbtm_offday_schedules = get_post_meta($post->ID, 'wbtm_offday_schedule', true)?get_post_meta($post->ID, 'wbtm_offday_schedule', true):[];
+
+
+            if ($wbtm_bus_on_dates) {
+                $wbtm_bus_on_dates_arr = explode(',',$wbtm_bus_on_dates);
+                $onday = array();
+                foreach ($wbtm_bus_on_dates_arr as $ondate) {
+                    $onday[] = '"' . date('d-m-Y', strtotime($ondate)) . '"';
+                }
+                $on_particular_date = implode(',', $onday);
+                echo 'var enableDates = [' . $on_particular_date . '];';
+            ?>
+
+
+            function enableAllTheseDays(date) {
+                var sdate = jQuery.datepicker.formatDate('dd-mm-yy', date)
+                if (enableDates.length > 0) {
+                    if (jQuery.inArray(sdate, enableDates) != -1) {
+                        return [true];
+                    }
+                }
+                return [false];
+            }
+
+            jQuery('#j_date').datepicker({
+                dateFormat: '<?php echo wbbm_convert_datepicker_dateformat(); ?>',
+                minDate: 0,
+                beforeShowDay: enableAllTheseDays
+            });
+
+            <?php } elseif($wbtm_offday_schedules) {
+
+
+
+            $alloffdays = array();
+            foreach ($wbtm_offday_schedules as $wbtm_offday_schedule){
+                $alloffdays =  array_unique( array_merge( $alloffdays ,displayDates($wbtm_offday_schedule['from_date'], $wbtm_offday_schedule['to_date'])) ); ;
+            }
+
+            $offday = array();
+            foreach ($alloffdays as $alloffday) {
+                $offday[] = '"' . date('d-m-Y', strtotime($alloffday)) . '"';
+            }
+            $off_particular_date = implode(',', $offday);
+
+            echo 'var off_particular_date = [' . $off_particular_date . '];';
+
+            $weekly_offday = get_post_meta(get_the_id(), 'weekly_offday', true);
+
+            $weekly_offday = implode(', ', $weekly_offday);
+
+            echo 'var weekly_offday = [' . $weekly_offday . '];';
+
+
+
+            ?>
+
+
+            function off_particular(date) {
+                var sdate = jQuery.datepicker.formatDate('dd-mm-yy', date)
+                if (off_particular_date.length > 0) {
+                    if (jQuery.inArray(sdate, off_particular_date) != -1) {
+                        return [false];
+                    }
+                }
+
+
+                if (weekly_offday.length > 0) {
+                    if (weekly_offday.includes(date.getDay())) {
+                        return [false];
+                    }
+                }
+                return [true];
+            }
+
+            jQuery("#j_date").datepicker({
+                dateFormat: "<?php echo wbbm_convert_datepicker_dateformat(); ?>",
+                minDate: 0,
+                beforeShowDay: off_particular
+            });
+
+
+            <?php }  else{
+
+
+            $weekly_offday = get_post_meta(get_the_id(), 'weekly_offday', true)?get_post_meta(get_the_id(), 'weekly_offday', true):[];
+
+            $weekly_offday = implode(', ', $weekly_offday);
+
+            echo 'var weekly_offday = [' . $weekly_offday . '];';
+            ?>
+
+            function weekly_offday_d(date) {
+                if (weekly_offday.length > 0) {
+                    if (weekly_offday.includes(date.getDay())) {
+                        return [false];
+                    }
+                }
+                return [true];
+
+            }
+
+            jQuery("#j_date").datepicker({
+                dateFormat: "<?php echo wbtm_convert_datepicker_dateformat(); ?>",
+                minDate: 0,
+                beforeShowDay: weekly_offday_d
+            });
+
+            <?php
+
+            /////
+            } } else {
+
+            ?>
+
+
+
+            jQuery( "#j_date" ).datepicker({
+                dateFormat: "<?php echo wbbm_convert_datepicker_dateformat(); ?>",
+                minDate:0
+            });
+
+
+
+            <?php } ?>
+
+            jQuery( "#r_date" ).datepicker({
+                dateFormat: "<?php echo wbbm_convert_datepicker_dateformat(); ?>",
+                minDate:0
+            });
+            jQuery( "#ja_date" ).datepicker({
+                dateFormat: "yy-mm-dd"
+            });
+        });
+
+    </script>
+
+    <?php }
 
 
 

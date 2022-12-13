@@ -57,20 +57,27 @@
                         <th></th>
                     </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="boarding-point">
                     <?php if ($wbbm_bus_bp) :
                         $count = 0;
                     foreach ($wbbm_bus_bp as $field) { ?>
                         <tr>
                             <td align="center">
-                                <?php echo wbbm_get_next_bus_stops_list('wbbm_bus_bp_stops_name[]', 'wbbm_bus_bp_stops_name', 'wbbm_bus_bp_stops', $count); ?>
+                                <select name="wbbm_bus_bp_stops_name[]" class='seat_type bus_stop_add_option'>
+                                    <option value=""><?php _e('Please Select', 'bus-ticket-booking-with-seat-reservation'); ?></option>
+                                    <?php foreach ($terms as $term) {?>
+                                        <option data-term_id="<?php echo $term->term_id; ?>" value="<?php echo $term->name; ?>" <?php echo ($term->name == $field['wbbm_bus_bp_stops_name'])?'Selected':'' ?>><?php echo $term->name; ?></option>
+                                    <?php } ?>
+                                </select>
                             </td>
-                            <td align="center"><input type="text" data-clocklet name='wbbm_bus_bp_start_time[]'
-                                    value="<?php if (isset($field['wbbm_bus_bp_start_time']) && $field['wbbm_bus_bp_start_time'] != '') echo esc_attr($field['wbbm_bus_bp_start_time']); ?>"
-                                    class="text" placeholder="15:00"></td>
-                            <td align="center"><a class="button remove-faq-row" href="#"><i class="fas fa-minus-circle"></i>
+                            <td align="center">
+                                <input type="text" data-clocklet name='wbbm_bus_bp_start_time[]' value="<?php if (isset($field['wbbm_bus_bp_start_time']) && $field['wbbm_bus_bp_start_time'] != '') echo esc_attr($field['wbbm_bus_bp_start_time']); ?>" class="text" placeholder="15:00">
+                            </td>
+                            <td align="center">
+                                <a class="button remove-faq-row" href="#"><i class="fas fa-minus-circle"></i>
                                     <?php _e('Remove', 'bus-booking-manager'); ?>
-                                </a></td>
+                                </a>
+                            </td>
                         </tr>
 
                         <?php $count++; } endif; ?>
@@ -105,7 +112,7 @@
                             <th></th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="dropping-point">
                     <?php
                     if ($wbtm_bus_next_stops) :
                     $count = 0;

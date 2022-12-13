@@ -658,7 +658,7 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
     }
 
 
-    function wbbm_get_bus_stops_list($name)
+    function wbbm_get_bus_stops_list($name,$class=null)
     {
         global $post;
         $values = get_post_custom($post->ID);
@@ -677,12 +677,12 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
         if (!empty($terms) && !is_wp_error($terms)) {
             ob_start();
             ?>
-            <select name="<?php echo $name; ?>" class='seat_type select2 bus_stop_add_option'>
+            <select name="<?php echo $name; ?>" class='seat_type select2 <?php echo $class; ?>'>
                 <option value=""><?php _e('Please Select', 'bus-booking-manager'); ?></option>
                 <?php
                 foreach ($terms as $term) {
                     ?>
-                    <option value="<?php echo $term->name; ?>" <?php if ($type_name == $term->name) {
+                    <option data-term_id="<?php echo $term->name; ?>" value="<?php echo $term->name; ?>" <?php if ($type_name == $term->name) {
                         echo "Selected";
                     } ?>><?php echo $term->name; ?></option>
                     <?php
@@ -713,7 +713,7 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
         if (!empty($terms) && !is_wp_error($terms)) {
             ob_start();
             ?>
-            <select name="<?php echo $name; ?>" class='seat_type select2 bus_stop_add_option'>
+            <select name="<?php echo $name; ?>" class='seat_type select2'>
                 <option value=""><?php _e('Please Select', 'bus-booking-manager'); ?></option>
                 <?php
                 foreach ($terms as $term) {

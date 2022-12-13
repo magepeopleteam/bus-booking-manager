@@ -7,8 +7,7 @@
                 <?php  esc_html_e('Type', 'bus-booking-manager'); ?>
             </label>
             <span>
-            <?php
-            if(isset($bus_categories) && !empty($bus_categories)){
+            <?php if(isset($bus_categories) && !empty($bus_categories)){
                 echo '<select name="wbbm_bus_category" id="wbbm_bus_category">';
                 echo '<option value="">'.__('Select Type','bus-booking-manager').'</option>';
                 foreach ($bus_categories as $key => $value) {
@@ -22,15 +21,12 @@
             }
             ?>
             </span>
-
         </div>
         <div class='sec'>
             <label for="wbbm_ev_98" class="ra-item-label">
                 <?php _e('Coach No', 'bus-booking-manager'); ?>
             </label>
-            <input id='wbbm_ev_98' type="text" name='wbbm_bus_no' value='<?php if (array_key_exists('wbbm_bus_no', $values)) {
-                echo $values['wbbm_bus_no'][0];
-            } ?>' />
+            <input id='wbbm_ev_98' type="text" name='wbbm_bus_no' value='<?php if (array_key_exists('wbbm_bus_no', $values)) {echo $values['wbbm_bus_no'][0];} ?>' />
         </div>
 
         <div class='sec'>
@@ -59,6 +55,7 @@
 
             </label>
         </div>
+
         <div class='sec'>
             <label for="wbbm_sell_off" class="ra-item-label">
                 <?php echo wbbm_get_option('wbbm_bus_sell_off_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_bus_sell_off_text', 'wbbm_label_setting_sec') : __('Bus Sell Off','bus-booking-manager'); ?>
@@ -74,6 +71,7 @@
                 <span class="slider round"></span>
             </label>
         </div>
+
         <div class='sec'>
             <label for="wbbm_seat_available" class="ra-item-label">
                 <?php echo wbbm_get_option('wbbm_bus_seat_available_show_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_bus_seat_available_show_text', 'wbbm_label_setting_sec') : __('Bus Seat Available Show','bus-booking-manager'); ?>
@@ -90,6 +88,7 @@
             </label>
             </label>
         </div>
+
     </div>
     <script type="text/javascript">
         jQuery(document).ready(function($) {
@@ -107,43 +106,40 @@
         });
     </script>
 
-    <?php
+    <?php if ($bus_ticket_type) :
+        foreach ($bus_ticket_type as $field) {
+            $qty_t_type = esc_attr($field['ticket_type_qty_t_type']);
+            ?>
+            <tr>
+                <td>
+                    <input type="text" class="widefat" name="ticket_type_name[]" value="<?php if ($field['ticket_type_name'] != '') echo esc_attr($field['ticket_type_name']); ?>" />
+                </td>
 
-    if ($bus_ticket_type) :
+                <td>
+                    <input type="number" class="widefat" name="ticket_type_price[]" value="<?php if ($field['ticket_type_price'] != '') echo esc_attr($field['ticket_type_price']); else echo ''; ?>" />
+                </td>
 
-    foreach ($bus_ticket_type as $field) {
-    $qty_t_type = esc_attr($field['ticket_type_qty_t_type']);
-    ?>
-    <tr>
-        <td><input type="text" class="widefat" name="ticket_type_name[]"
-                   value="<?php if ($field['ticket_type_name'] != '') echo esc_attr($field['ticket_type_name']); ?>" />
-        </td>
+                <td>
+                    <input type="number" class="widefat" name="ticket_type_qty[]" value="<?php if ($field['ticket_type_qty'] != '') echo esc_attr($field['ticket_type_qty']); else echo ''; ?>" />
+                </td>
 
-        <td><input type="number" class="widefat" name="ticket_type_price[]"
-                   value="<?php if ($field['ticket_type_price'] != '') echo esc_attr($field['ticket_type_price']); else echo ''; ?>" />
-        </td>
+                <td><select name="ticket_type_qty_t_type[]" id="mep_ev_9800kj8" class=''>
+                        <option value="inputbox" <?php if ($qty_t_type == 'inputbox') {
+                            echo "Selected";
+                        } ?>><?php _e('Input Box', 'bus-booking-manager'); ?></option>
+                        <option value="dropdown" <?php if ($qty_t_type == 'dropdown') {
+                            echo "Selected";
+                        } ?>><?php _e('Dropdown List', 'bus-booking-manager'); ?></option>
+                    </select></td>
 
-        <td><input type="number" class="widefat" name="ticket_type_qty[]"
-                   value="<?php if ($field['ticket_type_qty'] != '') echo esc_attr($field['ticket_type_qty']); else echo ''; ?>" />
-        </td>
+                <td>
+                    <a class="button remove-row-t" href="#" <?php _e('Remove', 'bus-booking-manager'); ?></a></td>
+            </tr>
 
-        <td><select name="ticket_type_qty_t_type[]" id="mep_ev_9800kj8" class=''>
-                <option value="inputbox" <?php if ($qty_t_type == 'inputbox') {
-                    echo "Selected";
-                } ?>><?php _e('Input Box', 'bus-booking-manager'); ?></option>
-                <option value="dropdown" <?php if ($qty_t_type == 'dropdown') {
-                    echo "Selected";
-                } ?>><?php _e('Dropdown List', 'bus-booking-manager'); ?></option>
-            </select></td>
-
-        <td><a class="button remove-row-t" href="#" <?php _e('Remove', 'bus-booking-manager'); ?></a></td>
-    </tr>
-    <?php
-    }
-else :
+        <?php } else :
     // show a blank one
-endif;
-    ?>
+    endif;
+        ?>
 </div>
 
 

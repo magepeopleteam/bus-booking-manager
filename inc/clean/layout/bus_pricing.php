@@ -2,8 +2,7 @@
     <h3><?php echo $cpt_label.' '. __('Seat Price:', 'bus-booking-manager'); ?></h3>
     <hr />
 
-<?php
-
+    <?php
     $terms = get_terms($get_terms_default_attributes);
     if ($terms) {
     ?>
@@ -31,10 +30,22 @@
                 foreach ($wbbm_bus_prices as $field) {
                     ?>
                     <tr>
-                        <td><?php echo wbbm_get_next_bus_stops_list('wbbm_bus_bp_price_stop[]', 'wbbm_bus_bp_price_stop', 'wbbm_bus_prices', $coun); ?>
+                        <td>
+                            <select name="wbbm_bus_bp_price_stop[]" class='seat_type'>
+                                <option value=""><?php _e('Please Select', 'bus-ticket-booking-with-seat-reservation'); ?></option>
+                                <?php foreach ($terms as $term) { ?>
+                                    <option data-term_id="<?php echo $term->term_id; ?>" value="<?php echo $term->name; ?>" <?php echo ($term->name == $field['wbbm_bus_bp_price_stop'])?'Selected':'' ?>><?php echo $term->name; ?></option>
+                                <?php } ?>
+                            </select>
                         </td>
 
-                        <td><?php echo wbbm_get_next_bus_stops_list('wbbm_bus_dp_price_stop[]', 'wbbm_bus_dp_price_stop', 'wbbm_bus_prices', $coun); ?>
+                        <td>
+                            <select name="wbbm_bus_dp_price_stop[]" class='seat_type'>
+                                <option value=""><?php _e('Please Select', 'bus-ticket-booking-with-seat-reservation'); ?></option>
+                                <?php foreach ($terms as $term) { ?>
+                                    <option data-term_id="<?php echo $term->term_id; ?>" value="<?php echo $term->name; ?>" <?php echo ($term->name == $field['wbbm_bus_dp_price_stop'])?'Selected':'' ?>><?php echo $term->name; ?></option>
+                                <?php } ?>
+                            </select>
                         </td>
 
                         <td class="wbbm-price-col">
@@ -108,8 +119,8 @@
 
             <!-- empty hidden one for jQuery -->
             <tr class="empty-row-price screen-reader-text">
-                <td><?php echo wbbm_get_bus_stops_list('wbbm_bus_bp_price_stop[]'); ?></td>
-                <td><?php echo wbbm_get_bus_stops_list('wbbm_bus_dp_price_stop[]'); ?></td>
+                <td><?php echo wbbm_get_bus_stops_list('wbbm_bus_bp_price_stop[]','ra_bus_bp_price_stop'); ?></td>
+                <td><?php echo wbbm_get_bus_stops_list('wbbm_bus_dp_price_stop[]','ra_bus_dp_price_stop'); ?></td>
                 <td class="wbbm-price-col">
                     <input step="0.01" type="number" name='wbbm_bus_price[]' value="" class="text">
                     <input step="0.01" type="number" name='wbbm_bus_price_roundtrip[]'
@@ -180,7 +191,21 @@
     $mep_events_extra_prices = get_post_meta($post_id, 'mep_events_extra_prices', true);
     wp_nonce_field('mep_events_extra_price_nonce', 'mep_events_extra_price_nonce');
     ?>
-    <div id="wbbm_extra_service">
+
+
+    <h5 class="dFlex mpStyle">
+        <span class="pb-10"><b class="ra-enable-button"><?php _e('Enable extra service :', 'bus-ticket-booking-with-seat-reservation'); ?></b>
+            <label class="roundSwitchLabel">
+                <input id="extra-service-control" name="show_extra_service" <?php echo ($show_extra_service == "yes" ? " checked" : ""); ?> value="yes" type="checkbox">
+                <span class="roundSwitch" data-collapse-target="#ttbm_display_related"></span>
+            </label>
+        </span>
+        <p><?php _e('You can offer extra services or sell products along with tickets by enabling this option. ', 'bus-ticket-booking-with-seat-reservation'); ?></p>
+    </h5>
+
+
+
+    <div style="margin-top:20px;display: <?php echo ($show_extra_service == "yes" ? "block" : "none"); ?>" class="extra-service" id="wbbm_extra_service">
         <h3><?php _e('Extra service Area :', 'bus-booking-manager'); ?></h3>
 
         <p class="event_meta_help_txt">
