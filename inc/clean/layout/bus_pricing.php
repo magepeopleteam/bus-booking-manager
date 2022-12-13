@@ -191,7 +191,21 @@
     $mep_events_extra_prices = get_post_meta($post_id, 'mep_events_extra_prices', true);
     wp_nonce_field('mep_events_extra_price_nonce', 'mep_events_extra_price_nonce');
     ?>
-    <div id="wbbm_extra_service">
+
+
+    <h5 class="dFlex mpStyle">
+        <span class="pb-10"><b class="ra-enable-button"><?php _e('Enable extra service :', 'bus-ticket-booking-with-seat-reservation'); ?></b>
+            <label class="roundSwitchLabel">
+                <input id="extra-service-control" name="show_extra_service" <?php echo ($show_extra_service == "yes" ? " checked" : ""); ?> value="yes" type="checkbox">
+                <span class="roundSwitch" data-collapse-target="#ttbm_display_related"></span>
+            </label>
+        </span>
+        <p><?php _e('You can offer extra services or sell products along with tickets by enabling this option. ', 'bus-ticket-booking-with-seat-reservation'); ?></p>
+    </h5>
+
+
+
+    <div style="margin-top:20px;display: <?php echo ($show_extra_service == "yes" ? "block" : "none"); ?>" class="extra-service" id="wbbm_extra_service">
         <h3><?php _e('Extra service Area :', 'bus-booking-manager'); ?></h3>
 
         <p class="event_meta_help_txt">

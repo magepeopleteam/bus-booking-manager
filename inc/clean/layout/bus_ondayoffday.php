@@ -3,13 +3,18 @@
     <h3><?php echo $cpt_label.' '. __('Onday and Offday:', 'bus-booking-manager'); ?></h3>
     <hr />
 
-    <div class='sec onday-sec'>
+    <h5 class="dFlex mpStyle">
+        <span class="pb-10"><b>Enable Operation on day settings :</b> If you want to operate bus on a certain date please enable it and configure operational day.</span>
+        <label class="roundSwitchLabel">
+            <input id="operational-on-day-control" name="show_operational_on_day" <?php echo ($show_operational_on_day == "yes" ? " checked" : ""); ?> value="yes" type="checkbox">
+            <span class="roundSwitch" data-collapse-target="#ttbm_display_related"></span>
+        </label>
+    </h5>
+    <div style="display: <?php echo ($show_operational_on_day == "yes" ? "block" : "none"); ?>" class='sec onday-sec operational-on-day'>
     <label for="bus_on_date">
         <?php echo $cpt_label.' '. __('Onday Dates:', 'bus-booking-manager'); ?>
         <span>
-            <input type="text" class="ra_bus_on_date"  id='bus_on_date' name='wbtm_bus_on_date' value='<?php if (array_key_exists('wbtm_bus_on_date', $values)) {
-                                        echo $values['wbtm_bus_on_date'][0];
-                                    } ?>' />
+            <input type="text" class="ra_bus_on_date"  id='bus_on_date' name='wbtm_bus_on_date' value='<?php if (array_key_exists('wbtm_bus_on_date', $values)) { echo $values['wbtm_bus_on_date'][0]; } ?>' />
         </span>
     </label>
 </div>
@@ -25,173 +30,179 @@ jQuery(document).ready(function($) {
 });
 </script>
 <hr>
+
+
 <!-- Start Offday wrapper-->
 <?php
                     $values = get_post_custom($post->ID);
                     $wbtm_offday_schedule = get_post_meta($post->ID, 'wbtm_offday_schedule', true);
                     ?>
+    <h5 class="dFlex mpStyle">
+        <span class="pb-10"><b>Enable offday settings</b> If you need to keep bus off for a certain date please enable it and configure offday</span>
+        <label class="roundSwitchLabel">
+            <input id="off-day-control" name="show_off_day" <?php echo ($show_off_day == "yes" ? " checked" : ""); ?> value="yes" type="checkbox">
+            <span class="roundSwitch" data-collapse-target="#ttbm_display_related"></span>
+        </label>
+    </h5>
 
-<div class="wbbm-offday-wrapper">
-    <div class="wbbm-offday-inner">
-        <label><?php echo $cpt_label.' '. __('Offday Date and Time:', 'bus-booking-manager'); ?></label>
-        <table id="repeatable-fieldset-offday" width="100%">
-            <tr>
-                <th><?php _e('From Date', 'bus-booking-manager'); ?></th>
-                <th><?php _e('From Time', 'bus-booking-manager'); ?></th>
-                <th><?php _e('To Date', 'bus-booking-manager'); ?></th>
-                <th><?php _e('To Time', 'bus-booking-manager'); ?></th>
-                <th></th>
-            </tr>
-            <tbody>
-                <?php
-                            if ($wbtm_offday_schedule) :
-                                $count = 0;
-                                foreach ($wbtm_offday_schedule as $field) {
-                                    ?>
-                <tr class="">
-                    <td align="left"><input type="text" id="<?php echo 'db_offday_from_'.$count; ?>"
-                            class="repeatable-offday-from-field" name='wbtm_od_offdate_from[]' placeholder="2020-12-31"
-                            value="<?php echo $field['from_date'] ?>" /></td>
-                    <td align="left"><input type="text" class="repeatable-offtime-from-field"
-                            name='wbtm_od_offtime_from[]' placeholder="09:00 am"
-                            value="<?php echo $field['from_time'] ?>" /></td>
-                    <td align="left"><input type="text" id="<?php echo 'db_offday_to_'.$count; ?>"
-                            class="repeatable-offday-to-field" name='wbtm_od_offdate_to[]' placeholder="2020-12-31"
-                            value="<?php echo $field['to_date'] ?>" /></td>
-                    <td align="left"><input type="text" class="repeatable-offtime-to-field" name='wbtm_od_offtime_to[]'
-                            placeholder="09:59 pm" value="<?php echo $field['to_time'] ?>" /></td>
-                    <td align="left">
-                        <a class="button remove-bp-row" href="#">
-                            <i class="fas fa-minus-circle"></i>
-                            <?php _e('Remove', 'bus-booking-manager'); ?>
-                        </a>
-                    </td>
+    <div style="display: <?php echo ($show_off_day == "yes" ? "block" : "none"); ?>" class="wbbm-offday-wrapper  off-day">
+        <div class="wbbm-offday-inner">
+            <label><?php echo $cpt_label.' '. __('Offday Date and Time:', 'bus-booking-manager'); ?></label>
+            <table id="repeatable-fieldset-offday" width="100%">
+                <tr>
+                    <th><?php _e('From Date', 'bus-booking-manager'); ?></th>
+                    <th><?php _e('From Time', 'bus-booking-manager'); ?></th>
+                    <th><?php _e('To Date', 'bus-booking-manager'); ?></th>
+                    <th><?php _e('To Time', 'bus-booking-manager'); ?></th>
+                    <th></th>
                 </tr>
+                <tbody>
+                    <?php
+                                if ($wbtm_offday_schedule) :
+                                    $count = 0;
+                                    foreach ($wbtm_offday_schedule as $field) {
+                                        ?>
+                    <tr class="">
+                        <td align="left"><input type="text" id="<?php echo 'db_offday_from_'.$count; ?>"
+                                class="repeatable-offday-from-field" name='wbtm_od_offdate_from[]' placeholder="2020-12-31"
+                                value="<?php echo $field['from_date'] ?>" /></td>
+                        <td align="left"><input type="text" class="repeatable-offtime-from-field"
+                                name='wbtm_od_offtime_from[]' placeholder="09:00 am"
+                                value="<?php echo $field['from_time'] ?>" /></td>
+                        <td align="left"><input type="text" id="<?php echo 'db_offday_to_'.$count; ?>"
+                                class="repeatable-offday-to-field" name='wbtm_od_offdate_to[]' placeholder="2020-12-31"
+                                value="<?php echo $field['to_date'] ?>" /></td>
+                        <td align="left"><input type="text" class="repeatable-offtime-to-field" name='wbtm_od_offtime_to[]'
+                                placeholder="09:59 pm" value="<?php echo $field['to_time'] ?>" /></td>
+                        <td align="left">
+                            <a class="button remove-bp-row" href="#">
+                                <i class="fas fa-minus-circle"></i>
+                                <?php _e('Remove', 'bus-booking-manager'); ?>
+                            </a>
+                        </td>
+                    </tr>
 
-                <script>
-                setTimeout(function() {
-                    $("#db_offday_from_<?php echo $count ?>").datepicker({
-                        dateFormat: "yy-mm-dd",
-                        minDate: 0
-                    });
-                    $("#db_offday_to_<?php echo $count ?>").datepicker({
-                        dateFormat: "yy-mm-dd",
-                        minDate: 0
-                    });
-                }, 400);
-                </script>
-                <?php
+                    <script>
+                    setTimeout(function() {
+                        $("#db_offday_from_<?php echo $count ?>").datepicker({
+                            dateFormat: "yy-mm-dd",
+                            minDate: 0
+                        });
+                        $("#db_offday_to_<?php echo $count ?>").datepicker({
+                            dateFormat: "yy-mm-dd",
+                            minDate: 0
+                        });
+                    }, 400);
+                    </script>
+                    <?php
 
-                                    $count++;
-                                }
-                            else :
-                                // show a blank one
-                            endif;
-                            ?>
+                                        $count++;
+                                    }
+                                else :
+                                    // show a blank one
+                                endif;
+                                ?>
 
-                <!-- empty hidden one for jQuery -->
-                <tr class="empty-row-offday screen-reader-text">
-                    <td align="left"><input type="text" class="repeatable-offday-from-field"
-                            name='wbtm_od_offdate_from[]' placeholder="2020-12-31" /></td>
-                    <td align="left"><input type="text" class="repeatable-offtime-from-field"
-                            name='wbtm_od_offtime_from[]' placeholder="09:00 am" /></td>
-                    <td align="left"><input type="text" class="repeatable-offday-to-field" name='wbtm_od_offdate_to[]'
-                            placeholder="2020-12-31" /></td>
-                    <td align="left"><input type="text" class="repeatable-offtime-to-field" name='wbtm_od_offtime_to[]'
-                            placeholder="09:59 pm" /></td>
-                    <td align="left">
-                        <a class="button remove-bp-row" href="#">
-                            <i class="fas fa-minus-circle"></i>
-                            <?php _e('Remove', 'bus-booking-manager'); ?>
-                        </a>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <a id="add-offday-row" class="button" href="#"><i class="fas fa-plus"></i>
-            <?php _e('Add More offdate', 'bus-booking-manager'); ?>
-        </a>
-    </div>
-</div>
+                    <!-- empty hidden one for jQuery -->
+                    <tr class="empty-row-offday screen-reader-text">
+                        <td align="left"><input type="text" class="repeatable-offday-from-field"
+                                name='wbtm_od_offdate_from[]' placeholder="2020-12-31" /></td>
+                        <td align="left"><input type="text" class="repeatable-offtime-from-field"
+                                name='wbtm_od_offtime_from[]' placeholder="09:00 am" /></td>
+                        <td align="left"><input type="text" class="repeatable-offday-to-field" name='wbtm_od_offdate_to[]'
+                                placeholder="2020-12-31" /></td>
+                        <td align="left"><input type="text" class="repeatable-offtime-to-field" name='wbtm_od_offtime_to[]'
+                                placeholder="09:59 pm" /></td>
+                        <td align="left">
+                            <a class="button remove-bp-row" href="#">
+                                <i class="fas fa-minus-circle"></i>
+                                <?php _e('Remove', 'bus-booking-manager'); ?>
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <a id="add-offday-row" class="button" href="#"><i class="fas fa-plus"></i>
+                <?php _e('Add More offdate', 'bus-booking-manager'); ?>
+            </a>
+        </div>
 
-<script type="text/javascript">
-jQuery(document).ready(function($) {
-    var datePickerOpt = {
-        dateFormat: "yy-mm-dd",
-        minDate: 0
-    }
-    $('#add-offday-row').on('click', function(e) {
-        e.preventDefault();
-        var now = Date.now();
-        var row = $('.empty-row-offday.screen-reader-text').clone(true);
-        row.removeClass('empty-row-offday screen-reader-text');
-        row.insertBefore('#repeatable-fieldset-offday tbody>tr:last');
-        row.find(".repeatable-offday-from-field").attr('id', 'offday_from' + now);
-        row.find(".repeatable-offday-to-field").attr('id', 'offday_to' + now);
+        <script type="text/javascript">
+            jQuery(document).ready(function($) {
+                var datePickerOpt = {
+                    dateFormat: "yy-mm-dd",
+                    minDate: 0
+                }
+                $('#add-offday-row').on('click', function(e) {
+                    e.preventDefault();
+                    var now = Date.now();
+                    var row = $('.empty-row-offday.screen-reader-text').clone(true);
+                    row.removeClass('empty-row-offday screen-reader-text');
+                    row.insertBefore('#repeatable-fieldset-offday tbody>tr:last');
+                    row.find(".repeatable-offday-from-field").attr('id', 'offday_from' + now);
+                    row.find(".repeatable-offday-to-field").attr('id', 'offday_to' + now);
 
-        $("#offday_from" + now).datepicker(datePickerOpt);
-        $("#offday_to" + now).datepicker(datePickerOpt);
+                    $("#offday_from" + now).datepicker(datePickerOpt);
+                    $("#offday_to" + now).datepicker(datePickerOpt);
 
-    });
+                });
 
-    $('.remove-bp-row').on('click', function() {
-        $(this).parents('tr').remove();
-        return false;
-    });
-});
-</script>
-<hr>
-<label><?php echo $cpt_label.' '.__('Offdays:', 'bus-booking-manager'); ?></label>
-<div class='sec offday-sec'>
-    <label for='sun'>
-        <input type="checkbox" style="text-align: left;width: auto;" name="weekly_offday[]" value='0' id='fri' <?php echo ((in_array(0, $weekly_offday))?'Checked':'') ?>>
-        <?php _e('Sunday', 'bus-ticket-booking-with-seat-reservation'); ?>
-    </label>
-    <label for='mon'>
-        <input type="checkbox" style="text-align: left;width: auto;" name="weekly_offday[]" value='1' id='fri' <?php echo ((in_array(1, $weekly_offday))?'Checked':'') ?>>
-        <?php _e('Monday', 'bus-ticket-booking-with-seat-reservation'); ?>
-    </label>
-    <label for='tue'>
-        <input type="checkbox" style="text-align: left;width: auto;" name="weekly_offday[]" value='2' id='fri' <?php echo ((in_array(2, $weekly_offday))?'Checked':'') ?>>
-        <?php _e('Tuesday', 'bus-ticket-booking-with-seat-reservation'); ?>
-    </label>
-    <label for='wed'>
-        <input type="checkbox" style="text-align: left;width: auto;" name="weekly_offday[]" value='3' id='fri' <?php echo ((in_array(3, $weekly_offday))?'Checked':'') ?>>
-        <?php _e('Wednesday', 'bus-ticket-booking-with-seat-reservation'); ?>
-    </label>
-    <label for='thu'>
-        <input type="checkbox" style="text-align: left;width: auto;" name="weekly_offday[]" value='4' id='fri' <?php echo ((in_array(4, $weekly_offday))?'Checked':'') ?>>
-        <?php _e('Thursday', 'bus-ticket-booking-with-seat-reservation'); ?>
-    </label>
-    <label for='fri'>
-        <input type="checkbox" style="text-align: left;width: auto;" name="weekly_offday[]" value='5' id='fri' <?php echo ((in_array(5, $weekly_offday))?'Checked':'') ?>>
-        <?php _e('Friday', 'bus-ticket-booking-with-seat-reservation'); ?>
-    </label>
-    <label for='sat'>
-        <input type="checkbox" style="text-align: left;width: auto;" name="weekly_offday[]" value='6' id='fri' <?php echo ((in_array(6, $weekly_offday))?'Checked':'') ?>>
-        <?php _e('Saturday', 'bus-ticket-booking-with-seat-reservation'); ?>
-    </label>
-</div>
+                $('.remove-bp-row').on('click', function() {
+                    $(this).parents('tr').remove();
+                    return false;
+                });
+            });
+            </script>
 
-<script type="text/javascript">
-jQuery(document).ready(function($) {
+        <hr>
 
-    jQuery("#od_start").datepicker({
-        dateFormat: "yy-mm-dd",
-        minDate: 0
-    });
-    jQuery("#od_end").datepicker({
-        dateFormat: "yy-mm-dd",
-        // minDate:0
-    });
+        <label><?php echo $cpt_label.' '.__('Offdays:', 'bus-booking-manager'); ?></label>
+        <div class='sec offday-sec'>
+            <label for='sun'>
+                <input type="checkbox" style="text-align: left;width: auto;" name="weekly_offday[]" value='0' id='fri' <?php echo ((in_array(0, $weekly_offday))?'Checked':'') ?>>
+                <?php _e('Sunday', 'bus-ticket-booking-with-seat-reservation'); ?>
+            </label>
+            <label for='mon'>
+                <input type="checkbox" style="text-align: left;width: auto;" name="weekly_offday[]" value='1' id='fri' <?php echo ((in_array(1, $weekly_offday))?'Checked':'') ?>>
+                <?php _e('Monday', 'bus-ticket-booking-with-seat-reservation'); ?>
+            </label>
+            <label for='tue'>
+                <input type="checkbox" style="text-align: left;width: auto;" name="weekly_offday[]" value='2' id='fri' <?php echo ((in_array(2, $weekly_offday))?'Checked':'') ?>>
+                <?php _e('Tuesday', 'bus-ticket-booking-with-seat-reservation'); ?>
+            </label>
+            <label for='wed'>
+                <input type="checkbox" style="text-align: left;width: auto;" name="weekly_offday[]" value='3' id='fri' <?php echo ((in_array(3, $weekly_offday))?'Checked':'') ?>>
+                <?php _e('Wednesday', 'bus-ticket-booking-with-seat-reservation'); ?>
+            </label>
+            <label for='thu'>
+                <input type="checkbox" style="text-align: left;width: auto;" name="weekly_offday[]" value='4' id='fri' <?php echo ((in_array(4, $weekly_offday))?'Checked':'') ?>>
+                <?php _e('Thursday', 'bus-ticket-booking-with-seat-reservation'); ?>
+            </label>
+            <label for='fri'>
+                <input type="checkbox" style="text-align: left;width: auto;" name="weekly_offday[]" value='5' id='fri' <?php echo ((in_array(5, $weekly_offday))?'Checked':'') ?>>
+                <?php _e('Friday', 'bus-ticket-booking-with-seat-reservation'); ?>
+            </label>
+            <label for='sat'>
+                <input type="checkbox" style="text-align: left;width: auto;" name="weekly_offday[]" value='6' id='fri' <?php echo ((in_array(6, $weekly_offday))?'Checked':'') ?>>
+                <?php _e('Saturday', 'bus-ticket-booking-with-seat-reservation'); ?>
+            </label>
+        </div>
 
 
-    // jQuery( "#ja_date" ).datepicker({
-    //   dateFormat: "yy-mm-dd"
-    // });
-    // jQuery(".the_select select").select2();
-});
-</script>
+        <script type="text/javascript">
+            jQuery(document).ready(function($) {
+
+                jQuery("#od_start").datepicker({
+                    dateFormat: "yy-mm-dd",
+                    minDate: 0
+                });
+                jQuery("#od_end").datepicker({
+                    dateFormat: "yy-mm-dd",
+                    // minDate:0
+                });
+
+            });
+        </script>
 
 
 

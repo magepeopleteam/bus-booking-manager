@@ -195,6 +195,8 @@ class WBBMMetaBox{
             'taxonomy' => 'wbbm_bus_stops',
             'hide_empty' => false
         );
+        $show_extra_service = array_key_exists('show_extra_service', $values) ? $values['show_extra_service'][0] : '';
+
         require_once(dirname(__FILE__) . "/clean/layout/bus_pricing.php");
     }
 
@@ -234,6 +236,10 @@ class WBBMMetaBox{
             }
         }
 
+        $values = get_post_custom($post->ID);
+
+        $show_pickup_point = array_key_exists('show_pickup_point', $values) ? $values['show_pickup_point'][0] : '';
+
         require_once(dirname(__FILE__) . "/clean/layout/bus_pickuppoint.php");
 
     }
@@ -252,6 +258,10 @@ class WBBMMetaBox{
         if(!is_array($weekly_offday)){
             $weekly_offday = array();
         }
+
+        $show_operational_on_day = array_key_exists('show_operational_on_day', $values) ? $values['show_operational_on_day'][0] : '';
+
+        $show_off_day = array_key_exists('show_off_day', $values) ? $values['show_off_day'][0] : '';
 
 
         require_once(dirname(__FILE__) . "/clean/layout/bus_ondayoffday.php");
@@ -540,34 +550,28 @@ class WBBMMetaBox{
         $wbtm_od_end = strip_tags($_POST['wbtm_od_end']);
         $wbtm_bus_on_date = $_POST['wbtm_bus_on_date'];
 
-
         $od = isset($_POST['weekly_offday']) ? $_POST['weekly_offday'] : '';
-
-
         update_post_meta($post_id, 'weekly_offday', $od);
 
-
-
-        $od_sun = strip_tags($_POST['od_sun']);
-        $od_mon = strip_tags($_POST['od_mon']);
-        $od_tue = strip_tags($_POST['od_tue']);
-        $od_wed = strip_tags($_POST['od_wed']);
-        $od_thu = strip_tags($_POST['od_thu']);
-        $od_fri = strip_tags($_POST['od_fri']);
-        $od_sat = strip_tags($_POST['od_sat']);
         $show_boarding_points = strip_tags($_POST['show_boarding_points']);
-        $update_virtual = update_post_meta($post_id, '_virtual', 'yes');
-        $update_wbtm_od_start = update_post_meta($post_id, 'wbtm_od_start', $wbtm_od_start);
-        $update_wbtm_od_end = update_post_meta($post_id, 'wbtm_od_end', $wbtm_od_end);
-        $wbtm_bus_on_date = update_post_meta($post_id, 'wbtm_bus_on_date', $wbtm_bus_on_date);
-        $update_wbtm_od_sun = update_post_meta($post_id, 'od_Sun', $od_sun);
-        $update_wbtm_od_mon = update_post_meta($post_id, 'od_Mon', $od_mon);
-        $update_wbtm_od_tue = update_post_meta($post_id, 'od_Tue', $od_tue);
-        $update_wbtm_od_wed = update_post_meta($post_id, 'od_Wed', $od_wed);
-        $update_wbtm_od_thu = update_post_meta($post_id, 'od_Thu', $od_thu);
-        $update_wbtm_od_fri = update_post_meta($post_id, 'od_Fri', $od_fri);
-        $update_wbtm_od_sat = update_post_meta($post_id, 'od_Sat', $od_sat);
-        $update_wbtm_show_boarding_points = update_post_meta($post_id, 'show_boarding_points', $show_boarding_points);
+        update_post_meta($post_id, '_virtual', 'yes');
+        update_post_meta($post_id, 'wbtm_od_start', $wbtm_od_start);
+        update_post_meta($post_id, 'wbtm_od_end', $wbtm_od_end);
+        update_post_meta($post_id, 'wbtm_bus_on_date', $wbtm_bus_on_date);
+        update_post_meta($post_id, 'show_boarding_points', $show_boarding_points);
+
+
+        $show_extra_service = isset($_POST['show_extra_service']) ? $_POST['show_extra_service'] : 'no';
+        update_post_meta($post_id, 'show_extra_service', $show_extra_service);
+
+        $show_extra_service = isset($_POST['show_pickup_point']) ? $_POST['show_pickup_point'] : 'no';
+        update_post_meta($post_id, 'show_pickup_point', $show_extra_service);
+
+        $show_operational_on_day = isset($_POST['show_operational_on_day']) ? $_POST['show_operational_on_day'] : 'no';
+        update_post_meta($post_id, 'show_operational_on_day', $show_operational_on_day);
+
+        $show_off_day = isset($_POST['show_off_day']) ? $_POST['show_off_day'] : 'no';
+        update_post_meta($post_id, 'show_off_day', $show_off_day);
 
         // Partial Payment
         do_action('wcpp_partial_settings_saved', $post_id);
