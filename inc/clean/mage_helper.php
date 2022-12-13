@@ -758,3 +758,32 @@ function wbbm_update_seat_book_on_status_global_settings(){
         update_option( 'wbbm_general_setting_sec', $marged_arr );
     endif;
 }
+/*
+ * Buffer time calculation. If return true that means bus will show in search list.
+ * If return false that means this bus will ignore from search result
+ * @param string bp_time: Boarding point time
+ * @param date date
+ * @return bool
+ * */
+ function wbbm_buffer_time_calculation($bp_time, $date) {
+    $is_allow = false;
+    $buffer_time_from_setting = wbbm_get_option('wbbm_buffer_time', 'wbbm_general_setting_sec', 0);
+    $bus_start_time = date('H:i:s', strtotime($bp_time));
+
+     if ($buffer_time_from_setting > 0) {
+         // Convert bus start time into date format
+         $bus_buffer_time = (float) $buffer_time_from_setting;
+
+         // Make bus search date & bus start time as date format
+         $start_bus = $date . ' ' . $bus_start_time;
+
+         // $diff = round((strtotime($start_bus) - strtotime(current_time('Y-m-d H:i:s'))) / 3600, 1); // In Hour
+         $diff = round((strtotime($start_bus) - strtotime(current_time('Y-m-d H:i:s'))) / 60, 1); // In Minute
+         if ($diff >= $bus_buffer_time) {
+             $is_allow = true;
+         }
+     } else {
+         $is_allow = true;
+     }
+    return $is_allow;
+ }

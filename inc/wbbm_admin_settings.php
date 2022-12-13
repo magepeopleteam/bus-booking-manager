@@ -59,6 +59,13 @@ class MAGE_WBBM_Setting_Controls {
         $settings_fields = array(
             'wbbm_general_setting_sec' => array(
                 array(
+                    'name' => 'wbbm_buffer_time',
+                    'label' => __( 'Buffer time', 'bus-booking-manager' ),
+                    'desc' => __( 'Please enter here vehicle buffer time in Minutes. By default is 0.', 'bus-booking-manager' ),
+                    'type' => 'text',
+                    'default' => '0',
+                ),
+                array(
                     'name' => 'wbbm_gutenbug_switch',
                     'label' => __( 'On/Off Gutenburg', 'bus-booking-manager' ),
                     'desc' => __( 'Enable/Disable gutenburg editor.', 'bus-booking-manager' ),

@@ -62,6 +62,20 @@ function mage_search_bus_list($return){
 
             while ($loop->have_posts()) {
                 $loop->the_post();
+
+                $bus_stops_times = get_post_meta(get_the_ID(), 'wbbm_bus_bp_stops', true);
+                $start_time = '';
+                foreach($bus_stops_times as $stop) {
+                    if($stop['wbbm_bus_bp_stops_name'] == $_GET[$start]) {
+                        $start_time = $stop['wbbm_bus_bp_start_time'];
+                    }
+                }
+
+                // Buffer time
+                if(!wbbm_buffer_time_calculation($start_time, $j_date)) continue;
+                // Buffer time END
+
+                $start_time = wbbm_time_24_to_12($start_time); // convert time
                 
                 $is_on_date = false;
                 $bus_on_dates = array();
@@ -80,17 +94,7 @@ function mage_search_bus_list($return){
                 } else {
 
                     // Offday schedule check
-                    $bus_stops_times = get_post_meta(get_the_ID(), 'wbbm_bus_bp_stops', true);
                     $bus_offday_schedules = get_post_meta(get_the_ID(), 'wbtm_offday_schedule', true);
-                    
-                    $start_time = '';
-                    foreach($bus_stops_times as $stop) {
-                        if($stop['wbbm_bus_bp_stops_name'] == $_GET[$start]) {
-                            $start_time = $stop['wbbm_bus_bp_start_time'];
-                        }
-                    }
-
-                    $start_time = wbbm_time_24_to_12($start_time);
 
                     $offday_current_bus = false;
                     if(!empty($bus_offday_schedules)) {
