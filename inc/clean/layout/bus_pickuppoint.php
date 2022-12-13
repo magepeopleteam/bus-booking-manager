@@ -1,14 +1,14 @@
 <div class="mp_tab_item" data-tab-item="#wbtm_pickuppoint">
     <h3><?php echo $cpt_label.' '. __('Pickup Point:', 'bus-booking-manager'); ?></h3>
     <h5 class="dFlex mpStyle">
-        <span class="pb-10"><b class="ra-enable-button"><?php _e('Enable pickup point :', 'bus-ticket-booking-with-seat-reservation'); ?></b>
+        <span class="pb-10"><b class="ra-enable-button"><?php _e('Enable pickup point :', 'bus-booking-manager'); ?></b>
             <label class="roundSwitchLabel">
             <input id="pickup-point-control" name="show_pickup_point" <?php echo ($show_pickup_point == "yes" ? " checked" : ""); ?> value="yes" type="checkbox">
             <span class="roundSwitch" data-collapse-target="#ttbm_display_related"></span>
         </label>
         </span>
 
-        <p><?php _e('Do you have multiple pickup point for single boarding point then enable this to add pickup point ', 'bus-ticket-booking-with-seat-reservation'); ?></p>
+        <p><?php _e('Do you have multiple pickup point for single boarding point then enable this to add pickup point ', 'bus-booking-manager'); ?></p>
     </h5>
 
 
@@ -21,28 +21,28 @@
                 <div class="popupMainArea">
                     <div class="popupHeader">
                         <h4>
-                            <?php esc_html_e( 'Add new Pickup', 'bus-ticket-booking-with-seat-reservation' ); ?>
+                            <?php esc_html_e( 'Add new Pickup', 'bus-booking-manager' ); ?>
                         </h4>
                         <span class="fas fa-times popupClose"></span>
                     </div>
                     <div class="popupBody pickup-form">
-                        <h6 class="textSuccess success_text" style="display: none;"><?php esc_html_e( 'Added Succesfully', 'bus-ticket-booking-with-seat-reservation' ); ?></h6>
+                        <h6 class="textSuccess success_text" style="display: none;"><?php esc_html_e( 'Added Succesfully', 'bus-booking-manager' ); ?></h6>
                         <label>
-                            <span class="w_200"><?php esc_html_e( 'Name:', 'bus-ticket-booking-with-seat-reservation' ); ?></span>
+                            <span class="w_200"><?php esc_html_e( 'Name:', 'bus-booking-manager' ); ?></span>
                             <input type="text"  class="formControl" id="pickup_name">
                         </label>
-                        <p class="name_required"><?php esc_html_e( 'Name is required', 'bus-ticket-booking-with-seat-reservation' ); ?></p>
+                        <p class="name_required"><?php esc_html_e( 'Name is required', 'bus-booking-manager' ); ?></p>
 
                         <label class="mT">
-                            <span class="w_200"><?php esc_html_e( 'Description:', 'bus-ticket-booking-with-seat-reservation' ); ?></span>
+                            <span class="w_200"><?php esc_html_e( 'Description:', 'bus-booking-manager' ); ?></span>
                             <textarea  id="pickup_description" rows="5" cols="50" class="formControl"></textarea>
                         </label>
 
                     </div>
                     <div class="popupFooter">
                         <div class="buttonGroup">
-                            <button class="_themeButton submit-pickup" type="button"><?php esc_html_e( 'Save', 'bus-ticket-booking-with-seat-reservation' ); ?></button>
-                            <button class="_warningButton submit-pickup close_popup" type="button"><?php esc_html_e( 'Save & Close', 'bus-ticket-booking-with-seat-reservation' ); ?></button>
+                            <button class="_themeButton submit-pickup" type="button"><?php esc_html_e( 'Save', 'bus-booking-manager' ); ?></button>
+                            <button class="_warningButton submit-pickup close_popup" type="button"><?php esc_html_e( 'Save & Close', 'bus-booking-manager' ); ?></button>
                         </div>
                     </div>
                 </div>
@@ -53,7 +53,7 @@
                     <span class="fas fa-plus-square"></span>
                     Add new pickup point
                 </button>
-                <p class="ra-stopage-desc"><?php esc_html_e( "", 'bus-ticket-booking-with-seat-reservation' ); ?></p>
+                <p class="ra-stopage-desc"><?php esc_html_e( "", 'bus-booking-manager' ); ?></p>
             </div>
 
         </div>

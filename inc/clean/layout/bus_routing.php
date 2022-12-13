@@ -9,28 +9,28 @@
                 <div class="popupMainArea">
                     <div class="popupHeader">
                         <h4>
-                            <?php esc_html_e( 'Add New Bus Stop', 'bus-ticket-booking-with-seat-reservation' ); ?>
+                            <?php esc_html_e( 'Add New Bus Stop', 'bus-booking-manager' ); ?>
                         </h4>
                         <span class="fas fa-times popupClose"></span>
                     </div>
                     <div class="popupBody bus-stop-form">
                         <h6 class="textSuccess success_text" style="display: none;">Added Succesfully</h6>
                         <label>
-                            <span class="w_200"><?php esc_html_e( 'Name:', 'bus-ticket-booking-with-seat-reservation' ); ?></span>
+                            <span class="w_200"><?php esc_html_e( 'Name:', 'bus-booking-manager' ); ?></span>
                             <input type="text"  class="formControl" id="bus_stop_name">
                         </label>
-                        <p class="name_required"><?php esc_html_e( 'Name is required', 'bus-ticket-booking-with-seat-reservation' ); ?></p>
+                        <p class="name_required"><?php esc_html_e( 'Name is required', 'bus-booking-manager' ); ?></p>
 
                         <label class="mT">
-                            <span class="w_200"><?php esc_html_e( 'Description:', 'bus-ticket-booking-with-seat-reservation' ); ?></span>
+                            <span class="w_200"><?php esc_html_e( 'Description:', 'bus-booking-manager' ); ?></span>
                             <textarea  id="bus_stop_description" rows="5" cols="50" class="formControl"></textarea>
                         </label>
 
                     </div>
                     <div class="popupFooter">
                         <div class="buttonGroup">
-                            <button class="_themeButton submit-bus-stop" type="button"><?php esc_html_e( 'Save', 'bus-ticket-booking-with-seat-reservation' ); ?></button>
-                            <button class="_warningButton submit-bus-stop close_popup" type="button"><?php esc_html_e( 'Save & Close', 'bus-ticket-booking-with-seat-reservation' ); ?></button>
+                            <button class="_themeButton submit-bus-stop" type="button"><?php esc_html_e( 'Save', 'bus-booking-manager' ); ?></button>
+                            <button class="_warningButton submit-bus-stop close_popup" type="button"><?php esc_html_e( 'Save & Close', 'bus-booking-manager' ); ?></button>
                         </div>
                     </div>
                 </div>
@@ -40,7 +40,7 @@
                 <span class="fas fa-plus-square"></span>
                 Add New Bus Stop
             </button>
-            <p class="ra-stopage-desc"><?php esc_html_e( "You can't start routing until you add bus stoppages. If you haven't added any yet, you can do so from here.", 'bus-ticket-booking-with-seat-reservation' ); ?></p>
+            <p class="ra-stopage-desc"><?php esc_html_e( "You can't start routing until you add bus stoppages. If you haven't added any yet, you can do so from here.", 'bus-booking-manager' ); ?></p>
         </div>
 
     </div>
@@ -64,7 +64,7 @@
                         <tr>
                             <td align="center">
                                 <select name="wbbm_bus_bp_stops_name[]" class='seat_type bus_stop_add_option'>
-                                    <option value=""><?php _e('Please Select', 'bus-ticket-booking-with-seat-reservation'); ?></option>
+                                    <option value=""><?php _e('Please Select', 'bus-booking-manager'); ?></option>
                                     <?php foreach ($terms as $term) {?>
                                         <option data-term_id="<?php echo $term->term_id; ?>" value="<?php echo $term->name; ?>" <?php echo ($term->name == $field['wbbm_bus_bp_stops_name'])?'Selected':'' ?>><?php echo $term->name; ?></option>
                                     <?php } ?>
@@ -122,7 +122,7 @@
                             <td align="center">
 
                                 <select name="wbbm_bus_next_stops_name[]" class='seat_type bus_stop_add_option'>
-                                    <option value=""><?php _e('Please Select', 'bus-ticket-booking-with-seat-reservation'); ?></option>
+                                    <option value=""><?php _e('Please Select', 'bus-booking-manager'); ?></option>
                                     <?php foreach ($terms as $term) {?>
                                         <option data-term_id="<?php echo $term->term_id; ?>" value="<?php echo $term->name; ?>" <?php echo ($term->name == $field['wbbm_bus_next_stops_name'])?'Selected':'' ?>><?php echo $term->name; ?></option>
                                     <?php } ?>

@@ -1508,7 +1508,7 @@ function wbbm_bus_od_meta_box($post)
                 if ($values['od_Sun'][0] == 'yes') {
                     echo 'Checked';
                 }
-            } ?> /> <?php _e('Sunday', 'bus-ticket-booking-with-seat-reservation'); ?>
+            } ?> /> <?php _e('Sunday', 'bus-booking-manager'); ?>
         </label>
         <label for='mon'>
             <input type="checkbox" style="text-align: left;width: auto;" name="od_mon" value='yes'
@@ -1516,7 +1516,7 @@ function wbbm_bus_od_meta_box($post)
                 if ($values['od_Mon'][0] == 'yes') {
                     echo 'Checked';
                 }
-            } ?>> <?php _e('Monday', 'bus-ticket-booking-with-seat-reservation'); ?>
+            } ?>> <?php _e('Monday', 'bus-booking-manager'); ?>
         </label>
         <label for='tue'>
             <input type="checkbox" style="text-align: left;width: auto;" name="od_tue" value='yes'
@@ -1524,7 +1524,7 @@ function wbbm_bus_od_meta_box($post)
                 if ($values['od_Tue'][0] == 'yes') {
                     echo 'Checked';
                 }
-            } ?>> <?php _e('Tuesday', 'bus-ticket-booking-with-seat-reservation'); ?>
+            } ?>> <?php _e('Tuesday', 'bus-booking-manager'); ?>
         </label>
         <label for='wed'>
             <input type="checkbox" style="text-align: left;width: auto;" name="od_wed" value='yes'
@@ -1532,7 +1532,7 @@ function wbbm_bus_od_meta_box($post)
                 if ($values['od_Wed'][0] == 'yes') {
                     echo 'Checked';
                 }
-            } ?>> <?php _e('Wednesday', 'bus-ticket-booking-with-seat-reservation'); ?>
+            } ?>> <?php _e('Wednesday', 'bus-booking-manager'); ?>
         </label>
         <label for='thu'>
             <input type="checkbox" style="text-align: left;width: auto;" name="od_thu" value='yes'
@@ -1540,7 +1540,7 @@ function wbbm_bus_od_meta_box($post)
                 if ($values['od_Thu'][0] == 'yes') {
                     echo 'Checked';
                 }
-            } ?>> <?php _e('Thursday', 'bus-ticket-booking-with-seat-reservation'); ?>
+            } ?>> <?php _e('Thursday', 'bus-booking-manager'); ?>
         </label>
         <label for='fri'>
             <input type="checkbox" style="text-align: left;width: auto;" name="od_fri" value='yes'
@@ -1548,7 +1548,7 @@ function wbbm_bus_od_meta_box($post)
                 if ($values['od_Fri'][0] == 'yes') {
                     echo 'Checked';
                 }
-            } ?>> <?php _e('Friday', 'bus-ticket-booking-with-seat-reservation'); ?>
+            } ?>> <?php _e('Friday', 'bus-booking-manager'); ?>
         </label>
         <label for='sat'>
             <input type="checkbox" style="text-align: left;width: auto;" name="od_sat" value='yes'
@@ -1556,7 +1556,7 @@ function wbbm_bus_od_meta_box($post)
                 if ($values['od_Sat'][0] == 'yes') {
                     echo 'Checked';
                 }
-            } ?>> <?php _e('Saturday', 'bus-ticket-booking-with-seat-reservation'); ?>
+            } ?>> <?php _e('Saturday', 'bus-booking-manager'); ?>
         </label>
     </div>
 
