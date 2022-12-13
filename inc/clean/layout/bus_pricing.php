@@ -32,7 +32,7 @@
                     <tr>
                         <td>
                             <select name="wbbm_bus_bp_price_stop[]" class='seat_type'>
-                                <option value=""><?php _e('Please Select', 'bus-ticket-booking-with-seat-reservation'); ?></option>
+                                <option value=""><?php _e('Please Select', 'bus-booking-manager'); ?></option>
                                 <?php foreach ($terms as $term) { ?>
                                     <option data-term_id="<?php echo $term->term_id; ?>" value="<?php echo $term->name; ?>" <?php echo ($term->name == $field['wbbm_bus_bp_price_stop'])?'Selected':'' ?>><?php echo $term->name; ?></option>
                                 <?php } ?>
@@ -41,7 +41,7 @@
 
                         <td>
                             <select name="wbbm_bus_dp_price_stop[]" class='seat_type'>
-                                <option value=""><?php _e('Please Select', 'bus-ticket-booking-with-seat-reservation'); ?></option>
+                                <option value=""><?php _e('Please Select', 'bus-booking-manager'); ?></option>
                                 <?php foreach ($terms as $term) { ?>
                                     <option data-term_id="<?php echo $term->term_id; ?>" value="<?php echo $term->name; ?>" <?php echo ($term->name == $field['wbbm_bus_dp_price_stop'])?'Selected':'' ?>><?php echo $term->name; ?></option>
                                 <?php } ?>
@@ -194,13 +194,13 @@
 
 
     <h5 class="dFlex mpStyle">
-        <span class="pb-10"><b class="ra-enable-button"><?php _e('Enable extra service :', 'bus-ticket-booking-with-seat-reservation'); ?></b>
+        <span class="pb-10"><b class="ra-enable-button"><?php _e('Enable extra service :', 'bus-booking-manager'); ?></b>
             <label class="roundSwitchLabel">
                 <input id="extra-service-control" name="show_extra_service" <?php echo ($show_extra_service == "yes" ? " checked" : ""); ?> value="yes" type="checkbox">
                 <span class="roundSwitch" data-collapse-target="#ttbm_display_related"></span>
             </label>
         </span>
-        <p><?php _e('You can offer extra services or sell products along with tickets by enabling this option. ', 'bus-ticket-booking-with-seat-reservation'); ?></p>
+        <p><?php _e('You can offer extra services or sell products along with tickets by enabling this option. ', 'bus-booking-manager'); ?></p>
     </h5>
 
 
