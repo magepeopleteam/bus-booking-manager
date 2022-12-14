@@ -67,7 +67,12 @@ function wbbm_booking_list_table_create()
 // run the install scripts upon plugin activation
 register_activation_hook(__FILE__, 'wbbm_booking_list_table_create');
 
+define('WBTM_PLUGIN_URL', plugin_dir_url(__FILE__));
+define('WBTM_PLUGIN_DIR', plugin_dir_path(__FILE__));
+define('WBTM_PLUGIN_FILE', plugin_basename(__FILE__));
+
 include_once(ABSPATH . 'wp-admin/includes/plugin.php');
+
 if (is_plugin_active('woocommerce/woocommerce.php')) {
 
     define('PLUGIN_ROOT', plugin_dir_url(__FILE__));
@@ -99,7 +104,9 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
         load_plugin_textdomain('bus-booking-manager', false, $plugin_dir);
     }
 
-
+    flush_rewrite_rules();
+    require_once WBTM_PLUGIN_DIR . '/inc/WBTM_Quick_Setup.php';
+    add_action('activated_plugin', 'activation_redirect', 90, 1);
     /**
      * Run code only once
      */
@@ -1861,14 +1868,40 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
 
 
 } else {
-    function wbbm_admin_notice_wc_not_active()
+
+
+
+    require_once WBTM_PLUGIN_DIR . '/inc/WBTM_Quick_Setup.php';
+    add_action('activated_plugin', 'activation_redirect_setup', 90, 1);
+
+
+
+
+    /*function wbbm_admin_notice_wc_not_active()
     {
         $class = 'notice notice-error';
         $message = __('Multipurpose Ticket Booking Manager  Plugin is Dependent on WooCommerce, But currently WooCommerce is not Active. Please Active WooCommerce plugin first.', 'bus-booking-manager');
         printf('<div class="%1$s"><p>%2$s</p></div>', esc_attr($class), esc_html($message));
     }
 
-    add_action('admin_notices', 'wbbm_admin_notice_wc_not_active');
+    add_action('admin_notices', 'wbbm_admin_notice_wc_not_active');*/
+
+
+}
+
+
+ function activation_redirect($plugin)
+{
+    if ($plugin == plugin_basename(__FILE__)) {
+        exit(wp_redirect(admin_url('edit.php?post_type=wbtm_bus&page=wbbm_init_quick_setup')));
+    }
+}
+
+
+function activation_redirect_setup( $plugin ) {
+    if ( $plugin == plugin_basename( __FILE__ ) ) {
+        exit( wp_redirect( admin_url( 'admin.php?post_type=wbtm_bus&page=wbbm_init_quick_setup' ) ) );
+    }
 }
 
 // Customize Woocommerce order itemmeta
@@ -1917,7 +1950,7 @@ function wbbm_plugin_action_link($links_array, $plugin_file_name)
 
     if (strpos($plugin_file_name, basename(__FILE__))) {
 
-        array_unshift($links_array, '<a href="' . esc_url(admin_url()) . 'edit.php?post_type=wbbm_bus&page=wbbm_gen_settings_page">' . __('Settings', 'bus-booking-manager') . '</a>');
+        array_unshift($links_array, '<a href="' . esc_url(admin_url()) . 'edit.php?post_type=wbbm_bus&page=wbbm_quick_setup">' . __('Settings', 'bus-booking-manager') . '</a>');
     }
 
     return $links_array;
@@ -1948,6 +1981,19 @@ function wbbm_plugin_row_meta($links_array, $plugin_file_name)
     }
 
     return $links_array;
+}
+
+
+function check_woocommerce() {
+    include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+    $plugin_dir = ABSPATH . 'wp-content/plugins/woocommerce';
+    if ( is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
+        return 'yes';
+    } elseif ( is_dir( $plugin_dir ) ) {
+        return 'no';
+    } else {
+        return 0;
+    }
 }
 
 /*************************

@@ -35,8 +35,7 @@
     </script>
     <hr>
 
-
-<!-- Start Offday wrapper-->
+    <!-- Start Offday wrapper-->
     <?php
     $values = get_post_custom($post->ID);
     $wbtm_offday_schedule = get_post_meta($post->ID, 'wbtm_offday_schedule', true);
