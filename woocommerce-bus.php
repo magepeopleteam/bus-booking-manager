@@ -1153,11 +1153,11 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
             $eid = wbbm_get_order_meta($item_id, '_wbbm_bus_id');
             if (get_post_type($eid) == 'wbbm_bus') {
                 $user_info_arr = wbbm_get_order_meta($item_id, '_wbbm_passenger_info');
-                $start = wbbm_get_order_meta($item_id, 'Boarding Point');
-                $end = wbbm_get_order_meta($item_id, 'Dropping Point');
-                $j_date = wbbm_get_order_meta($item_id, 'Journey Date');
+                $start = wbbm_get_order_meta($item_id, '_boarding_point');
+                $end = wbbm_get_order_meta($item_id, '_droping_point');
+                $j_date = wbbm_get_order_meta($item_id, '_journey_date');
                 $j_date = wbbm_convert_date_to_php($j_date);
-                $j_time = wbbm_get_order_meta($item_id, 'Journey Time');
+                $j_time = wbbm_get_order_meta($item_id, '_journey_time');
                 $bus_id = wbbm_get_order_meta($item_id, '_bus_id');
                 $b_time = wbbm_get_order_meta($item_id, '_btime');
 

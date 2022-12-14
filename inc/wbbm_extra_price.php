@@ -714,10 +714,20 @@ function wbbm_add_custom_fields_text_to_order_items($item, $cart_item_key, $valu
         $fd_no_label            = wbbm_get_option('wbbm_fd_no_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_fd_no_text', 'wbbm_label_setting_sec') : __('Flight Departure No', 'bus-booking-manager');
         $extra_services_label   = wbbm_get_option('wbbm_extra_services_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_extra_services_text', 'wbbm_label_setting_sec') : __('Extra Services', 'bus-booking-manager');
         
-        $item->add_meta_data('Boarding Point', $wbbm_start_stops);
-        $item->add_meta_data('Dropping Point', $wbbm_end_stops);
-        $item->add_meta_data('Journey Date', $wbbm_journey_date);
-        $item->add_meta_data('Journey Time', $jtime);
+        $boarding_point_label = __('Boarding Point', 'bus-booking-manager');
+        $droping_point_label = __('Dropping Point', 'bus-booking-manager');
+        $journey_date_label = __('Journey Date', 'bus-booking-manager');
+        $journey_time_label = __('Journey Time', 'bus-booking-manager');
+
+        $item->add_meta_data($boarding_point_label, $wbbm_start_stops);
+        $item->add_meta_data($droping_point_label, $wbbm_end_stops);
+        $item->add_meta_data($journey_date_label, $wbbm_journey_date);
+        $item->add_meta_data($journey_time_label, $jtime);
+
+        $item->add_meta_data('_boarding_point', $wbbm_start_stops);
+        $item->add_meta_data('_droping_point', $wbbm_end_stops);
+        $item->add_meta_data('_journey_date', $wbbm_journey_date);
+        $item->add_meta_data('_journey_time', $jtime);
 
         if (is_array($passenger_info) && sizeof($passenger_info) > 0) {
             $p_content = '';
