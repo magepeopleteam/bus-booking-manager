@@ -22,7 +22,7 @@ class MAGE_WBBM_Setting_Controls {
  
     function admin_menu() {
 
-         add_submenu_page('edit.php?post_type=wbbm_bus', __('Settings','bus-booking-manager'), '<span class="wbbm_color_green">'.__('Settings','bus-booking-manager').'</span>', 'manage_options', 'wbbm_gen_settings_page', array($this, 'plugin_page'));
+         add_submenu_page('edit.php?post_type=wbbm_bus', __('Settings','bus-booking-manager'), '<span class="wbbm_color_green">'.__('Settings','bus-booking-manager').'</span>', 'manage_options', 'wbbm_quick_setup', array($this, 'plugin_page'));
         /**
          * Detect PRO plugin is activated
          */
