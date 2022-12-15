@@ -400,7 +400,7 @@ function wbbm_display_custom_fields_text_cart($item_data, $cart_item)
 {
     if(!is_admin()){
 
-
+        $total_extra_service_qty = 0;
         $eid = $cart_item['wbbm_id'];
         if (get_post_type($eid) == 'wbbm_bus') {
             $total_adult = $cart_item['wbbm_total_adult_qt'];
@@ -423,7 +423,13 @@ function wbbm_display_custom_fields_text_cart($item_data, $cart_item)
             $extra_per_bag_price = get_post_meta($eid, 'wbbm_extra_bag_price', true);
             $extra_per_bag_price = $extra_per_bag_price ? $extra_per_bag_price : 0;
 
+            // Check extra service qty
             $wbbm_extra_services = $cart_item['wbbm_extra_services'];
+            if($wbbm_extra_services && is_array($wbbm_extra_services)) {
+                foreach($wbbm_extra_services as $exs) {
+                    $total_extra_service_qty += (int) $exs['wbbm_es_input_qty'];
+                }
+            }
 
             if (is_array($passenger_info) && sizeof($passenger_info) > 0) {
                 $i = 0;
@@ -434,7 +440,7 @@ function wbbm_display_custom_fields_text_cart($item_data, $cart_item)
                             <strong>
                                 <?php echo wbbm_get_option('wbbm_select_journey_date_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_select_journey_date_text', 'wbbm_label_setting_sec') . ': ' : _e('Journey Date', 'bus-booking-manager') . ': '; ?>
                             </strong>
-                            <?php echo ' ' . $cart_item['wbbm_journey_date']; ?>
+                            <?php echo ' ' . get_wbbm_datetime($cart_item['wbbm_journey_date'], 'date'); ?>
                         </li>
                         <li>
                             <strong>
@@ -520,7 +526,7 @@ function wbbm_display_custom_fields_text_cart($item_data, $cart_item)
                             </li>
                         <?php endif; ?>
 
-                        <?php if(!empty($wbbm_extra_services) && $i == 0): ?>
+                        <?php if($total_extra_service_qty && $i == 0): ?>
                             <li>
                                 <strong>
                                     <?php echo wbbm_get_option('wbbm_extra_services_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_extra_services_text', 'wbbm_label_setting_sec') . ': ' : _e('Extra Services', 'bus-booking-manager') . ': '; ?>
@@ -694,7 +700,7 @@ function wbbm_add_custom_fields_text_to_order_items($item, $cart_item_key, $valu
         // $timezone                = wp_timezone_string();
         // $timestamp               = strtotime( $wbbm_journey_time . ' '. $timezone);
         // $jtime                   = wp_date( 'H:i A', $timestamp ); 
-        $jtime                      = get_wbbm_datetime($wbbm_journey_time, 'time');
+        $jtime                      = $wbbm_journey_time;
 
         $adult_label            = wbbm_get_option('wbbm_adult_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_adult_text', 'wbbm_label_setting_sec') : __('Adult','bus-booking-manager');
         $child_label            = wbbm_get_option('wbbm_child_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_child_text', 'wbbm_label_setting_sec') : __('Child','bus-booking-manager');
@@ -721,8 +727,8 @@ function wbbm_add_custom_fields_text_to_order_items($item, $cart_item_key, $valu
 
         $item->add_meta_data($boarding_point_label, $wbbm_start_stops);
         $item->add_meta_data($droping_point_label, $wbbm_end_stops);
-        $item->add_meta_data($journey_date_label, $wbbm_journey_date);
-        $item->add_meta_data($journey_time_label, $jtime);
+        $item->add_meta_data($journey_date_label, get_wbbm_datetime($wbbm_journey_date, 'date'));
+        $item->add_meta_data($journey_time_label, get_wbbm_datetime($jtime, 'time'));
 
         $item->add_meta_data('_boarding_point', $wbbm_start_stops);
         $item->add_meta_data('_droping_point', $wbbm_end_stops);

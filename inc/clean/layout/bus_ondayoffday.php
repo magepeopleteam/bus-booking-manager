@@ -51,7 +51,7 @@
         <p><?php _e('If you need to keep bus off for a certain date please enable it and configure offday. ', 'bus-booking-manager'); ?></p>
     </h5>
 
-    <div style="display: <?php echo ($show_off_day == "yes" ? "block" : "none"); ?>" class="wbbm-offday-wrapper  off-day">
+    <div style="display: <?php echo ($show_off_day == 'yes' ? 'block' : 'none'); ?>" class="wbbm-offday-wrapper  off-day">
         <div class="wbbm-offday-inner">
             <label><?php echo $cpt_label.' '. __('Offday Date and Time:', 'bus-booking-manager'); ?></label>
             <table id="repeatable-fieldset-offday" width="100%">
@@ -154,9 +154,9 @@
                     return false;
                 });
             });
-            </script>
+        </script>
 
-        <hr>
+        <hr/>
 
         <label><?php echo $cpt_label.' '.__('Offdays:', 'bus-booking-manager'); ?></label>
         <div class='sec offday-sec'>
@@ -206,8 +206,6 @@
             });
         </script>
 
-
-
-
+    </div>
 
 </div>
