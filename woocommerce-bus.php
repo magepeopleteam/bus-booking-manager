@@ -1163,7 +1163,7 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
                 $start = wbbm_get_order_meta($item_id, '_boarding_point');
                 $end = wbbm_get_order_meta($item_id, '_droping_point');
                 $j_date = wbbm_get_order_meta($item_id, '_journey_date');
-                $j_date = wbbm_convert_date_to_php($j_date);
+                // $j_date = wbbm_convert_date_to_php($j_date);
                 $j_time = wbbm_get_order_meta($item_id, '_journey_time');
                 $bus_id = wbbm_get_order_meta($item_id, '_bus_id');
                 $b_time = wbbm_get_order_meta($item_id, '_btime');

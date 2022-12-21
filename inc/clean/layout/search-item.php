@@ -230,7 +230,7 @@ function mage_search_item($return)
                                     <?php endif; ?>
                                     <div class="mage_customer_info_area">
                             <?php
-                            $date = isset($_GET[$date_var]) ? strip_tags($_GET[$date_var]) : date('Y-m-d');
+                            $date = isset($_GET[$date_var]) ? wbbm_convert_date_to_php(mage_get_isset($date_var)) : date('Y-m-d');
                             $start = isset($_GET[$boarding_var]) ? strip_tags($_GET[$boarding_var]) : '';
                             $end = isset($_GET[$dropping_var]) ? strip_tags($_GET[$dropping_var]) : '';
                             hidden_input_field('bus_id', $id);
@@ -362,7 +362,7 @@ function mage_search_item($return)
                                 <?php endif; ?>
                                 <div class="mage_customer_info_area">
                                 <?php
-                                $date = isset($_GET[$date_var]) ? strip_tags($_GET[$date_var]) : date('Y-m-d');
+                                $date = isset($_GET[$date_var]) ? wbbm_convert_date_to_php(mage_get_isset($date_var)) : date('Y-m-d');
                                 $start = isset($_GET[$boarding_var]) ? strip_tags($_GET[$boarding_var]) : '';
                                 $end = isset($_GET[$dropping_var]) ? strip_tags($_GET[$dropping_var]) : '';
                                 hidden_input_field('bus_id', $id);
