@@ -10,14 +10,14 @@ function mage_search_list(){
     $general_setting = get_option('wbbm_general_setting_sec') ? maybe_unserialize(get_option('wbbm_general_setting_sec')) : array(); 
     ?>
     <div class="mage_route_title" style="background-color:<?php echo $route_title_bg_color; ?>;color:<?php echo $route_title_color; ?>">
-        <p>
+        <div>
             <strong><?php echo wbbm_get_option('wbbm_route_text', 'wbbm_label_setting_sec',__('Route', 'bus-booking-manager')); echo ':'; ?></strong>
             <?php echo mage_get_isset('bus_start_route'); ?>
             <span class="fa fa-long-arrow-right"></span>
             <?php echo mage_get_isset('bus_end_route'); ?>
             <strong><?php echo ' | '; echo wbbm_get_option('wbbm_date_text', 'wbbm_label_setting_sec',__('Date', 'bus-booking-manager')); echo ':'; ?></strong>
             <?php echo mage_wp_date(mage_get_isset('j_date')); ?>
-        </p>
+        </div>
     </div>
     <div class="mage-search-res-wrapper">
         <?php do_action( 'woocommerce_before_single_product' ); ?>
@@ -50,14 +50,14 @@ function mage_search_list(){
     <?php //mage_search_bus_list(false); ?>
     <?php if (isset($_GET['r_date']) && $_GET['r_date'] != '') { ?>
         <div class="mage_route_title return_title" style="background-color:<?php echo $route_title_bg_color; ?>">
-            <p>
+            <div>
                 <strong><?php echo wbbm_get_option('wbbm_route_text', 'wbbm_label_setting_sec',__('Route', 'bus-booking-manager')); echo ':'; ?></strong>
                 <?php echo mage_get_isset('bus_end_route'); ?>
                 <span class="fa fa-long-arrow-right"></span>
                 <?php echo mage_get_isset('bus_start_route'); ?>
                 <strong><?php echo ' | '; echo wbbm_get_option('wbbm_date_text', 'wbbm_label_setting_sec',__('Date', 'bus-booking-manager')); echo ':'; ?></strong>
                 <?php echo mage_wp_date(mage_get_isset('r_date')); ?>
-            </p>
+            </div>
         </div>
         <div class="mage-search-res-wrapper">
         <?php if ( $mage_bus_search_theme == 'minimal' ) { ?>

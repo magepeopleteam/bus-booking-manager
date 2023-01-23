@@ -164,7 +164,8 @@ ul.mage_route_list {
     margin: 0 0 15px 0;
 }
 
-div.mage_route_title p {
+div.mage_route_title p,
+div.mage_route_title div {
     text-align: center;
     font-size: 22px !important;
     color: #fff;
@@ -734,7 +735,7 @@ div.mage_bus_info h3,
 }
 
 .mage-search-brief-row .bus-title {
-    line-height: .5em;
+    line-height: 1.2em;
     display: block;
     color: inherit;
     text-decoration: none;
