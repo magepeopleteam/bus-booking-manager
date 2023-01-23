@@ -959,7 +959,7 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
             if ($wpdb->get_var($entire_query) == -1) { // is entire booking
                 $sold_seats = $total_seats;
             } else { // is single booking
-                $query = "SELECT COUNT(booking_id) FROM $table_name WHERE bus_id=$bus_id AND journey_date='$date' AND $where AND status IN ($seat_booked_status)";
+                $query = "SELECT COUNT(booking_id) FROM $table_name WHERE bus_id=$bus_id AND journey_date='$date' AND $where AND ticket_status != 99 AND status IN ($seat_booked_status)";
                 $sold_seats = $wpdb->get_var($query);
             }
         }
