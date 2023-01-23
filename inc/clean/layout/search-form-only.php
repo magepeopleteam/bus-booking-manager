@@ -72,7 +72,7 @@ function search_from_only($single_bus,$target) {
                 <span class="fa fa-calendar"></span>
                 <?php echo wbbm_get_option('wbbm_date_of_journey_text', 'wbbm_label_setting_sec',__('Date of Journey :', 'bus-booking-manager')); ?>                
             </label>
-            <input type="text" class="mage_form_control" id="j_date" name="j_date" value="<?php echo mage_get_isset('j_date'); ?>" placeholder="<?php echo wbbm_convert_datepicker_dateformat(); ?>" autocomplete="off" required>
+            <input type="text" class="mage_form_control" id="j_date" readonly name="j_date" value="<?php echo mage_get_isset('j_date'); ?>" placeholder="<?php echo wbbm_convert_datepicker_dateformat(); ?>" autocomplete="off" required>
         </div>
         <?php if (!$single_bus) {
             $return = (mage_get_isset('bus-r') == 'oneway') ? false : true; ?>
@@ -81,7 +81,7 @@ function search_from_only($single_bus,$target) {
                     <span class="fa fa-calendar"></span>
                     <?php echo wbbm_get_option('wbbm_return_date_text', 'wbbm_label_setting_sec',__('Return Date (Optional):', 'bus-booking-manager')); ?>                     
                 </label>
-                <input type="text" class="mage_form_control" id="r_date" name="r_date" value="<?php echo mage_get_isset('r_date'); ?>" autocomplete="off" placeholder="<?php echo wbbm_convert_datepicker_dateformat(); ?>">
+                <input type="text" class="mage_form_control" id="r_date" readonly name="r_date" value="<?php echo mage_get_isset('r_date'); ?>" autocomplete="off" placeholder="<?php echo wbbm_convert_datepicker_dateformat(); ?>">
             </div>
         <?php } ?>
         <div class="mage_form_list">
