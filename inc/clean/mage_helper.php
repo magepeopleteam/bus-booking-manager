@@ -22,12 +22,12 @@ function mage_qty_box($price,$name, $return) {
         <div class="mage_form_group">
             <div class="mage_flex mage_qty_dec"><span class="fa fa-minus"></span></div>
             <input type="text"
-                   class="mage_form mage_seat_qty"
+                   class="mage_form mage_seat_qty ra_seat_qty"
                    data-ticket-title="<?php echo $ticket_title.' '.__('Passenger info', 'bus-booking-manager'); ?>"
                    data-ticket-type="<?php echo $ticket_type; ?>"
                    data-price="<?php echo $price; ?>"
                    name="<?php echo $name; ?>"
-                   value="<?php echo cart_qty($name); ?>"
+                   value="<?php echo $_POST[$name]??0; ?>"
                    min="0"
                    max="<?php echo $available_seat; ?>"
                    required
@@ -228,11 +228,12 @@ function mage_available_seat($date) {
 }
 
 // Get intermidiate available seat
-function wbbm_intermidiate_available_seat($start, $end, $date): int
+function wbbm_intermidiate_available_seat($start, $end, $date,$eid=null): int
 {
-    $values = get_post_custom(get_the_id());
+    $post_id = get_the_id()?get_the_id():$eid;
+    $values = get_post_custom($post_id);
     $total_seat = $values['wbbm_total_seat'][0];
-    $sold_seat = wbbm_get_available_seat_new(get_the_id(), $start, $end, $date);
+    $sold_seat = wbbm_get_available_seat_new($post_id, $start, $end, $date);
     return ($total_seat - $sold_seat) > 0 ? ($total_seat - $sold_seat) : 0;
 }
 

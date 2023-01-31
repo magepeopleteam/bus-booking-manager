@@ -38,6 +38,8 @@ div.mage_hidden {
 .mage_disabled {
     cursor: no-drop !important;
     opacity: 0.2 !important;
+    pointer-events: none;
+
 }
 
 

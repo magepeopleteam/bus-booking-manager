@@ -112,6 +112,7 @@ endif;
                                 <strong><?php echo wbbm_get_option('wbbm_total_seat_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_total_seat_text', 'wbbm_label_setting_sec') : _e('Total Seat', 'bus-booking-manager'); echo ':'; ?></strong>
                                 <?php echo get_post_meta(get_the_id(), 'wbbm_total_seat', true); ?>
                             </p>
+
                             <?php if (($seat_price_adult > 0 || $is_price_zero_allow == 'on') && $odd_list && $off_day && ($off_date_status == false)) { ?>
                                 <?php if( $is_sell_off != 'on' ) : ?>
                                     <?php if($seat_available && $seat_available == 'on') : ?>
@@ -129,6 +130,9 @@ endif;
                                 ?>
 
                                 <p><strong><?php echo wbbm_get_option('wbbm_fare_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_fare_text', 'wbbm_label_setting_sec') : _e('Fare', 'bus-booking-manager'); echo ':'; ?></strong></p>
+
+                                <input type="hidden" name="available_quantity" value="<?php echo $available_seat?>">
+
                                 <div class="mage_center_space mar_b">
                                     <div>
                                         <p>
@@ -297,24 +301,6 @@ endif;
                             mage_book_now_area($available_seat);
                         }
 
-
-                        // if (mage_odd_list_check(false) && mage_off_day_check(false) && !$return) {
-                        //     $j_time = strtotime($j_date.' '. boarding_dropping_time(false,false));
-                        //     if( $c_time < $j_time){
-                        //         mage_book_now_area($available_seat);
-                        //     }
-                        // } else {
-                        //     echo '<span class="mage_error" style="display: block;text-align: center;padding: 5px;margin: 10px 0 0 0;">'.date($date_format,strtotime(mage_get_isset($date_var))).' Operational Off day !'.'</span>';
-                        // }
-
-
-                        // if (mage_odd_list_check(true) && mage_off_day_check(true) && wbbm_convert_date_to_php($_GET['r_date']) && $return) {
-                        //     $j_time = strtotime(wbbm_convert_date_to_php(mage_get_isset('j_date')).' '. boarding_dropping_time(false,false));
-                        //     $r_time = strtotime(wbbm_convert_date_to_php(mage_get_isset('r_date')).' '. boarding_dropping_time(false,true));
-                        //     if( $j_time < $r_time){
-                        //         mage_book_now_area($available_seat);
-                        //     }
-                        // }
                     }
                 }
 

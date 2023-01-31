@@ -199,6 +199,14 @@
 	});
 
 
+	$(document).on('click','.ra_seat_qty',function (e){
+
+
+		alert(6);
+
+	});
+
+
 
 
 
