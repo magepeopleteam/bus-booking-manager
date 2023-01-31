@@ -918,3 +918,26 @@ function wbbm_add_custom_fields_text_to_order_items($item, $cart_item_key, $valu
 }
 
 add_action('woocommerce_checkout_create_order_line_item', 'wbbm_add_custom_fields_text_to_order_items', 10, 4);
+
+function add_the_date_validation( $passed ) {
+
+    $eid = $_POST['bus_id'];
+    if (get_post_type($eid) == 'wbbm_bus') {
+        $return = false;
+        $boarding_var = $return ? 'bus_end_route' : 'bus_start_route';
+        $dropping_var = $return ? 'bus_start_route' : 'bus_end_route';
+        $date_var = $return ? 'r_date' : 'j_date';
+        $available_seat = wbbm_intermidiate_available_seat(@$_GET[$boarding_var], @$_GET[$dropping_var], wbbm_convert_date_to_php(mage_get_isset($date_var)),$eid);
+
+        $total_booking_seat = $_POST['adult_quantity'] + $_POST['child_quantity']  + $_POST['infant_quantity'] ;
+
+        //echo $available_seat.' '.$total_booking_seat;
+
+        if($available_seat<$total_booking_seat){
+            wc_add_notice( __( 'You have booked more than available seats', 'bus-booking-manager' ), 'error' );
+            $passed = false;
+        }
+    }
+    return $passed;
+}
+add_filter( 'woocommerce_add_to_cart_validation', 'add_the_date_validation', 10, 5 );
