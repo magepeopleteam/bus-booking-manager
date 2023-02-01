@@ -149,6 +149,7 @@ function wbbm_add_custom_fields_text_to_cart_item($cart_item_data, $product_id, 
     $extra_per_bag_price = get_post_meta($product_id, 'wbbm_extra_bag_price', true);
     $extra_per_bag_price = $extra_per_bag_price ? $extra_per_bag_price : 0;
     $extra_bag_price = 0;
+    $es_price = 0;
     $custom_reg_additional = array();
     if (isset($_POST['custom_reg_user']) && ($_POST['custom_reg_user']) == 'yes') {
 
@@ -278,8 +279,8 @@ function wbbm_add_custom_fields_text_to_cart_item($cart_item_data, $product_id, 
     // Extra Service
     $extra_service_qty = isset($_POST['extra_service_qty']) ? $_POST['extra_service_qty'] : array();
     $extra_services = get_post_meta($bus_id, 'mep_events_extra_prices', true);   
+    $es_array = array();
     if(!empty($extra_services)):
-        $es_array = array();
         $c = 0;
         $es_price = 0;
         foreach ($extra_services as $field) {
@@ -928,8 +929,11 @@ function add_the_date_validation( $passed ) {
         $dropping_var = $return ? 'bus_start_route' : 'bus_end_route';
         $date_var = $return ? 'r_date' : 'j_date';
         $available_seat = wbbm_intermidiate_available_seat(@$_GET[$boarding_var], @$_GET[$dropping_var], wbbm_convert_date_to_php(mage_get_isset($date_var)),$eid);
+        $adult_qty = isset($_POST['adult_quantity']) ? $_POST['adult_quantity'] : 0;
+        $child_qty = isset($_POST['child_quantity']) ? $_POST['child_quantity'] : 0;
+        $infant_qty = isset($_POST['infant_quantity']) ? $_POST['infant_quantity'] : 0;
 
-        $total_booking_seat = $_POST['adult_quantity'] + $_POST['child_quantity']  + $_POST['infant_quantity'] ;
+        $total_booking_seat = $adult_qty + $child_qty  + $infant_qty ;
 
         //echo $available_seat.' '.$total_booking_seat;
 
