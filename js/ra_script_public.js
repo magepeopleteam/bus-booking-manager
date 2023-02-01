@@ -20,9 +20,9 @@
 	});
 
 	function set_max_quantity (name_value,available_quantity){
-		var adult_quantity =	$('.ra_seat_qty[name="adult_quantity"]').val();
-		var child_quantity =	$('.ra_seat_qty[name="child_quantity"]').val();
-		var infant_quantity =	$('.ra_seat_qty[name="infant_quantity"]').val();
+		var adult_quantity =	$('.ra_seat_qty[name="adult_quantity"]').val() || 0;
+		var child_quantity =	$('.ra_seat_qty[name="child_quantity"]').val() || 0;
+		var infant_quantity =	$('.ra_seat_qty[name="infant_quantity"]').val() || 0;
 
 		if(name_value == 'adult_quantity'){
 			var  rest_quantity = available_quantity  -child_quantity-infant_quantity;
