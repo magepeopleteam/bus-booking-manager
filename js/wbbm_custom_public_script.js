@@ -32,7 +32,7 @@
 			var rest_quantity = available_quantity - adult_quantity-child_quantity;
 		}
 
-		console.log('rest_quantity',rest_quantity)
+		console.log('rest_quantity',available_quantity);
 
 		$('[name="'+name_value+'"]').attr('max',rest_quantity);
 

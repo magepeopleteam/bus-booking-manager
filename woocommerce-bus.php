@@ -97,7 +97,9 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
     require_once(dirname(__FILE__) . "/inc/clean/mage_function.php");
     //--------------
     require_once(dirname(__FILE__) . "/inc/class-meta-box.php");
-    // Language Load
+    require_once(dirname(__FILE__) . "/inc/BusBookingManagerClass.php");
+    
+   // Language Load
     add_action('init', 'wbbm_language_load');
     function wbbm_language_load()
     {
@@ -2040,3 +2042,4 @@ function check_woocommerce()
  * Check the required plugins
  ***************************/
 require_once(dirname(__FILE__) . "/inc/wbbm-required-plugins.php");
+

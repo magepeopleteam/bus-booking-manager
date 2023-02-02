@@ -301,6 +301,7 @@ function mage_search_item($return)
                                 <div class="mage_center_space">
                                         <h3><strong><?php echo wbbm_get_option('wbbm_fare_text', 'wbbm_label_setting_sec', __('Fare', 'bus-booking-manager')); ?></strong></h3>
                                 </div>
+                                <input type="hidden" name="available_quantity" value="<?php echo $available_seat?>">
                                 <div class="mage_center_space">
                                     <div>
                                         <p>

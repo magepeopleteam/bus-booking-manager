@@ -7,20 +7,7 @@ function search_from_only($single_bus,$target) {
     $search_form_dropdown_text_color = $search_form_dropdown_text_color ? $search_form_dropdown_text_color : '';
 ?>
 
-    <p>
-        <?php
 
-
-        /*$abc  = get_post_meta(get_the_id(), 'wbtm_offday_schedule', true)?get_post_meta(get_the_id(), 'wbtm_offday_schedule', true):[];
-
-        echo '<pre>';
-        print_r($abc);
-        echo '<pre>';*/
-
-
-
-        ?>
-    </p>
 
 
     <form action="<?php echo $single_bus ? '' : get_site_url() .'/'. $target.'/'; ?>" method="get" class="mage_form">
@@ -107,5 +94,12 @@ function search_from_only($single_bus,$target) {
             </div>
         </div>
     </form>
+
     <?php
+
+
+
+    if (isset($_GET['bus_start_route']) && ($_GET['bus_end_route']) && ($_GET['j_date'])) {
+        do_action('mage_next_date',false, true, $target);
+    }
 }
