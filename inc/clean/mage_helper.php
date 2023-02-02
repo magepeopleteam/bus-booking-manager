@@ -232,8 +232,8 @@ function wbbm_intermidiate_available_seat($start, $end, $date,$eid=null): int
 {
     $post_id = get_the_id()?get_the_id():$eid;
     $values = get_post_custom($post_id);
-    $total_seat = $values['wbbm_total_seat'][0];
-    $sold_seat = wbbm_get_available_seat_new($post_id, $start, $end, $date);
+    $total_seat = (int)$values['wbbm_total_seat'][0];
+    $sold_seat = (int)wbbm_get_available_seat_new($post_id, $start, $end, $date);
     return ($total_seat - $sold_seat) > 0 ? ($total_seat - $sold_seat) : 0;
 }
 
