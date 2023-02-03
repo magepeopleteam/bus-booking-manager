@@ -41,7 +41,7 @@
 .inside .sec { display: block; font-size: 15px; font-weight: normal; margin: 0;}
 .sec label { font-size: 16px; font-weight: bold;}
 #mep_uid { width: 65px;}
-.inside .sec input { border: 1px solid #DDD; padding: 5px; width: 100%; color: #000;}
+.inside .sec input { border: 1px solid #DDD; padding: 5px; color: #000;}
 .inside .sec label { font-weight: normal;}
 table.atendee-info { display: block; overflow: hidden; width: 100%;}
 /* Always set the map height explicitly to define the size of the div

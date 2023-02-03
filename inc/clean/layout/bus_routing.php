@@ -46,7 +46,7 @@
     </div>
 
     <hr />
-    <?php   if ($terms) { ?>
+
         <div class="bus-stops-wrapper">
             <div class="bus-stops-left-col">
                 <h3 class="bus-tops-sec-title"><?php _e('Boarding Point', 'bus-booking-manager'); ?></h3>
@@ -58,6 +58,7 @@
                     </tr>
                     </thead>
                     <tbody class="boarding-point">
+
                     <?php if ($wbbm_bus_bp) :
                         $count = 0;
                     foreach ($wbbm_bus_bp as $field) { ?>
@@ -65,7 +66,7 @@
                             <td align="center">
                                 <select name="wbbm_bus_bp_stops_name[]" class='seat_type bus_stop_add_option'>
                                     <option value=""><?php _e('Please Select', 'bus-booking-manager'); ?></option>
-                                    <?php foreach ($terms as $term) {?>
+                                    <?php foreach ($terms as $term) { ?>
                                         <option data-term_id="<?php echo $term->term_id; ?>" value="<?php echo $term->name; ?>" <?php echo ($term->name == $field['wbbm_bus_bp_stops_name'])?'Selected':'' ?>><?php echo $term->name; ?></option>
                                     <?php } ?>
                                 </select>
@@ -86,7 +87,7 @@
                         <!-- empty hidden one for jQuery -->
 
                         <tr class="empty-row-bp screen-reader-text">
-                            <td align="center"><?php echo wbbm_get_bus_stops_list('wbbm_bus_bp_stops_name[]'); ?></td>
+                            <td align="center"><?php echo wbbm_get_bus_stops_list('wbbm_bus_bp_stops_name[]','bus_stop_add_option'); ?></td>
                             <td align="center">
                                 <input type="text" data-clocklet name='wbbm_bus_bp_start_time[]' value="" class="text" placeholder="15:00">
                             </td>
@@ -144,7 +145,7 @@
                         <!-- empty hidden one for jQuery -->
                         <tr class="empty-row-faq screen-reader-text">
                             <td align="center">
-                                <?php echo wbbm_get_bus_stops_list('wbbm_bus_next_stops_name[]'); ?>
+                                <?php echo wbbm_get_bus_stops_list('wbbm_bus_next_stops_name[]','bus_stop_add_option'); ?>
                             </td>
                             <td align="center">
                                 <input type="text" data-clocklet name='wbbm_bus_next_end_time[]' value="" class="text" placeholder="15:00">
@@ -164,35 +165,33 @@
                 </p>
             </div>
         </div>
+
         <script type="text/javascript">
-        jQuery(document).ready(function($) {
-            $('#add-faq-row').on('click', function() {
-                var row = $('.empty-row-faq.screen-reader-text').clone(true);
-                row.removeClass('empty-row-faq screen-reader-text');
-                row.insertBefore('#repeatable-fieldset-faq-one tbody>tr:last');
-                return false;
-            });
+            jQuery(document).ready(function($) {
+                $('#add-faq-row').on('click', function() {
+                    var row = $('.empty-row-faq.screen-reader-text').clone(true);
+                    row.removeClass('empty-row-faq screen-reader-text');
+                    row.insertBefore('#repeatable-fieldset-faq-one tbody>tr:last');
+                    return false;
+                });
 
-            $('.remove-faq-row').on('click', function() {
-                $(this).parents('tr').remove();
-                return false;
-            });
+                $('.remove-faq-row').on('click', function() {
+                    $(this).parents('tr').remove();
+                    return false;
+                });
 
-            $('#add-bp-row').on('click', function() {
-                var row = $('.empty-row-bp.screen-reader-text').clone(true);
-                row.removeClass('empty-row-bp screen-reader-text');
-                row.insertBefore('#repeatable-fieldset-bp-one tbody>tr:last');
-                return false;
-            });
+                $('#add-bp-row').on('click', function() {
+                    var row = $('.empty-row-bp.screen-reader-text').clone(true);
+                    row.removeClass('empty-row-bp screen-reader-text');
+                    row.insertBefore('#repeatable-fieldset-bp-one tbody>tr:last');
+                    return false;
+                });
 
-            $('.remove-bp-row').on('click', function() {
-                $(this).parents('tr').remove();
-                return false;
+                $('.remove-bp-row').on('click', function() {
+                    $(this).parents('tr').remove();
+                    return false;
+                });
             });
-        });
         </script>
 
-        <?php } else {
-        echo "<div class='wbbm_bus_stops_notice'>".__('Please Enter some bus stops first.', 'bus-booking-manager')." <a class='wbbm_color_white' href='" . get_admin_url() . "edit-tags.php?taxonomy=wbbm_bus_stops&post_type=wbbm_bus'>".__('Click here for bus stops', 'bus-booking-manager')."</a></div>";
-    } ?>
 </div>

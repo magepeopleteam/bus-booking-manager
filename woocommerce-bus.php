@@ -746,24 +746,24 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
             'hide_empty' => false, //can be 1, '1' too
         );
         $terms = get_terms($get_terms_default_attributes);
-        if (!empty($terms) && !is_wp_error($terms)) {
-            ob_start();
+
         ?>
             <select name="<?php echo $name; ?>" class='seat_type select2 <?php echo $class; ?>'>
                 <option value=""><?php _e('Please Select', 'bus-booking-manager'); ?></option>
                 <?php
-                foreach ($terms as $term) {
+        if (!empty($terms) && !is_wp_error($terms)) {
+            ob_start();
+            foreach ($terms as $term) {
                 ?>
-                    <option data-term_id="<?php echo $term->name; ?>" value="<?php echo $term->name; ?>" <?php if ($type_name == $term->name) {
-                                                                                                                echo "Selected";
-                                                                                                            } ?>><?php echo $term->name; ?></option>
+                    <option data-term_id="<?php echo $term->name; ?>" value="<?php echo $term->name; ?>" <?php echo ($type_name == $term->name)?'Selected':''  ?>><?php echo $term->name; ?></option>
                 <?php
                 }
+        }
                 ?>
             </select>
         <?php
 
-        }
+
         $content = ob_get_clean();
         return $content;
     }
@@ -1912,21 +1912,11 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
 } else {
 
 
-
     require_once WBTM_PLUGIN_DIR . '/inc/WBTM_Quick_Setup.php';
     add_action('activated_plugin', 'activation_redirect_setup', 90, 1);
 
 
 
-
-    /*function wbbm_admin_notice_wc_not_active()
-    {
-        $class = 'notice notice-error';
-        $message = __('Multipurpose Ticket Booking Manager  Plugin is Dependent on WooCommerce, But currently WooCommerce is not Active. Please Active WooCommerce plugin first.', 'bus-booking-manager');
-        printf('<div class="%1$s"><p>%2$s</p></div>', esc_attr($class), esc_html($message));
-    }
-
-    add_action('admin_notices', 'wbbm_admin_notice_wc_not_active');*/
 }
 
 
