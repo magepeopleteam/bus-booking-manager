@@ -139,3 +139,24 @@ div[class^='mage'] {
 ul.mage_list_inline li a {
     color: #fff;
 }
+
+.mp_tab_menu ul li.active::after {
+    position: absolute;
+    right: 0;
+    left: 100%;
+    content: '';
+    border: 15px solid transparent;
+    margin: 0 auto;
+    bottom: 0;
+    border-left-color: #EA2330;
+    top: 0;
+}
+.bus-stops-left-col table tr th:nth-child(1), .bus-stops-right-col table th:nth-child(1) {
+    min-width: 130px;
+}
+.bus-stops-left-col table tr th:nth-child(2), .bus-stops-right-col table th:nth-child(2) {
+    min-width: 180px;
+}
+.bus-stops-left-col table tr th:nth-child(3), .bus-stops-right-col table th:nth-child(3) {
+    min-width: 100px;
+}
