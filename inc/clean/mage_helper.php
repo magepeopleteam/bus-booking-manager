@@ -194,7 +194,7 @@ function mage_bus_list_query($start, $end) {
 function mage_odd_list_check($return) {
     $start_date = strtotime(get_post_meta(get_the_id(), 'wbtm_od_start', true));
     $end_date = strtotime(get_post_meta(get_the_id(), 'wbtm_od_end', true));
-    $date = strtotime(wbbm_convert_date_to_php(mage_get_isset($return ? 'r_date' : 'j_date')));
+    $date = strtotime(mage_get_isset($return ? 'r_date' : 'j_date'));
 
     return (($start_date <=$date ) && ($end_date>=$date) ) ? false : true;
 }
