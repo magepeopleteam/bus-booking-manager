@@ -150,6 +150,41 @@
 		return false;
 	});
 
+	$(document).on('click','.ra_seat_price',function (e){
+		e.preventDefault();
+
+		$('.ra_bus_bp_price_stop').html("<option value=''>Select Boarging Point</option>");
+		$( ".boarding-point tr" ).each(function( index ) {
+			let term_id = $(this).find(':selected').data('term_id');
+			if(term_id){
+				$('.ra_bus_bp_price_stop').append("<option value="+$(this).find(":selected").val()+">"+$(this).find(":selected").val()+"</option>")
+			}
+		});
+
+		$('.ra_bus_dp_price_stop').html("<option value=''>Select Dropping Point</option>");
+		$( ".dropping-point tr" ).each(function( index ) {
+			let term_id = $(this).find(':selected').data('term_id');
+			if(term_id){
+				$('.ra_bus_dp_price_stop').append("<option value="+$(this).find(":selected").val()+">"+$(this).find(":selected").val()+"</option>")
+			}
+		});
+
+		return false;
+	});
+
+	$(document).on('change','.ra_bus_bp_price_stop',function (e){
+		e.preventDefault();
+		$( this ).even().removeClass( "ra_bus_bp_price_stop" );
+	});
+
+	$(document).on('change','.ra_bus_dp_price_stop',function (e){
+		e.preventDefault();
+		$( this ).even().removeClass( "ra_bus_dp_price_stop" );
+	});
+
+
+
+
 	$(document).on('click','.ra_pickuppoint_tab',function (e){
 		e.preventDefault();
 		$('.ra_pick_boarding').html("<option value=''>Select Boarding Point</option>");
@@ -176,35 +211,10 @@
 		return false;
 	});
 
-	$(document).on('click','.ra_seat_price',function (e){
-		e.preventDefault();
-
-		$('.ra_bus_bp_price_stop').html("<option value=''>Select Boarging Point</option>");
-		$( ".boarding-point tr" ).each(function( index ) {
-			let term_id = $(this).find(':selected').data('term_id');
-			if(term_id){
-				$('.ra_bus_bp_price_stop').append("<option value="+$(this).find(":selected").val()+">"+$(this).find(":selected").val()+"</option>")
-			}
-		});
-
-		$('.ra_bus_dp_price_stop').html("<option value=''>Select Dropping Point</option>");
-		$( ".dropping-point tr" ).each(function( index ) {
-			let term_id = $(this).find(':selected').data('term_id');
-			if(term_id){
-				$('.ra_bus_dp_price_stop').append("<option value="+$(this).find(":selected").val()+">"+$(this).find(":selected").val()+"</option>")
-			}
-		});
-
-		return false;
-	});
 
 
-	$(document).on('click','.ra_seat_qty',function (e){
 
 
-		alert(6);
-
-	});
 
 
 
