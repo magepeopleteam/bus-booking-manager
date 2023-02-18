@@ -8,7 +8,8 @@ $date_format        = get_option( 'date_format' );
 $boarding_var = $return ? 'bus_end_route' : 'bus_start_route';
 $dropping_var = $return ? 'bus_start_route' : 'bus_end_route';
 $date_var = $return ? 'r_date' : 'j_date';
-$j_date = wbbm_convert_date_to_php(mage_get_isset($date_var));
+// $j_date = wbbm_convert_date_to_php(mage_get_isset($date_var));
+$j_date = mage_get_isset($date_var);
 
 $in_cart = mage_find_product_in_cart();
 
