@@ -310,6 +310,8 @@ class WBBMMetaBox
 
         /* Bus Category, Coach no and Seat */
         $wbbm_bus_category = strip_tags($_POST['wbbm_bus_category']);
+        wp_set_post_terms($post_id, $wbbm_bus_category, 'wbbm_bus_cat', false);
+        
         $wbbm_bus_no = strip_tags($_POST['wbbm_bus_no']);
         $wbbm_total_seat = strip_tags($_POST['wbbm_total_seat']);
         $update_seat_stock_status = update_post_meta($post_id, '_manage_stock', 'no');

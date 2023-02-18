@@ -4,7 +4,7 @@
  * Plugin Name: Multipurpose Ticket Booking Manager (Bus/Train/Ferry/Boat/Shuttle)
  * Plugin URI: http://mage-people.com
  * Description: A Complete Ticket Booking System for WordPress & WooCommerce
- * Version: 4.0.4
+ * Version: 4.0.6
  * Author: MagePeople Team
  * Author URI: http://www.mage-people.com/
  * Text Domain: bus-booking-manager
