@@ -592,23 +592,7 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
     }
 
 
-    function wbbm_load_bus_templates($template)
-    {
-        global $post;
-        if ($post->post_type == "wbbm_bus") {
-            $template_name = 'single-bus.php';
-            $template_path = 'mage-bus-ticket/';
-            $default_path = plugin_dir_path(__FILE__) . 'templates/';
-            $template = locate_template(array($template_path . $template_name));
-            if (!$template) :
-                $template = $default_path . $template_name;
-            endif;
-            return $template;
-        }
-        return $template;
-    }
 
-    add_filter('single_template', 'wbbm_load_bus_templates');
 
 
     add_filter('template_include', 'wbbm_taxonomy_set_template');

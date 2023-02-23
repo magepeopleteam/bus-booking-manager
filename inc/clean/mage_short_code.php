@@ -74,7 +74,7 @@ function mage_search_bus_list($return){
                 // Buffer time
                 if(!wbbm_buffer_time_calculation($start_time, $j_date)) continue;
                 // Buffer time END
-
+             
                 $start_time = wbbm_time_24_to_12($start_time); // convert time
                 
                 $is_on_date = false;
@@ -84,7 +84,7 @@ function mage_search_bus_list($return){
                     $bus_on_dates = explode( ', ', $bus_on_date );
                     $is_on_date = true;
                 }
-                
+
                 if( $is_on_date ) {
                     // echo $j_date;
                     // echo '<pre>';print_r($bus_on_dates);
