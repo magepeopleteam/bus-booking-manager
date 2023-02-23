@@ -74,7 +74,7 @@ function mage_search_bus_list($return){
                 // Buffer time
                 if(!wbbm_buffer_time_calculation($start_time, $j_date)) continue;
                 // Buffer time END
-                echo 'kkd';
+             
                 $start_time = wbbm_time_24_to_12($start_time); // convert time
                 
                 $is_on_date = false;
