@@ -3,8 +3,10 @@
   <component name="ChangeListManager">
     <list default="true" id="fbb178be-4572-4ef1-a0ae-7b3cdb6515c6" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inc/BusBookingManagerClass.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/BusBookingManagerClass.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/inc/FilterClass.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/FilterClass.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inc/clean/layout/search-item.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/clean/layout/search-item.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inc/clean/mage_short_code.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/clean/mage_short_code.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/woocommerce-bus.php" beforeDir="false" afterPath="$PROJECT_DIR$/woocommerce-bus.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

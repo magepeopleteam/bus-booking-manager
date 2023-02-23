@@ -13,7 +13,21 @@
                 return $t;
 			}*/
 
-
+            function wbbm_load_bus_templates($template)
+            {
+                global $post;
+                if ($post->post_type == "wbbm_bus") {
+                    $template_name = 'single-bus.php';
+                    $template_path = 'mage-bus-ticket/';
+                    $default_path = plugin_dir_path( dirname( __FILE__ ) )  . 'templates/';
+                    $template = locate_template(array($template_path . $template_name));
+                    if (!$template) :
+                        $template = $default_path . $template_name;
+                    endif;
+                    return $template;
+                }
+                return $template;
+            }
 
 
             public function wbbm_add_custom_fields_text_to_cart_item($cart_item_data, $product_id, $variation_id = null)
