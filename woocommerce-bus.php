@@ -1690,11 +1690,17 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
     function wbbm_convert_datepicker_dateformat()
     {
         $date_format = get_option('date_format');
-        $php_d = array('F', 'j', 'Y', 'm', 'd', 'D', 'M', 'y');
-        $js_d = array('d', 'M', 'yy', 'mm', 'dd', 'D', 'M', 'y');
-        $dformat = str_replace($php_d, $js_d, $date_format);
-        if ($date_format == 'Y-m-d' || $date_format == 'm/d/Y' || $date_format == 'm/d/Y' || $date_format == 'd/m/Y') {
-            return $dformat;
+        // return $date_format;
+        // $php_d     = array('F', 'j', 'Y', 'm','d','D','M','y');
+        // $js_d   = array('d', 'M', 'yy','mm','dd','tt','mm','yy');
+        $dformat = str_replace('d', 'dd', $date_format);
+        $dformat = str_replace('m', 'mm', $dformat);
+        $dformat = str_replace('Y', 'yy', $dformat);
+
+        if ($date_format == 'Y-m-d' || $date_format == 'm/d/Y' || $date_format == 'd/m/Y' || $date_format == 'Y/d/m' || $date_format == 'Y-d-m') {
+            return str_replace('/', '-', $dformat);
+        } elseif ($date_format == 'Y.m.d' || $date_format == 'm.d.Y' || $date_format == 'd.m.Y' || $date_format == 'Y.d.m' || $date_format == 'Y.d.m') {
+            return str_replace('.', '-', $dformat);
         } else {
             return 'yy-mm-dd';
         }

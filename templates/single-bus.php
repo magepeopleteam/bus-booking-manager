@@ -126,7 +126,7 @@ endif;
                                 <?php if ($in_cart) { ?>
                                     <p class="already_cart"><span class="fa fa-cart-plus"></span><?php echo wbbm_get_option('wbbm_item_in_cart_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_item_in_cart_text', 'wbbm_label_setting_sec') : _e('Item has been added to cart', 'bus-booking-manager'); ?></p>
                                 <?php } ?>
-                                <?php 
+                                <?php
                                 $is_price_zero_allow = get_post_meta($id, 'wbbm_price_zero_allow', true);
                                 ?>
 
@@ -144,7 +144,7 @@ endif;
                                     </div>
                                     <?php mage_qty_box($seat_price_adult, 'adult_quantity', false); ?>
                                 </div>
-                                
+
                                 <?php
                                 if ( ($seat_price_child > 0) || ($is_price_zero_allow == 'on') ) : ?>
                                     <div class="mage_center_space mar_b">
@@ -177,7 +177,7 @@ endif;
                                         <?php echo wbbm_entire_switch($seat_price_entire, 'entire_quantity', false); ?>
                                     </div>
                                 <?php endif; ?>
-                                
+
                             <?php } ?>
                             <?php
                                 // Pickup Point
@@ -192,7 +192,7 @@ endif;
                                             <label for="mage_pickpoint"><?php _e('Select Pickup Area', 'bus-booking-manager'); ?></label>
                                             <select name="mage_pickpoint" class="mage_pickpoint">
                                                 <option value=""><?php _e('Select your Pickup Area', 'bus-booking-manager'); ?></option>
-                                                <?php 
+                                                <?php
                                                 foreach($pickpoints as $pickpoint) {
                                                     echo '<option value="' . $pickpoint['pickpoint'] . '->' . $pickpoint['time']. '">'.ucfirst($pickpoint['pickpoint']).' <=> '.$pickpoint['time'].'</option>';
                                                 } ?>
@@ -234,7 +234,8 @@ endif;
                             </div>
                             <div class="mage_customer_info_area">
                     <?php
-                    $date = isset($_GET[$date_var]) ? strip_tags($_GET[$date_var]) : date('Y-m-d');
+
+                    $date = isset($_GET[$date_var]) ? mage_wp_date($_GET[$date_var], 'Y-m-d') : date('Y-m-d');
                     $start = isset($_GET[$boarding_var]) ? strip_tags($_GET[$boarding_var]) : '';
                     $end = isset($_GET[$dropping_var]) ? strip_tags($_GET[$dropping_var]) : '';
                     hidden_input_field('bus_id', $id);
@@ -253,7 +254,7 @@ endif;
                 // Extra Service Section
                 if($available_seat > 0){
                     wbbm_extra_services_section($id);
-                }            
+                }
 
                 // Operatinal on day off day check
                 if($j_date != '' && $boarding != '' && $dropping != '') {
@@ -268,7 +269,7 @@ endif;
                         // Offday schedule check
                         $bus_stops_times = get_post_meta(get_the_ID(), 'wbbm_bus_bp_stops', true);
                         $bus_offday_schedules = get_post_meta(get_the_ID(), 'wbtm_offday_schedule', true);
-                        
+
                         $start_time = '';
                         foreach($bus_stops_times as $stop) {
                             if($stop['wbbm_bus_bp_stops_name'] == $_GET[$boarding_var]) {
@@ -280,14 +281,23 @@ endif;
 
                         $offday_current_bus = false;
                         if(!empty($bus_offday_schedules)) {
-                            $s_datetime = new DateTime( $j_date.' '.$start_time );
+
+
+
+
+                            $s_datetime = new DateTime( mage_wp_date($j_date, 'Y-m-d').' '.$start_time );
+
 
                             foreach($bus_offday_schedules as $item) {
 
-                                $c_iterate_date_from = wbbm_convert_date_to_php($item['from_date']);
+
+
+                                $c_iterate_date_from = mage_wp_date( $item['from_date'], 'Y-m-d');
+                                
+
                                 $c_iterate_datetime_from = new DateTime( $c_iterate_date_from.' '.$item['from_time'] );
 
-                                $c_iterate_date_to = wbbm_convert_date_to_php($item['to_date']);
+                                $c_iterate_date_to = mage_wp_date($item['to_date'], 'Y-m-d');
                                 $c_iterate_datetime_to = new DateTime( $c_iterate_date_to.' '.$item['to_time'] );
 
                                 if( $s_datetime >= $c_iterate_datetime_from && $s_datetime <= $c_iterate_datetime_to ) {
@@ -305,7 +315,7 @@ endif;
                     }
                 }
 
-                ?>                        
+                ?>
                         </div>
                     </div>
                 </div>
