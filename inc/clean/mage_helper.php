@@ -194,14 +194,15 @@ function mage_bus_list_query($start, $end) {
 function mage_odd_list_check($return) {
     $start_date = strtotime(get_post_meta(get_the_id(), 'wbtm_od_start', true));
     $end_date = strtotime(get_post_meta(get_the_id(), 'wbtm_od_end', true));
-    $date = strtotime(mage_get_isset($return ? 'r_date' : 'j_date'));
+    $date = mage_get_isset($return ? 'r_date' : 'j_date');
+    $date = mage_wp_date($date, 'Y-m-d');
 
     return (($start_date <=$date ) && ($end_date>=$date) ) ? false : true;
 }
 
 //off day check
 function mage_off_day_check($return) {
-    $current_day = 'od_' . date('D', strtotime($return ? wbbm_convert_date_to_php(mage_get_isset('r_date')) : wbbm_convert_date_to_php(mage_get_isset('j_date'))));
+    $current_day = 'od_' . date('D', strtotime($return ? mage_wp_date(mage_get_isset('r_date')) : mage_wp_date(mage_get_isset('j_date'))));
     return get_post_meta(get_the_id(), $current_day, true) == 'yes' ? false : true;
 }
 
@@ -369,9 +370,8 @@ function wbbm_time_24_to_12($time) {
 // Convert date format according to wp date format
 function mage_wp_date($date, $format = false) {
     $wp_date_format = get_option('date_format');
-    if($wp_date_format == 'd/m/Y') {
-        $date = str_replace('/', '-', $date);
-    }
+
+    $date = mage_date_format_issue($date);
 
     if($date && $format) {
         $date = date($format, strtotime($date));
@@ -384,6 +384,21 @@ function mage_wp_date($date, $format = false) {
         $date  = date($wp_date_format, strtotime($date));
     }
 
+    return $date;
+}
+function mage_date_format_issue($date)
+{
+    $date_format = get_option('date_format');
+
+    if ($date) {
+        if ($date_format == 'm/d/Y') {
+            $date = str_replace('-', '/', $date);
+        }
+
+        if ($date_format == 'd/m/Y') {
+            $date = str_replace('/', '-', $date);
+        }
+    }
     return $date;
 }
 
