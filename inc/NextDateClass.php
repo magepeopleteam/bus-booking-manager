@@ -12,7 +12,7 @@ class NextDateClass extends CommonClass
    public function mage_next_date_suggestion($return, $single_bus, $target)
     {
         $date = $return ? $this->mage_bus_isset('r_date') : $this->mage_bus_isset('j_date');
-        $date = $this->wbbm_convert_date_to_php($date);
+        $date = mage_wp_date($date);
         if ($date) {
             $tab_date = isset($_GET['tab_date']) ? $_GET['tab_date'] : mage_wp_date($this->mage_bus_isset('j_date'), 'Y-m-d');
             $tab_date_r = isset($_GET['tab_date_r']) ? $_GET['tab_date_r'] : mage_wp_date($this->mage_bus_isset('r_date'), 'Y-m-d');
@@ -48,7 +48,7 @@ class NextDateClass extends CommonClass
     function mage_next_date_suggestion_single($return, $single_bus, $target)
     {
         $j_date = $this->mage_bus_isset('j_date');
-        $j_date = $this->wbbm_convert_date_to_php($j_date);
+        $j_date = mage_wp_date($j_date,'Y-m-d');
         $wbtm_bus_on_dates = get_post_meta(get_the_id(), 'wbtm_bus_on_date', true) ? maybe_unserialize(get_post_meta(get_the_id(), 'wbtm_bus_on_date', true)) : [];
         $wbtm_offday_schedules = get_post_meta(get_the_id(), 'wbtm_offday_schedule', true)?get_post_meta(get_the_id(), 'wbtm_offday_schedule', true):[];
         $weekly_offday = get_post_meta(get_the_id(), 'weekly_offday', true) ? get_post_meta(get_the_id(), 'weekly_offday', true):[];
