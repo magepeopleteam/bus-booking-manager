@@ -231,7 +231,8 @@ function mage_available_seat($date) {
 // Get intermidiate available seat
 function wbbm_intermidiate_available_seat($start, $end, $date,$eid=null): int
 {
-    $post_id = get_the_id()?get_the_id():$eid;
+    // $post_id = get_the_id()?get_the_id():$eid;
+    $post_id = $eid?:get_the_id();
     $values = get_post_custom($post_id);
     $total_seat = (int)$values['wbbm_total_seat'][0];
     $sold_seat = (int)wbbm_get_available_seat_new($post_id, $start, $end, $date);

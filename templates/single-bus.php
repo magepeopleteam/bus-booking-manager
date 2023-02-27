@@ -257,61 +257,62 @@ endif;
                 }
 
                 // Operatinal on day off day check
-                if($j_date != '' && $boarding != '' && $dropping != '') {
-                    if( $is_on_date ) {
-                        if( in_array( $j_date, $bus_on_dates ) ) {
-                            mage_book_now_area($available_seat);
-                        } else {
-                            echo '<span class="mage_error" style="display: block;text-align: center;padding: 5px;margin: 10px 0 0 0;">'.date($date_format,strtotime(mage_get_isset($date_var))).' Operational Off day !'.'</span>';
-                        }
-                    } else {
+                // Offday schedule check
+                $bus_stops_times = get_post_meta(get_the_ID(), 'wbbm_bus_bp_stops', true);
+                $bus_offday_schedules = get_post_meta(get_the_ID(), 'wbtm_offday_schedule', true);
 
-                        // Offday schedule check
-                        $bus_stops_times = get_post_meta(get_the_ID(), 'wbbm_bus_bp_stops', true);
-                        $bus_offday_schedules = get_post_meta(get_the_ID(), 'wbtm_offday_schedule', true);
+                $start_time = '';
+                foreach ($bus_stops_times as $stop) {
+                    if ($stop['wbbm_bus_bp_stops_name'] == $_GET[$boarding_var]) {
+                        $start_time = $stop['wbbm_bus_bp_start_time'];
+                    }
+                }
 
-                        $start_time = '';
-                        foreach($bus_stops_times as $stop) {
-                            if($stop['wbbm_bus_bp_stops_name'] == $_GET[$boarding_var]) {
-                                $start_time = $stop['wbbm_bus_bp_start_time'];
+                $start_time = wbbm_time_24_to_12($start_time);
+
+                if(wbbm_buffer_time_calculation($start_time, $j_date)) {
+                    if ($j_date != '' && $boarding != '' && $dropping != '') {
+                        if ($is_on_date) {
+                            if (in_array($j_date, $bus_on_dates)) {
+                                mage_book_now_area($available_seat);
+                            } else {
+                                echo '<span class="mage_error" style="display: block;text-align: center;padding: 5px;margin: 10px 0 0 0;">' . date($date_format, strtotime(mage_get_isset($date_var))) . ' Operational Off day !' . '</span>';
                             }
-                        }
+                        } else {
 
-                        $start_time = wbbm_time_24_to_12($start_time);
-
-                        $offday_current_bus = false;
-                        if(!empty($bus_offday_schedules)) {
+                            $offday_current_bus = false;
+                            if (!empty($bus_offday_schedules)) {
 
 
 
 
-                            $s_datetime = new DateTime( mage_wp_date($j_date, 'Y-m-d').' '.$start_time );
+                                $s_datetime = new DateTime(mage_wp_date($j_date, 'Y-m-d') . ' ' . $start_time);
 
 
-                            foreach($bus_offday_schedules as $item) {
+                                foreach ($bus_offday_schedules as $item) {
 
 
 
-                                $c_iterate_date_from = mage_wp_date( $item['from_date'], 'Y-m-d');
-                                
+                                    $c_iterate_date_from = mage_wp_date($item['from_date'], 'Y-m-d');
 
-                                $c_iterate_datetime_from = new DateTime( $c_iterate_date_from.' '.$item['from_time'] );
 
-                                $c_iterate_date_to = mage_wp_date($item['to_date'], 'Y-m-d');
-                                $c_iterate_datetime_to = new DateTime( $c_iterate_date_to.' '.$item['to_time'] );
+                                    $c_iterate_datetime_from = new DateTime($c_iterate_date_from . ' ' . $item['from_time']);
 
-                                if( $s_datetime >= $c_iterate_datetime_from && $s_datetime <= $c_iterate_datetime_to ) {
-                                    $offday_current_bus = true;
-                                    break;
+                                    $c_iterate_date_to = mage_wp_date($item['to_date'], 'Y-m-d');
+                                    $c_iterate_datetime_to = new DateTime($c_iterate_date_to . ' ' . $item['to_time']);
+
+                                    if ($s_datetime >= $c_iterate_datetime_from && $s_datetime <= $c_iterate_datetime_to) {
+                                        $offday_current_bus = true;
+                                        break;
+                                    }
                                 }
                             }
-                        }
 
-                        // Check Offday and date
-                        if(!$offday_current_bus && mage_off_day_check($return)) {
-                            mage_book_now_area($available_seat);
+                            // Check Offday and date
+                            if (!$offday_current_bus && mage_off_day_check($return)) {
+                                mage_book_now_area($available_seat);
+                            }
                         }
-
                     }
                 }
 
