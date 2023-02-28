@@ -1,5 +1,5 @@
 <div class="mp_tab_item" data-tab-item="#wbtm_pickuppoint">
-    <h3><?php echo $cpt_label.' '. __('Pickup Point:', 'bus-booking-manager'); ?></h3>
+    <h3><?php echo  __('Pickup Point:', 'bus-booking-manager'); ?></h3>
     <h5 class="dFlex mpStyle">
         <span class="pb-10"><b class="ra-enable-button"><?php _e('Enable pickup point :', 'bus-booking-manager'); ?></b>
             <label class="roundSwitchLabel">
