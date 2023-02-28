@@ -24,7 +24,7 @@ function mage_bus_search_form($atts){
 function mage_bus_search($atts){
     $defaults = array(
         "style" => false,
-        "theme" => false,
+        "theme" => 'minimal',
     );
     $params         = shortcode_atts($defaults, $atts);
     global $mage_bus_search_theme;
