@@ -430,6 +430,8 @@ div.mage_container .search_form_horizontal h2 {
 
 .search_form_horizontal form.mage_form .mage_form_list {
     margin: 2px;
+    display: flex;
+flex-direction: column;
 }
 
 .search_form_horizontal div.mage_form_radio,
@@ -446,6 +448,7 @@ div.mage_container .search_form_horizontal h2 {
     margin-bottom: 5px;
     margin-top: 5px;
     color: #000;
+    width: auto;
 }
 
 .search_form_horizontal form .mage_form_control {
@@ -459,7 +462,7 @@ div.mage_container .search_form_horizontal h2 {
 }
 
 .search_form_horizontal button.mage_button {
-    height: 40px;
+    height: 52px;
     border: none
 }
 
@@ -580,6 +583,7 @@ div.mage_bus_info h3,
 
 .route-input-wrap {
     position: relative;
+    display: flex;
 }
 
 .mage_form .mage_form_radio {
@@ -717,7 +721,8 @@ div.mage_bus_info h3,
     justify-content: space-between;
     display: flex;
 }
-
+input#r_date,
+input#j_date{width: auto;}
 .mage-search-brief-row .mage-bus-detail-action {
     background: #22D02D;
     color: #fff;
