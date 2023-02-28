@@ -70,12 +70,12 @@ if(! empty($off_day_sche)):
 
     if(in_array($j_date,$all_off_dates)){
         $off_date_status =  true;
-    }
-    else{
+    } else{
         $off_date_status =  false;
     }
 endif;
 // End Off dates
+
 ?>
     <div class="mage_container">
         <?php do_action( 'wbbm_before_single_product' ); ?>
