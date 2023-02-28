@@ -393,7 +393,7 @@ div.mage_form_list_title h4 {
 .mage_form_list .mage_form_full,
 .mage_customer_info_area label {
     margin: 15px 0 0 0;
-    width: calc(50% - 8px);
+    /* width: calc(50% - 8px); */
     display: inline-block;
     font-size: 14px !important;
 }
@@ -401,11 +401,11 @@ div.mage_form_list_title h4 {
 .mage_customer_info_area .mage_form_list label>span {
     width: 50%;
     display: inline-block;
-    text-align: center;
+   /* text-align: center; */
 }
 
 .mage_customer_info_area .mage_form_list label .mage_form_full {
-    width: 50%;
+   /* width: 50%; */
     margin: 0;
 }
 
