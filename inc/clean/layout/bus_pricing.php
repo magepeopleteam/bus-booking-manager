@@ -4,7 +4,7 @@
 
     <?php
     $terms = get_terms($get_terms_default_attributes);
-    if ($terms) {
+
     ?>
 
     <div style="width:100%;overflow-x:auto;">
@@ -158,14 +158,13 @@
             <!-- Roundtrip price -->
             </tbody>
         </table>
-        <p><a id="add-price-row" class="button" href="#"><i class="fas fa-plus"></i>
-                <?php _e('Add More Price', 'bus-booking-manager'); ?></a></p>
+        <p>
+            <a id="add-price-row" class="button" href="#"><i class="fas fa-plus"></i><?php _e('Add More Price', 'bus-booking-manager'); ?></a>
+        </p>
     </div>
 
     <?php
-                } else {
-                    echo "<div class='wbbm_bus_stops_notice'>".__('Please Enter some bus stops first.', 'bus-booking-manager')."<a class='wbbm_color_white' href='" . get_admin_url() . "edit-tags.php?taxonomy=wbbm_bus_stops&post_type=wbbm_bus'>".__('Click here for bus stops', 'bus-booking-manager')."</a></div>";
-                }
+
                 ?>
     <script type="text/javascript">
         jQuery(document).ready(function($) {
