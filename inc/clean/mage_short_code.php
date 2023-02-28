@@ -67,7 +67,7 @@ function mage_search_bus_list($return){
                 $start_time = '';
                 foreach($bus_stops_times as $stop) {
                     if($stop['wbbm_bus_bp_stops_name'] == $_GET[$start]) {
-                        $start_time = $stop['wbbm_bus_bp_start_time'];
+                        $start_time = isset($stop['wbbm_bus_bp_start_time'])?$stop['wbbm_bus_bp_start_time']:'';
                     }
                 }
 
