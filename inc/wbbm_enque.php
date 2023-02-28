@@ -255,7 +255,7 @@ function wbbm_bus_enqueue_scripts() {
 
     wp_enqueue_script('mage_style',plugin_dir_url( __DIR__ ).'js/mage_style.js',array('jquery'),time(),true);
 
-    wp_enqueue_style('mage_css',plugin_dir_url( __DIR__ ).'css/mage_css.css',array());
+    wp_enqueue_style('mage_css',plugin_dir_url( __DIR__ ).'css/mage_css.css',array(), time());
 
 
 }
