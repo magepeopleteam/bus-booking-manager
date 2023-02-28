@@ -5,6 +5,10 @@ function search_from_only($single_bus,$target) {
 
     $search_form_dropdown_text_color = wbbm_get_option('wbbm_search_form_dropdown_t_color', 'wbbm_style_setting_sec');
     $search_form_dropdown_text_color = $search_form_dropdown_text_color ? $search_form_dropdown_text_color : '';
+
+    $wbbm_bus_prices = get_post_meta(get_the_id(),'wbbm_bus_prices',true);
+
+    //echo '<pre>';print_r($wbbm_bus_prices);echo '<pre>';
 ?>
 
 
@@ -20,10 +24,11 @@ function search_from_only($single_bus,$target) {
                 <div class="route-input-wrap"><input id="bus_start_route" type="text" class="mage_form_control" name="bus_start_route" value="<?php echo mage_get_isset('bus_start_route'); ?>" placeholder="<?php _e('Please Select', 'bus-booking-manager'); ?>" autocomplete="off" required/></div>
                 <?php
                 if($single_bus){
-                    $start_stops = get_post_meta(get_the_id(),'wbbm_bus_bp_stops',true);
+
+                    $start_stops = get_post_meta(get_the_id(),'wbbm_bus_prices',true);
                     echo '<div class="mage_input_select_list" '; if($search_form_dropdown_b_color){ echo 'style="background-color:'.$search_form_dropdown_b_color.'"'; } echo '><ul>';
                     foreach ($start_stops as $_start_stops) {
-                        echo '<li '; if($search_form_dropdown_text_color){ echo 'style="color:'.$search_form_dropdown_text_color.'"'; } echo ' data-route="' . $_start_stops['wbbm_bus_bp_stops_name'] . '"><span class="fa fa-map-marker"></span>' . $_start_stops['wbbm_bus_bp_stops_name'] . '</li>';
+                        echo '<li '; if($search_form_dropdown_text_color){ echo 'style="color:'.$search_form_dropdown_text_color.'"'; } echo ' data-route="' . $_start_stops['wbbm_bus_bp_price_stop'] . '"><span class="fa fa-map-marker"></span>' . $_start_stops['wbbm_bus_bp_price_stop'] . '</li>';
                     }
                     echo '</ul></div>';
                 }else {
@@ -42,10 +47,10 @@ function search_from_only($single_bus,$target) {
                 <div class="route-input-wrap"><input id="bus_end_route" type="text" class="mage_form_control" name="bus_end_route" value="<?php echo mage_get_isset('bus_end_route'); ?>" placeholder="<?php _e('Please Select', 'bus-booking-manager'); ?>" autocomplete="off" required/></div>
                 <?php
                 if($single_bus){
-                    $end_stops = get_post_meta(get_the_id(),'wbbm_bus_next_stops',true);
+                    $end_stops = get_post_meta(get_the_id(),'wbbm_bus_prices',true);
                     echo '<div class="mage_input_select_list_static"><ul class="">';
                     foreach ($end_stops as $_end_stops) {
-                        echo '<li data-route="' . $_end_stops['wbbm_bus_next_stops_name'] . '"><span class="fa fa-map-marker"></span>' . $_end_stops['wbbm_bus_next_stops_name'] . '</li>';
+                        echo '<li data-route="' . $_end_stops['wbbm_bus_dp_price_stop'] . '"><span class="fa fa-map-marker"></span>' . $_end_stops['wbbm_bus_dp_price_stop'] . '</li>';
                     }
                     echo '</ul></div>';
                 }else {
