@@ -141,7 +141,7 @@ class MAGE_WBBM_Setting_Controls {
                     'label' => __( 'Search Result Page', 'bus-booking-manager' ),
                     'desc' => __( 'Please select the page where you want to show the search result page. By default search result page is bus-search. You can also set any page as a search result page by putting the page slug into the shortcode. Ex: <strong>[bus-search-form result-page="CUSTOM-PAGE-SLUG-HERE"]</strong>', 'bus-booking-manager' ),
                     'type' => 'select',
-                    'default' => 'bus-search',
+                    'default' => 'bus-search-list',
                     'options' => wbbm_get_page_list()
                 )
             ),
