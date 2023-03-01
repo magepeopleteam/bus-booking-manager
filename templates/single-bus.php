@@ -263,8 +263,10 @@ endif;
 
                 $start_time = '';
                 foreach ($bus_stops_times as $stop) {
-                    if ($stop['wbbm_bus_bp_stops_name'] == $_GET[$boarding_var]) {
-                        $start_time = $stop['wbbm_bus_bp_start_time'];
+                    if(isset($_GET[$boarding_var])) {
+                        if ($stop['wbbm_bus_bp_stops_name'] == $_GET[$boarding_var]) {
+                            $start_time = $stop['wbbm_bus_bp_start_time'];
+                        }
                     }
                 }
 
@@ -325,5 +327,6 @@ endif;
             <?php do_action('mage_multipurpose_reg'); ?>
         </div>
         <?php do_action('after-single-bus'); ?>
+        <?php do_action('wbbm_prevent_form_resubmission'); ?>
     </div>
 <?php get_footer(); ?>
