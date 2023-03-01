@@ -153,23 +153,67 @@
 	$(document).on('click','.ra_seat_price',function (e){
 		e.preventDefault();
 
-		$('.ra_bus_bp_price_stop').html("<option value=''>Select Boarging Point</option>");
-		$( ".boarding-point tr" ).each(function( index ) {
-			let term_id = $(this).find(':selected').data('term_id');
-			if(term_id){
-				$('.ra_bus_bp_price_stop').append("<option value='"+$(this).find(":selected").val()+"'>"+$(this).find(":selected").val()+"</option>")
-			}
-		});
+		var new_bus = $('#price_bus_record').val();
 
-		$('.ra_bus_dp_price_stop').html("<option value=''>Select Dropping Point</option>");
-		$( ".dropping-point tr" ).each(function( index ) {
-			let term_id = $(this).find(':selected').data('term_id');
-			if(term_id){
-				$('.ra_bus_dp_price_stop').append("<option value='"+$(this).find(":selected").val()+"'>"+$(this).find(":selected").val()+"</option>")
-			}
-		});
+		if(new_bus==''){
+			var route_row = '';
+			var i = 0;
+			$( ".boarding-point tr" ).each(function( index ) {
+				var j = 0;
+				let term_id = $(this).find(':selected').data('term_id');
+				if(term_id){
+					var boarding_point = $(this).find(":selected").val();
+					$( ".dropping-point tr" ).each(function( index ) {
+						if (i <= j) {
+							let term_id = $(this).find(':selected').data('term_id');
+							if(term_id){
+								var dropping_point = $(this).find(":selected").val();
+								route_row += '<tr class="temprary-record-price"><td>'+boarding_point+'</td><td>'+dropping_point+'</td><td class="wbbm-price-col">\n' +
+									'                    <input step="0.01" type="number" name="wbbm_bus_price[]" value="" class="text">\n' +
+									'                    <input type="hidden" name="wbbm_bus_bp_price_stop[]" value="'+boarding_point+'" class="text">\n' +
+									'                    <input type="hidden" name="wbbm_bus_dp_price_stop[]" value="'+dropping_point+'" class="text">\n' +
+									'                    <input step="0.01" type="number" name="wbbm_bus_price_roundtrip[]" placeholder="Adult return discount price" value="" class="text roundtrip-input">\n' +
+									'                </td><td class="wbbm-price-col">\n' +
+									'                    <input step="0.01" type="number" name="wbbm_bus_price_child[]" value="" class="text">\n' +
+									'                    <input step="0.01" type="number" name="wbbm_bus_price_child_roundtrip[]" placeholder="Child return discount price" value="" class="text roundtrip-input">\n' +
+									'                </td><td class="wbbm-price-col">\n' +
+									'                    <input step="0.01" type="number" name="wbbm_bus_price_infant[]" value="" class="text">\n' +
+									'                    <input step="0.01" type="number" name="wbbm_bus_price_infant_roundtrip[]" placeholder="Infant return discount price" value="" class="text roundtrip-input">\n' +
+									'                </td><td class="wbbm-price-col"><a class="button remove-price-row" href="#"><i class="fas fa-minus-circle"></i>\n' +
+									'                        Remove</a>\n' +
+									'                </td></tr>';
+							}
+						}
+						j++;
+					});
+				}
+				i++
+			});
+			$('.temprary-record-price').remove();
+			$('.auto-generated').append(route_row);
+		}
+
+			$('.ra_bus_bp_price_stop').html("<option value=''>Select Boarging Point</option>");
+			$( ".boarding-point tr" ).each(function( index ) {
+				let term_id = $(this).find(':selected').data('term_id');
+				if(term_id){
+					$('.ra_bus_bp_price_stop').append("<option value='"+$(this).find(":selected").val()+"'>"+$(this).find(":selected").val()+"</option>")
+				}
+			});
+
+			$('.ra_bus_dp_price_stop').html("<option value=''>Select Dropping Point</option>");
+			$( ".dropping-point tr" ).each(function( index ) {
+				let term_id = $(this).find(':selected').data('term_id');
+				if(term_id){
+					$('.ra_bus_dp_price_stop').append("<option value='"+$(this).find(":selected").val()+"'>"+$(this).find(":selected").val()+"</option>")
+				}
+			});
+
 
 		return false;
+
+
+
 	});
 
 	$(document).on('change','.ra_bus_bp_price_stop',function (e){
