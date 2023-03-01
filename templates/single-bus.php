@@ -327,7 +327,6 @@ endif;
             <?php do_action('mage_multipurpose_reg'); ?>
         </div>
         <?php do_action('after-single-bus'); ?>
-        
         <?php do_action('wbbm_prevent_form_resubmission'); ?>
     </div>
 <?php get_footer(); ?>
