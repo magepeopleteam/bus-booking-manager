@@ -160,3 +160,22 @@ ul.mage_list_inline li a {
 .bus-stops-left-col table tr th:nth-child(3), .bus-stops-right-col table th:nth-child(3) {
     min-width: 100px;
 }
+.single-wbbm_bus .mage_thumb{
+    text-align: center;
+    background: #fff;
+}
+.single-wbbm_bus .mage_thumb img{
+    width: auto;
+}
+.single-wbbm_bus .mage_bus_details{
+    background: #ffffff;
+}
+.single-wbbm_bus .mage_bus_info, .mage_price_info {
+    border: none;
+    padding: 20px;
+    margin: 0 0 0 15px;
+    background: #fff;
+}
+.single-wbbm_bus .mage_bus_details{
+    border-left: 3px dashed #d3d3d3;
+}
