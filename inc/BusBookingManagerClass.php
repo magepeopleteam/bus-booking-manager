@@ -17,14 +17,18 @@ class BusBookingManagerClass
         require_once plugin_dir_path( dirname( __FILE__ ) ) . 'inc/CommonClass.php';
         require_once plugin_dir_path( dirname( __FILE__ ) ) . 'inc/FilterClass.php';
         require_once plugin_dir_path( dirname( __FILE__ ) ) . 'inc/NextDateClass.php';
+        require_once plugin_dir_path( dirname( __FILE__ ) ) . 'inc/AdminMetaBoxClass.php';
         //require_once plugin_dir_path( dirname( __FILE__ ) ) . 'inc/ActiveDataShowClass.php';
     }
 
     private function define_all_hooks() {
         $NextDateClass = new NextDateClass;
+        $AdminMetaBoxClass = new AdminMetaBoxClass;
         //$ActiveDataShowClass = new ActiveDataShowClass;
 
         add_action('mage_next_date', array($NextDateClass,'mage_next_date_suggestion_single'), 99, 3);
+        //Save meta
+        add_action('save_post', array($AdminMetaBoxClass, 'wbbm_single_settings_meta_save'));
         //add_action('active_date', array($ActiveDataShowClass,'active_date_picker'), 99, 3);
     }
 

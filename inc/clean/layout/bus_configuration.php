@@ -90,6 +90,7 @@
         </div>
 
     </div>
+
     <script type="text/javascript">
         jQuery(document).ready(function($) {
             $('#add-row-t').on('click', function() {

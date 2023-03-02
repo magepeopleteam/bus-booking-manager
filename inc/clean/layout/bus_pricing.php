@@ -6,9 +6,11 @@
     $terms = get_terms($get_terms_default_attributes);
 
     ?>
+    <input type="hidden" id="price_bus_record" value="<?php echo ($wbbm_bus_prices=='')?$wbbm_bus_prices:count($wbbm_bus_prices) ?>">
 
     <div style="width:100%;overflow-x:auto;">
         <table id="repeatable-fieldset-price-one" width="auto">
+            <tbody class="auto-generated">
             <tr>
                 <th><?php _e('Boarding Point', 'bus-booking-manager'); ?></th>
                 <th><?php _e('Dropping Point', 'bus-booking-manager'); ?></th>
@@ -23,7 +25,6 @@
                 <?php endif; ?>
                 <th></th>
             </tr>
-            <tbody>
             <?php
             if ($wbbm_bus_prices) :
                 $coun = 0;
@@ -164,28 +165,6 @@
     </div>
 
     <?php
-
-                ?>
-    <script type="text/javascript">
-        jQuery(document).ready(function($) {
-
-
-            $('#add-price-row').on('click', function() {
-                var row = $('.empty-row-price.screen-reader-text').clone(true);
-                row.removeClass('empty-row-price screen-reader-text');
-                row.insertBefore('#repeatable-fieldset-price-one tbody>tr:last');
-                return false;
-            });
-
-            $('.remove-price-row').on('click', function() {
-                $(this).parents('tr').remove();
-                return false;
-            });
-
-        });
-    </script>
-    <?php
-
 
     $mep_events_extra_prices = get_post_meta($post_id, 'mep_events_extra_prices', true);
     wp_nonce_field('mep_events_extra_price_nonce', 'mep_events_extra_price_nonce');
