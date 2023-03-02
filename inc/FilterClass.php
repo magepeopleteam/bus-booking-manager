@@ -34,344 +34,349 @@
             {
 
 
-                $journey_date = $_POST['journey_date'];
-                $is_return = 0;
-                $return_discount = 0;
-                $return_discount = wbbm_cart_has_opposite_route($_POST['start_stops'], $_POST['end_stops'], $journey_date);
+                if (get_post_type($product_id) == "wbbm_bus") {
 
-                $product_id = get_post_meta($product_id, 'link_wbbm_bus', true) ? get_post_meta($product_id, 'link_wbbm_bus', true) : $product_id;
-                $total_seats = get_post_meta($product_id, 'wbbm_total_seat', true);
-                $tp = get_post_meta($product_id, '_price', true);
-                $price_arr = get_post_meta($product_id, 'wbbm_bus_prices', true);
-                $new = array();
-                $user = array();
-                $start_stops = sanitize_text_field($_POST['start_stops']);
-                $end_stops = sanitize_text_field($_POST['end_stops']);
-                $adult_seat = sanitize_text_field($_POST['adult_quantity']);
 
-                $total_child_fare_original = 0;
-                $total_child_fare_roundtrip = 0;
-                $child_fare_original = 0;
-                $child_fare_roundtrip = 0;
-                if (isset($_POST['child_quantity'])) {
-                    $total_child_seat = sanitize_text_field($_POST['child_quantity']);
-                    $child_fare = mage_seat_price($product_id, $start_stops, $end_stops, 'child');
-                    $child_fare_original = mage_seat_price($product_id, $start_stops, $end_stops, 'child');
-                    $child_fare_roundtrip = mage_seat_price($product_id, $start_stops, $end_stops, 'child', true);
-                    if ($return_discount > 0) {
-                        $total_child_fare = $child_fare_roundtrip * $total_child_seat;
+                    $journey_date = $_POST['journey_date'];
+                    $is_return = 0;
+                    $return_discount = 0;
+                    $return_discount = wbbm_cart_has_opposite_route($_POST['start_stops'], $_POST['end_stops'], $journey_date);
 
-                        $total_child_fare_original = $child_fare * $total_child_seat;
-                        $total_child_fare_roundtrip = $child_fare_roundtrip * $total_child_seat;
+                    $product_id = get_post_meta($product_id, 'link_wbbm_bus', true) ? get_post_meta($product_id, 'link_wbbm_bus', true) : $product_id;
+                    $total_seats = get_post_meta($product_id, 'wbbm_total_seat', true);
+                    $tp = get_post_meta($product_id, '_price', true);
+                    $price_arr = get_post_meta($product_id, 'wbbm_bus_prices', true);
+                    $new = array();
+                    $user = array();
+                    $start_stops = sanitize_text_field($_POST['start_stops']);
+                    $end_stops = sanitize_text_field($_POST['end_stops']);
+                    $adult_seat = sanitize_text_field($_POST['adult_quantity']);
 
-                        $child_fare = $child_fare_roundtrip;
+                    $total_child_fare_original = 0;
+                    $total_child_fare_roundtrip = 0;
+                    $child_fare_original = 0;
+                    $child_fare_roundtrip = 0;
+                    if (isset($_POST['child_quantity'])) {
+                        $total_child_seat = sanitize_text_field($_POST['child_quantity']);
+                        $child_fare = mage_seat_price($product_id, $start_stops, $end_stops, 'child');
+                        $child_fare_original = mage_seat_price($product_id, $start_stops, $end_stops, 'child');
+                        $child_fare_roundtrip = mage_seat_price($product_id, $start_stops, $end_stops, 'child', true);
+                        if ($return_discount > 0) {
+                            $total_child_fare = $child_fare_roundtrip * $total_child_seat;
+
+                            $total_child_fare_original = $child_fare * $total_child_seat;
+                            $total_child_fare_roundtrip = $child_fare_roundtrip * $total_child_seat;
+
+                            $child_fare = $child_fare_roundtrip;
+                        } else {
+                            $total_child_fare = $child_fare * $total_child_seat;
+
+                            $total_child_fare_original = $child_fare * $total_child_seat;
+                            $total_child_fare_roundtrip = $child_fare_roundtrip * $total_child_seat;
+                        }
                     } else {
-                        $total_child_fare = $child_fare * $total_child_seat;
-
-                        $total_child_fare_original = $child_fare * $total_child_seat;
-                        $total_child_fare_roundtrip = $child_fare_roundtrip * $total_child_seat;
+                        $total_child_seat = 0;
+                        $child_fare = 0;
+                        $total_child_fare = 0;
                     }
-                } else {
-                    $total_child_seat = 0;
-                    $child_fare = 0;
-                    $total_child_fare = 0;
-                }
 
-                $total_infant_fare_original = 0;
-                $total_infant_fare_roundtrip = 0;
-                $infant_fare_original = 0;
-                $infant_fare_roundtrip = 0;
-                if (isset($_POST['infant_quantity'])) {
-                    $total_infant_seat = sanitize_text_field($_POST['infant_quantity']);
-                    $infant_fare = mage_seat_price($product_id, $start_stops, $end_stops, 'infant');
-                    $infant_fare_original = mage_seat_price($product_id, $start_stops, $end_stops, 'infant');
-                    $infant_fare_roundtrip = mage_seat_price($product_id, $start_stops, $end_stops, 'infant', true);
-                    if ($return_discount > 0) {
-                        $total_infant_fare = $infant_fare_roundtrip * $total_infant_seat;
+                    $total_infant_fare_original = 0;
+                    $total_infant_fare_roundtrip = 0;
+                    $infant_fare_original = 0;
+                    $infant_fare_roundtrip = 0;
+                    if (isset($_POST['infant_quantity'])) {
+                        $total_infant_seat = sanitize_text_field($_POST['infant_quantity']);
+                        $infant_fare = mage_seat_price($product_id, $start_stops, $end_stops, 'infant');
+                        $infant_fare_original = mage_seat_price($product_id, $start_stops, $end_stops, 'infant');
+                        $infant_fare_roundtrip = mage_seat_price($product_id, $start_stops, $end_stops, 'infant', true);
+                        if ($return_discount > 0) {
+                            $total_infant_fare = $infant_fare_roundtrip * $total_infant_seat;
 
-                        $total_infant_fare_original = $infant_fare * $total_infant_seat;
-                        $total_infant_fare_roundtrip = $infant_fare_roundtrip * $total_infant_seat;
+                            $total_infant_fare_original = $infant_fare * $total_infant_seat;
+                            $total_infant_fare_roundtrip = $infant_fare_roundtrip * $total_infant_seat;
 
-                        $infant_fare = $infant_fare_roundtrip;
+                            $infant_fare = $infant_fare_roundtrip;
+                        } else {
+                            $total_infant_fare = $infant_fare * $total_infant_seat;
+
+                            $total_infant_fare_original = $infant_fare * $total_infant_seat;
+                            $total_infant_fare_roundtrip = $infant_fare_roundtrip * $total_infant_seat;
+                        }
                     } else {
-                        $total_infant_fare = $infant_fare * $total_infant_seat;
-
-                        $total_infant_fare_original = $infant_fare * $total_infant_seat;
-                        $total_infant_fare_roundtrip = $infant_fare_roundtrip * $total_infant_seat;
+                        $total_infant_seat = 0;
+                        $infant_fare = 0;
+                        $total_infant_fare = 0;
                     }
-                } else {
-                    $total_infant_seat = 0;
-                    $infant_fare = 0;
-                    $total_infant_fare = 0;
-                }
 
-                $total_entire_fare_original = 0;
-                $total_entire_fare_roundtrip = 0;
-                $entire_fare_original = 0;
-                $entire_fare_roundtrip = 0;
-                if (isset($_POST['entire_quantity'])) {
-                    $total_entire_seat = $total_seats;
-                    $entire_fare = mage_seat_price($product_id, $start_stops, $end_stops, 'entire');
-                    $entire_fare_original = mage_seat_price($product_id, $start_stops, $end_stops, 'entire');
-                    $entire_fare_roundtrip = mage_seat_price($product_id, $start_stops, $end_stops, 'entire', true);
-                    if ($return_discount > 0) {
-                        $total_entire_fare = $entire_fare_roundtrip;
+                    $total_entire_fare_original = 0;
+                    $total_entire_fare_roundtrip = 0;
+                    $entire_fare_original = 0;
+                    $entire_fare_roundtrip = 0;
+                    if (isset($_POST['entire_quantity'])) {
+                        $total_entire_seat = $total_seats;
+                        $entire_fare = mage_seat_price($product_id, $start_stops, $end_stops, 'entire');
+                        $entire_fare_original = mage_seat_price($product_id, $start_stops, $end_stops, 'entire');
+                        $entire_fare_roundtrip = mage_seat_price($product_id, $start_stops, $end_stops, 'entire', true);
+                        if ($return_discount > 0) {
+                            $total_entire_fare = $entire_fare_roundtrip;
 
-                        $total_entire_fare_original = $entire_fare;
-                        $total_entire_fare_roundtrip = $entire_fare_roundtrip;
+                            $total_entire_fare_original = $entire_fare;
+                            $total_entire_fare_roundtrip = $entire_fare_roundtrip;
 
-                        $entire_fare = $entire_fare_roundtrip;
+                            $entire_fare = $entire_fare_roundtrip;
+                        } else {
+                            $total_entire_fare = $entire_fare;
+
+                            $total_entire_fare_original = $entire_fare;
+                            $total_entire_fare_roundtrip = $entire_fare_roundtrip;
+                        }
                     } else {
-                        $total_entire_fare = $entire_fare;
-
-                        $total_entire_fare_original = $entire_fare;
-                        $total_entire_fare_roundtrip = $entire_fare_roundtrip;
-                    }
-                } else {
-                    $total_entire_seat = 0;
-                    $entire_fare = 0;
-                    $total_entire_fare = 0;
-                }
-
-                $total_seat = ($adult_seat + $total_child_seat + $total_infant_seat + $total_entire_seat);
-                $main_fare = mage_seat_price($product_id, $start_stops, $end_stops, 'adult');
-                $main_fare_original = mage_seat_price($product_id, $start_stops, $end_stops, 'adult');
-                $main_fare_roundtrip = mage_seat_price($product_id, $start_stops, $end_stops, 'adult', true);
-
-                if ($return_discount > 0) {
-                    $total_main_fare = $main_fare_roundtrip * $adult_seat;
-
-                    $total_main_fare_original = $main_fare * $adult_seat;
-                    $total_main_fare_roundtrip = $main_fare_roundtrip * $adult_seat;
-
-                    $main_fare = $main_fare_roundtrip;
-                } else {
-                    $total_main_fare = $main_fare * $adult_seat;
-
-                    $total_main_fare_original = $main_fare * $adult_seat;
-                    $total_main_fare_roundtrip = $main_fare_roundtrip * $adult_seat;
-                }
-
-                $adult_fare = $total_main_fare;
-
-                $total_fare = ($adult_fare + $total_child_fare + $total_infant_fare + $total_entire_fare);
-                $total_fare_roundtrip = ($total_main_fare_roundtrip + $total_child_fare_roundtrip + $total_infant_fare_roundtrip + $total_entire_fare_roundtrip);
-                $total_fare_original = ($total_main_fare_original + $total_child_fare_original + $total_infant_fare_original + $total_entire_fare_original);
-
-                $user_start_time = sanitize_text_field($_POST['user_start_time']);
-                $bus_start_time = sanitize_text_field($_POST['bus_start_time']);
-                $bus_id = sanitize_text_field($_POST['bus_id']);
-
-                // Pickup Point
-                if (isset($_POST['mage_pickpoint'])) {
-                    $pickpoint = $_POST['mage_pickpoint'];
-                }else{
-                    $pickpoint = 'n_a';
-                }
-
-                if ($return_discount > 0) {
-                    $is_return = 1;
-                }
-
-                $extra_per_bag_price = get_post_meta($product_id, 'wbbm_extra_bag_price', true);
-                $extra_per_bag_price = $extra_per_bag_price ? $extra_per_bag_price : 0;
-                $extra_bag_price = 0;
-                $es_price = 0;
-                $custom_reg_additional = array();
-                if (isset($_POST['custom_reg_user']) && ($_POST['custom_reg_user']) == 'yes') {
-
-
-                    $wbbm_user_name = (isset($_POST['wbbm_user_name'])) ? wbbm_array_strip($_POST['wbbm_user_name']) : '';
-                    $wbbm_user_email = (isset($_POST['wbbm_user_email'])) ? wbbm_array_strip($_POST['wbbm_user_email']) : '';
-                    $wbbm_user_phone = (isset($_POST['wbbm_user_phone'])) ? wbbm_array_strip($_POST['wbbm_user_phone']) : '';
-                    $wbbm_user_address = (isset($_POST['wbbm_user_address'])) ? wbbm_array_strip($_POST['wbbm_user_address']) : '';
-                    $wbbm_user_gender = (isset($_POST['wbbm_user_gender'])) ? wbbm_array_strip($_POST['wbbm_user_gender']) : '';
-                    $wbbm_user_type = (isset($_POST['wbbm_user_type'])) ? wbbm_array_strip($_POST['wbbm_user_type']) : '';
-                    $wbbm_user_dob = (isset($_POST['wbbm_user_dob'])) ? wbbm_array_strip($_POST['wbbm_user_dob']) : '';
-                    $wbbm_user_nationality = (isset($_POST['wbbm_user_nationality'])) ? wbbm_array_strip($_POST['wbbm_user_nationality']) : '';
-                    $wbbm_user_flight_arrival_no = (isset($_POST['wbbm_user_flight_arrival_no'])) ? wbbm_array_strip($_POST['wbbm_user_flight_arrival_no']) : '';
-                    $wbbm_user_flight_departure_no = (isset($_POST['wbbm_user_flight_departure_no'])) ? wbbm_array_strip($_POST['wbbm_user_flight_departure_no']) : '';
-                    $bag_qty = (isset($_POST['extra_bag_quantity']) ? $_POST['extra_bag_quantity'] : 0);
-
-
-                    $count_user = count($wbbm_user_type);
-                    for ($iu = 0; $iu < $count_user; $iu++) {
-
-                        if($wbbm_user_name) {
-                            if ($wbbm_user_name[$iu] != '') :
-                                $user[$iu]['wbbm_user_name'] = stripslashes(strip_tags($wbbm_user_name[$iu]));
-                            endif;
-                        }
-
-                        if($wbbm_user_email) {
-                            if ($wbbm_user_email[$iu] != '') :
-                                $user[$iu]['wbbm_user_email'] = stripslashes(strip_tags($wbbm_user_email[$iu]));
-                            endif;
-                        }
-
-                        if($wbbm_user_phone) {
-                            if ($wbbm_user_phone[$iu] != '') :
-                                $user[$iu]['wbbm_user_phone'] = stripslashes(strip_tags($wbbm_user_phone[$iu]));
-                            endif;
-                        }
-
-                        if($wbbm_user_address) {
-                            if ($wbbm_user_address[$iu] != '') :
-                                $user[$iu]['wbbm_user_address'] = stripslashes(strip_tags($wbbm_user_address[$iu]));
-                            endif;
-                        }
-
-                        if($wbbm_user_gender) {
-                            if ($wbbm_user_gender[$iu] != '') :
-                                $user[$iu]['wbbm_user_gender'] = stripslashes(strip_tags($wbbm_user_gender[$iu]));
-                            endif;
-                        }
-
-                        if($wbbm_user_type) {
-                            if ($wbbm_user_type[$iu] != '') :
-                                $user[$iu]['wbbm_user_type'] = stripslashes(strip_tags($wbbm_user_type[$iu]));
-                            endif;
-                        }
-
-                        if($wbbm_user_dob) {
-                            if ($wbbm_user_dob[$iu] != '') :
-                                $user[$iu]['wbbm_user_dob'] = stripslashes(strip_tags($wbbm_user_dob[$iu]));
-                            endif;
-                        }
-
-                        if($wbbm_user_nationality) {
-                            if ($wbbm_user_nationality[$iu] != '') :
-                                $user[$iu]['wbbm_user_nationality'] = stripslashes(strip_tags($wbbm_user_nationality[$iu]));
-                            endif;
-                        }
-
-                        if($wbbm_user_flight_arrival_no) {
-                            if ($wbbm_user_flight_arrival_no[$iu] != '') :
-                                $user[$iu]['wbbm_user_flight_arrival_no'] = stripslashes(strip_tags($wbbm_user_flight_arrival_no[$iu]));
-                            endif;
-                        }
-
-                        if($wbbm_user_flight_departure_no) {
-                            if ($wbbm_user_flight_departure_no[$iu] != '') :
-                                $user[$iu]['wbbm_user_flight_departure_no'] = stripslashes(strip_tags($wbbm_user_flight_departure_no[$iu]));
-                            endif;
-                        }
-
-                        if ($bag_qty) {
-                            if ($bag_qty[$iu] != '') :
-                                $user[$iu]['extra_bag_quantity'] = stripslashes(strip_tags($bag_qty[$iu]));
-                                $user[$iu]['wbtm_extra_bag_price'] = (float)$extra_per_bag_price;
-
-                                $extra_bag_price += (int) $bag_qty[$iu] * (float)$extra_per_bag_price;
-                            endif;
-                        }
-
-                        // Additional reg builder field
-                        $reg_form_arr = maybe_unserialize(get_post_meta($product_id, 'wbbm_attendee_reg_form', true));
-
-                        if (is_array($reg_form_arr) && sizeof($reg_form_arr) > 0) {
-                            foreach ($reg_form_arr as $builder) {
-                                $custom_reg_additional[$iu][] = array(
-                                    'name' => $builder['field_label'],
-                                    'value' => (isset($_POST[$builder['field_id']][$iu]) ? $_POST[$builder['field_id']][$iu] : ''),
-                                );
-                            }
-                        }
-
-                    }
-                } else {
-                    // User type
-                    $r_counter = 0;
-                    for ($r = 1; $r <= $adult_seat; $r++) {
-                        $user[$r_counter]['wbbm_user_type'] = 'adult';
-                        $r_counter++;
+                        $total_entire_seat = 0;
+                        $entire_fare = 0;
+                        $total_entire_fare = 0;
                     }
 
-                    for ($r = 1; $r <= $total_child_seat; $r++) {
-                        $user[$r_counter]['wbbm_user_type'] = 'child';
-                        $r_counter++;
+                    $total_seat = ($adult_seat + $total_child_seat + $total_infant_seat + $total_entire_seat);
+                    $main_fare = mage_seat_price($product_id, $start_stops, $end_stops, 'adult');
+                    $main_fare_original = mage_seat_price($product_id, $start_stops, $end_stops, 'adult');
+                    $main_fare_roundtrip = mage_seat_price($product_id, $start_stops, $end_stops, 'adult', true);
+
+                    if ($return_discount > 0) {
+                        $total_main_fare = $main_fare_roundtrip * $adult_seat;
+
+                        $total_main_fare_original = $main_fare * $adult_seat;
+                        $total_main_fare_roundtrip = $main_fare_roundtrip * $adult_seat;
+
+                        $main_fare = $main_fare_roundtrip;
+                    } else {
+                        $total_main_fare = $main_fare * $adult_seat;
+
+                        $total_main_fare_original = $main_fare * $adult_seat;
+                        $total_main_fare_roundtrip = $main_fare_roundtrip * $adult_seat;
                     }
 
-                    for ($r = 1; $r <= $total_infant_seat; $r++) {
-                        $user[$r_counter]['wbbm_user_type'] = 'infant';
-                        $r_counter++;
+                    $adult_fare = $total_main_fare;
+
+                    $total_fare = ($adult_fare + $total_child_fare + $total_infant_fare + $total_entire_fare);
+                    $total_fare_roundtrip = ($total_main_fare_roundtrip + $total_child_fare_roundtrip + $total_infant_fare_roundtrip + $total_entire_fare_roundtrip);
+                    $total_fare_original = ($total_main_fare_original + $total_child_fare_original + $total_infant_fare_original + $total_entire_fare_original);
+
+                    $user_start_time = sanitize_text_field($_POST['user_start_time']);
+                    $bus_start_time = sanitize_text_field($_POST['bus_start_time']);
+                    $bus_id = sanitize_text_field($_POST['bus_id']);
+
+                    // Pickup Point
+                    if (isset($_POST['mage_pickpoint'])) {
+                        $pickpoint = $_POST['mage_pickpoint'];
+                    }else{
+                        $pickpoint = 'n_a';
                     }
 
-                    for ($r = 1; $r <= $total_entire_seat; $r++) {
-                        $user[$r_counter]['wbbm_user_type'] = 'entire';
-                        $r_counter++;
+                    if ($return_discount > 0) {
+                        $is_return = 1;
                     }
-                }
 
-                // Extra Service
-                $extra_service_qty = isset($_POST['extra_service_qty']) ? $_POST['extra_service_qty'] : array();
-                $extra_services = get_post_meta($bus_id, 'mep_events_extra_prices', true);
-                $es_array = array();
-                if(!empty($extra_services)):
-                    $c = 0;
+                    $extra_per_bag_price = get_post_meta($product_id, 'wbbm_extra_bag_price', true);
+                    $extra_per_bag_price = $extra_per_bag_price ? $extra_per_bag_price : 0;
+                    $extra_bag_price = 0;
                     $es_price = 0;
-                    foreach ($extra_services as $field) {
-                        $es_array[$c] = array(
-                            'wbbm_es_name' => $field['option_name'],
-                            'wbbm_es_price' => (int)$field['option_price'],
-                            'wbbm_es_input_qty' => $extra_service_qty[$c][0],
-                            'wbbm_es_available_qty' => (int)$field['option_qty'],
-                        );
-                        $es_price += (int)$field['option_price'] * $extra_service_qty[$c][0];
-                        $c++;
+                    $custom_reg_additional = array();
+                    if (isset($_POST['custom_reg_user']) && ($_POST['custom_reg_user']) == 'yes') {
+
+
+                        $wbbm_user_name = (isset($_POST['wbbm_user_name'])) ? wbbm_array_strip($_POST['wbbm_user_name']) : '';
+                        $wbbm_user_email = (isset($_POST['wbbm_user_email'])) ? wbbm_array_strip($_POST['wbbm_user_email']) : '';
+                        $wbbm_user_phone = (isset($_POST['wbbm_user_phone'])) ? wbbm_array_strip($_POST['wbbm_user_phone']) : '';
+                        $wbbm_user_address = (isset($_POST['wbbm_user_address'])) ? wbbm_array_strip($_POST['wbbm_user_address']) : '';
+                        $wbbm_user_gender = (isset($_POST['wbbm_user_gender'])) ? wbbm_array_strip($_POST['wbbm_user_gender']) : '';
+                        $wbbm_user_type = (isset($_POST['wbbm_user_type'])) ? wbbm_array_strip($_POST['wbbm_user_type']) : '';
+                        $wbbm_user_dob = (isset($_POST['wbbm_user_dob'])) ? wbbm_array_strip($_POST['wbbm_user_dob']) : '';
+                        $wbbm_user_nationality = (isset($_POST['wbbm_user_nationality'])) ? wbbm_array_strip($_POST['wbbm_user_nationality']) : '';
+                        $wbbm_user_flight_arrival_no = (isset($_POST['wbbm_user_flight_arrival_no'])) ? wbbm_array_strip($_POST['wbbm_user_flight_arrival_no']) : '';
+                        $wbbm_user_flight_departure_no = (isset($_POST['wbbm_user_flight_departure_no'])) ? wbbm_array_strip($_POST['wbbm_user_flight_departure_no']) : '';
+                        $bag_qty = (isset($_POST['extra_bag_quantity']) ? $_POST['extra_bag_quantity'] : 0);
+
+
+                        $count_user = count($wbbm_user_type);
+                        for ($iu = 0; $iu < $count_user; $iu++) {
+
+                            if($wbbm_user_name) {
+                                if ($wbbm_user_name[$iu] != '') :
+                                    $user[$iu]['wbbm_user_name'] = stripslashes(strip_tags($wbbm_user_name[$iu]));
+                                endif;
+                            }
+
+                            if($wbbm_user_email) {
+                                if ($wbbm_user_email[$iu] != '') :
+                                    $user[$iu]['wbbm_user_email'] = stripslashes(strip_tags($wbbm_user_email[$iu]));
+                                endif;
+                            }
+
+                            if($wbbm_user_phone) {
+                                if ($wbbm_user_phone[$iu] != '') :
+                                    $user[$iu]['wbbm_user_phone'] = stripslashes(strip_tags($wbbm_user_phone[$iu]));
+                                endif;
+                            }
+
+                            if($wbbm_user_address) {
+                                if ($wbbm_user_address[$iu] != '') :
+                                    $user[$iu]['wbbm_user_address'] = stripslashes(strip_tags($wbbm_user_address[$iu]));
+                                endif;
+                            }
+
+                            if($wbbm_user_gender) {
+                                if ($wbbm_user_gender[$iu] != '') :
+                                    $user[$iu]['wbbm_user_gender'] = stripslashes(strip_tags($wbbm_user_gender[$iu]));
+                                endif;
+                            }
+
+                            if($wbbm_user_type) {
+                                if ($wbbm_user_type[$iu] != '') :
+                                    $user[$iu]['wbbm_user_type'] = stripslashes(strip_tags($wbbm_user_type[$iu]));
+                                endif;
+                            }
+
+                            if($wbbm_user_dob) {
+                                if ($wbbm_user_dob[$iu] != '') :
+                                    $user[$iu]['wbbm_user_dob'] = stripslashes(strip_tags($wbbm_user_dob[$iu]));
+                                endif;
+                            }
+
+                            if($wbbm_user_nationality) {
+                                if ($wbbm_user_nationality[$iu] != '') :
+                                    $user[$iu]['wbbm_user_nationality'] = stripslashes(strip_tags($wbbm_user_nationality[$iu]));
+                                endif;
+                            }
+
+                            if($wbbm_user_flight_arrival_no) {
+                                if ($wbbm_user_flight_arrival_no[$iu] != '') :
+                                    $user[$iu]['wbbm_user_flight_arrival_no'] = stripslashes(strip_tags($wbbm_user_flight_arrival_no[$iu]));
+                                endif;
+                            }
+
+                            if($wbbm_user_flight_departure_no) {
+                                if ($wbbm_user_flight_departure_no[$iu] != '') :
+                                    $user[$iu]['wbbm_user_flight_departure_no'] = stripslashes(strip_tags($wbbm_user_flight_departure_no[$iu]));
+                                endif;
+                            }
+
+                            if ($bag_qty) {
+                                if ($bag_qty[$iu] != '') :
+                                    $user[$iu]['extra_bag_quantity'] = stripslashes(strip_tags($bag_qty[$iu]));
+                                    $user[$iu]['wbtm_extra_bag_price'] = (float)$extra_per_bag_price;
+
+                                    $extra_bag_price += (int) $bag_qty[$iu] * (float)$extra_per_bag_price;
+                                endif;
+                            }
+
+                            // Additional reg builder field
+                            $reg_form_arr = maybe_unserialize(get_post_meta($product_id, 'wbbm_attendee_reg_form', true));
+
+                            if (is_array($reg_form_arr) && sizeof($reg_form_arr) > 0) {
+                                foreach ($reg_form_arr as $builder) {
+                                    $custom_reg_additional[$iu][] = array(
+                                        'name' => $builder['field_label'],
+                                        'value' => (isset($_POST[$builder['field_id']][$iu]) ? $_POST[$builder['field_id']][$iu] : ''),
+                                    );
+                                }
+                            }
+
+                        }
+                    } else {
+                        // User type
+                        $r_counter = 0;
+                        for ($r = 1; $r <= $adult_seat; $r++) {
+                            $user[$r_counter]['wbbm_user_type'] = 'adult';
+                            $r_counter++;
+                        }
+
+                        for ($r = 1; $r <= $total_child_seat; $r++) {
+                            $user[$r_counter]['wbbm_user_type'] = 'child';
+                            $r_counter++;
+                        }
+
+                        for ($r = 1; $r <= $total_infant_seat; $r++) {
+                            $user[$r_counter]['wbbm_user_type'] = 'infant';
+                            $r_counter++;
+                        }
+
+                        for ($r = 1; $r <= $total_entire_seat; $r++) {
+                            $user[$r_counter]['wbbm_user_type'] = 'entire';
+                            $r_counter++;
+                        }
                     }
-                endif;
-                // Extra Service END
 
-                $total_fare = $total_fare + $es_price + $extra_bag_price;
+                    // Extra Service
+                    $extra_service_qty = isset($_POST['extra_service_qty']) ? $_POST['extra_service_qty'] : array();
+                    $extra_services = get_post_meta($bus_id, 'mep_events_extra_prices', true);
+                    $es_array = array();
+                    if(!empty($extra_services)):
+                        $c = 0;
+                        $es_price = 0;
+                        foreach ($extra_services as $field) {
+                            $es_array[$c] = array(
+                                'wbbm_es_name' => $field['option_name'],
+                                'wbbm_es_price' => (int)$field['option_price'],
+                                'wbbm_es_input_qty' => $extra_service_qty[$c][0],
+                                'wbbm_es_available_qty' => (int)$field['option_qty'],
+                            );
+                            $es_price += (int)$field['option_price'] * $extra_service_qty[$c][0];
+                            $c++;
+                        }
+                    endif;
+                    // Extra Service END
+
+                    $total_fare = $total_fare + $es_price + $extra_bag_price;
 
 
-                $cart_item_data['wbbm_start_stops'] = $start_stops;
-                $cart_item_data['wbbm_end_stops'] = $end_stops;
-                $cart_item_data['wbbm_journey_date'] = $journey_date;
-                $cart_item_data['wbbm_journey_time'] = $user_start_time;
-                $cart_item_data['wbbm_bus_time'] = $bus_start_time;
-                $cart_item_data['wbbm_total_seats'] = $total_seat;
+                    $cart_item_data['wbbm_start_stops'] = $start_stops;
+                    $cart_item_data['wbbm_end_stops'] = $end_stops;
+                    $cart_item_data['wbbm_journey_date'] = $journey_date;
+                    $cart_item_data['wbbm_journey_time'] = $user_start_time;
+                    $cart_item_data['wbbm_bus_time'] = $bus_start_time;
+                    $cart_item_data['wbbm_total_seats'] = $total_seat;
 
-                $cart_item_data['wbbm_total_adult_qt'] = $adult_seat;
-                $cart_item_data['wbbm_total_adult_price'] = $adult_fare;
-                $cart_item_data['wbbm_per_adult_price'] = $main_fare;
-                $cart_item_data['wbbm_per_adult_price_original'] = $main_fare_original;
-                $cart_item_data['wbbm_per_adult_price_roundtrip'] = $main_fare_roundtrip;
+                    $cart_item_data['wbbm_total_adult_qt'] = $adult_seat;
+                    $cart_item_data['wbbm_total_adult_price'] = $adult_fare;
+                    $cart_item_data['wbbm_per_adult_price'] = $main_fare;
+                    $cart_item_data['wbbm_per_adult_price_original'] = $main_fare_original;
+                    $cart_item_data['wbbm_per_adult_price_roundtrip'] = $main_fare_roundtrip;
 
-                $cart_item_data['wbbm_total_child_qt'] = $total_child_seat;
-                $cart_item_data['wbbm_total_child_price'] = $total_child_fare;
-                $cart_item_data['wbbm_per_child_price'] = $child_fare;
-                $cart_item_data['wbbm_per_child_price_original'] = $child_fare_original;
-                $cart_item_data['wbbm_per_child_price_roundtrip'] = $child_fare_roundtrip;
+                    $cart_item_data['wbbm_total_child_qt'] = $total_child_seat;
+                    $cart_item_data['wbbm_total_child_price'] = $total_child_fare;
+                    $cart_item_data['wbbm_per_child_price'] = $child_fare;
+                    $cart_item_data['wbbm_per_child_price_original'] = $child_fare_original;
+                    $cart_item_data['wbbm_per_child_price_roundtrip'] = $child_fare_roundtrip;
 
-                $cart_item_data['wbbm_total_infant_qt'] = $total_infant_seat;
-                $cart_item_data['wbbm_total_infant_price'] = $total_infant_fare;
-                $cart_item_data['wbbm_per_infant_price'] = $infant_fare;
-                $cart_item_data['wbbm_per_infant_price_original'] = $infant_fare_original;
-                $cart_item_data['wbbm_per_infant_price_roundtrip'] = $infant_fare_roundtrip;
+                    $cart_item_data['wbbm_total_infant_qt'] = $total_infant_seat;
+                    $cart_item_data['wbbm_total_infant_price'] = $total_infant_fare;
+                    $cart_item_data['wbbm_per_infant_price'] = $infant_fare;
+                    $cart_item_data['wbbm_per_infant_price_original'] = $infant_fare_original;
+                    $cart_item_data['wbbm_per_infant_price_roundtrip'] = $infant_fare_roundtrip;
 
-                $cart_item_data['wbbm_total_entire_qt'] = $total_entire_seat;
-                $cart_item_data['wbbm_total_entire_price'] = $total_entire_fare;
-                $cart_item_data['wbbm_per_entire_price'] = $entire_fare;
-                $cart_item_data['wbbm_per_entire_price_original'] = $entire_fare_original;
-                $cart_item_data['wbbm_per_entire_price_roundtrip'] = $entire_fare_roundtrip;
+                    $cart_item_data['wbbm_total_entire_qt'] = $total_entire_seat;
+                    $cart_item_data['wbbm_total_entire_price'] = $total_entire_fare;
+                    $cart_item_data['wbbm_per_entire_price'] = $entire_fare;
+                    $cart_item_data['wbbm_per_entire_price_original'] = $entire_fare_original;
+                    $cart_item_data['wbbm_per_entire_price_roundtrip'] = $entire_fare_roundtrip;
 
-                $cart_item_data['wbbm_passenger_info'] = $user;
-                $cart_item_data['wbbm_passenger_info_additional'] = $custom_reg_additional;
-                $cart_item_data['wbbm_extra_services'] = $es_array;
-                $cart_item_data['wbbm_tp'] = $total_fare;
-                $cart_item_data['wbbm_bus_id'] = $bus_id;
-                $cart_item_data['line_total'] = $total_fare;
-                $cart_item_data['line_subtotal'] = $total_fare;
-                $cart_item_data['quantity'] = $total_seat;
-                $cart_item_data['wbbm_id'] = $product_id;
-                $cart_item_data['is_return'] = $is_return;
-                $cart_item_data['total_fare_original'] = $total_fare_original;
-                $cart_item_data['total_fare_roundtrip'] = $total_fare_roundtrip;
-                $cart_item_data['pickpoint'] = $pickpoint;
+                    $cart_item_data['wbbm_passenger_info'] = $user;
+                    $cart_item_data['wbbm_passenger_info_additional'] = $custom_reg_additional;
+                    $cart_item_data['wbbm_extra_services'] = $es_array;
+                    $cart_item_data['wbbm_tp'] = $total_fare;
+                    $cart_item_data['wbbm_bus_id'] = $bus_id;
+                    $cart_item_data['line_total'] = $total_fare;
+                    $cart_item_data['line_subtotal'] = $total_fare;
+                    $cart_item_data['quantity'] = $total_seat;
+                    $cart_item_data['wbbm_id'] = $product_id;
+                    $cart_item_data['is_return'] = $is_return;
+                    $cart_item_data['total_fare_original'] = $total_fare_original;
+                    $cart_item_data['total_fare_roundtrip'] = $total_fare_roundtrip;
+                    $cart_item_data['pickpoint'] = $pickpoint;
 
-                return $cart_item_data;
+                    return $cart_item_data;
+                }
+
             }
 
 
