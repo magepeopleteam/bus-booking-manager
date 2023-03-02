@@ -256,16 +256,18 @@
 	});
 
 
+	$(document).on('click','#add-price-row',function (e){
+		var row = $('.empty-row-price.screen-reader-text').clone(true);
+		row.removeClass('empty-row-price screen-reader-text');
+		row.insertAfter('#repeatable-fieldset-price-one tbody>tr:last');
+		return false;
+	});
 
-
-
-
-
-
-
-
-
-
+	$(document).on('click','.remove-price-row',function (e){
+		e.preventDefault();
+		$(this).parents('tr').remove();
+		return false;
+	});
 
 
 }(jQuery));
