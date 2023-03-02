@@ -64,7 +64,7 @@
                     foreach ($wbbm_bus_bp as $field) { ?>
                         <tr>
                             <td align="center">
-                                <select name="wbbm_bus_bp_stops_name[]" class='seat_type bus_stop_add_option'>
+                                <select name="wbbm_bus_bp_stops_name[]" class='seat_type bus_stop_add_option wbbm_bus_stops_route'>
                                     <option value=""><?php _e('Please Select', 'bus-booking-manager'); ?></option>
                                     <?php foreach ($terms as $term) { ?>
                                         <option data-term_id="<?php echo $term->term_id; ?>" value="<?php echo $term->name; ?>" <?php echo ($term->name == $field['wbbm_bus_bp_stops_name'])?'Selected':'' ?>><?php echo $term->name; ?></option>
@@ -87,7 +87,7 @@
                         <!-- empty hidden one for jQuery -->
 
                         <tr class="empty-row-bp screen-reader-text">
-                            <td align="center"><?php echo wbbm_get_bus_stops_list('wbbm_bus_bp_stops_name[]','bus_stop_add_option'); ?></td>
+                            <td align="center"><?php echo wbbm_get_bus_stops_list('wbbm_bus_bp_stops_name[]','bus_stop_add_option wbbm_bus_stops_route'); ?></td>
                             <td align="center">
                                 <input type="text" data-clocklet name='wbbm_bus_bp_start_time[]' value="" class="text" placeholder="15:00">
                             </td>
@@ -122,7 +122,7 @@
                         <tr>
                             <td align="center">
 
-                                <select name="wbbm_bus_next_stops_name[]" class='seat_type bus_stop_add_option'>
+                                <select name="wbbm_bus_next_stops_name[]" class='seat_type bus_stop_add_option wbbm_bus_stops_route'>
                                     <option value=""><?php _e('Please Select', 'bus-booking-manager'); ?></option>
                                     <?php foreach ($terms as $term) {?>
                                         <option data-term_id="<?php echo $term->term_id; ?>" value="<?php echo $term->name; ?>" <?php echo ($term->name == $field['wbbm_bus_next_stops_name'])?'Selected':'' ?>><?php echo $term->name; ?></option>
@@ -145,7 +145,7 @@
                         <!-- empty hidden one for jQuery -->
                         <tr class="empty-row-faq screen-reader-text">
                             <td align="center">
-                                <?php echo wbbm_get_bus_stops_list('wbbm_bus_next_stops_name[]','bus_stop_add_option'); ?>
+                                <?php echo wbbm_get_bus_stops_list('wbbm_bus_next_stops_name[]','bus_stop_add_option wbbm_bus_stops_route'); ?>
                             </td>
                             <td align="center">
                                 <input type="text" data-clocklet name='wbbm_bus_next_end_time[]' value="" class="text" placeholder="15:00">

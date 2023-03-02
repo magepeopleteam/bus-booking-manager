@@ -150,7 +150,7 @@
 		return false;
 	});
 
-	$(document).on('click','.ra_seat_price',function (e){
+	$(document).on('change','.wbbm_bus_stops_route',function (e){
 		e.preventDefault();
 
 		var new_bus = $('#price_bus_record').val();

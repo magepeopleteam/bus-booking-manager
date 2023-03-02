@@ -3,8 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="29a3e1f8-d0e8-48c0-bae9-3edced8b8d41" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inc/clean/layout/bus_pricing.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/clean/layout/bus_pricing.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/wbbm_custom_admin_script.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/wbbm_custom_admin_script.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inc/clean/layout/bus_routing.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/clean/layout/bus_routing.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -25,14 +24,14 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -42,6 +41,7 @@
       <option name="presentableId" value="Default" />
       <updated>1677720460848</updated>
       <workItem from="1677720462271" duration="1366000" />
+      <workItem from="1677726518665" duration="1487000" />
     </task>
     <servers />
   </component>
