@@ -73,7 +73,8 @@ div.mage_group_input,
 div.mage_slide_indicator_area,
 div.mage_form_inline form.mage_form,
 ul.mage-list-double{
-    display: -webkit-flex !important;display: flex !important;
+    display: -webkit-flex !important;
+    display: flex !important;
     -webkit-flex-wrap: wrap;-ms-flex-wrap: wrap;flex-wrap: wrap;
 }
 
@@ -159,4 +160,47 @@ ul.mage_list_inline li a {
 }
 .bus-stops-left-col table tr th:nth-child(3), .bus-stops-right-col table th:nth-child(3) {
     min-width: 100px;
+}
+.single-wbbm_bus .mage_thumb{
+    text-align: center;
+    background: #fff;
+}
+.single-wbbm_bus .mage_thumb img{
+    width: auto;
+}
+.single-wbbm_bus .mage_bus_details{
+    background: #ffffff;
+}
+.single-wbbm_bus .mage_bus_info, .mage_price_info {
+    border: none;
+    padding: 20px;
+    margin: 0 0 0 15px;
+    background: #fff;
+}
+.single-wbbm_bus .mage_bus_details{
+    border-left: 3px dashed #d3d3d3;
+}
+
+
+.single-wbbm_bus .mage_container.bus_detail{
+    padding: 15px 0px;
+}
+
+@media only screen and (max-width: 750px) {
+    .single-wbbm_bus [class^="mage"] div[class*="flex"], .single-wbbm_bus [class^="mage"] [class*="flex"]{
+        display: inherit !important;
+        -webkit-flex-wrap: wrap;
+        -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+    }
+    .single-wbbm_bus .mage_flex_equal{
+        background: #ffffff;
+    }
+    .single-wbbm_bus .mage_bus_details {
+        border-left: none;
+    }
+    .single-wbbm_bus .mage_thumb{
+        width: auto;
+    }
+
 }

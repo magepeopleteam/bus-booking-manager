@@ -77,13 +77,26 @@ endif;
 // End Off dates
 
 ?>
-    <div class="mage_container">
+    <div class="mage_container bus_detail">
         <?php do_action( 'wbbm_before_single_product' ); ?>
         <?php do_action( 'woocommerce_before_single_product' ); ?>
         <div class="mage_search_list <?php echo $in_cart ? 'booked' : ''; ?>" data-seat-available="<?php echo $available_seat; ?>">
             <form action="" method="post">
                 <div class="mage_flex_equal xs_not_flex">
-                    <div class="mage_thumb"><?php the_post_thumbnail('full'); ?></div>
+                    <div class="mage_thumb">
+
+                        <?php
+
+                        if(has_post_thumbnail()) {
+                            the_post_thumbnail('full');
+                        } else {
+                            echo '<img src="'.PLUGIN_ROOT. '/images/bus-placeholder.png'.'" loading="lazy" />';
+                        }
+
+                        ?>
+
+
+                    </div>
                     <div class="mage_bus_details">
                         <div class="mage_bus_info">
                             <h3><?php the_title(); ?></h3>
