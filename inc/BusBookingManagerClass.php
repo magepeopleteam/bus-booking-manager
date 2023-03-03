@@ -9,12 +9,15 @@ class BusBookingManagerClass
 
         $this->define_all_hooks();
         $this->define_all_filters();
+        $this->define_all_shortcode();
 
     }
 
 
     private function load_dependencies() {
         require_once plugin_dir_path( dirname( __FILE__ ) ) . 'inc/CommonClass.php';
+        require_once plugin_dir_path( dirname( __FILE__ ) ) . 'inc/SearchClass.php';
+        require_once plugin_dir_path( dirname( __FILE__ ) ) . 'inc/ShortCodeClass.php';
         require_once plugin_dir_path( dirname( __FILE__ ) ) . 'inc/FilterClass.php';
         require_once plugin_dir_path( dirname( __FILE__ ) ) . 'inc/NextDateClass.php';
         require_once plugin_dir_path( dirname( __FILE__ ) ) . 'inc/AdminMetaBoxClass.php';
@@ -38,6 +41,15 @@ class BusBookingManagerClass
         add_filter('single_template',array($FilterClass, 'wbbm_load_bus_templates'), 20, 2);
         add_filter('woocommerce_add_cart_item_data', array($FilterClass, 'wbbm_add_custom_fields_text_to_cart_item'), 20, 2);
         add_filter('woocommerce_get_item_data', array($FilterClass, 'wbbm_display_custom_fields_text_cart'), 20, 2);
+
+    }
+
+    private function define_all_shortcode() {
+
+        $ShortCodeClass = new ShortCodeClass();
+
+        //add_shortcode('bus-search-form', array($ShortCodeClass, 'mage_bus_search_form'));
+        //add_shortcode('bus-search', array($ShortCodeClass, 'mage_bus_search'));
 
     }
 

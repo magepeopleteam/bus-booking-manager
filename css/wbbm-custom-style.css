@@ -73,7 +73,8 @@ div.mage_group_input,
 div.mage_slide_indicator_area,
 div.mage_form_inline form.mage_form,
 ul.mage-list-double{
-    display: -webkit-flex !important;display: flex !important;
+    display: -webkit-flex !important;
+    display: flex !important;
     -webkit-flex-wrap: wrap;-ms-flex-wrap: wrap;flex-wrap: wrap;
 }
 
@@ -178,4 +179,28 @@ ul.mage_list_inline li a {
 }
 .single-wbbm_bus .mage_bus_details{
     border-left: 3px dashed #d3d3d3;
+}
+
+
+.single-wbbm_bus .mage_container.bus_detail{
+    padding: 15px 0px;
+}
+
+@media only screen and (max-width: 750px) {
+    .single-wbbm_bus [class^="mage"] div[class*="flex"], .single-wbbm_bus [class^="mage"] [class*="flex"]{
+        display: inherit !important;
+        -webkit-flex-wrap: wrap;
+        -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+    }
+    .single-wbbm_bus .mage_flex_equal{
+        background: #ffffff;
+    }
+    .single-wbbm_bus .mage_bus_details {
+        border-left: none;
+    }
+    .single-wbbm_bus .mage_thumb{
+        width: auto;
+    }
+
 }

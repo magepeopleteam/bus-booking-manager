@@ -70,7 +70,7 @@ function mage_search_list()
         <div class="mage-search-res-wrapper">
             <?php if ($mage_bus_search_theme == 'minimal') { ?>
                 <div class="mage-search-res-header">
-                    <div class="mage-search-res-header--img bnnnn">
+                    <div class="mage-search-res-header--img">
                         <span><?php echo wbbm_get_option('wbbm_bus_image_text', 'wbbm_label_setting_sec', __('Bus Image', 'bus-booking-manager')); ?></span>
                     </div>
                     <div class="mage-search-res-header--left">

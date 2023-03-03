@@ -77,7 +77,7 @@ endif;
 // End Off dates
 
 ?>
-    <div class="mage_container">
+    <div class="mage_container bus_detail">
         <?php do_action( 'wbbm_before_single_product' ); ?>
         <?php do_action( 'woocommerce_before_single_product' ); ?>
         <div class="mage_search_list <?php echo $in_cart ? 'booked' : ''; ?>" data-seat-available="<?php echo $available_seat; ?>">
