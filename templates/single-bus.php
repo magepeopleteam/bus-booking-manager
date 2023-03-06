@@ -34,8 +34,9 @@ $seat_price_entire = mage_seat_price($id, $boarding, $dropping, 'entire');
 
 $boarding_time = get_wbbm_datetime(boarding_dropping_time(false, $return),'time');
 $dropping_time = get_wbbm_datetime(boarding_dropping_time(true, $return),'time');
-$odd_list = mage_odd_list_check(false);
-$off_day = mage_off_day_check(false);
+$show_off_day = get_post_meta(get_the_ID(), 'show_off_day', true) ?: 'no';
+$odd_list = $show_off_day === 'yes' ? mage_odd_list_check(false) : true;
+$off_day = $show_off_day === 'yes' ? mage_off_day_check(false) : false;
 $is_sell_off = get_post_meta($id, 'wbbm_sell_off', true);
 $seat_available = get_post_meta($id, 'wbbm_seat_available', true);
 $total_seat = get_post_meta(get_the_id(), 'wbbm_total_seat', true);
@@ -54,7 +55,7 @@ $entire_bus_booking = wbbm_get_option('wbbm_entire_bus_booking_switch', 'wbbm_ge
 $off_day_sche       = get_post_meta($id, 'wbtm_offday_schedule',true);
 $all_off_dates      = array();
 $off_date_status    =  false;
-if(! empty($off_day_sche)):
+if(! empty($off_day_sche) && $show_off_day === 'yes'):
     foreach ($off_day_sche as $off_day_sch) {
 
         $begin      = new DateTime($off_day_sch['from_date']);
@@ -110,7 +111,7 @@ endif;
                                 <strong><?php echo wbbm_get_option('wbbm_bus_no_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_bus_no_text', 'wbbm_label_setting_sec') : _e('Bus No', 'bus-booking-manager'); echo ':'; ?></strong>
                                 <?php echo get_post_meta(get_the_id(), 'wbbm_bus_no', true); ?>
                             </p>
-                            <?php if (($seat_price_adult > 0 || $is_price_zero_allow == 'on') && $odd_list && $off_day) { ?>
+                            <?php if (($seat_price_adult > 0 || $is_price_zero_allow == 'on') && $odd_list && !$off_day) { ?>
                                 <p>
                                     <strong><?php echo wbbm_get_option('wbbm_boarding_points_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_boarding_points_text', 'wbbm_label_setting_sec') : _e('Boarding', 'bus-booking-manager'); echo ':'; ?></strong>
                                     <?php echo $boarding; ?>
@@ -127,7 +128,7 @@ endif;
                                 <?php echo get_post_meta(get_the_id(), 'wbbm_total_seat', true); ?>
                             </p>
 
-                            <?php if (($seat_price_adult > 0 || $is_price_zero_allow == 'on') && $odd_list && $off_day && ($off_date_status == false)) { ?>
+                            <?php if (($seat_price_adult > 0 || $is_price_zero_allow == 'on') && $odd_list && !$off_day && ($off_date_status == false)) { ?>
                                 <?php if( $is_sell_off != 'on' ) : ?>
                                     <?php if($seat_available && $seat_available == 'on') : ?>
                                         <p>
@@ -324,7 +325,7 @@ endif;
                             }
 
                             // Check Offday and date
-                            if (!$offday_current_bus && mage_off_day_check($return)) {
+                            if (!$offday_current_bus && !mage_off_day_check($return)) {
                                 mage_book_now_area($available_seat);
                             }
                         }

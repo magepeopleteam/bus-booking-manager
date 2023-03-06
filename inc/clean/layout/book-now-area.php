@@ -21,7 +21,7 @@
         </div>
         <div class="mage_flex_equal">
             <div class="mage_sub_price">
-                <div class="mage_sub_total"><div><?php echo wbbm_get_option('wbbm_sub_total_text', 'wbbm_label_setting_sec',__('Sub Total', 'bus-booking-manager')); echo ':'; ?></div><div><strong><?php if($currency_pos=="left"){ echo get_woocommerce_currency_symbol(); } ?><span class="mage_subtotal_figure">0<?php //echo wc_price(0); ?><?php if($currency_pos=="right"){ echo get_woocommerce_currency_symbol(); } ?></span></strong></div></div>
+                <div class="mage_sub_total"><div><?php echo wbbm_get_option('wbbm_sub_total_text', 'wbbm_label_setting_sec',__('Sub Total', 'bus-booking-manager')); echo ':'; ?></div> <span class="mage_subtotal_figure">0</span> </div>
             </div>
             <?php if( $is_sell_off != 'on' ) : 
                 

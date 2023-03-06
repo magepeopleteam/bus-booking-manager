@@ -1072,6 +1072,11 @@ input#j_date{width: auto;}
     display: flex;
     border: 1px solid #d3d3d3;
     margin-bottom: 10px;
+    align-items: center;
+}
+
+.mage_search_list .mage_book_now_area .mage_sub_total .mage_subtotal_figure {
+    margin-left: 5px;
 }
 
 .mage_search_list .mage_book_now_area .mage_sub_total div {

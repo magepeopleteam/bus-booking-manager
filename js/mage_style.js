@@ -205,6 +205,48 @@
     }, '.mage-bus-detail-action');
     // Minimul Design Script END
 
+    $(document).ready(function() {
+        $('.wbbm_entire_switch_wrapper #wbbm_entire_bus').click(function (e) {
+            const $this = $(this);
+            const priceInfoEl = $this.parents('.mage_search_list');
+            const price = priceInfoEl.find('.wbbm_entire_switch_wrapper').attr('data-entire-price')
+            if($(this)[0].hasAttribute('checked')){
+                $(this).attr('checked',false);
+                priceInfoEl.find('.mage_sub_total span').html('0');
+                // $('.mage_sub_total strong span').html('0');
+                $(this).val('0');
+                $('input[name=adult_quantity]').closest('.mage_center_space').show();
+                $('input[name=child_quantity]').closest('.mage_center_space').show();
+                $('input[name=infant_quantity]').closest('.mage_center_space').show();
+                $('div.entire').hide();   
+            }
+            else{
+                $(this).attr('checked',true);
+                priceInfoEl.find('.mage_sub_total span').html(wbbm_woo_price_format(price));
+                $(this).val('1');
+                $('input[name=adult_quantity]').closest('.mage_center_space').hide();
+                $('input[name=child_quantity]').closest('.mage_center_space').hide();
+                $('input[name=infant_quantity]').closest('.mage_center_space').hide();
+
+                priceInfoEl.find('.mage_seat_qty').val(0);
+                const infoArea = priceInfoEl.find('.mage_customer_info_area');
+                infoArea.find('.adult').empty().hide();
+                infoArea.find('.child').empty().hide();
+                infoArea.find('.infant').empty().hide();
+                let passenger_info_title = $('#wbbm_entire_bus').attr('data-ticket-title');
+                
+                let passenger_info_form = $('.mage_hidden_customer_info_form').html();
+                $('div.entire').html(passenger_info_form);
+                let passenger_info_user_type = $('div.entire .mage_form_list input[name="wbbm_user_type[]"]');
+                $('div.entire .mage_form_list .mage_form_list_title h4').html(passenger_info_title);
+                $(passenger_info_user_type).val('entire');
+                $('div.entire .mage_form_list').show();
+                $('div.entire').show();
+            }
+                  
+        });
+    })
+
     function mage_bus_dropping_point(target) {
         if (target.parents().hasClass('mage_bus_boarding_point')) {
             var boarding_point = target.attr('data-route');
@@ -322,7 +364,7 @@
             subTotal = subTotal + (extBagUnitPrice * extQty > 0 ? extBagUnitPrice * extQty : 0);
         })
         // Ext Bag Price END
-        currentTarget.find('.mage_sub_total span').html(subTotal);
+        currentTarget.find('.mage_sub_total span').html(wbbm_woo_price_format(subTotal));
         mageCustomerInfoForm(currentTarget);
     }
 
