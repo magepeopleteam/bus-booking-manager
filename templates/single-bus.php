@@ -43,8 +43,9 @@ $total_seat = get_post_meta(get_the_id(), 'wbbm_total_seat', true);
 $c_time = current_time( 'timestamp' );
 $is_on_date = false;
 $bus_on_dates = array();
+$show_operational_on_day = get_post_meta($id, 'show_operational_on_day', true) ?: 'no';
 $bus_on_date = get_post_meta($id, 'wbtm_bus_on_date', true);
-if( $bus_on_date != null ) {
+if( $bus_on_date != null && $show_operational_on_day === 'yes') {
     $bus_on_dates = explode( ', ', $bus_on_date );
     $is_on_date = true;
 }
