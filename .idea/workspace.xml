@@ -3,11 +3,9 @@
   <component name="ChangeListManager">
     <list default="true" id="29a3e1f8-d0e8-48c0-bae9-3edced8b8d41" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/css/wbbm-custom-style.css" beforeDir="false" afterPath="$PROJECT_DIR$/css/wbbm-custom-style.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inc/BusBookingManagerClass.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/BusBookingManagerClass.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inc/clean/layout/search-list.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/clean/layout/search-list.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inc/wbbm_enque.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/wbbm_enque.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/single-bus.php" beforeDir="false" afterPath="$PROJECT_DIR$/templates/single-bus.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inc/clean/layout/bus_pricing.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/clean/layout/bus_pricing.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inc/wbbm_admin_settings.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/wbbm_admin_settings.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/js/wbbm_custom_admin_script.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/wbbm_custom_admin_script.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

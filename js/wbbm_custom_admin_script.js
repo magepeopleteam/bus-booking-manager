@@ -150,10 +150,13 @@
 		return false;
 	});
 
+	/*seat pricing start*/
+
 	$(document).on('change','.wbbm_bus_stops_route',function (e){
 		e.preventDefault();
 
 		var new_bus = $('#price_bus_record').val();
+		var discount_price_switch = $('#discount_price_switch').val();
 
 		if(new_bus==''){
 			var route_row = '';
@@ -168,20 +171,39 @@
 							let term_id = $(this).find(':selected').data('term_id');
 							if(term_id){
 								var dropping_point = $(this).find(":selected").val();
-								route_row += '<tr class="temprary-record-price"><td>'+boarding_point+'</td><td>'+dropping_point+'</td><td class="wbbm-price-col">\n' +
-									'                    <input step="0.01" type="number" name="wbbm_bus_price[]" value="" class="text">\n' +
-									'                    <input type="hidden" name="wbbm_bus_bp_price_stop[]" value="'+boarding_point+'" class="text">\n' +
-									'                    <input type="hidden" name="wbbm_bus_dp_price_stop[]" value="'+dropping_point+'" class="text">\n' +
-									'                    <input step="0.01" type="number" name="wbbm_bus_price_roundtrip[]" placeholder="Adult return discount price" value="" class="text roundtrip-input">\n' +
-									'                </td><td class="wbbm-price-col">\n' +
-									'                    <input step="0.01" type="number" name="wbbm_bus_price_child[]" value="" class="text">\n' +
-									'                    <input step="0.01" type="number" name="wbbm_bus_price_child_roundtrip[]" placeholder="Child return discount price" value="" class="text roundtrip-input">\n' +
-									'                </td><td class="wbbm-price-col">\n' +
-									'                    <input step="0.01" type="number" name="wbbm_bus_price_infant[]" value="" class="text">\n' +
-									'                    <input step="0.01" type="number" name="wbbm_bus_price_infant_roundtrip[]" placeholder="Infant return discount price" value="" class="text roundtrip-input">\n' +
-									'                </td><td class="wbbm-price-col"><a class="button remove-price-row" href="#"><i class="fas fa-minus-circle"></i>\n' +
-									'                        Remove</a>\n' +
-									'                </td></tr>';
+
+								if(discount_price_switch=='on'){
+									route_row += '<tr class="temprary-record-price"><td>'+boarding_point+'</td><td>'+dropping_point+'</td><td class="wbbm-price-col">\n' +
+										'                    <input step="0.01" type="number" name="wbbm_bus_price[]" value="" class="text">\n' +
+										'                    <input type="hidden" name="wbbm_bus_bp_price_stop[]" value="'+boarding_point+'" class="text">\n' +
+										'                    <input type="hidden" name="wbbm_bus_dp_price_stop[]" value="'+dropping_point+'" class="text">\n' +
+										'                    <input step="0.01" type="number" name="wbbm_bus_price_roundtrip[]" placeholder="Adult return discount price" value="" class="text roundtrip-input">\n' +
+										'                </td><td class="wbbm-price-col">\n' +
+										'                    <input step="0.01" type="number" name="wbbm_bus_price_child[]" value="" class="text">\n' +
+										'                    <input step="0.01" type="number" name="wbbm_bus_price_child_roundtrip[]" placeholder="Child return discount price" value="" class="text roundtrip-input">\n' +
+										'                </td><td class="wbbm-price-col">\n' +
+										'                    <input step="0.01" type="number" name="wbbm_bus_price_infant[]" value="" class="text">\n' +
+										'                    <input step="0.01" type="number" name="wbbm_bus_price_infant_roundtrip[]" placeholder="Infant return discount price" value="" class="text roundtrip-input">\n' +
+										'                </td><td class="wbbm-price-col"><a class="button remove-price-row" href="#"><i class="fas fa-minus-circle"></i>\n' +
+										'                        Remove</a>\n' +
+										'                </td></tr>';
+								}else{
+									route_row += '<tr class="temprary-record-price"><td>'+boarding_point+'</td><td>'+dropping_point+'</td><td class="wbbm-price-col">\n' +
+										'                    <input step="0.01" type="number" name="wbbm_bus_price[]" value="" class="text">\n' +
+										'                    <input type="hidden" name="wbbm_bus_bp_price_stop[]" value="'+boarding_point+'" class="text">\n' +
+										'                    <input type="hidden" name="wbbm_bus_dp_price_stop[]" value="'+dropping_point+'" class="text">\n' +
+										'                </td><td class="wbbm-price-col">\n' +
+										'                    <input step="0.01" type="number" name="wbbm_bus_price_child[]" value="" class="text">\n' +
+										'                </td><td class="wbbm-price-col">\n' +
+										'                    <input step="0.01" type="number" name="wbbm_bus_price_infant[]" value="" class="text">\n' +
+										'                </td><td class="wbbm-price-col"><a class="button remove-price-row" href="#"><i class="fas fa-minus-circle"></i>\n' +
+										'                        Remove</a>\n' +
+										'                </td></tr>';
+								}
+
+
+
+
 							}
 						}
 						j++;
@@ -226,8 +248,21 @@
 		$( this ).even().removeClass( "ra_bus_dp_price_stop" );
 	});
 
+	$(document).on('click','#add-price-row',function (e){
+		var row = $('.empty-row-price.screen-reader-text').clone(true);
+		row.removeClass('empty-row-price screen-reader-text');
+		row.insertAfter('#repeatable-fieldset-price-one tbody>tr:last');
+		return false;
+	});
+
+	$(document).on('click','.remove-price-row',function (e){
+		e.preventDefault();
+		$(this).parents('tr').remove();
+		return false;
+	});
 
 
+	/*seat pricing end*/
 
 	$(document).on('click','.ra_pickuppoint_tab',function (e){
 		e.preventDefault();
@@ -256,18 +291,7 @@
 	});
 
 
-	$(document).on('click','#add-price-row',function (e){
-		var row = $('.empty-row-price.screen-reader-text').clone(true);
-		row.removeClass('empty-row-price screen-reader-text');
-		row.insertAfter('#repeatable-fieldset-price-one tbody>tr:last');
-		return false;
-	});
 
-	$(document).on('click','.remove-price-row',function (e){
-		e.preventDefault();
-		$(this).parents('tr').remove();
-		return false;
-	});
 
 
 }(jQuery));
