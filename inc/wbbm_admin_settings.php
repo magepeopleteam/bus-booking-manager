@@ -99,9 +99,9 @@ class MAGE_WBBM_Setting_Controls {
                     )
                 ),
                 array(
-                    'name' => 'wbbm_entire_bus_booking_switch',
-                    'label' => __( 'On/Off Entire Bus Booking Type', 'bus-booking-manager' ),
-                    'desc' => __( 'Enable/Disable entire bus booking.', 'bus-booking-manager' ),
+                    'name' => 'discount_price_switch',
+                    'label' => __( 'On/Off Discount Price', 'bus-booking-manager' ),
+                    'desc' => __( 'Enable/Disable discount price in seat pricing.', 'bus-booking-manager' ),
                     'type' => 'select',
                     'default' => 'off',
                     'options' => array(
