@@ -161,23 +161,23 @@
         <label><?php echo $cpt_label.' '.__('Offdays:', 'bus-booking-manager'); ?></label>
         <div class='sec offday-sec'>
             <label for='sun'>
-                <input type="checkbox" style="text-align: left;width: auto;" name="weekly_offday[]" value='0' id='fri' <?php echo ((in_array(0, $weekly_offday))?'Checked':'') ?>>
+                <input type="checkbox" style="text-align: left;width: auto;" name="weekly_offday[]" value='7' id='sun' <?php echo ((in_array(7, $weekly_offday))?'Checked':'') ?>>
                 <?php _e('Sunday', 'bus-booking-manager'); ?>
             </label>
             <label for='mon'>
-                <input type="checkbox" style="text-align: left;width: auto;" name="weekly_offday[]" value='1' id='fri' <?php echo ((in_array(1, $weekly_offday))?'Checked':'') ?>>
+                <input type="checkbox" style="text-align: left;width: auto;" name="weekly_offday[]" value='1' id='mon' <?php echo ((in_array(1, $weekly_offday))?'Checked':'') ?>>
                 <?php _e('Monday', 'bus-booking-manager'); ?>
             </label>
             <label for='tue'>
-                <input type="checkbox" style="text-align: left;width: auto;" name="weekly_offday[]" value='2' id='fri' <?php echo ((in_array(2, $weekly_offday))?'Checked':'') ?>>
+                <input type="checkbox" style="text-align: left;width: auto;" name="weekly_offday[]" value='2' id='tue' <?php echo ((in_array(2, $weekly_offday))?'Checked':'') ?>>
                 <?php _e('Tuesday', 'bus-booking-manager'); ?>
             </label>
             <label for='wed'>
-                <input type="checkbox" style="text-align: left;width: auto;" name="weekly_offday[]" value='3' id='fri' <?php echo ((in_array(3, $weekly_offday))?'Checked':'') ?>>
+                <input type="checkbox" style="text-align: left;width: auto;" name="weekly_offday[]" value='3' id='wed' <?php echo ((in_array(3, $weekly_offday))?'Checked':'') ?>>
                 <?php _e('Wednesday', 'bus-booking-manager'); ?>
             </label>
             <label for='thu'>
-                <input type="checkbox" style="text-align: left;width: auto;" name="weekly_offday[]" value='4' id='fri' <?php echo ((in_array(4, $weekly_offday))?'Checked':'') ?>>
+                <input type="checkbox" style="text-align: left;width: auto;" name="weekly_offday[]" value='4' id='thu' <?php echo ((in_array(4, $weekly_offday))?'Checked':'') ?>>
                 <?php _e('Thursday', 'bus-booking-manager'); ?>
             </label>
             <label for='fri'>
@@ -185,7 +185,7 @@
                 <?php _e('Friday', 'bus-booking-manager'); ?>
             </label>
             <label for='sat'>
-                <input type="checkbox" style="text-align: left;width: auto;" name="weekly_offday[]" value='6' id='fri' <?php echo ((in_array(6, $weekly_offday))?'Checked':'') ?>>
+                <input type="checkbox" style="text-align: left;width: auto;" name="weekly_offday[]" value='6' id='sat' <?php echo ((in_array(6, $weekly_offday))?'Checked':'') ?>>
                 <?php _e('Saturday', 'bus-booking-manager'); ?>
             </label>
         </div>

@@ -116,7 +116,12 @@ function mage_search_bus_list($return){
                     }
 
                     // Check Offday and date
-                    if(!$offday_current_bus && mage_off_day_check($return)) {
+                    $show_off_day = get_post_meta(get_the_ID(), 'show_off_day', true) ?: 'no';
+                    if($show_off_day === 'yes') {
+                        if( (!$offday_current_bus && !mage_off_day_check($return)) ) {
+                            mage_search_item($return);
+                        }
+                    } else {
                         mage_search_item($return);
                     }
 

@@ -47,7 +47,7 @@ function wbbm_entire_switch($price,$name, $return){
             $ticket_type = 'entire';
         }   
     ?>
-    <div class="wbbm_entire_switch_wrapper">
+    <div class="wbbm_entire_switch_wrapper" data-entire-price="<?php echo $price; ?>">
     <label class="switch">
         <input  type="checkbox" 
                 id="wbbm_entire_bus" 
@@ -61,41 +61,6 @@ function wbbm_entire_switch($price,$name, $return){
         <span class="slider round"></span>
     </label>
     </div>
-    <script>
-    jQuery(document).ready(function(){
-    jQuery('.wbbm_entire_switch_wrapper #wbbm_entire_bus').click(function (e) {
-        
-        if(jQuery(this)[0].hasAttribute('checked')){
-            jQuery(this).attr('checked',false);
-            jQuery('.mage_sub_total strong span').html('0');
-            jQuery(this).val('0');
-            jQuery('input[name=adult_quantity]').closest('.mage_center_space').show();
-            jQuery('input[name=child_quantity]').closest('.mage_center_space').show();
-            jQuery('input[name=infant_quantity]').closest('.mage_center_space').show();
-            jQuery('div.entire').hide();   
-        }
-        else{
-            jQuery(this).attr('checked',true);
-            jQuery('.mage_sub_total strong span').html(<?php echo $price; ?>);
-            jQuery(this).val('1');
-            jQuery('input[name=adult_quantity]').closest('.mage_center_space').hide();
-            jQuery('input[name=child_quantity]').closest('.mage_center_space').hide();
-            jQuery('input[name=infant_quantity]').closest('.mage_center_space').hide();
-            let passenger_info_title = jQuery('#wbbm_entire_bus').attr('data-ticket-title');
-            
-            let passenger_info_form = jQuery('.mage_hidden_customer_info_form').html();
-            jQuery('div.entire').html(passenger_info_form);
-            let passenger_info_user_type = jQuery('div.entire .mage_form_list input[name="wbbm_user_type[]"]');
-            jQuery('div.entire .mage_form_list .mage_form_list_title h4').html(passenger_info_title);
-            jQuery(passenger_info_user_type).val('entire');
-            jQuery('div.entire .mage_form_list').show();
-            jQuery('div.entire').show();
-        }
-              
-    });
-
-    });
-    </script>
     <?php
 }
 
@@ -202,8 +167,36 @@ function mage_odd_list_check($return) {
 
 //off day check
 function mage_off_day_check($return) {
-    $current_day = 'od_' . date('D', strtotime($return ? mage_wp_date(mage_get_isset('r_date')) : mage_wp_date(mage_get_isset('j_date'))));
-    return get_post_meta(get_the_id(), $current_day, true) == 'yes' ? false : true;
+    // $current_day = 'od_' . date('D', strtotime($return ? mage_wp_date(mage_get_isset('r_date')) : mage_wp_date(mage_get_isset('j_date'))));
+    // return get_post_meta(get_the_id(), $current_day, true) == 'yes' ? false : true;
+
+    $get_day = null;
+    $id = get_the_ID();
+    $j_date = $return ? mage_wp_date(mage_get_isset('r_date'), 'Y-m-d') : mage_wp_date(mage_get_isset('j_date'), 'Y-m-d');
+    
+    $weekly_offday = get_post_meta($id, 'weekly_offday', true) ?: array();
+    if ($j_date) {
+        if ($return) {
+            $weekly_offday = get_post_meta($id, 'weekly_offday_return', true) ?: array();
+            $j_date_day = strtolower(date('N', strtotime($j_date)));
+            if (in_array($j_date_day, $weekly_offday)) {
+                $get_day = 'yes';
+            }
+        } else {
+            $j_date_day = strtolower(date('N', strtotime($j_date)));
+            if (in_array($j_date_day, $weekly_offday)) {
+                $get_day = 'yes';
+            }
+        }
+
+        if ($get_day == 'yes') {
+            return true;
+        } else {
+            return false;
+        }
+    } else {
+        return false;
+    }
 }
 
 //check already in cart

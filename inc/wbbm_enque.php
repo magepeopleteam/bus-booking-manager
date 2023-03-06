@@ -70,18 +70,19 @@ function wbbm_admin_footer_script(){
             <?php
             if (is_single()) {
 
-            $wbtm_bus_on_dates = get_post_meta($post->ID, 'wbtm_bus_on_date', true) ? maybe_unserialize(get_post_meta($post->ID, 'wbtm_bus_on_date', true)) : [];
             $wbtm_offday_schedules = get_post_meta($post->ID, 'wbtm_offday_schedule', true)?get_post_meta($post->ID, 'wbtm_offday_schedule', true):[];
 
-
-            if ($wbtm_bus_on_dates) {
+            $show_operational_on_day = get_post_meta($post->ID, 'show_operational_on_day', true) ?: 'no';
+            $wbtm_bus_on_dates = get_post_meta($post->ID, 'wbtm_bus_on_date', true) ? maybe_unserialize(get_post_meta($post->ID, 'wbtm_bus_on_date', true)) : [];
+            echo 'var enableDates = [];';
+            if ($wbtm_bus_on_dates && $show_operational_on_day === 'yes') {
                 $wbtm_bus_on_dates_arr = explode(',',$wbtm_bus_on_dates);
                 $onday = array();
                 foreach ($wbtm_bus_on_dates_arr as $ondate) {
                     $onday[] = '"' . date('d-m-Y', strtotime($ondate)) . '"';
                 }
                 $on_particular_date = implode(',', $onday);
-                echo 'var enableDates = [' . $on_particular_date . '];';
+                echo 'enableDates = [' . $on_particular_date . '];';
             ?>
 
 
@@ -104,25 +105,31 @@ function wbbm_admin_footer_script(){
             <?php } elseif($wbtm_offday_schedules) {
 
 
-
+            $show_off_day = get_post_meta(get_the_ID(), 'show_off_day', true) ?: 'no';
             $alloffdays = array();
-            foreach ($wbtm_offday_schedules as $wbtm_offday_schedule){
-                $alloffdays =  array_unique( array_merge( $alloffdays ,displayDates($wbtm_offday_schedule['from_date'], $wbtm_offday_schedule['to_date'])) ); ;
+            $weekly_offday = array();
+            echo 'var off_particular_date = [];';
+            echo 'var weekly_offday = [];';
+            if($show_off_day === 'yes') {
+                foreach ($wbtm_offday_schedules as $wbtm_offday_schedule){
+                    $alloffdays =  array_unique( array_merge( $alloffdays ,displayDates($wbtm_offday_schedule['from_date'], $wbtm_offday_schedule['to_date'])) ); ;
+                }
+    
+                $offday = array();
+                foreach ($alloffdays as $alloffday) {
+                    $offday[] = '"' . date('d-m-Y', strtotime($alloffday)) . '"';
+                }
+                $off_particular_date = implode(',', $offday);
+    
+                echo 'off_particular_date = [' . $off_particular_date . '];';
+    
+                $weekly_offday = get_post_meta(get_the_id(), 'weekly_offday', true) ?: [];
+                $weekly_offday = str_replace(7, 0, $weekly_offday);
+    
+                $weekly_offday = implode(', ', $weekly_offday);
+    
+                echo 'weekly_offday = [' . $weekly_offday . '];';
             }
-
-            $offday = array();
-            foreach ($alloffdays as $alloffday) {
-                $offday[] = '"' . date('d-m-Y', strtotime($alloffday)) . '"';
-            }
-            $off_particular_date = implode(',', $offday);
-
-            echo 'var off_particular_date = [' . $off_particular_date . '];';
-
-            $weekly_offday = get_post_meta(get_the_id(), 'weekly_offday', true) ? get_post_meta(get_the_id(), 'weekly_offday', true) : [];;
-
-            $weekly_offday = implode(', ', $weekly_offday);
-
-            echo 'var weekly_offday = [' . $weekly_offday . '];';
 
 
 
@@ -259,6 +266,32 @@ function wbbm_ajax_url() {
     ?>
     <script type="text/javascript">
         var wbtm_ajaxurl = "<?php echo admin_url('admin-ajax.php'); ?>";
+        const wbbm_currency_symbol = "<?php echo html_entity_decode(get_woocommerce_currency_symbol()); ?>";
+        const wbbm_currency_position = "<?php echo get_option('woocommerce_currency_pos'); ?>";
+        const wbbm_currency_decimal = "<?php echo wc_get_price_decimal_separator(); ?>";
+        const wbbm_currency_thousands_separator = "<?php echo wc_get_price_thousand_separator(); ?>";
+        const wbbm_num_of_decimal = "<?php echo get_option('woocommerce_price_num_decimals', 2); ?>";
+
+        // currency format according to WooCommerce setting
+        function wbbm_woo_price_format(price) {
+            if (typeof price === 'string') {
+                price = Number(price);
+            }
+            price = price.toFixed(2);
+            // price = price.toString();
+            // price = price.toFixed(wbbm_num_of_decimal);
+            let price_text = '';
+            if (wbbm_currency_position === 'right') {
+                price_text = price + wbbm_currency_symbol;
+            } else if (wbbm_currency_position === 'right_space') {
+                price_text = price + ' ' + wbbm_currency_symbol;
+            } else if (wbbm_currency_position === 'left') {
+                price_text = wbbm_currency_symbol + price;
+            } else {
+                price_text = wbbm_currency_symbol + ' ' + price;
+            }
+            return price_text;
+        }
     </script>
     <?php
 }
