@@ -49,9 +49,10 @@ function mage_search_bus_list($return){
         $start = $return?'bus_end_route':'bus_start_route';
         $end = $return?'bus_start_route':'bus_end_route';
         $loop = new WP_Query(mage_bus_list_query($start,$end));
+        $has_bus = false;
         if($loop->post_count == 0){
             ?>
-            <div class='wbbm_error' style='text-align:center'>
+            <div class='wbbm_error' style='text-align:center;padding: 10px;color: red;'>
                 <span><?php _e('Sorry, No Bus Found','bus-booking-manager'); ?></span>
             </div>
             <?php
@@ -62,7 +63,6 @@ function mage_search_bus_list($return){
 
             while ($loop->have_posts()) {
                 $loop->the_post();
-
                 $bus_stops_times = get_post_meta(get_the_ID(), 'wbbm_bus_bp_stops', true);
                 $start_time = '';
                 foreach($bus_stops_times as $stop) {
@@ -81,19 +81,13 @@ function mage_search_bus_list($return){
                 $bus_on_dates = array();
                 $show_operational_on_day = get_post_meta(get_the_ID(), 'show_operational_on_day', true) ?: 'no';
                 $bus_on_date = get_post_meta(get_the_ID(), 'wbtm_bus_on_date', true);
-                if( $bus_on_date != null && $show_operational_on_day === 'yes') {
+                if($show_operational_on_day === 'yes' && $bus_on_dates) {
                     $bus_on_dates = explode( ', ', $bus_on_date );
-                    $is_on_date = true;
-                }
-
-                if( $is_on_date ) {
-                    // echo $j_date;
-                    // echo '<pre>';print_r($bus_on_dates);
                     if( in_array( $j_date, $bus_on_dates ) ) {
+                        $has_bus = true;
                         mage_search_item($return);
                     }
                 } else {
-
                     // Offday schedule check
                     $bus_offday_schedules = get_post_meta(get_the_ID(), 'wbtm_offday_schedule', true);
 
@@ -120,28 +114,24 @@ function mage_search_bus_list($return){
                     $show_off_day = get_post_meta(get_the_ID(), 'show_off_day', true) ?: 'no';
                     if($show_off_day === 'yes') {
                         if( (!$offday_current_bus && !mage_off_day_check($return)) ) {
+                            $has_bus = true;
                             mage_search_item($return);
                         }
                     } else {
+                        $has_bus = true;
                         mage_search_item($return);
                     }
 
-                    // Offday schedule check END
-
-                    // if (mage_odd_list_check(false) && mage_off_day_check(false) && !$return) {
-                    //     $j_time = strtotime(wbbm_convert_date_to_php(mage_get_isset('j_date')).' '. boarding_dropping_time(`false`,false));
-                    //     if( $c_time < $j_time){
-                    //         mage_search_item(false);
-                    //     }
-                    // }
-                    // if (mage_odd_list_check(true) && mage_off_day_check(true) && wbbm_convert_date_to_php($_GET['r_date']) && $return) {
-                    //     $j_time = strtotime(wbbm_convert_date_to_php(mage_get_isset('j_date')).' '. boarding_dropping_time(false,false));
-                    //     $r_time = strtotime(wbbm_convert_date_to_php(mage_get_isset('r_date')).' '. boarding_dropping_time(false,true));
-                    //     if( $j_time < $r_time){
-                    //         mage_search_item(true);
-                    //     }
-                    // }
                 }
+
+            }
+
+            if( !$has_bus ) { // Bus available
+                ?>
+                <div class='wbbm_error' style='text-align:center;padding: 10px;color: red;'>
+                    <span><?php _e('Sorry, No Bus Found','bus-booking-manager'); ?></span>
+                </div>
+                <?php
             }
         }
     }
