@@ -12,7 +12,7 @@ class NextDateClass extends CommonClass
    public function mage_next_date_suggestion($return, $single_bus, $target)
     {
         $date = $return ? $this->mage_bus_isset('r_date') : $this->mage_bus_isset('j_date');
-        $date = mage_wp_date($date);
+        $date = mage_wp_date($date, 'Y-m-d');
         if ($date) {
             $tab_date = isset($_GET['tab_date']) ? $_GET['tab_date'] : mage_wp_date($this->mage_bus_isset('j_date'), 'Y-m-d');
             $tab_date_r = isset($_GET['tab_date_r']) ? $_GET['tab_date_r'] : mage_wp_date($this->mage_bus_isset('r_date'), 'Y-m-d');
@@ -49,25 +49,38 @@ class NextDateClass extends CommonClass
     {
         $j_date = $this->mage_bus_isset('j_date');
         $j_date = mage_wp_date($j_date,'Y-m-d');
+        $show_operational_on_day = get_post_meta(get_the_ID(), 'show_operational_on_day', true) ?: 'no';
         $wbtm_bus_on_dates = get_post_meta(get_the_id(), 'wbtm_bus_on_date', true) ? maybe_unserialize(get_post_meta(get_the_id(), 'wbtm_bus_on_date', true)) : [];
+
+        $show_off_day = get_post_meta(get_the_ID(), 'show_off_day', true) ?: 'no';
         $wbtm_offday_schedules = get_post_meta(get_the_id(), 'wbtm_offday_schedule', true)?get_post_meta(get_the_id(), 'wbtm_offday_schedule', true):[];
         $weekly_offday = get_post_meta(get_the_id(), 'weekly_offday', true) ? get_post_meta(get_the_id(), 'weekly_offday', true):[];
 
         // echo '<pre>'; echo print_r($wbtm_offday_schedules); echo '<pre>';
 
 
-        if ($wbtm_bus_on_dates) {
+        if ($wbtm_bus_on_dates && $show_operational_on_day === 'yes') {
             ?>
             <div class="mage_default_xs">
                 <ul class="mage_list_inline flexEqual mage_next_date">
                     <?php
                     $wbtm_bus_on_dates_arr = explode(',', $wbtm_bus_on_dates);
                     foreach ($wbtm_bus_on_dates_arr as $i => $ondate) {
-                        if ($j_date <= $this->wbbm_convert_date_to_php($ondate)) {
-                            $ondate = ($i) ? $this->wbbm_convert_date_to_php($ondate) : $j_date;
+                        $ondate = mage_wp_date($ondate, 'Y-m-d');
+                        if ($j_date <= $ondate) {
+                            $ondate = $ondate ?: $j_date;
                             ?>
+                            <?php if(!in_array($j_date, $wbtm_bus_on_dates_arr) && $i === 0) : ?>
+                            <li class="mage_active">
+                                <a href="#">
+                                    <?php
+                                    echo $this->get_wbbm_datetime($j_date, 'date-text')
+                                    ?>
+                                </a>
+                            </li>
+                            <?php endif; ?>
                             <li class="<?php echo $j_date == $ondate ? 'mage_active' : ''; ?>">
-                                <a href="<?php echo $single_bus ? '' : get_site_url() . '/' . $target; ?>?bus_start_route=<?php echo strip_tags($_GET['bus_start_route']); ?>&bus_end_route=<?php echo strip_tags($_GET['bus_end_route']); ?>&j_date=<?php echo $return ? strip_tags($_GET['j_date']) : $ondate; ?>&r_date=<?php echo $return ? $ondate : (isset($_GET['r_date']) ? strip_tags($_GET['r_date']) : ''); ?>&bus-r=<?php echo (isset($_GET['bus-r']) ? strip_tags($_GET['bus-r']) : ''); ?>" data-sroute='<?php echo strip_tags($_GET['bus_start_route']); ?>' data-eroute='<?php echo strip_tags($_GET['bus_end_route']); ?>' data-jdate='<?php echo $return ? strip_tags($_GET['j_date']) : $next_date; ?>' data-rdate='<?php echo $return ? $next_date : (isset($_GET['r_date']) ? strip_tags($_GET['r_date']) : ''); ?>' class='wbtm_next_day_search'>
+                                <a href="<?php echo $single_bus ? '' : get_site_url() . '/' . $target; ?>?bus_start_route=<?php echo strip_tags($_GET['bus_start_route']); ?>&bus_end_route=<?php echo strip_tags($_GET['bus_end_route']); ?>&j_date=<?php echo $return ? strip_tags($_GET['j_date']) : $ondate; ?>&r_date=<?php echo $return ? $ondate : (isset($_GET['r_date']) ? strip_tags($_GET['r_date']) : ''); ?>&bus-r=<?php echo (isset($_GET['bus-r']) ? strip_tags($_GET['bus-r']) : ''); ?>" data-sroute='<?php echo strip_tags($_GET['bus_start_route']); ?>' data-eroute='<?php echo strip_tags($_GET['bus_end_route']); ?>' data-jdate='<?php echo $return ? strip_tags($_GET['j_date']) : ''; ?>' data-rdate='<?php echo $return ? '' : (isset($_GET['r_date']) ? strip_tags($_GET['r_date']) : ''); ?>' class='wbtm_next_day_search'>
                                     <?php
                                     echo $this->get_wbbm_datetime($ondate, 'date-text')
                                     ?>
@@ -82,7 +95,7 @@ class NextDateClass extends CommonClass
             </div>
 
             <?php
-        }elseif ($wbtm_offday_schedules || $weekly_offday){
+        }elseif (($wbtm_offday_schedules || $weekly_offday) && $show_off_day === 'yes'){
 
 
             $alloffdays = array();
