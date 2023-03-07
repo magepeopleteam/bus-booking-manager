@@ -8,6 +8,7 @@
 
     ?>
     <input type="hidden" id="price_bus_record" value="<?php echo ($wbbm_bus_prices=='')?$wbbm_bus_prices:count($wbbm_bus_prices) ?>">
+
     <input type="hidden" id="discount_price_switch" value="<?php echo $discount_price_switch ?>">
 
     <div style="width:100%;overflow-x:auto;">

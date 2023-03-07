@@ -4,8 +4,6 @@
     <list default="true" id="29a3e1f8-d0e8-48c0-bae9-3edced8b8d41" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/inc/clean/layout/bus_pricing.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/clean/layout/bus_pricing.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inc/wbbm_admin_settings.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/wbbm_admin_settings.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/wbbm_custom_admin_script.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/wbbm_custom_admin_script.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -22,6 +20,7 @@
     <option name="stateVersion" value="1" />
   </component>
   <component name="ProjectId" id="2MRBLnjrWnA46X21bwstMFeoDWy" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -45,6 +44,7 @@
       <workItem from="1677720462271" duration="1366000" />
       <workItem from="1677726518665" duration="11355000" />
       <workItem from="1677806819056" duration="8424000" />
+      <workItem from="1678152896498" duration="1862000" />
     </task>
     <servers />
   </component>
