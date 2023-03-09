@@ -1117,3 +1117,6 @@ input#j_date{width: auto;}
 .mage-form-field select {
     font-size: 14px;
 }
+div.mage_form_list_body .mage_group_input label input{margin:0 10px 0 0;}
+div.mage_form_list_body .mage_group_input label{width: auto;
+margin: 10px 10px 0 0;}
