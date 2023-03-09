@@ -137,13 +137,13 @@ function mage_search_item($return)
                                         <strong><?php echo wbbm_get_option('wbbm_boarding_points_text', 'wbbm_label_setting_sec', __('Boarding', 'bus-booking-manager')); ?>
                                         </strong>:
                                         <?php echo $boarding; ?>
-                                        <strong>(<?php echo $boarding_time; ?>)</strong>
+                                        <strong>(<?php echo get_wbbm_datetime($boarding_time, 'time'); ?>)</strong>
                                     </p>
                                     <p>
                                         <strong><?php echo wbbm_get_option('wbbm_dropping_points_text', 'wbbm_label_setting_sec', __('Dropping', 'bus-booking-manager')); ?>
                                         </strong>:
                                         <?php echo $dropping; ?>
-                                        <strong>(<?php echo $dropping_time; ?>)</strong>
+                                        <strong>(<?php echo get_wbbm_datetime($dropping_time, 'time'); ?>)</strong>
                                     </p>
                                     <p>
                                         <strong><?php echo wbbm_get_option('wbbm_date_text', 'wbbm_label_setting_sec', __('Date', 'bus-booking-manager')); ?>
