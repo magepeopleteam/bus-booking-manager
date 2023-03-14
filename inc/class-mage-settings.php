@@ -128,6 +128,8 @@ class MAGE_Setting_API {
                 $desc = isset( $option['desc'] ) ? $option['desc'] : '';
                 $args = array(
                     'id' => $option['name'],
+                    'class' => isset( $option['class'] ) ? $option['class'] : '',
+                    'args' => isset( $option['args'] ) ? $option['args'] : '',
                     'desc' => isset( $option['desc'] ) ? $option['desc'] : '',
                     'name' => $option['label'],
                     'section' => $section,
@@ -156,13 +158,76 @@ class MAGE_Setting_API {
     function callback_text( $args ) {
 
         $value = esc_attr( $this->get_option( $args['id'], $args['section'], $args['std'] ) );
+        $custom_class = $args['class'];
         $size = isset( $args['size'] ) && !is_null( $args['size'] ) ? $args['size'] : 'regular';
         $placeholder = isset( $args['placeholder'] ) && !is_null( $args['placeholder'] ) ? $args['placeholder'] : '';
-        $html = sprintf( '<input type="text" class="%1$s-text" id="%2$s[%3$s]" name="%2$s[%3$s]" value="%4$s" placeholder="%5$s"/>', $size, $args['section'], $args['id'], $value, $placeholder);
+        $html = sprintf( '<input type="text" class="%1$s-text %6$s" id="%2$s[%3$s]" name="%2$s[%3$s]" value="%4$s" placeholder="%5$s"/>', $size, $args['section'], $args['id'], $value, $placeholder,$custom_class);
         // $html .= sprintf( '<span class="description"> %s</span>', $args['desc'] );
-
         echo $html;
     }
+
+    public function callback_checkbox_multi( $option ){
+
+        $id				= isset( $option['id'] ) ? $option['id'] : "";
+
+        $field_name 	= isset( $option['field_name'] ) ? $option['field_name'] : $id;
+
+
+        $default 		= isset( $option['default'] ) ? $option['default'] : array();
+        $args			= isset( $option['args'] ) ? $option['args'] : array();
+        $args			= is_array( $args ) ? $args : $this->args_from_string( $args );
+
+        $value			= isset( $option['value'] ) ? $option['value'] : array();
+        $value          = !empty($value) ?  $value : $default;
+
+        $value =  $this->get_option( $option['id'], $option['section'], $option['std'] ) ;
+
+        $field_id       = $id;
+        $field_name     = !empty( $field_name ) ? '['.$field_name.']' : '['.$id.']';
+
+
+
+
+
+
+        ?>
+
+        <div class="hhh">
+            <?php
+            foreach( $args as $key => $argName ):
+                $checked = is_array( $value ) && in_array( $key, $value ) ? "checked" : "";
+                ?>
+                <label for='<?php echo $field_id.'-'.$key; ?>'>
+                    <input class="<?php echo $field_id; ?>" name='<?php echo $option['section'].$field_name.'[]'; ?>' type='checkbox' id='<?php echo $field_id.'-'.$key; ?>' value='<?php echo $key; ?>' <?php echo $checked; ?>><?php echo $argName; ?>
+                </label><br>
+            <?php
+            endforeach;
+            ?>
+            <div class="error-mgs"></div>
+        </div>
+
+        <?php
+
+    }
+
+
+    public function args_from_string( $string ){
+
+        if( strpos( $string, 'PAGES_IDS_ARRAY' )    !== false ) return $this->get_pages_array();
+        if( strpos( $string, 'POSTS_IDS_ARRAY' )    !== false ) return $this->get_posts_array();
+        if( strpos( $string, 'POST_TYPES_ARRAY' )   !== false ) return $this->get_post_types_array();
+        if( strpos( $string, 'TAX_' )               !== false ) return $this->get_taxonomies_array( $string );
+        if( strpos( $string, 'USER_ROLES' )         !== false ) return $this->get_user_roles_array();
+        if( strpos( $string, 'USER_IDS_ARRAY' )     !== false ) return $this->get_user_ids_array();
+        if( strpos( $string, 'MENUS' )              !== false ) return $this->get_menus_array();
+        if( strpos( $string, 'SIDEBARS_ARRAY' )     !== false ) return $this->get_sidebars_array();
+        if( strpos( $string, 'THUMB_SIEZS_ARRAY' )  !== false ) return $this->get_thumb_sizes_array();
+        if( strpos( $string, 'FONTAWESOME_ARRAY' )  !== false ) return $this->get_font_aws_array();
+
+        return array();
+    }
+
+
 
     /**
      * Displays a checkbox for a settings field

@@ -291,6 +291,15 @@
 	});
 
 
+	$(".global_particular_onday").multiDatesPicker({
+		numberOfMonths: [1,3],
+		dateFormat: "yy-mm-dd",
+		minDate: 0,
+	});
+
+
+
+
 
 
 

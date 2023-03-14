@@ -15,6 +15,7 @@ function search_from_only($single_bus,$target) {
 
 
     <form action="<?php echo $single_bus ? '' : get_site_url() .'/'. $target.'/'; ?>" method="get" class="mage_form">
+        <?php do_action('active_date',$single_bus,get_the_ID()) ?>
         <div class="mage_form_list">
             <label for="bus_start_route">
                 <span class="fa fa-map-marker"></span>
