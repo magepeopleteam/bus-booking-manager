@@ -167,7 +167,7 @@ class MAGE_WBBM_Setting_Controls {
                     'desc' => __( '', 'bus-booking-manager' ),
                     'type' => 'checkbox_multi',
                     'args' => array(
-                        '0' => __('Sunday', 'bus-ticket-booking-with-seat-reservation'),
+                        '7' => __('Sunday', 'bus-ticket-booking-with-seat-reservation'),
                         '1' => __('Monday', 'bus-ticket-booking-with-seat-reservation'),
                         '2' => __('Tuesday', 'bus-ticket-booking-with-seat-reservation'),
                         '3' => __('Wednesday', 'bus-ticket-booking-with-seat-reservation'),

@@ -105,6 +105,14 @@
 				}
 			}
 			if (weekly_offday.length > 0) {
+
+				// Fix sunday value issue
+				const sundayIndex = weekly_offday.indexOf(7);
+				if(sundayIndex !== -1) {
+					weekly_offday[sundayIndex] = 0;
+				}
+				// Fix sunday value issue
+				
 				if (weekly_offday.includes(date.getDay())) {
 					return [false];
 				}
