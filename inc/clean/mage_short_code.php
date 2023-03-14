@@ -81,7 +81,7 @@ function mage_search_bus_list($return){
                 $bus_on_dates = array();
                 $show_operational_on_day = get_post_meta(get_the_ID(), 'show_operational_on_day', true) ?: 'no';
                 $bus_on_date = get_post_meta(get_the_ID(), 'wbtm_bus_on_date', true);
-                if($show_operational_on_day === 'yes' && $bus_on_dates) {
+                if($show_operational_on_day === 'yes' && $bus_on_date) {
                     $bus_on_dates = explode( ', ', $bus_on_date );
                     if( in_array( $j_date, $bus_on_dates ) ) {
                         $has_bus = true;

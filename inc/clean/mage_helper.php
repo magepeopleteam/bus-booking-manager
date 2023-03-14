@@ -177,7 +177,7 @@ function mage_off_day_check($return) {
     $weekly_offday = get_post_meta($id, 'weekly_offday', true) ?: array();
     if ($j_date) {
         if ($return) {
-            $weekly_offday = get_post_meta($id, 'weekly_offday_return', true) ?: array();
+            // $weekly_offday = get_post_meta($id, 'weekly_offday_return', true) ?: array();
             $j_date_day = strtolower(date('N', strtotime($j_date)));
             if (in_array($j_date_day, $weekly_offday)) {
                 $get_day = 'yes';
