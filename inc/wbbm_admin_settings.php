@@ -39,6 +39,10 @@ class MAGE_WBBM_Setting_Controls {
                 'title' => __( 'General Settings', 'bus-booking-manager' )
             ),
             array(
+                'id' => 'wbbm_global_offday_sec',
+                'title' => __( 'Global Offday Settings', 'bus-booking-manager' )
+            ),
+            array(
                 'id' => 'wbbm_label_setting_sec',
                 'title' => __( 'Translation Settings', 'bus-booking-manager' )
             ),
@@ -146,8 +150,37 @@ class MAGE_WBBM_Setting_Controls {
                 )
             ),
 
+            'wbbm_global_offday_sec' => array(
+                array(
+                    'name' => 'global_particular_onday',
+                    'class' => 'global_particular_onday',
+                    'label' => __( 'Global Off-Dates', 'bus-booking-manager' ),
+                    'desc' => __( 'Please select global offdate', 'bus-booking-manager' ),
+                    'type' => 'text',
+                    'default' => '0',
+                ),
+                array(
+                    'name' => 'bus_global_offdays',
+                    'id' => 'bus_global_offdays',
+                    'class' => '',
+                    'label' => __( 'Global Off-Days ', 'bus-booking-manager' ),
+                    'desc' => __( '', 'bus-booking-manager' ),
+                    'type' => 'checkbox_multi',
+                    'args' => array(
+                        '0' => __('Sunday', 'bus-ticket-booking-with-seat-reservation'),
+                        '1' => __('Monday', 'bus-ticket-booking-with-seat-reservation'),
+                        '2' => __('Tuesday', 'bus-ticket-booking-with-seat-reservation'),
+                        '3' => __('Wednesday', 'bus-ticket-booking-with-seat-reservation'),
+                        '4' => __('Thursday', 'bus-ticket-booking-with-seat-reservation'),
+                        '5' => __('Friday', 'bus-ticket-booking-with-seat-reservation'),
+                        '6' => __('Saturday', 'bus-ticket-booking-with-seat-reservation'),
+                    ),
 
-  'wbbm_label_setting_sec' => array(
+                )
+            ),
+
+
+            'wbbm_label_setting_sec' => array(
 
             array(
                 'name' => 'wbbm_buy_ticket_text',

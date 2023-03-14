@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="29a3e1f8-d0e8-48c0-bae9-3edced8b8d41" name="Changes" comment="">
+    <list default="true" id="73c98079-c73f-43e2-b64b-9679bbcb0149" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inc/clean/layout/bus_pricing.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/clean/layout/bus_pricing.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inc/BusBookingManagerClass.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/BusBookingManagerClass.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inc/CommonClass.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/CommonClass.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inc/class-mage-settings.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/class-mage-settings.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inc/clean/layout/search-form-only.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/clean/layout/search-form-only.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/inc/wbbm_admin_settings.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/wbbm_admin_settings.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inc/wbbm_enque.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/wbbm_enque.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/js/wbbm_custom_admin_script.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/wbbm_custom_admin_script.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/js/wbbm_custom_public_script.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/wbbm_custom_public_script.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
