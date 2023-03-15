@@ -85,8 +85,8 @@ function mage_search_item($return)
                             <span><?php echo $coach_no; ?></span>
                         </div>
                         <div>
-                            <?php echo '<p class="mage-bus-stopage"><span class="dashicons dashicons-location"></span> '. wbbm_get_option('wbbm_from_text', 'wbbm_label_setting_sec', __('From: ', 'bus-booking-manager')) . $boarding . ' ( ' . get_wbbm_datetime($boarding_time, 'time') . ' )</p>'; ?>
-                            <?php echo '<p class="mage-bus-stopage"><span class="dashicons dashicons-location"></span> '. wbbm_get_option('wbbm_to_text', 'wbbm_label_setting_sec', __('To: ', 'bus-booking-manager')) . $dropping . ' ( ' . get_wbbm_datetime($dropping_time, 'time') . ' )</p>'; ?>
+                            <?php echo '<p class="mage-bus-stopage"><span class="dashicons dashicons-location"></span> '. wbbm_get_option('wbbm_from_text', 'wbbm_label_setting_sec', __('From: ', 'bus-booking-manager')) .' '. $boarding . ' ( ' . get_wbbm_datetime($boarding_time, 'time') . ' )</p>'; ?>
+                            <?php echo '<p class="mage-bus-stopage"><span class="dashicons dashicons-location"></span> '. wbbm_get_option('wbbm_to_text', 'wbbm_label_setting_sec', __('To: ', 'bus-booking-manager')).' '. $dropping . ' ( ' . get_wbbm_datetime($dropping_time, 'time') . ' )</p>'; ?>
                         </div>
                     </div>
                     <div class="mage-search-res-header--right">
@@ -148,7 +148,7 @@ function mage_search_item($return)
                                     <p>
                                         <strong><?php echo wbbm_get_option('wbbm_date_text', 'wbbm_label_setting_sec', __('Date', 'bus-booking-manager')); ?>
                                         </strong>:
-                                        <?php echo mage_wp_date($search_date); ?>
+                                        <?php echo ($return)?mage_wp_date(mage_get_isset('r_date')):mage_wp_date(mage_get_isset('j_date')) ?>
                                     </p>
                                     <p>
                                         <strong><?php echo wbbm_get_option('wbbm_starting_text', 'wbbm_label_setting_sec', __('Start Time', 'bus-booking-manager')); ?>

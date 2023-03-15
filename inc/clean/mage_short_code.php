@@ -53,7 +53,7 @@ function mage_search_bus_list($return){
         if($loop->post_count == 0){
             ?>
             <div class='wbbm_error' style='text-align:center;padding: 10px;color: red;'>
-                <span><?php _e('Sorry, No Bus Found','bus-booking-manager'); ?></span>
+                <span><?php echo __('Sorry, No','bus-booking-manager').' '.wbbm_get_option( 'wbbm_cpt_label', 'wbbm_general_setting_sec', 'Bus').' '.__('Found','bus-booking-manager'); ?></span>
             </div>
             <?php
         } else {
@@ -129,7 +129,7 @@ function mage_search_bus_list($return){
             if( !$has_bus ) { // Bus available
                 ?>
                 <div class='wbbm_error' style='text-align:center;padding: 10px;color: red;'>
-                    <span><?php _e('Sorry, No Bus Found','bus-booking-manager'); ?></span>
+                    <span><?php echo __('Sorry, No','bus-booking-manager').' '.wbbm_get_option( 'wbbm_cpt_label', 'wbbm_general_setting_sec', 'Bus').' '.__('Found','bus-booking-manager'); ?></span>
                 </div>
                 <?php
             }
