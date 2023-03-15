@@ -125,7 +125,7 @@ function mage_search_item($return)
                     <form action="" method="post">
                         <div class="mage_flex xs_not_flex">
                             <div class="mage_flex_equal mage_bus_details">
-                                <div class="mage_bus_info nnnnn">
+                                <div class="mage_bus_info">
                                     <h3><a href="<?php echo get_the_permalink($id) ?>"><?php echo the_title(); ?></a>
                                     </h3>
                                     <p>
@@ -268,7 +268,7 @@ function mage_search_item($return)
                     <div class="mage_flex xs_not_flex">
                         <div class="mage_thumb"><?php the_post_thumbnail('full'); ?></div>
                         <div class="mage_flex_equal mage_bus_details">
-                            <div class="mage_bus_info nnnn">
+                            <div class="mage_bus_info">
                                 <h3><a href="<?php echo get_the_permalink($id) ?>"><?php echo the_title(); ?></a></h3>
                                 <p>
                                     <strong><?php echo wbbm_get_option('wbbm_type_text', 'wbbm_label_setting_sec', __('Type :', 'bus-booking-manager')); ?></strong>
