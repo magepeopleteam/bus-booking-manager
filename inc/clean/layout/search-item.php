@@ -85,8 +85,8 @@ function mage_search_item($return)
                             <span><?php echo $coach_no; ?></span>
                         </div>
                         <div>
-                            <?php echo '<p class="mage-bus-stopage"><span class="dashicons dashicons-location"></span> '. wbbm_get_option('wbbm_from_text', 'wbbm_label_setting_sec', __('From: ', 'bus-booking-manager')) . $boarding . ' ( ' . get_wbbm_datetime($boarding_time, 'time') . ' )</p>'; ?>
-                            <?php echo '<p class="mage-bus-stopage"><span class="dashicons dashicons-location"></span> '. wbbm_get_option('wbbm_to_text', 'wbbm_label_setting_sec', __('To: ', 'bus-booking-manager')) . $dropping . ' ( ' . get_wbbm_datetime($dropping_time, 'time') . ' )</p>'; ?>
+                            <?php echo '<p class="mage-bus-stopage"><span class="dashicons dashicons-location"></span> '. wbbm_get_option('wbbm_from_text', 'wbbm_label_setting_sec', __('From: ', 'bus-booking-manager')) .' '. $boarding . ' ( ' . get_wbbm_datetime($boarding_time, 'time') . ' )</p>'; ?>
+                            <?php echo '<p class="mage-bus-stopage"><span class="dashicons dashicons-location"></span> '. wbbm_get_option('wbbm_to_text', 'wbbm_label_setting_sec', __('To: ', 'bus-booking-manager')).' '. $dropping . ' ( ' . get_wbbm_datetime($dropping_time, 'time') . ' )</p>'; ?>
                         </div>
                     </div>
                     <div class="mage-search-res-header--right">
@@ -125,7 +125,7 @@ function mage_search_item($return)
                     <form action="" method="post">
                         <div class="mage_flex xs_not_flex">
                             <div class="mage_flex_equal mage_bus_details">
-                                <div class="mage_bus_info">
+                                <div class="mage_bus_info nnnnn">
                                     <h3><a href="<?php echo get_the_permalink($id) ?>"><?php echo the_title(); ?></a>
                                     </h3>
                                     <p>
@@ -148,7 +148,7 @@ function mage_search_item($return)
                                     <p>
                                         <strong><?php echo wbbm_get_option('wbbm_date_text', 'wbbm_label_setting_sec', __('Date', 'bus-booking-manager')); ?>
                                         </strong>:
-                                        <?php echo mage_wp_date($search_date); ?>
+                                        <?php echo ($return)?mage_wp_date(mage_get_isset('r_date')):mage_wp_date(mage_get_isset('j_date')) ?>
                                     </p>
                                     <p>
                                         <strong><?php echo wbbm_get_option('wbbm_starting_text', 'wbbm_label_setting_sec', __('Start Time', 'bus-booking-manager')); ?>
@@ -268,7 +268,7 @@ function mage_search_item($return)
                     <div class="mage_flex xs_not_flex">
                         <div class="mage_thumb"><?php the_post_thumbnail('full'); ?></div>
                         <div class="mage_flex_equal mage_bus_details">
-                            <div class="mage_bus_info">
+                            <div class="mage_bus_info nnnn">
                                 <h3><a href="<?php echo get_the_permalink($id) ?>"><?php echo the_title(); ?></a></h3>
                                 <p>
                                     <strong><?php echo wbbm_get_option('wbbm_type_text', 'wbbm_label_setting_sec', __('Type :', 'bus-booking-manager')); ?></strong>
