@@ -630,11 +630,11 @@
                                 </ul>
 
                                 <?php
-                                if (($cart_item['line_subtotal'] == $cart_item['total_fare_roundtrip']) && $cart_item['is_return'] == 1):
+                             /*   if (($cart_item['line_subtotal'] == $cart_item['total_fare_roundtrip']) && $cart_item['is_return'] == 1):
                                     $percent = ($cart_item['total_fare_roundtrip'] * 100) / $cart_item['total_fare_original'];
                                     $percent = 100 - $percent;
                                     echo '<p style="color:#af7a2d;font-size: 13px;line-height: 1em;"><strong>' . __('Congratulation!', 'bus-booking-manager') . '</strong> <span> ' . __('For a round trip, you got', 'bus-booking-manager') . ' <span style="font-weight:600">' . number_format($percent, 2) . '%</span> ' . __('discount on this trip', 'bus-booking-manager') . '</span></p>';
-                                endif;
+                                endif;*/
                                 $i++;
                             }
                         }
