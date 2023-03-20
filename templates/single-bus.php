@@ -290,7 +290,8 @@ endif;
                 if(wbbm_buffer_time_calculation($start_time, $j_date)) {
                     if ($j_date != '' && $boarding != '' && $dropping != '') {
                         if ($is_on_date) {
-                            if (in_array($j_date, $bus_on_dates)) {
+                            $j_date_c = mage_wp_date($j_date, 'Y-m-d');
+                            if (in_array($j_date_c, $bus_on_dates)) {
                                 mage_book_now_area($available_seat);
                             } else {
                                 echo '<span class="mage_error" style="display: block;text-align: center;padding: 5px;margin: 10px 0 0 0;">' . date($date_format, strtotime(mage_get_isset($date_var))) . ' Operational Off day !' . '</span>';
