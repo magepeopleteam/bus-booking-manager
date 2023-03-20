@@ -123,7 +123,18 @@ class MAGE_WBBM_Setting_Controls {
                         'on' => 'On',
                         'off'  => 'Off'
                     )
-                ),                
+                ),
+                array(
+                    'name' => 'wbbm_entire_bus_booking_switch',
+                    'label' => __( 'On/Off Entire bus', 'bus-booking-manager' ),
+                    'desc' => __( 'Enable/Disable entire bus option.', 'bus-booking-manager' ),
+                    'type' => 'select',
+                    'default' => 'off',
+                    'options' => array(
+                        'on' => 'On',
+                        'off'  => 'Off'
+                    )
+                ),
                 array(
                     'name' => 'wbbm_cpt_label',
                     'label' => __( 'CPT Name', 'bus-booking-manager' ),
