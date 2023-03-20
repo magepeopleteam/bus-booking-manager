@@ -204,7 +204,7 @@ function mage_search_item($return)
                                         </div>
                                     <?php endif; ?>
 
-                                    <?php if (($entire_bus_booking == 'on') && ($available_seat == $total_seat) && ($seat_price_entire > 0) || ($is_price_zero_allow == 'on') ) : ?>
+                                    <?php if (($entire_bus_booking == 'on') && ($available_seat == $total_seat) && ($seat_price_entire > 0) || ($is_price_zero_allow == 'off') ) : ?>
                                     <div class="mage_center_space">
                                         <p>
                                             <strong><?php echo wbbm_get_option('wbbm_entire_bus_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_entire_bus_text', 'wbbm_label_setting_sec') : _e('Entire Bus', 'bus-booking-manager'); echo ':'; ?></strong>
@@ -337,7 +337,7 @@ function mage_search_item($return)
                                     </div>
                                 <?php endif; ?>
 
-                                <?php if (($available_seat == $total_seat) && ($seat_price_entire > 0) || ($is_price_zero_allow == 'on') ) : ?>
+                                <?php if (($available_seat == $total_seat) && ($seat_price_entire > 0) || ($is_price_zero_allow == 'off') ) : ?>
                                     <div class="mage_center_space">
                                         <p>
                                             <strong><?php echo wbbm_get_option('wbbm_entire_bus_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_entire_bus_text', 'wbbm_label_setting_sec') : _e('Entire Bus', 'bus-booking-manager'); echo ':'; ?></strong>

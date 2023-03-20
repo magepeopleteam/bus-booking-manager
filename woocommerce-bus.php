@@ -1726,13 +1726,9 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
             $setting_format__dashed = str_replace('/', '-', $setting_format);
             $dash_date = str_replace('/', '-', $date);
 
-            $date_f = DateTime::createFromFormat($setting_format__dashed, $dash_date);
-            if ($date_f) {
-                $res = $date_f->format($to);
-                return $res;
-            } else {
-                return null;
-            }
+            // $date_f = DateTime::createFromFormat($setting_format__dashed, $dash_date);
+            $date_f = date($setting_format__dashed, strtotime($dash_date));
+            return $date_f;
         }
     }
 
