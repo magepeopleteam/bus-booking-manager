@@ -204,3 +204,8 @@ ul.mage_list_inline li a {
     }
 
 }
+@media only screen and (max-width: 425px) {
+    .mage_next_date {
+        flex-direction: column;
+    }
+}
