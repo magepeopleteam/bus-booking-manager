@@ -98,7 +98,7 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
     require_once(dirname(__FILE__) . "/inc/wbbm_upgrade.php");
     require_once(dirname(__FILE__) . "/inc/wbbm_license.php");
     //added by sumon
-    require_once(dirname(__FILE__) . "/inc/clean/mage_short_code.php");
+    //require_once(dirname(__FILE__) . "/inc/clean/mage_short_code.php");
     require_once(dirname(__FILE__) . "/inc/clean/mage_function.php");
     //--------------
     require_once(dirname(__FILE__) . "/inc/class-meta-box.php");

@@ -21,6 +21,7 @@ function search_from_only($single_bus,$target) {
                 <span class="fa fa-map-marker"></span>
                <?php echo wbbm_get_option('wbbm_from_text', 'wbbm_label_setting_sec',__('From :', 'bus-booking-manager')); ?>
             </label>
+
             <div class="mage_input_select mage_bus_boarding_point">
                 <div class="route-input-wrap"><input id="bus_start_route" type="text" class="mage_form_control" name="bus_start_route" value="<?php echo mage_get_isset('bus_start_route'); ?>" placeholder="<?php _e('Please Select', 'bus-booking-manager'); ?>" autocomplete="off" required/></div>
                 <?php
@@ -37,6 +38,7 @@ function search_from_only($single_bus,$target) {
                 }
                 ?>
             </div>
+
         </div>
         <div class="mage_form_list">
             <label for="bus_end_route">

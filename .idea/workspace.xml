@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="73c98079-c73f-43e2-b64b-9679bbcb0149" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/inc/FilterClass.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/FilterClass.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inc/wbbm_admin_settings.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/wbbm_admin_settings.php" afterDir="false" />
+    <list default="true" id="42ab67b4-457a-404c-bb4d-ec292dac1fbf" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -19,7 +18,7 @@
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
-  <component name="ProjectId" id="2MRBLnjrWnA46X21bwstMFeoDWy" />
+  <component name="ProjectId" id="2NRkFlQJLh4yGFkp3JHFw6iW5qa" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -35,16 +34,14 @@
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="73c98079-c73f-43e2-b64b-9679bbcb0149" name="Changes" comment="" />
-      <created>1677720460848</created>
+      <changelist id="42ab67b4-457a-404c-bb4d-ec292dac1fbf" name="Changes" comment="" />
+      <created>1679634180692</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1677720460848</updated>
-      <workItem from="1677720462271" duration="1366000" />
-      <workItem from="1677726518665" duration="11355000" />
-      <workItem from="1677806819056" duration="8424000" />
-      <workItem from="1678851211761" duration="5164000" />
-      <workItem from="1678936563226" duration="381000" />
+      <updated>1679634180692</updated>
+      <workItem from="1679634181910" duration="600000" />
+      <workItem from="1679645550371" duration="596000" />
+      <workItem from="1679883015598" duration="594000" />
     </task>
     <servers />
   </component>
@@ -61,16 +58,5 @@
         </entry>
       </map>
     </option>
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/js/wbbm_custom_public_script.js</url>
-          <line>107</line>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
 </project>
