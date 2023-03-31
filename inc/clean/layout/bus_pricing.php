@@ -1,7 +1,7 @@
 <div class="mp_tab_item" data-tab-item="#wbtm_seat_price">
-    <h3><?php echo $cpt_label.' '. __('Seat Price:', 'bus-booking-manager'); ?></h3>
-    <hr />
+    <h3 class="wbbm_mp_tab_item_heading"><img src="<?php echo WBTM_PLUGIN_URL .'images/bus_arrow_left.png';?>"/><?php echo $cpt_label.' '. __('Seat Price', 'bus-booking-manager'); ?></h3>
 
+    <div class="wbbm_seat_price_inner_wrap">
     <?php
     $terms = get_terms($get_terms_default_attributes);
     $discount_price_switch = wbbm_get_option('discount_price_switch', 'wbbm_general_setting_sec', 'off');
@@ -34,21 +34,27 @@
                     ?>
                     <tr>
                         <td>
-                            <select name="wbbm_bus_bp_price_stop[]" class='seat_type'>
-                                <option value=""><?php _e('Please Select', 'bus-booking-manager'); ?></option>
-                                <?php foreach ($terms as $term) { ?>
-                                    <option data-term_id="<?php echo $term->term_id; ?>" value="<?php echo $term->name; ?>" <?php echo ($term->name == $field['wbbm_bus_bp_price_stop'])?'Selected':'' ?>><?php echo $term->name; ?></option>
-                                <?php } ?>
-                            </select>
+                            <div class="wbbm_bus_route_select">
+                                <span class="wbbm_bus_route_icon wbbm_bus_route_icon1"><img src="<?php echo WBTM_PLUGIN_URL .'images/bus_route_map.png';?>"/></span>
+                                <select name="wbbm_bus_bp_price_stop[]" class='seat_type'>
+                                    <option value=""><?php _e('Please Select', 'bus-booking-manager'); ?></option>
+                                    <?php foreach ($terms as $term) { ?>
+                                        <option data-term_id="<?php echo $term->term_id; ?>" value="<?php echo $term->name; ?>" <?php echo ($term->name == $field['wbbm_bus_bp_price_stop'])?'Selected':'' ?>><?php echo $term->name; ?></option>
+                                    <?php } ?>
+                                </select>
+                            </div>
                         </td>
 
                         <td>
-                            <select name="wbbm_bus_dp_price_stop[]" class='seat_type'>
-                                <option value=""><?php _e('Please Select', 'bus-booking-manager'); ?></option>
-                                <?php foreach ($terms as $term) { ?>
-                                    <option data-term_id="<?php echo $term->term_id; ?>" value="<?php echo $term->name; ?>" <?php echo ($term->name == $field['wbbm_bus_dp_price_stop'])?'Selected':'' ?>><?php echo $term->name; ?></option>
-                                <?php } ?>
-                            </select>
+                            <div class="wbbm_bus_route_select">
+                                <span class="wbbm_bus_route_icon wbbm_bus_route_icon1"><img src="<?php echo WBTM_PLUGIN_URL .'images/bus_route_map.png';?>"/></span>
+                                <select name="wbbm_bus_dp_price_stop[]" class='seat_type'>
+                                    <option value=""><?php _e('Please Select', 'bus-booking-manager'); ?></option>
+                                    <?php foreach ($terms as $term) { ?>
+                                        <option data-term_id="<?php echo $term->term_id; ?>" value="<?php echo $term->name; ?>" <?php echo ($term->name == $field['wbbm_bus_dp_price_stop'])?'Selected':'' ?>><?php echo $term->name; ?></option>
+                                    <?php } ?>
+                                </select>
+                            </div>
                         </td>
 
                         <td class="wbbm-price-col">
@@ -128,8 +134,18 @@
 
             <!-- empty hidden one for jQuery -->
             <tr class="empty-row-price screen-reader-text">
-                <td><?php echo wbbm_get_bus_stops_list('wbbm_bus_bp_price_stop[]','ra_bus_bp_price_stop'); ?></td>
-                <td><?php echo wbbm_get_bus_stops_list('wbbm_bus_dp_price_stop[]','ra_bus_dp_price_stop'); ?></td>
+                <td>
+                    <div class="wbbm_bus_route_select">
+                        <span class="wbbm_bus_route_icon wbbm_bus_route_icon1"><img src="<?php echo WBTM_PLUGIN_URL .'images/bus_route_map.png';?>"/></span>
+                        <?php echo wbbm_get_bus_stops_list('wbbm_bus_bp_price_stop[]','ra_bus_bp_price_stop'); ?>
+                    </div>
+                </td>
+                <td>
+                    <div class="wbbm_bus_route_select">
+                        <span class="wbbm_bus_route_icon wbbm_bus_route_icon1"><img src="<?php echo WBTM_PLUGIN_URL .'images/bus_route_map.png';?>"/></span>
+                    <?php echo wbbm_get_bus_stops_list('wbbm_bus_dp_price_stop[]','ra_bus_dp_price_stop'); ?>
+                    </div>
+                </td>
                 <td class="wbbm-price-col">
                     <input step="0.01" type="number" name='wbbm_bus_price[]' value="" class="text">
                     <?php if($discount_price_switch=='on'){ ?>
@@ -294,5 +310,5 @@
 
 
 
-
+    </div>
 </div>
