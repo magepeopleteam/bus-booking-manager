@@ -1,8 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="42ab67b4-457a-404c-bb4d-ec292dac1fbf" name="Changes" comment="">
+    <list default="true" id="15b63738-b91b-4d08-9f57-1023edf32336" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/css/ttbm_admin_style.css" beforeDir="false" afterPath="$PROJECT_DIR$/css/ttbm_admin_style.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inc/BusBookingManagerClass.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/BusBookingManagerClass.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inc/ShortCodeClass.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/ShortCodeClass.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inc/class-meta-box.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/class-meta-box.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inc/clean/layout/search-form-horizontal.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/clean/layout/search-form-horizontal.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inc/clean/layout/search-form-only.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/clean/layout/search-form-only.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inc/clean/layout/search-form-vertical.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/clean/layout/search-form-vertical.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inc/clean/layout/search-list.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/clean/layout/search-list.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inc/clean/layout/search-page-horizontal.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/clean/layout/search-page-horizontal.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inc/clean/layout/search-page-vertical.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/clean/layout/search-page-vertical.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inc/wbbm_tax.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/wbbm_tax.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/js/wbbm_custom_admin_script.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/wbbm_custom_admin_script.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/single-bus.php" beforeDir="false" afterPath="$PROJECT_DIR$/templates/single-bus.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -18,30 +31,28 @@
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
-  <component name="ProjectId" id="2NRkFlQJLh4yGFkp3JHFw6iW5qa" />
+  <component name="ProjectId" id="2Nl6CPhPfhc5Ui1UD2jimvOB73A" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="42ab67b4-457a-404c-bb4d-ec292dac1fbf" name="Changes" comment="" />
-      <created>1679634180692</created>
+      <changelist id="15b63738-b91b-4d08-9f57-1023edf32336" name="Changes" comment="" />
+      <created>1680226193484</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1679634180692</updated>
-      <workItem from="1679634181910" duration="600000" />
-      <workItem from="1679645550371" duration="596000" />
-      <workItem from="1679883015598" duration="594000" />
+      <updated>1680226193484</updated>
+      <workItem from="1680226194787" duration="1487000" />
     </task>
     <servers />
   </component>

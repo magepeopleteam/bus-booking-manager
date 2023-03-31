@@ -73,7 +73,7 @@ class WBBMMetaBox
     public function wbbm_meta_box_cb()
     {
         $post_id = get_the_id();
-?>
+        ?>
         <div class="mp_event_all_meta_in_tab mp_event_tab_area">
             <div class="mp_tab_menu">
                 <ul>
@@ -93,8 +93,11 @@ class WBBMMetaBox
 
 
         $cpt_label = wbbm_get_option('wbbm_cpt_label', 'wbbm_general_setting_sec', __('Bus', 'bus-booking-manager'));
-    ?>
-        <li data-target-tabs="#wbtm_ticket_panel" class="active"><span class="dashicons dashicons-admin-settings"></span><?php echo $cpt_label . ' ' . __('Configuration', 'bus-booking-manager'); ?>
+
+        ?>
+
+        <li data-target-tabs="#wbtm_ticket_panel" class="active">
+            <span class="dashicons dashicons-admin-settings"></span><?php echo $cpt_label . ' ' . __('Configuration', 'bus-booking-manager'); ?>
         </li>
 
         <li data-target-tabs="#wbtm_routing" class="wbtm_routing_tab">
@@ -108,7 +111,12 @@ class WBBMMetaBox
         <li class="ra_pickuppoint_tab" data-target-tabs="#wbtm_pickuppoint"><span class="dashicons dashicons-flag"></span><?php echo $cpt_label . ' ' . __('Pickup Point', 'bus-booking-manager'); ?>
         </li>
 
-        <li data-target-tabs="#wbtm_bus_off_on_date"><span class="dashicons dashicons-calendar-alt"></span><?php echo $cpt_label . ' ' . __('Onday & Offday', 'bus-booking-manager'); ?>
+        <li data-target-tabs="#wbtm_bus_off_on_date">
+            <span class="dashicons dashicons-calendar-alt"></span><?php echo $cpt_label . ' ' . __('Onday & Offday', 'bus-booking-manager'); ?>
+        </li>
+
+        <li data-target-tabs="#wbmm_bus_features">
+            <span class="dashicons dashicons-calendar-alt"></span><?php echo $cpt_label . ' ' . __('Features', 'bus-booking-manager'); ?>
         </li>
 
         <?php if (is_plugin_active('mage-partial-payment-pro/mage_partial_pro.php')) : ?>
@@ -131,8 +139,11 @@ class WBBMMetaBox
         $this->wbbm_bus_routing($cpt_label);
         $this->wbbm_bus_pricing($post_id, $cpt_label);
         $this->wbbm_bus_pickuppoint($post_id);
-        $this->wbbm_bus_ondayoffday()
-    ?>
+        $this->wbbm_bus_ondayoffday();
+        $this->wbbm_bus_features();
+
+        ?>
+
         <?php do_action('wbbm_after_meta_box_tab_content'); ?>
         <!-- Partial Payment Setting -->
         <div class="mp_tab_item tab-content" data-tab-item="#wbtm_bus_partial_payment">
@@ -141,7 +152,7 @@ class WBBMMetaBox
             <?php $this->wbbm_partial_payment_setting(); ?>
         </div>
 
-<?php
+        <?php
     }
 
     public function wbbm_partial_payment_setting()
@@ -166,10 +177,7 @@ class WBBMMetaBox
     {
         global $post;
 
-
         $wbtm_bus_next_stops = maybe_unserialize(get_post_meta($post->ID, 'wbbm_bus_next_stops', true));
-
-
 
         $wbbm_bus_bp = get_post_meta($post->ID, 'wbbm_bus_bp_stops', true);
         $values = get_post_custom($post->ID);
@@ -264,6 +272,20 @@ class WBBMMetaBox
 
 
         require_once(dirname(__FILE__) . "/clean/layout/bus_ondayoffday.php");
+    }
+
+    public function wbbm_bus_features()
+    {
+
+        $get_terms_features = array(
+            'taxonomy' => 'wbbm_bus_feature',
+            'hide_empty' => false
+        );
+        $feature_terms = get_terms($get_terms_features);
+
+
+
+        require_once(dirname(__FILE__) . "/clean/layout/bus_features.php");
     }
 
 

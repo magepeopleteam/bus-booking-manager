@@ -1,7 +1,8 @@
 <?php
 get_header();
 the_post();
-mage_search_form_horizontal(true);
+$ShortCodeClass = new ShortCodeClass;
+$ShortCodeClass->mage_search_form_horizontal(true);
 $id = get_the_id();
 $return = false;
 $date_format        = get_option( 'date_format' );

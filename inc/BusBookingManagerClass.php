@@ -47,7 +47,6 @@ class BusBookingManagerClass
     private function define_all_shortcode() {
 
         $ShortCodeClass = new ShortCodeClass();
-
         //add_shortcode('bus-search-form', array($ShortCodeClass, 'mage_bus_search_form'));
         add_shortcode('bus-search', array($ShortCodeClass, 'mage_bus_search'));
 
