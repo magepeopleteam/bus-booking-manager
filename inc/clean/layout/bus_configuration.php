@@ -2,26 +2,7 @@
     <h3 class="wbbm_mp_tab_item_heading"><img src="<?php echo WBTM_PLUGIN_URL .'images/bus_arrow_left.png';?>"/><?php echo $cpt_label.' '. __('Configuration', 'bus-booking-manager'); ?></h3>
 
     <div class="configuration_wrapper">
-        <div class='sec'>
-            <label for="wbbm_bus_category" class="ra-item-label">
-                <?php  esc_html_e('Type', 'bus-booking-manager'); ?>
-            </label>
-            <span>
-            <?php if(isset($bus_categories) && !empty($bus_categories)){
-                echo '<select name="wbbm_bus_category" id="wbbm_bus_category">';
-                echo '<option value="">'.__('Select Type','bus-booking-manager').'</option>';
-                foreach ($bus_categories as $key => $value) {
-                    if($wbbm_bus_category == $key){
-                        echo '<option value="'.esc_attr($key).'" selected>'.esc_html($value).'</option>';
-                    } else {
-                        echo '<option value="'.esc_attr($key).'">'.esc_html($value).'</option>';
-                    }
-                }
-                echo '</select>';
-            }
-            ?>
-            </span>
-        </div>
+
         <div class='sec'>
             <label for="wbbm_ev_98" class="ra-item-label">
                 <?php _e('Coach No', 'bus-booking-manager'); ?>
