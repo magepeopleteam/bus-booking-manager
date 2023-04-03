@@ -328,16 +328,16 @@ span.wbbm-ticket-confirm {
 .wbbm_bus_pickpint_wrapper {
     display: flex;
     padding-top: 5px;
+    flex-direction: column;
 }
 
 .wbbm_bus_pickpint_wrapper .wbbm_left_col {
-    flex-basis: 20%;
+    flex-basis: 100%;
+    margin-bottom: 30px;
 }
 
 .wbbm_bus_pickpint_wrapper .wbbm_right_col {
-    flex-basis: 76%;
-    border-left: 1px solid #eaeaea;
-    padding-left: 50px;
+    flex-basis: 100%;
 }
 
 .all-center {
@@ -346,24 +346,26 @@ span.wbbm-ticket-confirm {
     justify-content: center;
 }
 
+.pickpoint-adding-wrap-main {
+    padding: 20px;
+    padding-top: 0;
+}
+
 .wbbm_pickpoint_title {
+    background-color: #081D33;
+    color: #fff;
+    text-align: center;
+    padding: 10px;
+    font-size: 20px;
     margin: 0;
-    background: #fff;
-    position: absolute;
-    top: -2px;
-    padding: 1px 15px;
-    font-size: 15px;
-    border-radius: 0 0 3px 3px;
-    color: #ffa600;
-    font-weight: 400;
-    box-shadow: 1px 1px 5px 3px #ddd;
+    border-radius: 8px 10px 0 0;
 }
 
 .wbbm_remove_pickpoint {
     padding: 4px 6px;
-    font-size: 16px;
+    font-size: 14px;
     color: #F06292;
-    font-weight: 700;
+    font-weight: 400;
     background: transparent;
     border: none;
     border-radius: 3px;
@@ -372,23 +374,11 @@ span.wbbm-ticket-confirm {
 }
 
 .wbbm_selected_city_item {
-    /* background: #eceff1; */
-    background: #dde1e4;
-    padding: 5px 10px 8px;
-    border-radius: 3px;
+    background: #fff;
     margin-bottom: 10px;
     position: relative;
-}
-
-.wbbm_selected_city_item:before {
-    content: '';
-    position: absolute;
-    width: 50px;
-    height: 2px;
-    background: #eceff1;
-    display: block;
-    right: 100%;
-    top: 50%;
+    border: 2px solid rgb(92, 88, 165);
+    border-radius: 10px;
 }
 
 .wbbm_selected_city_item .pickpoint-adding {
@@ -438,8 +428,7 @@ span.wbbm-ticket-confirm {
 }
 
 .wbbm_pick_boarding {
-    width: 90%;
-    border: 1px solid #8ac34a;
+    width: 100%;
 }
 
 @media only screen and (max-width: 1024px) {
@@ -478,7 +467,7 @@ span.wbbm-ticket-confirm {
 }
 
 .wbbm_color_green {
-    color: #22D02D;
+    color: rgb(59, 201, 124);
 }
 
 .wbbm_plugin_pro_menu {
@@ -497,13 +486,14 @@ span.wbbm-ticket-confirm {
 #repeatable-fieldset-offday tr td input {
     width: 100%;
     padding: 5px 10px;
+    height: 30px;
 }
 
 label.switch {
     position: relative;
     display: inline-block;
-    width: 60px;
-    height: 24px;
+    width: 40px;
+    height: 12px;
     margin-left: 5px;
 }
 
@@ -519,7 +509,7 @@ label .slider.round {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #ccc;
+    background-color: rgba(212, 212, 212, 0.25);
     -webkit-transition: .4s;
     transition: .4s;
 }
@@ -529,16 +519,23 @@ label .slider:before {
     content: "";
     height: 17px;
     width: 17px;
-    left: 5px;
+    left: 0px;
     bottom: 4px;
-    background-color: #fff;
+    background-color: #ffffff;
     -webkit-transition: .4s;
     transition: .4s;
     border-radius: 50%;
+    top: -3px;
+    box-shadow: -1px 3px 5px -3px rgba(170, 170, 170, 0.76)
+}
+
+label input:checked+.slider:before {
+    left: -10px;
+    background-color: #5C58A5;
 }
 
 label input:checked+.slider {
-    background-color: #2196F3;
+    background-color: rgba(92, 88, 165, 0.25);
 }
 
 label input:checked+.slider:before {
@@ -667,11 +664,14 @@ CSS Added By Ariful
 
 #wbbm-single-settings-meta .bus-tops-sec-title {
     text-align: center;
-    color: #555;
+    color: #fff;
     border-bottom: 1px solid #d3d3d3;
-    padding-bottom: 10px;
+    padding: 10px;
     text-transform: uppercase;
     text-decoration: none;
+    background-color: rgb(8, 29, 51);
+    margin: 0;
+    border-radius: 8px 8px 0 0;
 }
 
 #wbbm-single-settings-meta .bus-stops-wrapper .bus-stops-left-col,
@@ -682,6 +682,7 @@ CSS Added By Ariful
 
 #wbbm-single-settings-meta .configuration_wrapper .sec {
     margin: 0;
+    margin-bottom: 10px;
 }
 
 #wbbm-single-settings-meta .onday-sec label {
@@ -699,42 +700,41 @@ CSS Added By Ariful
 }
 
 #wbbm-single-settings-meta table th {
-    background-color: #EA2330;
+    background-color: rgb(92, 88, 165);
     color: #fff;
     font-size: 13px;
     padding: 8px;
 }
 
-#wbbm-single-settings-meta table td,
-#wbbm-single-settings-meta .inside .offday-sec label,
-#wbbm-single-settings-meta .configuration_wrapper .sec,
-#wbbm-single-settings-meta .wbbm_bus_psngr_regform_wrap .sec {
-    padding: 8px;
+#wbbm-single-settings-meta .inside .offday-sec label {
+    margin-right: 10px;
 }
 
+#wbbm-single-settings-meta table td,
+#wbbm-single-settings-meta .configuration_wrapper .sec,
+#wbbm-single-settings-meta .wbbm_bus_psngr_regform_wrap .sec {}
+
 #wbbm-single-settings-meta table tr:nth-child(even),
-#wbbm-single-settings-meta .inside .offday-sec label:nth-child(even),
 #wbbm-single-settings-meta .configuration_wrapper .sec:nth-child(even),
 #wbbm-single-settings-meta .wbbm_bus_psngr_regform_wrap .sec:nth-child(even) {
     background-color: #fff;
 }
 
 #wbbm-single-settings-meta table tr:nth-child(odd),
-#wbbm-single-settings-meta .inside .offday-sec label:nth-child(odd),
 #wbbm-single-settings-meta .configuration_wrapper .sec:nth-child(odd),
 #wbbm-single-settings-meta .wbbm_bus_psngr_regform_wrap .sec:nth-child(odd) {
-    background-color: #f9e9e9;
+    background-color: #ffffff;
 }
 
 #wbbm-single-settings-meta .bus-stops-wrapper .bus-stops-left-col table tbody tr:after {
-    content: '\f30b';
+    content: '';
+    background: url('http://localhost:8080/mage-multipurpose/wp-content/plugins/bus-booking-manager/images/bus_route_arrow.png');
     position: absolute;
-    font-family: "Font Awesome 5 Free";
-    font-weight: 900;
-    font-size: 16px;
-    color: #EA2330;
     left: 101%;
     top: 12px;
+    width: 30px;
+    height: 30px;
+    background-repeat: no-repeat;
 }
 
 #wbbm-single-settings-meta .bus-stops-wrapper .bus-stops-left-col table tbody tr:not(.empty-row-bp) {
@@ -786,9 +786,9 @@ a#add-bp-row.button,
 a#add-price-row.button,
 a#add-offday-row.button,
 a#add-row.button {
-    background-color: #22D02D;
+    background-color: rgb(59, 201, 124);
     border-radius: 5px;
-    border: 1px solid #22D02D;
+    border: 1px solid rgb(59, 201, 124);
     color: #fff;
     display: block;
     width: max-content;
@@ -832,16 +832,16 @@ a#add-offday-row.button {
 
 #wbbm-single-settings-meta .wbbm_add_more_pickpoint,
 #wbbm-single-settings-meta .wbbm_add_pickpoint_this_city {
-    background-color: #22D02D !important;
+    background-color: rgb(59, 201, 124) !important;
     border-radius: 5px;
-    border: 1px solid #22D02D !important;
+    border: 1px solid rgb(59, 201, 124) !important;
     padding: 0px 10px;
     line-height: 28px;
     font-size: 13px;
     font-weight: 400;
-    width: 100%;
+    width: max-content;
     box-shadow: none;
-    margin-top: 10px
+    margin-top: 0px
 }
 
 #wbbm-single-settings-meta .wbbm_add_more_pickpoint {
@@ -857,17 +857,17 @@ a#add-offday-row.button {
 
 #wbbm-single-settings-meta .remove_city_for_pickpoint {
     color: #fff;
-    background: #000;
-    padding: 5px;
-    border-radius: 0;
-    right: 0;
-    top: 0;
+    background: #EA2330;
+    padding: 8px;
+    border-radius: 50%;
+    right: -10px;
+    top: -10px;
 }
 
 .wbbm_green_btn {
-    background-color: #22D02D;
+    background-color: rgb(59, 201, 124);
     border-radius: 5px;
-    border: 1px solid #22D02D;
+    border: 1px solid rgb(59, 201, 124);
     color: #fff;
     transition: 02s;
     display: inline-block;
@@ -932,25 +932,27 @@ a#add-offday-row.button {
     display: -webkit-flex;
     display: flex;
     min-height: 300px;
+    border-radius: 10px;
+    overflow: hidden;
 }
 
 .mp_tab_menu {
-    width: 100%;max-width: 300px;
-    background-color: #444;
+    width: 200px;
+    max-width: 200px;
+    min-width: 200px;
+    background-color: #081D33;
     color: #fff;
     font-size: 15px;
     font-weight: 600;
 }
 
 .mp_tab_menu ul {
-    border-top: 1px solid #FFF;
     margin: 0;
 }
 
 .mp_tab_menu ul li {
-    width: 93%;
-    padding:10px;
-    margin: 0;
+    padding: 10px;
+    margin: 10px;
     cursor: pointer;
     color: #c6d4db;
     position: relative;
@@ -958,7 +960,12 @@ a#add-offday-row.button {
     display: -webkit-flex;
     display: flex;
     -webkit-align-items: center;
-    border-right: 1px dotted #fff;
+    border-radius: 20px;
+}
+
+.mp_tab_menu ul li img {
+    width: 15px;
+    margin-right: 8px;
 }
 
 .mp_tab_menu ul li:last-child {
@@ -975,19 +982,20 @@ a#add-offday-row.button {
 .mp_tab_menu ul li.active {
     color: #fff;
     font-size: 12px;
-    background-color: #EA2330;
+    background-color: #5C58A5;
 }
 
 .mp_tab_menu ul li:hover {
     color: #f2f2f2;
 }
 
-
 .mp_tab_details {
     width: 100%;
-    background-color: #f5f5f5;
-    padding: 15px;
+    background-color: #FAFAFA;
+    padding: 0;
     box-sizing: border-box;
+    overflow-y: scroll;
+    overflow-x: hidden;
 }
 
 .mp_tab_details hr {
@@ -1009,8 +1017,7 @@ a#add-offday-row.button {
 
 .mp_tab_item {
     display: none;
-    overflow-x: auto;
-    overflow-y: hidden;
+    overflow: scroll;
 }
 
 .mp_tab_menu ul li {
@@ -1018,12 +1025,18 @@ a#add-offday-row.button {
     transition: all .25s ease-in-out;
 }
 
-#wbbm-single-settings-meta label {
+#wbbm-single-settings-meta label.ra-item-label {
     display: inline-block;
-    margin-bottom: 5px;
     font-size: 16px;
+    background-color: #E2E2FF;
+    margin: 0;
+    padding: 10px;
+    border-radius: 0 10px 10px 0;
+    margin-right: 30px;
+    color: #474747;
 }
 
+#wbbm-single-settings-meta label,
 #wbbm-single-settings-meta label span {
     display: inline-block;
 }
@@ -1149,4 +1162,304 @@ a#add-offday-row.button {
 .wbbm_go_pro_review_sec h1 {
     margin-bottom: 40px;
     margin-top: 40px;
+}
+
+.wbbm-ss-side-heading {
+    text-align: center;
+    font-size: 18px;
+    margin: 20px;
+}
+
+.wbbm_mp_tab_item_heading {
+    margin: 0;
+    padding: 20px;
+    background-color: #E2E2FF;
+}
+
+.wbbm_mp_tab_item_heading img {
+    width: 14px;
+    margin-right: 10px;
+}
+
+.configuration_wrapper {
+    margin-top: 10px;
+}
+
+.mp_tab_details select {
+    border-color: #5C58A5;
+    color: #5C58A5;
+    background-color: rgba(237, 239, 251, 0.41);
+    height: 30px;
+}
+
+.inside .mp_tab_details input[type=text] {
+    border-color: #5C58A5;
+    color: #5C58A5;
+    padding: 0;
+    background-color: rgba(237, 239, 251, 0.41);
+    padding-left: 5px;
+}
+
+.mp_tab_item_inner_wrapper {
+    padding: 20px;
+}
+
+div.mpStyle ._dButton_xs_bgBlue.wbtm_route_add_new_bus_btn {
+    background-color: rgb(92, 88, 165);
+    margin-bottom: 10px;
+}
+
+.wbtm_route_add_new_bus_btn i {
+    margin-right: 5px;
+    font-size: 12px;
+}
+
+#wbbm-single-settings-meta .bus-stops-wrapper .bus-stops-left-col {
+    margin-right: 30px;
+}
+
+#wbbm-single-settings-meta .bus-stops-wrapper .bus-stops-left-col,
+#wbbm-single-settings-meta .bus-stops-wrapper .bus-stops-right-col {
+    border: 2px solid rgb(92, 88, 165);
+    border-radius: 10px;
+    padding: 0;
+}
+
+.bus-stops-wrapper {
+    margin-top: 30px;
+}
+
+.boarding-point td,
+.dropping-point td {
+    padding: 10px;
+}
+
+a.button.remove-bp-row i {
+    margin-right: 5px;
+}
+
+.wbbm_bus_route_select,
+.wbbm_bus_route_time {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+}
+
+.wbbm_bus_route_icon {
+    background-color: rgb(92, 88, 165);
+    width: 30px;
+    height: 30px;
+    display: inline-block;
+    border-radius: 3px;
+    margin-right: -4px;
+    position: relative;
+    text-align: center;
+}
+
+.wbbm_bus_route_icon1 img {
+    width: 14px;
+    padding-top: 6px;
+}
+
+.wbbm_bus_route_icon2 img {
+    width: 16px;
+    padding-top: 6px;
+}
+
+.wbbm_seat_price_inner_wrap {
+    padding: 20px;
+}
+
+#add-price-row i {
+    margin-right: 5px;
+}
+
+.wbbm_seat_price_inner_wrap table tr td {
+    padding: 8px;
+}
+
+.wbbm_seat_price_inner_wrap table tr {
+    border-bottom: 10px solid #FAFAFA;
+}
+
+.remove-price-row i {
+    margin-right: 5px;
+}
+
+.mp_tab_item .mpStyle .roundSwitch {
+    width: 40px;
+    height: 12px;
+    background-color: rgba(212, 212, 212, 0.25);
+}
+
+.mp_tab_item .mpStyle .roundSwitch::before {
+    left: 0px;
+    bottom: -2px;
+    box-shadow: -1px 3px 5px -3px rgba(170, 170, 170, 0.76);
+    background-color: #fff;
+}
+
+.mp_tab_item .mpStyle .roundSwitchLabel input:checked+.roundSwitch::before {
+    left: -10px;
+}
+
+.mp_tab_item .mpStyle .roundSwitchLabel input:checked+.roundSwitch::before {
+    background-color: #5C58A5;
+}
+
+.mp_tab_item .mpStyle .roundSwitchLabel input:checked+.roundSwitch {
+    background-color: rgba(92, 88, 165, 0.25);
+}
+
+.wbbm_pickuppoint_inner_wrapper {
+    padding: 20px;
+}
+
+.wbbm_pickuppoint_inner_wrapper .ra-text-center {
+    text-align: left;
+}
+
+.ra-picup-point-button i {
+    margin-right: 5px;
+    color: #fff;
+}
+
+.wbbm_pickuppoint_inner_wrapper div.mpStyle ._dButton_xs_bgBlue.ra-picup-point-button {
+    background-color: rgb(59, 201, 124);
+    font-weight: normal;
+    font-size: 13px;
+}
+
+.wbtm_bus_off_on_date_inner_wrapper {
+    padding: 20px;
+}
+
+.wbtm_bus_off_on_date_inner_wrapper .ra-enable-button {
+    font-size: 18px;
+}
+
+.wbtm_bus_off_on_date_inner_wrapper .onday-sec label {
+    display: block;
+    font-size: 18px;
+    font-weight: 600 !important;
+    color: #000;
+}
+
+.wbtm_bus_off_on_date_inner_wrapper .onday-sec label span {
+    margin-top: 10px;
+}
+
+.wbbm_bus_pickpint_wrapper .ra-display-boarding-point {
+    display: flex;
+}
+
+.wbbm_bus_pickpint_wrapper .ra-display-boarding-point select {
+    margin-right: 20px;
+}
+
+.wbbm_bus_pickpint_wrapper .ra-display-button {
+    display: flex;
+}
+
+.wbbm_bus_pickpint_wrapper h3 {
+    font-size: var(--fs);
+}
+
+.pickpoint-adding-col {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    margin-right: 20px;
+}
+
+.pickpoint-adding-wrap {
+    margin-bottom: 20px;
+}
+
+.wbbm_bus_pickpint_wrapper #wbbm_pick_boarding {
+    margin-right: 20px;
+}
+
+.wbtm_bus_off_on_date_inner_wrapper table td {
+    padding: 8px;
+}
+
+.wbtm_bus_off_on_date_inner_wrapper table tr {
+    border-bottom: 10px solid #FAFAFA;
+}
+
+.wbtm_bus_off_on_date_inner_wrapper table th {
+    text-align: left;
+}
+
+.wbbm_bus_icon_group {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+}
+
+.wbbm-offday-wrapper.off-day label {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #000;
+}
+
+.wbtm_bus_partial_payment_inner_wrapper {
+    padding: 20px;
+    padding-left: 0;
+}
+
+#wbbm-single-settings-meta .wbtm_bus_partial_payment_inner_wrapper table th {
+    background-color: #E2E2FF;
+    color: #474747;
+    font-size: 16px;
+    border-radius: 0 20px 20px 0;
+    font-weight: 400;
+    width: 230px;
+}
+
+#wbbm-single-settings-meta .wbtm_bus_partial_payment_inner_wrapper table td {
+    padding-left: 30px;
+}
+
+#wbbm-single-settings-meta .wbtm_bus_partial_payment_inner_wrapper table tr {
+    border-bottom: 10px solid #FAFAFA;
+}
+
+.wbtm_bus_reg_form2_inner_wrapper {
+    padding: 20px;
+    padding-left: 0;
+}
+
+.wbtm_bus_reg_form2_inner_wrapper table tr {
+    border-bottom: 10px solid #FAFAFA;
+}
+
+.wbtm_bus_reg_form2_inner_wrapper table tr td {
+    padding: 5px;
+    vertical-align: middle;
+}
+
+.wbtm_bus_reg_form2_inner_wrapper table tr td:first-child {
+    background-color: #E2E2FF;
+    color: #474747;
+    font-size: 16px;
+    border-radius: 0 20px 20px 0;
+    font-weight: 400;
+    width: 230px;
+}
+
+.wbtm_bus_reg_form2_inner_wrapper table tr td:last-child {
+    padding-left: 30px;
+    vertical-align: middle;
+    padding-top: 10px;
+}
+
+.wbbm_seat_price_inner_wrap table th,
+.mp_ticket_type_table table th {
+    text-align: left;
 }
