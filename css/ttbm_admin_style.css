@@ -307,3 +307,10 @@ table.wc_status_table td.woo_btn_td span {font-size: 20px; color: #10DD10;}
 #ttbm_quick_setup{
 	padding-bottom: 60px;
 }
+
+#wbbm-single-settings-meta .mpStyle.mp_tab_item label{
+	display: flex;
+}
+div.mpStyle .mp_hidden_content, .mpStyle .dNone, .mpStyle [class*="_dNone"] {
+	display: none !important;
+}

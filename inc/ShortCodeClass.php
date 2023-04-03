@@ -163,7 +163,7 @@ class ShortCodeClass extends SearchClass
                 <?php if($wbbm_buy_ticket_text){ ?>
                     <h2><?php echo  $wbbm_buy_ticket_text; ?></h2>
                 <?php } ?>
-                <?php search_from_only($single_bus,$target); ?>
+                <?php $this->search_from_only($single_bus,$target); ?>
             </div>
         </div>
     <?php }
