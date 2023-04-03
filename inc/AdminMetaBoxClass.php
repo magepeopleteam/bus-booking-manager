@@ -96,6 +96,19 @@ class AdminMetaBoxClass extends CommonClass
             }
         }
 
+        $wbbm_features = $_POST['wbbm_features'];
+        if (!empty($wbbm_features)) {
+            $i = 0;
+            foreach ($wbbm_features as $feature) {
+                if ($feature != '') {
+                    $post_feature[] = $feature;
+                }
+                $i++;
+            }
+        }
+
+        update_post_meta($post_id, 'wbbm_features', $post_feature);
+
         update_post_meta($post_id, 'wbbm_bus_bp_stops', $bus_bus_bp_stops);
 
         update_post_meta($post_id, 'wbbm_bus_next_stops', $bus_dropping_points);

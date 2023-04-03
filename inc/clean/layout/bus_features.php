@@ -6,7 +6,10 @@
                 <thead>
                 <tr>
                     <td>
+<<<<<<< HEAD
 
+=======
+>>>>>>> f29f306563aaedc2b09b51a8cc65c59109e1c9aa
                         <h3><?php echo $cpt_label.' '. __('Features:', 'bus-booking-manager'); ?></h3>
                     </td>
                 </tr>
@@ -19,6 +22,7 @@
                                 <label class="dNone">
                                     <input type="text" name="ttbm_service_included_in_price" value="">
                                 </label>
+<<<<<<< HEAD
 
                                 <?php foreach ($feature_terms as $feature_term){ ?>
 
@@ -29,6 +33,14 @@
 
                                 <?php } ?>
 
+=======
+                                <?php  foreach ($feature_terms as $feature_term){ ?>
+                                    <label class="customCheckboxLabel">
+                                        <input <?php echo (in_array($feature_term->name,$wbbm_features))?'checked':'' ?> type="checkbox" name="wbbm_features[<?php echo $feature_term->name ?>]" value="<?php echo $feature_term->name ?>">
+                                        <span class="customCheckbox"><span class="mR_xs <?php echo get_term_meta($feature_term->term_id, '_pagetitle', true) ?>"></span><?php echo $feature_term->name ?></span>
+                                    </label>
+                                <?php } ?>
+>>>>>>> f29f306563aaedc2b09b51a8cc65c59109e1c9aa
                             </div>
                         </div>
                     </td>

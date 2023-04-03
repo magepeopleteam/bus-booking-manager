@@ -220,6 +220,7 @@ class WBBMMetaBox
         $boarding_points = maybe_unserialize(get_post_meta($post->ID, 'wbbm_bus_bp_stops', true));
 
 
+
         $boarding_points_array = array();
         if ($boarding_points) {
             $boarding_points = array_column($boarding_points, 'wbbm_bus_bp_stops_name');
@@ -276,13 +277,23 @@ class WBBMMetaBox
 
     public function wbbm_bus_features()
     {
+<<<<<<< HEAD
 
+=======
+        global $post;
+>>>>>>> f29f306563aaedc2b09b51a8cc65c59109e1c9aa
         $get_terms_features = array(
             'taxonomy' => 'wbbm_bus_feature',
             'hide_empty' => false
         );
         $feature_terms = get_terms($get_terms_features);
 
+<<<<<<< HEAD
+=======
+        $wbbm_features = maybe_unserialize(get_post_meta($post->ID, 'wbbm_features', true));
+
+        //print_r($features);exit;
+>>>>>>> f29f306563aaedc2b09b51a8cc65c59109e1c9aa
 
 
         require_once(dirname(__FILE__) . "/clean/layout/bus_features.php");

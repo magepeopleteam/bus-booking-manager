@@ -164,6 +164,7 @@ class ShortCodeClass extends SearchClass
                     <h2><?php echo  $wbbm_buy_ticket_text; ?></h2>
                 <?php } ?>
                 <?php $this->search_from_only($single_bus,$target); ?>
+<<<<<<< HEAD
             </div>
         </div>
     <?php }
@@ -421,6 +422,8 @@ class ShortCodeClass extends SearchClass
             <div class="mage_search_box_small">
                 <h2><?php echo wbbm_get_option('wbbm_buy_ticket_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_buy_ticket_text', 'wbbm_label_setting_sec') : _e('BUY TICKET', 'bus-booking-manager'); ?></h2>
                 <?php do_action('mage_search_from_only',false,$target); ?>
+=======
+>>>>>>> f29f306563aaedc2b09b51a8cc65c59109e1c9aa
             </div>
         </div>
     <?php }

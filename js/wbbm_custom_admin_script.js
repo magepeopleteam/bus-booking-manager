@@ -51,7 +51,11 @@
 		}
 	});
 
+<<<<<<< HEAD
 	$(document).on('click', 'button.mp_input_add_icon_button', function () { alert(23);
+=======
+	$(document).on('click', 'button.mp_input_add_icon_button', function () { 
+>>>>>>> f29f306563aaedc2b09b51a8cc65c59109e1c9aa
 		$(this).attr('data-icon-target', 'icon');
 		$('body').addClass('noScroll').find('.add_icon_list_popup').addClass('in');
 	});

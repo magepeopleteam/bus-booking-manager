@@ -1,6 +1,10 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) { die; } // Cannot access pages directly.
+<<<<<<< HEAD
 add_action ( 'wbbm_bus_feature_edit_form_fields', 'addTitleFieldToCat',10,2);
+=======
+
+>>>>>>> f29f306563aaedc2b09b51a8cc65c59109e1c9aa
 function wbbm_bus_cpt_tax(){
 
 $cpt_label = wbbm_get_option( 'wbbm_cpt_label', 'wbbm_general_setting_sec', 'Bus');
@@ -90,19 +94,30 @@ register_taxonomy( 'wbbm_bus_pickpoint', 'wbbm_bus', $bus_pickpoint_args );
 
 
 
+<<<<<<< HEAD
 function saveCategoryFields($term_id) {
+=======
+add_action ( 'edited_wbbm_bus_feature', 'save_wbbm_bus_feature');
+add_action ( 'create_wbbm_bus_feature', 'save_wbbm_bus_feature', 10, 2);
+
+function save_wbbm_bus_feature($term_id) {
+>>>>>>> f29f306563aaedc2b09b51a8cc65c59109e1c9aa
     if ( isset( $_POST['ttbm_feature_icon'] ) ) {
         update_term_meta($term_id, '_pagetitle', $_POST['ttbm_feature_icon']);
     }
 }
+<<<<<<< HEAD
 add_action ( 'edited_wbbm_bus_feature', 'saveCategoryFields');
 
 add_action ( 'create_wbbm_bus_feature', 'saveCategoryFields', 10, 2);
+=======
+>>>>>>> f29f306563aaedc2b09b51a8cc65c59109e1c9aa
 
 
 
 
 
+<<<<<<< HEAD
 add_action( 'wbbm_bus_feature_add_form_fields', 'rudr_add_term_fields' );
 
 function rudr_add_term_fields( $taxonomy ) {
@@ -111,6 +126,12 @@ function rudr_add_term_fields( $taxonomy ) {
         'taxonomy' => 'wbbm_bus_feature',
         'hide_empty' => false,
     ) );
+=======
+add_action( 'wbbm_bus_feature_add_form_fields', 'wbbm_bus_feature_add_term_fields' );
+
+function wbbm_bus_feature_add_term_fields( $taxonomy ) {
+
+>>>>>>> f29f306563aaedc2b09b51a8cc65c59109e1c9aa
 
     ?>
 
@@ -127,6 +148,7 @@ function rudr_add_term_fields( $taxonomy ) {
     <p class="description">Please select a suitable icon for this feature</p>
 
 
+<<<<<<< HEAD
     <div class="add_icon_list_popup">
         <span class="fas fa-times popupClose"></span>
         <div class="add_icon_list">
@@ -4852,6 +4874,18 @@ function rudr_add_term_fields( $taxonomy ) {
 
 
 function addTitleFieldToCat(){
+=======
+    <?php
+
+    all_font_awesome();
+
+}
+
+
+add_action ( 'wbbm_bus_feature_edit_form_fields', 'add_wbbm_bus_feature',10,2);
+
+function add_wbbm_bus_feature(){
+>>>>>>> f29f306563aaedc2b09b51a8cc65c59109e1c9aa
     $cat_title = get_term_meta($_GET['tag_ID'], '_pagetitle', true);
     ?>
 
@@ -4872,12 +4906,30 @@ function addTitleFieldToCat(){
                 </div>
             </div>
 
+<<<<<<< HEAD
             <p class="description">Please select a suitable icon for this feature</p>                            </td>
+=======
+            <p class="description">Please select a suitable icon for this feature</p>
+        </td>
+>>>>>>> f29f306563aaedc2b09b51a8cc65c59109e1c9aa
     </tr>
 
 
 
 
+<<<<<<< HEAD
+=======
+
+
+    <?php
+
+    all_font_awesome();
+
+}
+
+function all_font_awesome(){
+    ?>
+>>>>>>> f29f306563aaedc2b09b51a8cc65c59109e1c9aa
     <div class="add_icon_list_popup">
         <span class="fas fa-times popupClose"></span>
         <div class="add_icon_list">
@@ -9596,7 +9648,10 @@ function addTitleFieldToCat(){
     </div>
 
     <?php
+<<<<<<< HEAD
 
+=======
+>>>>>>> f29f306563aaedc2b09b51a8cc65c59109e1c9aa
 }
 
 
