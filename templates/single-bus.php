@@ -1,15 +1,11 @@
 <?php
 get_header();
 the_post();
-<<<<<<< HEAD
-$ShortCodeClass = new ShortCodeClass;
-$ShortCodeClass->mage_search_form_horizontal(true);
-=======
+
 $SearchClass = new SearchClass;
 
 $SearchClass->mage_search_form_horizontal(true);
 
->>>>>>> f29f306563aaedc2b09b51a8cc65c59109e1c9aa
 $id = get_the_id();
 $return = false;
 $date_format        = get_option( 'date_format' );
