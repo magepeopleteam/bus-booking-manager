@@ -27,9 +27,7 @@ function load_sortable_datepicker(parent, item) {
 		});
 		$('.ttbm_select2').select2({});
 		$('.field-select2-wrapper select').select2({});
-		$("ul.select2-selection__rendered").sortable({
-			containment: 'parent'
-		});
+		//$("ul.select2-selection__rendered").sortable({containment: 'parent'});
 		//=========Short able==============//
 		$(document).find('.mp_sortable_area').sortable({
 			handle: $(this).find('.mp_sortable_button')

@@ -277,3 +277,25 @@ ul.mage_list_inline li a {
         width: auto;
     }
 }
+
+.interface-interface-skeleton__header {
+    z-index: 0;
+}
+
+div.add_icon_list_popup .popupCloseIcon {
+    position: absolute;
+    z-index: 1111;
+    cursor: pointer;
+    top: 5px;
+    right: 25px;
+    width: 50px;
+    height: 50px;
+    background-color: #FFF;
+    color: #222;
+    font-size: 40px;
+    border: 2px solid #FFF;
+    border-radius: 5px;
+}
+.wbtm_feature .mp_input_add_icon{
+    display: inline-block;
+}

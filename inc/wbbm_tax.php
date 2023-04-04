@@ -116,7 +116,7 @@ function wbbm_bus_feature_add_term_fields( $taxonomy ) {
     ?>
 
     <label for="ttbm_feature_icon">Feature Icon</label>
-    <div id="field-wrapper-ttbm_feature_icon" class=" field-wrapper field-icon-wrapper field-icon-wrapper-ttbm_feature_icon">
+    <div id="field-wrapper-ttbm_feature_icon" class="wbtm_feature field-wrapper field-icon-wrapper field-icon-wrapper-ttbm_feature_icon">
         <div class="mp_input_add_icon">
             <button type="button" class="mp_input_add_icon_button dButton_xs ">
                 <input type="hidden" name="ttbm_feature_icon" placeholder="" value="fas fa-forward">
@@ -146,21 +146,15 @@ function add_wbbm_bus_feature(){
     <tr class="form-field">
         <th scope="row" valign="top"><label for="ttbm_feature_icon">Feature Icon</label></th>
         <td>
-            <div id="field-wrapper-ttbm_feature_icon" class=" field-wrapper field-icon-wrapper
-            field-icon-wrapper-ttbm_feature_icon">
-
-
-                				<div class="mp_input_add_icon">
+            <div id="field-wrapper-ttbm_feature_icon" class="wbtm_feature field-wrapper field-icon-wrapper field-icon-wrapper-ttbm_feature_icon">
+                <div class="mp_input_add_icon">
                     <button type="button" class="mp_input_add_icon_button dButton_xs ">
                         <input type="hidden" name="ttbm_feature_icon" placeholder="" value="<?php echo $cat_title ?>">
-                        <span class="<?php echo $cat_title ?>" data-empty-text="Add Icon">
-			                    			                </span>
+                        <span class="<?php echo $cat_title ?>" data-empty-text="Add Icon"></span>
                         <span class="fas fa-times remove_input_icon active " title="Remove Icon"></span>
                     </button>
                 </div>
             </div>
-
-
             <p class="description">Please select a suitable icon for this feature</p>
         </td>
 
@@ -180,7 +174,7 @@ function all_font_awesome(){
     ?>
 
     <div class="add_icon_list_popup">
-        <span class="fas fa-times popupClose"></span>
+        <span class="fas fa-times popupCloseIcon"></span>
         <div class="add_icon_list">
             <div class="popupHeader">
                 <h2>Select Icon</h2>

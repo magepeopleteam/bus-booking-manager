@@ -20,6 +20,14 @@ class WBBMMetaBox
         add_action('wp_ajax_wbtm_add_bus_stope', [$this, 'wbtm_add_bus_stope']);
         add_action('wp_ajax_nopriv_wbtm_add_bus_stope', [$this, 'wbtm_add_bus_stope']);
 
+        /*Bus feature ajax*/
+        add_action('wp_ajax_wbtm_add_bus_feature', [$this, 'wbtm_add_bus_feature']);
+        add_action('wp_ajax_nopriv_wbtm_add_bus_feature', [$this, 'wbtm_add_bus_feature']);
+
+        add_action ( 'edited_wbbm_bus_feature', 'save_wbbm_bus_feature');
+        add_action ( 'create_wbbm_bus_feature', 'save_wbbm_bus_feature', 10, 2);
+
+
         /*Bus stop ajax*/
         add_action('wp_ajax_wbtm_add_pickup', [$this, 'wbtm_add_pickup']);
         add_action('wp_ajax_nopriv_wbtm_add_pickup', [$this, 'wbtm_add_pickup']);
@@ -38,6 +46,30 @@ class WBBMMetaBox
         }
         die();
     }
+
+    /*Add Bus feature ajax function*/
+    public function wbtm_add_bus_feature()
+    {
+        if (isset($_POST['name'])) {
+            $terms = wp_insert_term($_POST['name'], 'wbbm_bus_feature', $args = array('description' => $_POST['description']));
+
+            if ( isset( $_POST['ttbm_feature_icon'] ) ) {
+                update_term_meta($terms['term_id'], '_pagetitle', $_POST['ttbm_feature_icon']);
+            }
+            ?>
+            <p>
+                <label class="customCheckboxLabel">
+                    <input type="checkbox" name="wbbm_features[<?php echo $_POST['name'] ?>]" value="<?php echo $_POST['name'] ?>">
+                    <span class="customCheckbox"><span class="mR_xs <?php echo $_POST['ttbm_feature_icon'] ?>"></span><?php echo $_POST['name'] ?></span>
+                </label>
+            </p>
+            <?php
+        }
+        die();
+    }
+
+
+
 
     /*Add Pickup ajax function*/
     public function wbtm_add_pickup()
@@ -289,6 +321,8 @@ class WBBMMetaBox
             'hide_empty' => false
         );
         $feature_terms = get_terms($get_terms_features);
+
+        $cpt_label = wbbm_get_option('wbbm_cpt_label', 'wbbm_general_setting_sec', __('Bus', 'bus-booking-manager'));
 
 
         $wbbm_features = maybe_unserialize(get_post_meta($post->ID, 'wbbm_features', true));
