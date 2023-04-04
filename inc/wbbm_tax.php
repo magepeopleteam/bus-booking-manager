@@ -171,7 +171,7 @@ function add_wbbm_bus_feature(){
 function all_font_awesome(){
     ?>
     <div class="add_icon_list_popup">
-        <span class="fas fa-times popupClose"></span>
+        <span class="fas fa-times popupCloseIcon"></span>
         <div class="add_icon_list">
             <div class="popupHeader">
                 <h2>Select Icon</h2>

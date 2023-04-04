@@ -2,22 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="15b63738-b91b-4d08-9f57-1023edf32336" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/inc/clean/layout/bus_features.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/css/ttbm_admin_style.css" beforeDir="false" afterPath="$PROJECT_DIR$/css/ttbm_admin_style.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inc/AdminMetaBoxClass.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/AdminMetaBoxClass.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inc/SearchClass.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/SearchClass.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inc/ShortCodeClass.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/ShortCodeClass.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/inc/class-meta-box.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/class-meta-box.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inc/clean/layout/search-form-horizontal.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/clean/layout/search-form-horizontal.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inc/clean/layout/search-form-only.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/clean/layout/search-form-only.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inc/clean/layout/search-list.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/clean/layout/search-list.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inc/clean/layout/search-page-vertical.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/clean/layout/search-page-vertical.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inc/clean/mage_short_code.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/inc/clean/mage_short_code.php_backup" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/inc/clean/layout/bus_features.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/clean/layout/bus_features.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/inc/wbbm_tax.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/wbbm_tax.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/js/wbbm_custom_admin_script.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/wbbm_custom_admin_script.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/single-bus.php" beforeDir="false" afterPath="$PROJECT_DIR$/templates/single-bus.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -34,6 +23,7 @@
     <option name="stateVersion" value="1" />
   </component>
   <component name="ProjectId" id="2NRkFlQJLh4yGFkp3JHFw6iW5qa" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />

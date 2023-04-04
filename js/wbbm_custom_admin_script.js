@@ -51,6 +51,54 @@
 		}
 	});
 
+	$(".submit-feature").click(function(e) {
+		e.preventDefault();
+		let $this=$(this);
+		let target=$this.closest('.mpPopup').find('.bus-feature');
+		let name = $("#bus_feature").val().trim();
+		$(".success_text").slideUp('fast');
+		if(!name){
+			$(".name_required").show();
+		}else {
+			let description = $("#feature_description").val().trim();
+			let ttbm_feature_icon = $("#feature_icon").val().trim();
+
+			$.ajax({
+				type: 'POST',
+				// url:wbtm_ajax.wbtm_ajaxurl,
+				url: wbtm_ajaxurl,
+				dataType: 'HTML',
+				data: {
+					"action": "wbtm_add_bus_feature",
+					"name": name,
+					"description": description,
+					"ttbm_feature_icon": ttbm_feature_icon,
+				},
+
+				beforeSend: function () {
+					dLoader(target);
+				},
+
+				success: function (data) {
+
+					$('.features').append(data);
+
+					$(".name_required").hide();
+					$("#bus_stop_name").val("");
+					$("#bus_stop_description").val("");
+					$(".success_text").slideDown('fast');
+					setTimeout(function() {
+						$('.success_text').fadeOut('fast');
+					}, 1000); // <-- time in milliseconds
+					dLoaderRemove(target);
+					if ($this.hasClass('close_popup')) {
+						$this.delay(2000).closest('.popupMainArea').find('.popupClose').trigger('click');
+					}
+				}
+			});
+		}
+	});
+
 	$(document).on('click', 'button.mp_input_add_icon_button', function () { 
 		$(this).attr('data-icon-target', 'icon');
 		$('body').addClass('noScroll').find('.add_icon_list_popup').addClass('in');
@@ -60,7 +108,7 @@
 		$(this).attr('data-icon-target', 'icon');
 		$('body').addClass('noScroll').find('.add_icon_list_popup').addClass('in');
 	});
-	$(document).on('click', '.add_icon_list_popup .popupClose', function () {
+	$(document).on('click', '.add_icon_list_popup .popupCloseIcon', function () {
 		let parent = $(this).closest('.add_icon_list_popup');
 		parent.removeClass('in');
 		$('body').removeClass('noScroll');
@@ -77,7 +125,7 @@
 		let targetParent = $(this).closest('.add_icon_list_popup');
 		targetParent.find('.iconItem').removeClass('active');
 		$(this).addClass('active');
-		targetParent.find('.popupClose').trigger('click');
+		targetParent.find('.popupCloseIcon').trigger('click');
 	});
 	$(document).on('click', 'button.mp_input_add_icon_button span.remove_input_icon', function (e) {
 		e.stopImmediatePropagation();

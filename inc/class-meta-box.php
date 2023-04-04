@@ -20,6 +20,14 @@ class WBBMMetaBox
         add_action('wp_ajax_wbtm_add_bus_stope', [$this, 'wbtm_add_bus_stope']);
         add_action('wp_ajax_nopriv_wbtm_add_bus_stope', [$this, 'wbtm_add_bus_stope']);
 
+        /*Bus feature ajax*/
+        add_action('wp_ajax_wbtm_add_bus_feature', [$this, 'wbtm_add_bus_feature']);
+        add_action('wp_ajax_nopriv_wbtm_add_bus_feature', [$this, 'wbtm_add_bus_feature']);
+
+        add_action ( 'edited_wbbm_bus_feature', 'save_wbbm_bus_feature');
+        add_action ( 'create_wbbm_bus_feature', 'save_wbbm_bus_feature', 10, 2);
+
+
         /*Bus stop ajax*/
         add_action('wp_ajax_wbtm_add_pickup', [$this, 'wbtm_add_pickup']);
         add_action('wp_ajax_nopriv_wbtm_add_pickup', [$this, 'wbtm_add_pickup']);
@@ -38,6 +46,30 @@ class WBBMMetaBox
         }
         die();
     }
+
+    /*Add Bus feature ajax function*/
+    public function wbtm_add_bus_feature()
+    {
+        if (isset($_POST['name'])) {
+            $terms = wp_insert_term($_POST['name'], 'wbbm_bus_feature', $args = array('description' => $_POST['description']));
+
+            if ( isset( $_POST['ttbm_feature_icon'] ) ) {
+                update_term_meta($terms['term_id'], '_pagetitle', $_POST['ttbm_feature_icon']);
+            }
+            ?>
+            <p>
+                <label class="customCheckboxLabel">
+                    <input type="checkbox" name="wbbm_features[<?php echo $_POST['name'] ?>]" value="<?php echo $_POST['name'] ?>">
+                    <span class="customCheckbox"><span class="mR_xs <?php echo $_POST['ttbm_feature_icon'] ?>"></span><?php echo $_POST['name'] ?></span>
+                </label>
+            </p>
+            <?php
+        }
+        die();
+    }
+
+
+
 
     /*Add Pickup ajax function*/
     public function wbtm_add_pickup()
@@ -73,9 +105,14 @@ class WBBMMetaBox
     public function wbbm_meta_box_cb()
     {
         $post_id = get_the_id();
+
+        $cpt_label = wbbm_get_option('wbbm_cpt_label', 'wbbm_general_setting_sec', __('Bus', 'bus-booking-manager'));
+
         ?>
+
         <div class="mp_event_all_meta_in_tab mp_event_tab_area">
             <div class="mp_tab_menu">
+                <div class="wbbm-ss-side-heading"><?php echo $cpt_label.' '. __('Settings', 'bus-booking-manager'); ?></div>
                 <ul>
                     <?php do_action('wbbm_meta_box_tab_label', $post_id); ?>
                 </ul>
@@ -84,51 +121,49 @@ class WBBMMetaBox
                 <?php do_action('wbbm_meta_box_tab_content', $post_id); ?>
             </div>
         </div>
-    <?php
+        <?php
     }
 
     // Tab lists
     public function wbbm_add_meta_box_tab_label($post_id)
     {
 
-
         $cpt_label = wbbm_get_option('wbbm_cpt_label', 'wbbm_general_setting_sec', __('Bus', 'bus-booking-manager'));
-
         ?>
+        <li data-target-tabs="#wbtm_ticket_panel" class="active"><img src="<?php echo WBTM_PLUGIN_URL .'images/bus_config.png';?>"/> <?php echo  __('Configuration', 'bus-booking-manager'); ?>
 
-        <li data-target-tabs="#wbtm_ticket_panel" class="active">
-            <span class="dashicons dashicons-admin-settings"></span><?php echo $cpt_label . ' ' . __('Configuration', 'bus-booking-manager'); ?>
         </li>
 
         <li data-target-tabs="#wbtm_routing" class="wbtm_routing_tab">
-            <span class="dashicons dashicons-location-alt"></span><?php echo $cpt_label . ' ' . __('Routing', 'bus-booking-manager'); ?>
+            <img src="<?php echo WBTM_PLUGIN_URL .'images/bus_route.png';?>"/><?php echo __('Routing', 'bus-booking-manager'); ?>
         </li>
 
         <li data-target-tabs="#wbtm_seat_price" class="ra_seat_price">
-            <span class="dashicons dashicons-money-alt"></span><?php echo $cpt_label . ' ' . __('Seat Price', 'bus-booking-manager'); ?>
+            <img src="<?php echo WBTM_PLUGIN_URL .'images/bus_seat.png';?>"/><?php echo __('Seat Price', 'bus-booking-manager'); ?>
         </li>
 
-        <li class="ra_pickuppoint_tab" data-target-tabs="#wbtm_pickuppoint"><span class="dashicons dashicons-flag"></span><?php echo $cpt_label . ' ' . __('Pickup Point', 'bus-booking-manager'); ?>
+        <li class="ra_pickuppoint_tab" data-target-tabs="#wbtm_pickuppoint"><img src="<?php echo WBTM_PLUGIN_URL .'images/bus_pickup.png';?>"/><?php echo __('Pickup Point', 'bus-booking-manager'); ?>
         </li>
 
-        <li data-target-tabs="#wbtm_bus_off_on_date">
-            <span class="dashicons dashicons-calendar-alt"></span><?php echo $cpt_label . ' ' . __('Onday & Offday', 'bus-booking-manager'); ?>
-        </li>
 
+        <li data-target-tabs="#wbtm_bus_off_on_date"><img src="<?php echo WBTM_PLUGIN_URL .'images/bus_onday.png';?>"/><?php echo __('Onday & Offday', 'bus-booking-manager'); ?>
+
+        </li>
         <li data-target-tabs="#wbmm_bus_features">
-            <span class="dashicons dashicons-calendar-alt"></span><?php echo $cpt_label . ' ' . __('Features', 'bus-booking-manager'); ?>
-        </li>
+        <span class="dashicons dashicons-calendar-alt"></span><?php echo $cpt_label . ' ' . __('Features', 'bus-booking-manager'); ?>
+
+
 
         <?php if (is_plugin_active('mage-partial-payment-pro/mage_partial_pro.php')) : ?>
-            <li data-target-tabs="#wbtm_bus_partial_payment"><span class="dashicons dashicons-calendar-alt"></span><?php echo $cpt_label . ' ' . __('Partial payment', 'bus-booking-manager'); ?>
-            </li>
-        <?php endif; ?>
+        <li data-target-tabs="#wbtm_bus_partial_payment"><img src="<?php echo WBTM_PLUGIN_URL .'images/bus_partial.png';?>"/><?php echo __('Partial Payment', 'bus-booking-manager'); ?>
+        </li>
+    <?php endif; ?>
 
         <?php
         /*Hook:  wbbm_after_meta_box_tab_label */
         do_action('wbbm_after_meta_box_tab_label');
         ?>
-    <?php
+        <?php
     }
 
     public function wbbm_add_meta_box_tab_content($post_id)
@@ -147,9 +182,10 @@ class WBBMMetaBox
         <?php do_action('wbbm_after_meta_box_tab_content'); ?>
         <!-- Partial Payment Setting -->
         <div class="mp_tab_item tab-content" data-tab-item="#wbtm_bus_partial_payment">
-            <h3><?php echo $cpt_label . ' ' . __('Partial Payment:', 'bus-booking-manager'); ?></h3>
-            <hr />
-            <?php $this->wbbm_partial_payment_setting(); ?>
+            <h3 class="wbbm_mp_tab_item_heading"><img src="<?php echo WBTM_PLUGIN_URL .'images/bus_arrow_left.png';?>"/><?php echo $cpt_label . ' ' . __('Partial Payment', 'bus-booking-manager'); ?></h3>
+            <div class="wbtm_bus_partial_payment_inner_wrapper">
+                <?php $this->wbbm_partial_payment_setting(); ?>
+            </div>
         </div>
 
         <?php
@@ -277,16 +313,23 @@ class WBBMMetaBox
 
     public function wbbm_bus_features()
     {
+
         global $post;
+
         $get_terms_features = array(
             'taxonomy' => 'wbbm_bus_feature',
             'hide_empty' => false
         );
         $feature_terms = get_terms($get_terms_features);
 
-        $wbbm_features = maybe_unserialize(get_post_meta($post->ID, 'wbbm_features', true));
+        $cpt_label = wbbm_get_option('wbbm_cpt_label', 'wbbm_general_setting_sec', __('Bus', 'bus-booking-manager'));
 
-        //print_r($features);exit;
+
+        $wbbm_features = maybe_unserialize(get_post_meta($post->ID, 'wbbm_features', true)?get_post_meta($post->ID, 'wbbm_features', true):[]);
+
+
+
+
 
 
         require_once(dirname(__FILE__) . "/clean/layout/bus_features.php");
