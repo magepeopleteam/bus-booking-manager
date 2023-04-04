@@ -509,7 +509,7 @@ label .slider.round {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(212, 212, 212, 0.25);
+    background-color: rgb(30 27 27 / 25%);
     -webkit-transition: .4s;
     transition: .4s;
 }
@@ -1290,7 +1290,7 @@ a.button.remove-bp-row i {
 .mp_tab_item .mpStyle .roundSwitch {
     width: 40px;
     height: 12px;
-    background-color: rgba(212, 212, 212, 0.25);
+    background-color: rgb(30 27 27 / 25%);
 }
 
 .mp_tab_item .mpStyle .roundSwitch::before {
