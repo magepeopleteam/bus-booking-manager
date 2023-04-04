@@ -108,7 +108,11 @@ class WBBMMetaBox
 
         $cpt_label = wbbm_get_option('wbbm_cpt_label', 'wbbm_general_setting_sec', __('Bus', 'bus-booking-manager'));
 
+<<<<<<< HEAD
         ?>
+=======
+?>
+>>>>>>> 03426bd7e39e4c9a2b8de9fd6b8dffbc627a2e82
 
         <div class="mp_event_all_meta_in_tab mp_event_tab_area">
             <div class="mp_tab_menu">
@@ -128,24 +132,38 @@ class WBBMMetaBox
     public function wbbm_add_meta_box_tab_label($post_id)
     {
 
+<<<<<<< HEAD
         $cpt_label = wbbm_get_option('wbbm_cpt_label', 'wbbm_general_setting_sec', __('Bus', 'bus-booking-manager'));
         ?>
+=======
+    $cpt_label = wbbm_get_option('wbbm_cpt_label', 'wbbm_general_setting_sec', __('Bus', 'bus-booking-manager'));
+    ?>
+>>>>>>> 03426bd7e39e4c9a2b8de9fd6b8dffbc627a2e82
         <li data-target-tabs="#wbtm_ticket_panel" class="active"><img src="<?php echo WBTM_PLUGIN_URL .'images/bus_config.png';?>"/> <?php echo  __('Configuration', 'bus-booking-manager'); ?>
 
         </li>
 
         <li data-target-tabs="#wbtm_routing" class="wbtm_routing_tab">
+<<<<<<< HEAD
             <img src="<?php echo WBTM_PLUGIN_URL .'images/bus_route.png';?>"/><?php echo __('Routing', 'bus-booking-manager'); ?>
         </li>
 
         <li data-target-tabs="#wbtm_seat_price" class="ra_seat_price">
             <img src="<?php echo WBTM_PLUGIN_URL .'images/bus_seat.png';?>"/><?php echo __('Seat Price', 'bus-booking-manager'); ?>
+=======
+        <img src="<?php echo WBTM_PLUGIN_URL .'images/bus_route.png';?>"/><?php echo __('Routing', 'bus-booking-manager'); ?>
+        </li>
+
+        <li data-target-tabs="#wbtm_seat_price" class="ra_seat_price">
+        <img src="<?php echo WBTM_PLUGIN_URL .'images/bus_seat.png';?>"/><?php echo __('Seat Price', 'bus-booking-manager'); ?>
+>>>>>>> 03426bd7e39e4c9a2b8de9fd6b8dffbc627a2e82
         </li>
 
         <li class="ra_pickuppoint_tab" data-target-tabs="#wbtm_pickuppoint"><img src="<?php echo WBTM_PLUGIN_URL .'images/bus_pickup.png';?>"/><?php echo __('Pickup Point', 'bus-booking-manager'); ?>
         </li>
 
 
+<<<<<<< HEAD
         <li data-target-tabs="#wbtm_bus_off_on_date"><img src="<?php echo WBTM_PLUGIN_URL .'images/bus_onday.png';?>"/><?php echo __('Onday & Offday', 'bus-booking-manager'); ?>
 
         </li>
@@ -158,6 +176,20 @@ class WBBMMetaBox
         <li data-target-tabs="#wbtm_bus_partial_payment"><img src="<?php echo WBTM_PLUGIN_URL .'images/bus_partial.png';?>"/><?php echo __('Partial Payment', 'bus-booking-manager'); ?>
         </li>
     <?php endif; ?>
+=======
+         <li data-target-tabs="#wbtm_bus_off_on_date"><img src="<?php echo WBTM_PLUGIN_URL .'images/bus_onday.png';?>"/><?php echo __('Onday & Offday', 'bus-booking-manager'); ?>
+
+        </li>
+        <li data-target-tabs="#wbmm_bus_features">
+            <span class="dashicons dashicons-calendar-alt"></span><?php echo $cpt_label . ' ' . __('Features', 'bus-booking-manager'); ?>
+
+       
+
+        <?php if (is_plugin_active('mage-partial-payment-pro/mage_partial_pro.php')) : ?>
+            <li data-target-tabs="#wbtm_bus_partial_payment"><img src="<?php echo WBTM_PLUGIN_URL .'images/bus_partial.png';?>"/><?php echo __('Partial Payment', 'bus-booking-manager'); ?>
+            </li>
+        <?php endif; ?>
+>>>>>>> 03426bd7e39e4c9a2b8de9fd6b8dffbc627a2e82
 
         <?php
         /*Hook:  wbbm_after_meta_box_tab_label */
@@ -184,7 +216,11 @@ class WBBMMetaBox
         <div class="mp_tab_item tab-content" data-tab-item="#wbtm_bus_partial_payment">
             <h3 class="wbbm_mp_tab_item_heading"><img src="<?php echo WBTM_PLUGIN_URL .'images/bus_arrow_left.png';?>"/><?php echo $cpt_label . ' ' . __('Partial Payment', 'bus-booking-manager'); ?></h3>
             <div class="wbtm_bus_partial_payment_inner_wrapper">
+<<<<<<< HEAD
                 <?php $this->wbbm_partial_payment_setting(); ?>
+=======
+            <?php $this->wbbm_partial_payment_setting(); ?>
+>>>>>>> 03426bd7e39e4c9a2b8de9fd6b8dffbc627a2e82
             </div>
         </div>
 

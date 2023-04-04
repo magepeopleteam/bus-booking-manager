@@ -18,7 +18,7 @@ function wbbm_bus_admin_scripts() {
     wp_enqueue_script('wbbm-single-datatabs',plugin_dir_url( __DIR__ ).'js/wbbm-single-datatabs.js',array('jquery'),time(),true);
     wp_enqueue_script('mp_script',plugin_dir_url( __DIR__ ).'js/mp_script.js',array('jquery'),time(),true);
     wp_enqueue_script('wbbm_custom_admin_script',plugin_dir_url( __DIR__ ).'js/wbbm_custom_admin_script.js',array('jquery'),time(),true);
-    wp_enqueue_style('mep-ra-admin-style',plugin_dir_url( __DIR__ ).'css/wbbm-custom-style.css',array());
+    wp_enqueue_style('mep-ra-admin-style',plugin_dir_url( __DIR__ ).'css/wbbm-custom-style.css',array(),time());
     wp_enqueue_style('mp-style',plugin_dir_url( __DIR__ ).'css/mp_style.css',array());
 }
 
