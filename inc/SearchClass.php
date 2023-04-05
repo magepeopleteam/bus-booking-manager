@@ -438,7 +438,7 @@ class SearchClass extends CommonClass
                                             </div>
                                         <?php endif; ?>
 
-                                        <?php if (($entire_bus_booking == 'on') && ($available_seat == $total_seat) && ($seat_price_entire > 0) || ($is_price_zero_allow == 'off') ) : ?>
+                                        <?php if (($entire_bus_booking == 'on') && ($available_seat == $total_seat) && ($seat_price_entire > 0) ) : ?>
                                             <div class="mage_center_space">
                                                 <p>
                                                     <strong><?php echo wbbm_get_option('wbbm_entire_bus_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_entire_bus_text', 'wbbm_label_setting_sec') : _e('Entire Bus', 'bus-booking-manager'); echo ':'; ?></strong>
@@ -462,6 +462,7 @@ class SearchClass extends CommonClass
                                                 </div>
                                             </div>
                                         <?php endif; ?>
+
                                         <div class="mage_customer_info_area">
                                             <?php
                                             $date = isset($_GET[$date_var]) ? mage_wp_date($_GET[$date_var], 'Y-m-d') : date('Y-m-d');
@@ -571,7 +572,7 @@ class SearchClass extends CommonClass
                                         </div>
                                     <?php endif; ?>
 
-                                    <?php if (($available_seat == $total_seat) && ($seat_price_entire > 0) || ($is_price_zero_allow == 'off') ) : ?>
+                                    <?php if (($available_seat == $total_seat) && ($seat_price_entire > 0) ) : ?>
                                         <div class="mage_center_space">
                                             <p>
                                                 <strong><?php echo wbbm_get_option('wbbm_entire_bus_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_entire_bus_text', 'wbbm_label_setting_sec') : _e('Entire Bus', 'bus-booking-manager'); echo ':'; ?></strong>
