@@ -372,6 +372,11 @@
 		$( ".boarding-point tr" ).each(function( index ) {
 
 			let pick_name = $(this).find(":selected").val()
+			let pick_name_val = '';
+			if(pick_name) {
+				pick_name_val = pick_name.toLowerCase();
+				pick_name_val = pick_name_val.replace(/ /g, '_');
+			}
 
 			options = options+$(this).find(":selected").val();
 
@@ -384,7 +389,7 @@
 			}
 			let term_id = $(this).find(':selected').data('term_id');
 			if(term_id){
-				$('.ra_pick_boarding').append("<option value="+pick_name+">"+pick_name+"</option>")
+				$('.ra_pick_boarding').append("<option value="+pick_name_val+">"+pick_name+"</option>")
 			}
 		});
 
