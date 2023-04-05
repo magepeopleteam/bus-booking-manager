@@ -109,8 +109,10 @@
                                                 </div>
 
                                         <?php
+                                            endforeach;
+                                        }
                                         if ($get_pickpoints_data) {
-                                            $get_pickpoints_data = unserialize($get_pickpoints_data);
+                                            $get_pickpoints_data = maybe_unserialize($get_pickpoints_data);
                                             foreach ($get_pickpoints_data as $pickpoint) : ?>
 
                                                 <div class="pickpoint-adding">
