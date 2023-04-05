@@ -1,0 +1,1488 @@
+tr.seat_lists>:last-child {
+    /*display: none;*/
+}
+
+table.bus-seats tr td {
+    border: 1px solid #ddd;
+    text-align: center;
+    /* padding: 0; */
+}
+
+table.bus-seats tr td a {
+    display: block;
+    cursor: pointer;
+    padding: 8px;
+}
+
+tr.seat_lists td {
+    padding: 0;
+}
+
+td.no-border {
+    border: 0!important;
+}
+
+.align-left {
+    text-align: left!important;
+}
+
+.wbbm-content-wrapper {
+    width: 1080px;
+    margin: 0 auto;
+    overflow: hidden;
+    padding: 50px 0;
+    min-height: 780px;
+}
+
+a.seat_blank.seat_booked {
+    background: green;
+    color: #fff;
+}
+
+.bus-seat-panel {
+    width: 30%;
+    float: left;
+    overflow: hidden;
+}
+
+.bus-info-sec {
+    width: 100%;
+    float: none;
+    overflow: hidden;
+}
+
+.leaving-list {
+    width: 20%;
+    float: left;
+    padding-left: 0;
+}
+
+.leaving-list .selected_route {
+    font-size: inherit;
+    margin: 0;
+}
+
+.top-search-section {
+    display: block;
+    overflow: hidden;
+    float: none;
+}
+
+.leaving-list .qty {
+    width: auto;
+    width: 93%;
+    margin: 0 auto;
+}
+
+.wbbm-search-form-fields-sec.wbbm-single-search-form .fields-li button {
+    margin: 0!important;
+    float: none;
+}
+
+.wbbm-bus-grid .wbbm-bus-lists {
+    width: 32.5%;
+    float: left;
+    border: 1px solid #ddd;
+    margin: 5px;
+    padding: 5px;
+    overflow: hidden;
+}
+
+.wbbm-bus-grid .bus-thumb {
+    height: auto;
+    overflow: hidden;
+    width: 100%;
+    float: none;
+}
+
+.wbbm-bus-grid .wbbm-bus-info {
+    width: 100%;
+    float: none;
+    padding-left: 0;
+    padding-top: 0;
+}
+
+.wbbm-bus-grid .wbbm-bus-info ul li {
+    display: block;
+    margin: 0;
+    border-bottom: 1px solid #ecebeb;
+    padding: 7px 0;
+}
+
+table.selected-seat-list {
+    width: 100%;
+    margin: 20px 0;
+}
+
+table.selected-seat-list tr {
+    border: 1px solid #ddd;
+}
+
+td.no-border.empty-lane {
+    width: 60px;
+}
+
+.leaving-list select {
+    width: 90%;
+    padding: 0;
+}
+
+table.selected-seat-list td {
+    padding: 5px 10px;
+}
+
+.mep-show {
+    display: block;
+}
+
+.mep-hidden {
+    display: none;
+}
+
+table.selected-seat-list tr th {
+    text-align: center;
+}
+
+span.booked-seat {
+    display: block;
+    background: #ddd;
+    padding: 8px;
+}
+
+span.confirmed-seat {
+    background: #ff2626;
+    display: block;
+    color: #fff;
+    padding: 8px;
+}
+
+.wbbm-search-form-sec {
+    display: block;
+    overflow: hidden;
+}
+
+.fields-li {
+    display: inline-block;
+    width: 19.5%;
+}
+
+select.seat_type.select2,
+.leaving-list select {
+    padding: 10px 10px;
+    font-size: 15px;
+}
+
+.fields-li input {
+    padding: 10px!important;
+    font-size: 16px;
+}
+
+.fields-li button {
+    padding: 10px 30px;
+    font-size: 17px;
+    background: green;
+    border: 0;
+    color: #fff;
+    margin: -27px 0 0 0!important;
+    vertical-align: top;
+    display: inline-block;
+    height: 41px;
+    border-radius: 5px;
+}
+
+ul.search-li {
+    text-align: center;
+}
+
+ul.search-li li {
+    display: inline-block;
+    font-size: 16px;
+    vertical-align: top;
+}
+
+ul.search-li li input {
+    padding: 10px;
+    font-size: 16px;
+}
+
+ul.search-li li button {
+    padding: 12px 20px;
+    background: green;
+    border: 0;
+    color: #fff;
+    margin-top: 25px;
+}
+
+.mep-user-info-sec {
+    border: 1px solid #ddd;
+    margin-bottom: 5px;
+    padding: 20px;
+}
+
+.mep-user-info-sec input {
+    display: block;
+    padding: 10px;
+    margin-bottom: 5px;
+    width: 100%;
+    font-size: 14px;
+}
+
+.mep-user-info-sec {
+    border: 1px solid #ddd;
+    margin-bottom: 5px;
+    padding: 20px;
+}
+
+.mep-user-info-sec input {
+    display: block;
+    padding: 10px!important;
+    margin-bottom: 5px!important;
+    width: 100%!important;
+    font-size: 14px;
+}
+
+button.single_add_to_cart_button.button.alt.btn-mep-event-cart {
+    background: green;
+    color: #fff;
+    border: 0;
+    font-size: 16px;
+    padding: 10px 20px;
+    margin: 0;
+}
+
+.selected_route {
+    font-size: 20px;
+    margin: 30px 0 5px;
+    text-align: center;
+    display: block;
+    background: #709e5c;
+    color: #fff;
+    padding: 10px;
+}
+
+.wbtm-notice {
+    color: #b5b52b;
+    border: 1px solid;
+    padding: 5px;
+    display: inline-block;
+    margin: 20px auto;
+}
+
+.fields-li .select2-container {
+    display: block;
+    width: 100%!important;
+    min-width: 100px!important;
+}
+
+.fields-li input {
+    height: 42px!important;
+    border-radius: 5px!important;
+}
+
+
+/*Tickets*/
+
+.wbbm-ticket-body {
+    background: #fff;
+    padding: 10px;
+    margin: 40px auto;
+    width: 600px;
+}
+
+.wbbm-ticket-body table {
+    width: 100%;
+}
+
+.wbbm-ticket-body table tr {
+    border: 1px solid #fbfbfb!important;
+}
+
+.wbbm-ticket-body table tr td {
+    padding: 6px;
+    font-size: 15px;
+    border-bottom: 1px solid #ddd;
+}
+
+.wbbm-ticket-body table tr td h3 {
+    padding: 10px 0;
+    margin: 0;
+    font-size: 25px;
+}
+
+.ticket-search {
+    width: 400px;
+    background: #fff;
+    text-align: center;
+    padding: 20px;
+    margin: 30px auto;
+    border: 1px solid #ddd;
+}
+
+.ticket-search h2 {
+    margin: 0;
+    padding: 0 0 20px 0;
+}
+
+.ticket-search input {
+    display: block;
+    width: 100%;
+    padding: 7px;
+    margin-bottom: 10px;
+}
+
+.ticket-search button {
+    background: #676fec;
+    color: #fff;
+    border: 0;
+    padding: 10px 20px;
+    font-size: 15px;
+}
+
+span.wbbm-ticket-hold {
+    background: #d0d0d0;
+    padding: 5px 20px;
+}
+
+span.wbbm-ticket-confirm {
+    background: #02792f;
+    padding: 5px 20px;
+    color: #fff;
+}
+
+input.ticket-input {
+    padding: 10px!important;
+    margin-bottom: 30px!important;
+}
+
+.bus-details {
+    display: block;
+    overflow: hidden;
+}
+
+.bus-thumbnail {
+    width: 40%;
+    float: left;
+    overflow: hidden;
+    padding: 0 20px;
+}
+
+.bus-details-info {
+    width: 60%;
+    float: left;
+    overflow: hidden;
+}
+
+.bus-details-info h2 {
+    padding: 0;
+    margin: 0;
+}
+
+p {}
+
+.bus-details-info p {
+    margin: 0 0 10px 0;
+    padding: 0;
+}
+
+.bus-route-details {
+    display: block;
+    overflow: hidden;
+    margin: 20px 0;
+}
+
+.bus-route-list {
+    width: 50%;
+    float: left;
+    padding-right: 20px;
+}
+
+.bus-route-list h6 {
+    padding: 0;
+    margin: 0;
+    font-size: 15px;
+    font-weight: normal;
+    border-bottom: 1px dashed #ddd;
+}
+
+.bus-details-info h3 {
+    font-size: 15px;
+    font-weight: normal;
+    font-style: italic;
+    margin: 0;
+    padding: 0;
+}
+
+.bus-single-search-form {
+    display: block;
+    overflow: hidden;
+}
+
+.bus-single-search-form ul {
+    padding: 0;
+    margin: 20px 0;
+    list-style: none;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 15px;
+}
+
+.bus-single-search-form ul li {
+    width: 28%;
+}
+
+.bus-single-search-form ul li:last-child {
+    width: 10%;
+}
+
+.bus-single-search-form ul li label {
+    display: block;
+    text-align: left;
+    font-size: 14px;
+}
+
+.bus-single-search-form ul li select {
+    display: block;
+    width: 100%;
+    padding: 9px;
+    background: #fff;
+    font-size: 15px;
+}
+
+a.button.remove-seat-row {
+    text-align: center;
+    display: block;
+    cursor: pointer;
+}
+
+.bus-entry {
+    display: block;
+    overflow: hidden;
+    border-top: 1px solid #ddd;
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    border-top: 1px solid #ddd;
+    width: 300px;
+}
+
+.bus-entry ul {
+    padding: 0;
+    margin: 0;
+}
+
+.bus-entry ul li {
+    display: inline-block;
+    width: 49%;
+    padding: 20px 10px;
+    font-size: 14px;
+}
+
+.bus-entry ul li:last-child {
+    text-align: center;
+}
+
+.wbbm-bus-list-sec {
+    display: block;
+    overflow: hidden;
+}
+
+.wbbm-bus-lists {
+    width: 100%;
+    float: none;
+    border: 1px solid #ddd;
+    margin: 0 0 20px 0;
+    padding: 5px;
+    overflow: hidden;
+}
+
+.wbbm-bus-info {
+    width: 80%;
+    float: left;
+}
+
+.wbbm-bus-info {
+    width: 80%;
+    float: left;
+    padding-left: 20px;
+    padding-top: 5px;
+}
+
+.wbbm-bus-info ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.wbbm-bus-info ul li {
+    display: inline-block;
+    margin: 0 10px 0 0;
+}
+
+.wbbm-bus-info a.btn.wbbm-bus-list-btn {
+    width: 200px;
+    float: right;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-right: 5px;
+}
+
+.wbbm-bus-lists h2 {
+    font-size: 20px!important;
+    padding: 0;
+    margin: 0 0 10px 0;
+    font-weight: 400!important;
+}
+
+.wbbm-bus-lists ul {
+    font-size: 13px;
+    padding: 0;
+    margin: 0 0 10px 0;
+    list-style: none;
+}
+
+.wbbm-bus-lists a {
+    display: block;
+    text-align: center;
+    background: #22D02D;
+    color: #fff;
+    font-style: normal;
+    padding: 10px 0;
+    transition: 0.2s;
+    text-decoration: none;
+}
+
+.wbbm-bus-lists a:hover {
+    background-color: #0FA218;
+    transition: 0.2s;
+}
+
+.wbbm-search-form-fields-sec {
+    border: 1px solid #ddd;
+    padding: 20px;
+}
+
+.wbbm-search-form-fields-sec h2 {
+    padding: 0;
+    margin: 0 0 20px 0;
+    font-size: 20px!important;
+}
+
+.wbbm-search-form-fields-sec .fields-li {
+    display: block;
+    width: 100%;
+    overflow: hidden;
+    margin: 10px 0;
+}
+
+.wbbm-search-form-fields-sec .fields-li select,
+.wbbm-search-form-fields-sec .fields-li input {
+    display: block;
+    width: 100%;
+}
+
+.wbbm-search-form-fields-sec .fields-li button {
+    margin-top: 15px;
+    margin-bottom: 10px;
+}
+
+.bus-thumb {
+    height: auto;
+    overflow: hidden;
+    width: 20%;
+    float: left;
+}
+
+.bus-thumb img {
+    max-width: 100%;
+    width: auto;
+    height: auto;
+    max-height: 100%;
+}
+
+.wbbm-search-result-list {
+    display: block;
+    overflow: hidden;
+}
+
+.wbbm-search-result-list table {
+    width: 100%;
+}
+
+.wbbm-search-result-list table thead {
+    border-bottom: 2px solid #ddd;
+    border-top: 1px solid #ddd;
+}
+
+.wbbm-search-result-list table thead th {
+    padding: 8px!important;
+}
+
+.wbbm-search-result-list table td {
+    padding: 10px;
+}
+
+.wbbm-search-result-list table tr {
+    border-bottom: 1px solid #ddd;
+}
+
+.wbbm-search-result-list {
+    margin-top: 30px;
+}
+
+.fields-li label {
+    display: block!important;
+    width: 100%!important;
+    overflow: hidden;
+}
+
+.mep-user-ticket-list table {
+    width: 100%;
+}
+
+.mep-user-ticket-list table tr th {
+    background: #f7f7f7;
+    padding: 5px;
+    text-align: left;
+    color: #000;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.mep-user-ticket-list table tr td {
+    border-bottom: 1px solid #ddd;
+    padding: 10px 0;
+}
+
+.mep-user-ticket-list table tr td a {
+    display: block;
+    background: #ddd;
+    text-align: center;
+    padding: 3px;
+}
+
+.wbbm-bus-lists.into-cart {
+    border: 5px solid #93d493;
+    background: #f5f5f5;
+}
+
+.bus-list-item-mobile {
+    border: 1px solid #ddd;
+    padding: 0;
+    margin: 20px 0;
+}
+
+.bus-list-item-mobile ul {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.bus-list-item-mobile ul li {
+    margin: 0;
+    padding: 6px;
+    font-size: 14px;
+    border-bottom: 1px solid #ddd;
+}
+
+.bus-list-item-mobile ul li p {
+    padding: 0;
+    margin: 0;
+}
+
+li.mobile-view-btn {
+    border: 0!important;
+    text-align: center;
+}
+
+li.mobile-view-btn a {
+    display: block;
+    background: #333;
+    color: #fff;
+    width: 120px;
+    margin: 0 auto;
+    padding: 5px;
+}
+
+.bus-list-mobile {
+    display: none;
+}
+
+input#j_date {
+    background: #fff;
+    border-color: #ccc;
+    border-radius: 0;
+}
+
+.select2-container .select2-selection--single {
+    box-sizing: border-box;
+    cursor: pointer;
+    display: block;
+    height: 42px!important;
+    user-select: none;
+    -webkit-user-select: none;
+    font-size: inherit;
+    padding-top: 5px;
+}
+
+.select2-container {
+    min-width: 280px!important;
+}
+
+.leaving-list h6 {
+    padding: 0;
+    margin: 0 15px 10px 0;
+    font-size: 16px;
+    border-bottom: 1px solid #ddd;
+}
+
+.bus-thumb-list img {
+    width: 80px;
+    border: 1px solid #ddd;
+    padding: 2px;
+}
+
+table.bus-search-list tr td a {
+    display: block;
+    background: #fecc3d;
+    text-align: center;
+    padding: 0px 15px;
+}
+
+.wbbm-bus-passenger-info {
+    display: block;
+    overflow: hidden;
+}
+
+.wbbm-bus-passenger-info .qty {
+    width: auto;
+    padding: 5px 5px;
+    margin: 0 20px 0 0;
+}
+
+.passengger-list {
+    margin-top: 10px;
+}
+
+.wbbm-seat-informations {
+    overflow: hidden;
+    display: block;
+    width: 100%;
+}
+
+.wbbm-fpart {
+    width: 30%;
+    float: left;
+}
+
+.wbbm-fpart ul {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.wbbm-fpart ul li {
+    display: block;
+    text-align: left;
+    font-size: 15px;
+    margin: 10px -1px;
+}
+
+.wbbm-fpart label {
+    display: block;
+    overflow: hidden;
+    width: 100%;
+}
+
+.wbbm-fpart input {
+    display: block;
+    margin: 7px auto!important;
+    padding: 0!important;
+}
+
+.wbbm-fpart.wbbm-list-btn-li {
+    text-align: center;
+}
+
+.seat-no-form label {
+    width: 49%;
+    display: inline-block;
+}
+
+.seat-no-form input {
+    width: 50px!important;
+    /* float: right; */
+    margin-top: -76px;
+    display: block;
+    padding: 5px!important;
+}
+
+.search-radio-sec {
+    display: block;
+    overflow: hidden;
+    position: relative;
+    top: -25px;
+}
+
+.fields-li button {
+    overflow: hidden;
+}
+
+.search-radio-sec input {
+    height: auto!important;
+    margin: 0!important;
+    padding: 0!important;
+}
+
+.fields-li .search-radio-sec label {
+    display: inline-block!important;
+    width: 40%!important;
+}
+
+.wbbm-single-search-form .search-radio-sec {
+    top: 0;
+    margin-bottom: 10px;
+}
+
+.wbbm-single-search-form .fields-li .search-radio-sec label {
+    display: inline-block!important;
+    width: 30%!important;
+}
+
+html body .wbbm-single-search-form .search-radio-sec input {
+    height: auto!important;
+    margin: 0!important;
+    padding: 0!important;
+    display: inline-block!important;
+    width: auto!important;
+}
+
+.mage-form-field {
+    width: 100%;
+}
+
+.mage-form-field label {
+    font-weight: 700;
+}
+
+.mage-form-field select {
+    width: 100%;
+    border-radius: 5px;
+    color: #747474;
+    height: 40px;
+    background: #fff;
+    border: 1px solid #d3d3d3;
+    padding: 0px 10px;
+}
+
+.mage-field-inline {
+    display: flex;
+    justify-content: space-between;
+}
+
+
+/* Responsive CSS
+=====================================================================*/
+
+@media only screen and (min-width: 768px) and (max-width: 990px) {}
+
+@media only screen and (min-width: 480px) and (max-width: 767px) {
+    .wbbm-bus-lists {
+        width: 100%;
+        float: none;
+        margin: 5px 0;
+    }
+    .bus-thumbnail {
+        width: 100%;
+        float: none;
+        overflow: hidden;
+        padding: 20px 0;
+    }
+    .wbbm-content-wrapper {
+        width: 100%;
+        margin: 0;
+        overflow: hidden;
+        padding: 0;
+        min-height: 100%;
+    }
+    .bus-details-info {
+        width: 100%;
+        float: none;
+        overflow: hidden;
+    }
+    .bus-route-list {
+        width: 100%;
+        float: none;
+        padding-right: 0;
+        margin: 10px 0;
+    }
+    .bus-single-search-form ul li {
+        width: 100%;
+        margin: 5px 0;
+    }
+    .bus-seat-panel {
+        width: 100%;
+        float: none;
+        overflow: hidden;
+    }
+    .bus-info-sec {
+        width: 100%;
+        float: none;
+        overflow: hidden;
+    }
+    .leaving-list {
+        width: 100%;
+        float: none;
+        padding-left: 0;
+    }
+    .leaving-list h6 {
+        padding: 0;
+        margin: 10px 0;
+        font-size: 15px;
+        border-bottom: 1px solid #ddd;
+    }
+    .fields-li {
+        display: block;
+        margin: 10px 0;
+    }
+    .search-fields .fields-li label {
+        display: block!important;
+        width: 100%!important;
+        /* overflow: hidden; */
+    }
+    .fields-li select {
+        display: block;
+        width: 100%;
+    }
+    table.bus-search-list {
+        display: none;
+    }
+    .bus-list-mobile {
+        display: block;
+    }
+    .bus-thumb {
+        height: auto;
+        overflow: hidden;
+        width: 100%;
+        float: none;
+    }
+    .wbbm-bus-info {
+        width: 100%;
+        float: none;
+        padding-left: 20px;
+        padding-top: 5px;
+    }
+    .wbbm-fpart {
+        width: 100%;
+        float: none;
+    }
+    .wbbm-bus-passenger-info {
+        display: block;
+        overflow: hidden;
+        text-align: center;
+        margin-top: 30px;
+    }
+    .wbbm-fpart label {
+        display: inline-block;
+        overflow: hidden;
+        width: 46%;
+        font-weight: bold;
+        font-size: 15px;
+    }
+    .fields-li {
+        display: block;
+        width: 100%;
+    }
+    .fields-li button {
+        padding: 10px 30px;
+        font-size: 17px;
+        background: green;
+        border: 0;
+        color: #fff;
+        margin: 0 auto!important;
+        vertical-align: top;
+        display: block;
+        height: 41px;
+        border-radius: 5px;
+        width: 200px;
+    }
+    .bus-serch-form {
+        position: relative!important;
+        top: 0!important;
+        left: 0!important;
+        z-index: 99;
+    }
+}
+
+@media only screen and (min-width: 320px) and (max-width: 479px) {
+    .wbbm-bus-lists {
+        width: 100%;
+        float: none;
+        margin: 5px 0;
+    }
+    .bus-thumbnail {
+        width: 100%;
+        float: none;
+        overflow: hidden;
+        padding: 20px 0;
+    }
+    .wbbm-content-wrapper {
+        width: 100%;
+        margin: 0;
+        overflow: hidden;
+        padding: 0;
+        min-height: 100%;
+    }
+    .bus-details-info {
+        width: 100%;
+        float: none;
+        overflow: hidden;
+    }
+    .bus-route-list {
+        width: 100%;
+        float: none;
+        padding-right: 0;
+        margin: 10px 0;
+    }
+    .bus-single-search-form ul li {
+        width: 100%;
+        margin: 5px 0;
+    }
+    .bus-seat-panel {
+        width: 100%;
+        float: none;
+        overflow: hidden;
+    }
+    .bus-info-sec {
+        width: 100%;
+        float: none;
+        overflow: hidden;
+    }
+    .leaving-list {
+        width: 100%;
+        float: none;
+        padding-left: 0;
+    }
+    .leaving-list h6 {
+        padding: 0;
+        margin: 10px 0;
+        font-size: 15px;
+        border-bottom: 1px solid #ddd;
+    }
+    .fields-li {
+        display: block;
+        margin: 10px 0;
+    }
+    .search-fields .fields-li label {
+        display: block!important;
+        width: 100%!important;
+        /* overflow: hidden; */
+    }
+    .fields-li select {
+        display: block;
+        width: 100%;
+    }
+    table.bus-search-list {
+        display: none;
+    }
+    .bus-list-mobile {
+        display: block;
+    }
+    .bus-thumb {
+        height: auto;
+        overflow: hidden;
+        width: 100%;
+        float: none;
+    }
+    .wbbm-bus-info {
+        width: 100%;
+        float: none;
+        padding-left: 20px;
+        padding-top: 5px;
+    }
+    .wbbm-fpart {
+        width: 100%;
+        float: none;
+    }
+    .wbbm-bus-passenger-info {
+        display: block;
+        overflow: hidden;
+        text-align: center;
+        margin-top: 30px;
+    }
+    .wbbm-fpart label {
+        display: inline-block;
+        overflow: hidden;
+        width: 46%;
+        font-weight: bold;
+        font-size: 15px;
+    }
+    .fields-li {
+        display: block;
+        width: 100%;
+    }
+    .fields-li button {
+        padding: 10px 30px;
+        font-size: 17px;
+        background: green;
+        border: 0;
+        color: #fff;
+        margin: 0 auto!important;
+        vertical-align: top;
+        display: block;
+        height: 41px;
+        border-radius: 5px;
+        width: 200px;
+    }
+    .bus-serch-form {
+        position: relative!important;
+        top: 0!important;
+        left: 0!important;
+        z-index: 99;
+    }
+}
+
+@media (max-width: 319px) {
+    .wbbm-bus-lists {
+        width: 100%;
+        float: none;
+        margin: 5px 0;
+    }
+    .bus-thumbnail {
+        width: 100%;
+        float: none;
+        overflow: hidden;
+        padding: 20px 0;
+    }
+    .wbbm-content-wrapper {
+        width: 100%;
+        margin: 0;
+        overflow: hidden;
+        padding: 0;
+        min-height: 100%;
+    }
+    .bus-details-info {
+        width: 100%;
+        float: none;
+        overflow: hidden;
+    }
+    .bus-route-list {
+        width: 100%;
+        float: none;
+        padding-right: 0;
+        margin: 10px 0;
+    }
+    .bus-single-search-form ul li {
+        width: 100%;
+        margin: 5px 0;
+    }
+    .bus-seat-panel {
+        width: 100%;
+        float: none;
+        overflow: hidden;
+    }
+    .bus-info-sec {
+        width: 100%;
+        float: none;
+        overflow: hidden;
+    }
+    .leaving-list {
+        width: 100%;
+        float: none;
+        padding-left: 0;
+    }
+    .leaving-list h6 {
+        padding: 0;
+        margin: 10px 0;
+        font-size: 15px;
+        border-bottom: 1px solid #ddd;
+    }
+    .fields-li {
+        display: block;
+        margin: 10px 0;
+    }
+    .search-fields .fields-li label {
+        display: block!important;
+        width: 100%!important;
+        /* overflow: hidden; */
+    }
+    .fields-li select {
+        display: block;
+        width: 100%;
+    }
+    table.bus-search-list {
+        display: none;
+    }
+    .bus-list-mobile {
+        display: block;
+    }
+    .bus-thumb {
+        height: auto;
+        overflow: hidden;
+        width: 100%;
+        float: none;
+    }
+    .wbbm-bus-info {
+        width: 100%;
+        float: none;
+        padding-left: 20px;
+        padding-top: 5px;
+    }
+    .wbbm-fpart {
+        width: 100%;
+        float: none;
+    }
+    .wbbm-bus-passenger-info {
+        display: block;
+        overflow: hidden;
+        text-align: center;
+        margin-top: 30px;
+    }
+    .wbbm-fpart label {
+        display: inline-block;
+        overflow: hidden;
+        width: 46%;
+        font-weight: bold;
+        font-size: 15px;
+    }
+    .fields-li {
+        display: block;
+        width: 100%;
+    }
+    .fields-li button {
+        padding: 10px 30px;
+        font-size: 17px;
+        background: green;
+        border: 0;
+        color: #fff;
+        margin: 0 auto!important;
+        vertical-align: top;
+        display: block;
+        height: 41px;
+        border-radius: 5px;
+        width: 200px;
+    }
+    .bus-serch-form {
+        position: relative!important;
+        top: 0!important;
+        left: 0!important;
+        z-index: 99;
+    }
+}
+
+.wbbm-bus-list-sec.wbbm-bus-grid {
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-wrap: wrap;
+    flex-wrap: wrap;
+}
+
+.wbbm-bus-grid .wbbm-bus-lists {
+    width: calc(33.3333% - 10px);
+    -webkit-flex-flow: column;
+    flex-flow: column;
+    -webkit-justify-content: space-between;
+    justify-content: space-between;
+    display: -webkit-flex;
+    display: flex;
+}
+
+@media only screen and (max-width: 850px) {
+    .wbbm-bus-grid .wbbm-bus-lists {
+        width: calc(50% - 10px);
+    }
+}
+
+@media only screen and (max-width: 500px) {
+    .wbbm-bus-grid .wbbm-bus-lists {
+        width: 100%;
+        margin: 0 0 10px 0;
+    }
+}
+
+.mage-search-brief-row .mage-search-res-header--left span {
+    line-height: inherit;
+}
+
+.mage-search-brief-row .mage-bus-detail-action:hover {
+    text-decoration: none;
+}
+
+.mage-sm-text {
+    font-size: 14px;
+}
+
+button.mage_button.cursor-disabled,
+button.mage_button.cursor-disabled:hover {
+    cursor: not-allowed;
+    opacity: 0.5;
+    background: #aaa;
+    border-color: #aaa;
+}
+
+div.mage_container .mage_center_space p {
+    line-height: 1.5em;
+}
+
+input[type=checkbox]#wbbm_entire_bus {
+    transform: scale(2);
+    margin-right: 8px;
+}
+
+.mage_container .wbbm_entire_switch_wrapper label.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 24px;
+    margin-left: 5px;
+}
+
+.mage_container .wbbm_entire_switch_wrapper label.switch input {
+    visibility: hidden;
+}
+
+.mage_container .wbbm_entire_switch_wrapper label .slider.round {
+    border-radius: 34px;
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.mage_container .wbbm_entire_switch_wrapper label .slider:before {
+    position: absolute;
+    content: "";
+    height: 17px;
+    width: 17px;
+    left: 5px;
+    bottom: 4px;
+    background-color: #fff;
+    -webkit-transition: .4s;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+.mage_container .wbbm_entire_switch_wrapper label input:checked+.slider {
+    background-color: #2196F3;
+}
+
+.mage_container .wbbm_entire_switch_wrapper label input:checked+.slider:before {
+    -webkit-transform: translateX(33px);
+    -ms-transform: translateX(33px);
+    transform: translateX(33px);
+}
+
+ul.wbbm-cart-price-table {
+    background-color: #fff;
+    padding: 0;
+    border: 2px dashed #d3d3d3;
+}
+
+ul.wbbm-cart-price-table li {
+    list-style-type: none;
+    padding: 5px;
+    border-bottom: 1px dashed #d3d3d3;
+}
+
+ul.wbbm-cart-price-table li:last-child {
+    border-bottom: none;
+}
+
+div.mage_customer_info_area label.wbbm_extra_bag_wrap {
+    margin-top: 10px;
+    padding-top: 15px;
+    border-top: 1px solid #f5f5f5;
+    width: 100%;
+    border-bottom: 1px solid #f5f5f5;
+    height: auto;
+    padding-bottom: 15px;
+    line-height: inherit;
+}
+
+.wbbm_extra_bag_wrap div.mage_eb_form_qty,
+.wbbm_extra_service_wrap div.mage_es_form_qty {
+    max-width: 140px;
+    margin: 0;
+    text-align: center;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-wrap: wrap;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    background: #f7f7f7;
+    padding: 1px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.wbbm_extra_bag_wrap div.mage_eb_form_qty .mage_form_full,
+.wbbm_extra_service_wrap div.mage_es_form_qty .mage_form_full {
+    border-top: 0px !important;
+    border-bottom: 0px !important;
+    text-align: center;
+}
+
+.wbbm_extra_service_wrap div.mage_es_form_qty .mage_form_full {
+    width: 50%;
+    margin: 0;
+}
+
+.wbbm_extra_bag_wrap .mage_eb_qty_minus,
+.wbbm_extra_bag_wrap .mage_eb_qty_plus,
+.wbbm_extra_service_wrap .mage_es_qty_minus,
+.wbbm_extra_service_wrap .mage_es_qty_plus {
+    -webkit-justify-content: center;
+    justify-content: center;
+    -webkit-align-items: center;
+    align-items: center;
+    width: 25%;
+    color: #777;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+
+/* Chrome, Safari, Edge, Opera */
+
+.wbbm_extra_bag_wrap input::-webkit-outer-spin-button,
+.wbbm_extra_bag_wrap input::-webkit-inner-spin-button,
+.wbbm_extra_service_wrap input::-webkit-outer-spin-button,
+.wbbm_extra_service_wrap input::-webkit-inner-spin-button,
+.mage_form_group input[type=number]::-webkit-outer-spin-button,
+.mage_form_group input[type=number]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+
+/* Firefox */
+
+.wbbm_extra_bag_wrap input[type=number],
+.wbbm_extra_service_wrap input[type=number],
+.mage_form_group input[type=number] {
+    -moz-appearance: textfield;
+}
+
+.mage_customer_info_area .mage_form_list label.wbbm_extra_bag_wrap>span {
+    text-align: left;
+}
+
+.wbbm_extra_service_table {
+    margin-top: 20px;
+    font-size: 14px;
+}
+
+.wbbm_extra_service_table thead {
+    background-color: #d3d3d3;
+}
+
+ul.wbbm-cart-price-table li ol li {
+    list-style-type: decimal;
+}
+
+ul.wbbm-cart-price-table li ol {
+    margin-left: 0;
+}

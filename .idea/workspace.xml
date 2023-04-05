@@ -1,9 +1,84 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="15b63738-b91b-4d08-9f57-1023edf32336" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inc/SearchClass.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/SearchClass.php" afterDir="false" />
+    <list default="true" id="0ca0ca37-c1da-45e4-816c-622567d85a62" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/bus-booking-manager.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/LICENSE.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/css/admin_style.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/css/calendar.min.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/css/clocklet.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/css/images/arrow_down.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/css/images/arrow_up.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/css/images/ui-icons_222222_256x240.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/css/images/ui-icons_454545_256x240.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/css/jquery-ui-timepicker-addon.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/css/jquery-ui.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/css/mage_css.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/css/mkb-styles.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/css/mp_admin_settings.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/css/mp_style.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/css/select2.min.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/css/style.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/css/ttbm_admin_style.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/css/wbbm-custom-style.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/images/arrow_down.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/images/arrow_up.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/images/bus-placeholder (1).jpeg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/images/bus-placeholder-102.jpeg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/images/bus-placeholder.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/images/bus_arrow_left.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/images/bus_calendar.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/images/bus_config.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/images/bus_onday.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/images/bus_partial.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/images/bus_passenger.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/images/bus_pickup.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/images/bus_route.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/images/bus_route_arrow.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/images/bus_route_clock.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/images/bus_route_map.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/images/bus_seat.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/images/multipurpose-booking-manager.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/js/calendar.min.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/js/clocklet.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/js/events.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/js/gmap.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/js/jquery-barcode.min.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/js/jquery-ui-sliderAccess.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/js/jquery-ui-timepicker-addon.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/js/jquery-ui-timepicker-addon.min.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/js/mage_style.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/js/maps.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/js/mixitup.min.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/js/mkb-admin.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/js/mkb-admin.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/js/moment.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/js/mp_admin_settings.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/js/mp_script.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/js/select2.full.min.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/js/ttbm_admin_script.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/js/wbbm-scripts.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/js/wbbm-single-datatabs.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/js/wbbm_custom_admin_script.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/js/wbbm_custom_public_script.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/languages/bus-booking-manager.pot" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/appsero/src/Client.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/appsero/src/Insights.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/appsero/src/License.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/appsero/src/Updater.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/classes/class-form-fields-generator.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/classes/class-form-fields-wrapper.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/classes/class-meta-box.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/classes/class-taxonomy-edit.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/readme.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/single-bus.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/taxonomy-category.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/taxonomy-organozer.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/woocommerce-bus.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -19,8 +94,7 @@
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
-  <component name="ProjectId" id="2NRkFlQJLh4yGFkp3JHFw6iW5qa" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectId" id="2O02GPq7lKH5FXAID1XNVHODQ6X" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -36,16 +110,13 @@
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="15b63738-b91b-4d08-9f57-1023edf32336" name="Changes" comment="" />
-      <created>1679634180692</created>
+      <changelist id="0ca0ca37-c1da-45e4-816c-622567d85a62" name="Changes" comment="" />
+      <created>1680683085138</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1679634180692</updated>
-      <workItem from="1679634181910" duration="600000" />
-      <workItem from="1679645550371" duration="596000" />
-      <workItem from="1679883015598" duration="594000" />
-      <workItem from="1680487692413" duration="7705000" />
-      <workItem from="1680663937077" duration="7376000" />
+      <updated>1680683085138</updated>
+      <workItem from="1680683089130" duration="1100000" />
+      <workItem from="1680684493614" duration="445000" />
     </task>
     <servers />
   </component>
