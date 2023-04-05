@@ -51,7 +51,7 @@ function mage_search_item($return)
     $boarding_point_slug = preg_replace('/[^A-Za-z0-9-]/', '_', $boarding_point_slug);
 
     $coach_no = get_post_meta($id, 'wbbm_bus_no', true);
-    $pickpoints = get_post_meta($id, 'wbbm_selected_pickpoint_name_' . $boarding_point_slug, true);
+    $pickpoints = get_post_meta($id, 'wbbm_selected_pickpoint_name_' . strtolower($boarding_point_slug), true);
     
     if ($pickpoints) {
         $pickpoints = unserialize($pickpoints);
@@ -204,7 +204,7 @@ function mage_search_item($return)
                                         </div>
                                     <?php endif; ?>
 
-                                    <?php if (($entire_bus_booking == 'on') && ($available_seat == $total_seat) && ($seat_price_entire > 0) || ($is_price_zero_allow == 'off') ) : ?>
+                                    <?php if (($entire_bus_booking == 'on') && ($available_seat == $total_seat) && ($seat_price_entire > 0) && ($is_price_zero_allow == 'off') ) : ?>
                                     <div class="mage_center_space">
                                         <p>
                                             <strong><?php echo wbbm_get_option('wbbm_entire_bus_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_entire_bus_text', 'wbbm_label_setting_sec') : _e('Entire Bus', 'bus-booking-manager'); echo ':'; ?></strong>
@@ -337,7 +337,7 @@ function mage_search_item($return)
                                     </div>
                                 <?php endif; ?>
 
-                                <?php if (($available_seat == $total_seat) && ($seat_price_entire > 0) || ($is_price_zero_allow == 'off') ) : ?>
+                                <?php if (($available_seat == $total_seat) && ($seat_price_entire > 0) && ($is_price_zero_allow == 'off') ) : ?>
                                     <div class="mage_center_space">
                                         <p>
                                             <strong><?php echo wbbm_get_option('wbbm_entire_bus_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_entire_bus_text', 'wbbm_label_setting_sec') : _e('Entire Bus', 'bus-booking-manager'); echo ':'; ?></strong>

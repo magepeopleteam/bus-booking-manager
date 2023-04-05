@@ -73,9 +73,11 @@ class WBBMMetaBox
     public function wbbm_meta_box_cb()
     {
         $post_id = get_the_id();
+        $cpt_label = wbbm_get_option('wbbm_cpt_label', 'wbbm_general_setting_sec', __('Bus', 'bus-booking-manager'));
 ?>
         <div class="mp_event_all_meta_in_tab mp_event_tab_area">
             <div class="mp_tab_menu">
+                <div class="wbbm-ss-side-heading"><?php echo $cpt_label.' '. __('Settings', 'bus-booking-manager'); ?></div>
                 <ul>
                     <?php do_action('wbbm_meta_box_tab_label', $post_id); ?>
                 </ul>
@@ -90,29 +92,27 @@ class WBBMMetaBox
     // Tab lists
     public function wbbm_add_meta_box_tab_label($post_id)
     {
-
-
-        $cpt_label = wbbm_get_option('wbbm_cpt_label', 'wbbm_general_setting_sec', __('Bus', 'bus-booking-manager'));
+    $cpt_label = wbbm_get_option('wbbm_cpt_label', 'wbbm_general_setting_sec', __('Bus', 'bus-booking-manager'));
     ?>
-        <li data-target-tabs="#wbtm_ticket_panel" class="active"><span class="dashicons dashicons-admin-settings"></span><?php echo $cpt_label . ' ' . __('Configuration', 'bus-booking-manager'); ?>
+        <li data-target-tabs="#wbtm_ticket_panel" class="active"><img src="<?php echo WBTM_PLUGIN_URL .'images/bus_config.png';?>"/> <?php echo  __('Configuration', 'bus-booking-manager'); ?>
         </li>
 
         <li data-target-tabs="#wbtm_routing" class="wbtm_routing_tab">
-            <span class="dashicons dashicons-location-alt"></span><?php echo $cpt_label . ' ' . __('Routing', 'bus-booking-manager'); ?>
+        <img src="<?php echo WBTM_PLUGIN_URL .'images/bus_route.png';?>"/><?php echo __('Routing', 'bus-booking-manager'); ?>
         </li>
 
         <li data-target-tabs="#wbtm_seat_price" class="ra_seat_price">
-            <span class="dashicons dashicons-money-alt"></span><?php echo $cpt_label . ' ' . __('Seat Price', 'bus-booking-manager'); ?>
+        <img src="<?php echo WBTM_PLUGIN_URL .'images/bus_seat.png';?>"/><?php echo __('Seat Price', 'bus-booking-manager'); ?>
         </li>
 
-        <li class="ra_pickuppoint_tab" data-target-tabs="#wbtm_pickuppoint"><span class="dashicons dashicons-flag"></span><?php echo $cpt_label . ' ' . __('Pickup Point', 'bus-booking-manager'); ?>
+        <li class="ra_pickuppoint_tab" data-target-tabs="#wbtm_pickuppoint"><img src="<?php echo WBTM_PLUGIN_URL .'images/bus_pickup.png';?>"/><?php echo __('Pickup Point', 'bus-booking-manager'); ?>
         </li>
 
-        <li data-target-tabs="#wbtm_bus_off_on_date"><span class="dashicons dashicons-calendar-alt"></span><?php echo $cpt_label . ' ' . __('Onday & Offday', 'bus-booking-manager'); ?>
+        <li data-target-tabs="#wbtm_bus_off_on_date"><img src="<?php echo WBTM_PLUGIN_URL .'images/bus_onday.png';?>"/><?php echo __('Onday & Offday', 'bus-booking-manager'); ?>
         </li>
 
         <?php if (is_plugin_active('mage-partial-payment-pro/mage_partial_pro.php')) : ?>
-            <li data-target-tabs="#wbtm_bus_partial_payment"><span class="dashicons dashicons-calendar-alt"></span><?php echo $cpt_label . ' ' . __('Partial payment', 'bus-booking-manager'); ?>
+            <li data-target-tabs="#wbtm_bus_partial_payment"><img src="<?php echo WBTM_PLUGIN_URL .'images/bus_partial.png';?>"/><?php echo __('Partial Payment', 'bus-booking-manager'); ?>
             </li>
         <?php endif; ?>
 
@@ -136,9 +136,10 @@ class WBBMMetaBox
         <?php do_action('wbbm_after_meta_box_tab_content'); ?>
         <!-- Partial Payment Setting -->
         <div class="mp_tab_item tab-content" data-tab-item="#wbtm_bus_partial_payment">
-            <h3><?php echo $cpt_label . ' ' . __('Partial Payment:', 'bus-booking-manager'); ?></h3>
-            <hr />
+            <h3 class="wbbm_mp_tab_item_heading"><img src="<?php echo WBTM_PLUGIN_URL .'images/bus_arrow_left.png';?>"/><?php echo $cpt_label . ' ' . __('Partial Payment', 'bus-booking-manager'); ?></h3>
+            <div class="wbtm_bus_partial_payment_inner_wrapper">
             <?php $this->wbbm_partial_payment_setting(); ?>
+            </div>
         </div>
 
 <?php
@@ -231,7 +232,7 @@ class WBBMMetaBox
         $pickpoints = '';
         if ($bus_pickpoints) {
             foreach ($bus_pickpoints as $points) {
-                $pickpoints .= '<option value="' . $points->slug . '">' . str_replace("'", '', $points->name) . '</option>';
+                $pickpoints .= '<option value="' . $points->name . '">' . str_replace("'", '', $points->name) . '</option>';
             }
         }
 
