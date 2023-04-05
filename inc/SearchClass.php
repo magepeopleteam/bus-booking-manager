@@ -284,6 +284,7 @@ class SearchClass extends CommonClass
         }
 
         $is_sell_off = get_post_meta($id, 'wbbm_sell_off', true);
+        $wbbm_features = get_post_meta($id, 'wbbm_features', true);
         $seat_available = get_post_meta($id, 'wbbm_seat_available', true);
         $total_seat = get_post_meta($id, 'wbbm_total_seat', true);
         $is_price_zero_allow = get_post_meta($id, 'wbbm_price_zero_allow', true);
@@ -309,6 +310,15 @@ class SearchClass extends CommonClass
                             <div class="mage-bus-title">
                                 <a class="bus-title" href="<?php echo get_the_permalink($id) ?>"><?php echo the_title(); ?></a>
                                 <span><?php echo $coach_no; ?></span>
+
+
+                                <?php if($wbbm_features){ ?>
+                                <p class="wbbm-feature-icon">
+                                    <?php foreach ($wbbm_features as $feature_id){ ?>
+                                        <span class="customCheckbox"><span title="<?php echo get_term($feature_id)->name ?>" class="mR_xs <?php echo get_term_meta($feature_id, 'feature_icon', true) ?>"></span></span>
+                                    <?php } ?>
+                                </p>
+                                <?php } ?>
                             </div>
                             <div>
                                 <?php echo '<p class="mage-bus-stopage"><span class="dashicons dashicons-location"></span> '. wbbm_get_option('wbbm_from_text', 'wbbm_label_setting_sec', __('From: ', 'bus-booking-manager')) .' '. $boarding . ' ( ' . get_wbbm_datetime($boarding_time, 'time') . ' )</p>'; ?>
