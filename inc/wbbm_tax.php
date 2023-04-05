@@ -95,7 +95,7 @@ add_action ( 'create_wbbm_bus_feature', 'save_wbbm_bus_feature', 10, 2);
 
 function save_wbbm_bus_feature($term_id) {
     if ( isset( $_POST['ttbm_feature_icon'] ) ) {
-        update_term_meta($term_id, '_pagetitle', $_POST['ttbm_feature_icon']);
+        update_term_meta($term_id, 'feature_icon', $_POST['ttbm_feature_icon']);
     }
 }
 
@@ -111,7 +111,7 @@ function wbbm_bus_feature_add_term_fields( $taxonomy ) {
     ?>
 
     <label for="ttbm_feature_icon">Feature Icon</label>
-    <div id="field-wrapper-ttbm_feature_icon" class=" field-wrapper field-icon-wrapper field-icon-wrapper-ttbm_feature_icon">
+    <div id="field-wrapper-ttbm_feature_icon" class="wbtm_feature field-wrapper field-icon-wrapper field-icon-wrapper-ttbm_feature_icon">
         <div class="mp_input_add_icon">
             <button type="button" class="mp_input_add_icon_button dButton_xs ">
                 <input type="hidden" name="ttbm_feature_icon" placeholder="" value="fas fa-forward">
@@ -133,13 +133,13 @@ function wbbm_bus_feature_add_term_fields( $taxonomy ) {
 add_action ( 'wbbm_bus_feature_edit_form_fields', 'add_wbbm_bus_feature',10,2);
 
 function add_wbbm_bus_feature(){
-    $cat_title = get_term_meta($_GET['tag_ID'], '_pagetitle', true);
+    $cat_title = get_term_meta($_GET['tag_ID'], 'feature_icon', true);
     ?>
 
     <tr class="form-field">
         <th scope="row" valign="top"><label for="ttbm_feature_icon">Feature Icon</label></th>
         <td>
-            <div id="field-wrapper-ttbm_feature_icon" class=" field-wrapper field-icon-wrapper
+            <div id="field-wrapper-ttbm_feature_icon" class="wbtm_feature field-wrapper field-icon-wrapper
             field-icon-wrapper-ttbm_feature_icon">
 
 

@@ -54,7 +54,7 @@ class WBBMMetaBox
             $terms = wp_insert_term($_POST['name'], 'wbbm_bus_feature', $args = array('description' => $_POST['description']));
 
             if ( isset( $_POST['ttbm_feature_icon'] ) ) {
-                update_term_meta($terms['term_id'], '_pagetitle', $_POST['ttbm_feature_icon']);
+                update_term_meta($terms['term_id'], 'feature_icon', $_POST['ttbm_feature_icon']);
             }
             ?>
             <p>

@@ -18,8 +18,8 @@
                             <?php  foreach ($feature_terms as $feature_term){ ?>
                                 <p>
                                     <label class="customCheckboxLabel">
-                                        <input <?php echo (in_array($feature_term->name,$wbbm_features))?'checked':'' ?> type="checkbox" name="wbbm_features[<?php echo $feature_term->name ?>]" value="<?php echo $feature_term->name ?>">
-                                        <span class="customCheckbox"><span class="mR_xs <?php echo get_term_meta($feature_term->term_id, '_pagetitle', true) ?>"></span><?php echo $feature_term->name ?></span>
+                                        <input <?php echo (in_array($feature_term->term_id,$wbbm_features))?'checked':'' ?> type="checkbox" name="wbbm_features[<?php echo $feature_term->term_id ?>]" value="<?php echo $feature_term->term_id ?>">
+                                        <span class="customCheckbox"><span class="mR_xs <?php echo get_term_meta($feature_term->term_id, 'feature_icon', true) ?>"></span><?php echo $feature_term->name ?></span>
                                     </label>
                                 </p>
                             <?php } ?>

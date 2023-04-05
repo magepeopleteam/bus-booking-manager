@@ -97,11 +97,17 @@ class AdminMetaBoxClass extends CommonClass
         }
 
         $wbbm_features = $_POST['wbbm_features'];
+
+
+
+       // print_r($wbbm_features);exit;
+
+
         if (!empty($wbbm_features)) {
             $i = 0;
             foreach ($wbbm_features as $feature) {
                 if ($feature != '') {
-                    $post_feature[] = $feature;
+                    $post_feature[$i] = $feature;
                 }
                 $i++;
             }
