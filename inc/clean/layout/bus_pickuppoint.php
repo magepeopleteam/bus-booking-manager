@@ -91,7 +91,7 @@
                                                     <?php
                                                     if ($bus_pickpoints) {
                                                         foreach ($bus_pickpoints as $bus_pickpoint) {
-                                                            echo '<option value="' . $bus_pickpoint->slug . '" ' . ($bus_pickpoint->slug == $pickpoint['pickpoint'] ? "selected=selected" : '') . '>' . $bus_pickpoint->name . '</option>';
+                                                            echo '<option value="' . $bus_pickpoint->name . '" ' . ($bus_pickpoint->name == $pickpoint['pickpoint'] ? "selected=selected" : '') . '>' . $bus_pickpoint->name . '</option>';
                                                         }
                                                     }
                                                     ?>
