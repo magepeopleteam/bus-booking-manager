@@ -311,7 +311,7 @@ class SearchClass extends CommonClass
                                 <a class="bus-title" href="<?php echo get_the_permalink($id) ?>"><?php echo the_title(); ?></a>
                                 <span><?php echo $coach_no; ?></span>
                                 <?php if($wbbm_features){ ?>
-                                <p>
+                                <p class="wbbm-feature-icon">
                                     <?php foreach ($wbbm_features as $feature_id){ ?>
                                         <span class="customCheckbox"><span title="<?php echo get_term($feature_id)->name ?>" class="mR_xs <?php echo get_term_meta($feature_id, 'feature_icon', true) ?>"></span></span>
                                     <?php } ?>

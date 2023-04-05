@@ -298,3 +298,18 @@ div.add_icon_list_popup .popupCloseIcon {
 .wbtm_feature .mp_input_add_icon{
     display: inline-block;
 }
+.wbbm-feature-icon .customCheckbox{
+    position: relative;
+}
+.wbbm-feature-icon span{
+    padding-top: 15px;
+    padding-right: 10px;
+}
+.wbbm-feature-icon span[title]:hover::after {
+    content: attr(title);
+    position: absolute;
+    top: -4px;
+    left: 0;
+    font-size: 15px;
+    width: 300px;
+}
