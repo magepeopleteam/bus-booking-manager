@@ -403,6 +403,15 @@
 		minDate: 0,
 	});
 
+	// Admin datepicker loader
+	jQuery("#j_date, #r_date, #ja_date").datepicker({
+		dateFormat: "yy-mm-dd",
+		minDate: 0,
+		// beforeShowDay: function (date){
+		// 	return off_particular(date, global_off_particular_date,global_weekly_offday );
+		// }
+	});
+
 
 
 
