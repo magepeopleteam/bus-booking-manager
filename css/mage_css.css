@@ -1,0 +1,1122 @@
+.mage_container {
+    max-width: 1366px !important;
+    width: 100% !important;
+    margin: 0 auto !important;
+    padding: 15px;
+    font-size: 16px !important;
+}
+
+div.mage_container p {
+    font-size: 16px !important;
+}
+
+div.mage_row {
+    min-height: 1px;
+}
+
+.mage_container ul,
+ul.mage_route_list li,
+.mage_container label {
+    display: block;
+    width: 100%;
+}
+
+.mage_container ul {
+    list-style-type: none;
+}
+
+.mage_hidden,
+div.mage_hidden {
+    display: none !important;
+}
+
+.mage_error {
+    background-color: red !important;
+    color: #fff !important;
+}
+
+.mage_disabled {
+    cursor: no-drop !important;
+    opacity: 0.2 !important;
+    pointer-events: none;
+
+}
+
+
+/**********************/
+
+div.mage_container h2,
+div.mage_container h3,
+div.mage_container h4,
+div.mage_container p,
+form.mage_form,
+.mage_container ul {
+    margin: 0;
+    padding: 0;
+    line-height: 1;
+}
+
+
+/************flex**********/
+
+div.mage_flex,
+div[class*="mage_qty"],
+div.mage_center_space,
+div.mage_row,
+div.mage_flex_equal,
+div.mage_form_group,
+div.mage_form_list_body,
+div.mage_customer_info_area label,
+.search_form_horizontal form.mage_form,
+.mage_form_radio label,
+button.mage_button,
+div.mage_sub_price {
+    display: -webkit-flex;
+    display: flex;
+}
+
+.mage_flex_equal>*,
+.search_form_horizontal form.mage_form .mage_form_list {
+    -webkit-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+}
+
+.mage_center_space,
+[class*="mage_qty"],
+div.mage_customer_info_area label,
+button.mage_button,
+div.mage_sub_price {
+    -webkit-align-items: center;
+    align-items: center;
+}
+
+[class*="mage_qty"],
+button.mage_button,
+div.mage_sub_price {
+    -webkit-justify-content: center;
+    justify-content: center;
+}
+
+.mage_center_space,
+.mage_form_list_body,
+.search_form_horizontal form.mage_form,
+.search_form_horizontal div.mage_form_radio {
+    -webkit-justify-content: space-between;
+    justify-content: space-between;
+}
+
+div.mage_row,
+.mage_form_list_body,
+.mage_flex_equal,
+.mage_book_now_area,
+.search_form_horizontal form.mage_form {
+    -webkit-flex-wrap: wrap;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    position: relative
+}
+
+
+/**********************/
+
+.mage_search_box_small,
+.mage_container img,
+form.mage_form .mage_form_control,
+.mage_form_group,
+button.mage_button,
+.mage_sidebar_search_form,
+form .mage_form,
+form .mage_form_full,
+input[type='text'].mage_form_full,
+.mage_customer_info_area .mage_form_list {
+    -webkit-border-radius: 5px !important;
+    border-radius: 5px !important;
+}
+
+ul.mage_route_list {
+    -webkit-border-radius: 0 0 5px 5px;
+    border-radius: 0 0 5px 5px;
+}
+
+
+/**********************/
+
+
+/************Title**********/
+
+.mage_container h2 {
+    font-size: 25px !important;
+    font-weight: 700 !important;
+}
+
+.mage_container h3 {
+    font-size: 20px !important;
+    font-weight: 700 !important;
+}
+
+.mage_container h4 {
+    font-size: 18px !important;
+    font-weight: 700 !important;
+}
+
+.mage_route_title {
+    background-color: #0a4b78;
+    padding: 10px;
+    margin: 0 0 15px 0;
+}
+
+div.mage_route_title p,
+div.mage_route_title div {
+    text-align: center;
+    font-size: 22px !important;
+    color: #fff;
+}
+
+
+/**********Button************/
+
+button.mage_button {
+    padding: 0 !important;
+    color: #fff;
+    background-color: #22D02D;
+    font-size: 16px !important;
+    font-weight: 700;
+    min-width: 150px;
+    width: 100%;
+    cursor: pointer;
+    height: 45px;
+    text-transform: capitalize;
+    transition: 0.2s;
+    border: none;
+}
+
+button.mage_button:hover {
+    background-color: #0FA218;
+    transition: 0.2s;
+}
+
+button.mage_button span {
+    padding: 0 7px 0 0;
+}
+
+button.mage_button:hover,
+button.mage_button:focus {
+    text-decoration: none;
+    opacity: 0.9;
+}
+
+
+/**********************/
+
+.mage_mini_cart:hover,
+.mage_search_list.booked {
+    -webkit-box-shadow: 0 2px 10px #444;
+    box-shadow: 0 2px 10px #444;
+}
+
+
+/**********************/
+
+
+/***********search area***********/
+
+.mage_search_box_small {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #d3d3d3;
+    background-color: #b30c3b12;
+}
+
+div.mage_search_box_small h2 {
+    margin: 0 !important;
+    padding: 20px 0 0 0 !important;
+    color: #000;
+}
+
+ul.mage_route_list {
+    display: none;
+    position: absolute;
+    left: 0;
+    top: 100%;
+    right: 0;
+    border: 1px solid #ddd;
+    z-index: 11;
+    overflow: auto;
+    max-height: 300px;
+    background-color: #F2F2F2;
+}
+
+ul.mage_route_list li {
+    padding: 10px;
+    cursor: pointer;
+    border-top: 1px solid #ddd;
+    margin: 0;
+}
+
+ul.mage_route_list li span {
+    padding: 0 7px 0 0;
+}
+
+ul.mage_route_list li:first-child {
+    border-top: none;
+}
+
+.mage_search_box_sidebar {
+    width: 100%;
+    max-width: 300px;
+}
+
+.mage_sidebar_search_form {
+    padding: 15px;
+    border: 1px solid #ddd;
+}
+
+.mage_search_area {
+    width: 100%;
+    max-width: calc(100% - 315px);
+    margin: 0 0 0 15px;
+}
+
+.mage_search_list {
+    padding: 20px;
+    border: 1px solid #e4e4df;
+    margin: 8px 0 0 0;
+    background-color: #f5f5f5;
+}
+
+.mage_search_list.theme_minimal {
+    padding: 0;
+    border: 1px solid #d3d3d3;
+    margin: 0;
+    background: #b30c3b12;
+}
+
+.mage_search_list button.mage_button {
+    min-width: 150px;
+}
+
+
+/**********Form************/
+
+form.mage_form {
+    display: block;
+}
+
+.mage_form_list {
+    margin: 15px 0 0 0;
+}
+
+form.mage_form .mage_form_control,
+form .mage_form_full {
+    width: 100%;
+    border: 1px solid #ddd !important;
+    padding: 5px 15px !important;
+    height: 40px !important;
+    color: #222;
+    font-size: 16px !important;
+}
+
+form.mage_form label {
+    color: #555;
+    font-weight: 500;
+    padding: 0 0 7px 10px;
+    margin: 0;
+}
+
+form.mage_form label span {
+    padding: 0 7px 0 0;
+}
+
+form.mage_form .mage_form_list .mage_form_control:focus {
+    -webkit-border-radius: 5px 5px 0 0;
+    border-radius: 5px 5px 0 0;
+    border-color: #ddd;
+}
+
+form.mage_form .mage_form_list .mage_form_control:focus~ul.mage_route_list {
+    display: block;
+}
+
+.mage_form_group {
+    max-width: 140px;
+    border: 1px solid #ddd;
+    margin: 0;
+    background-color: #f7f7f7;
+    text-align: center;
+}
+
+div.mage_form_group .mage_form {
+    width: 50%;
+    border-top: none;
+    border-bottom: none;
+    text-align: center;
+    height: 40px;
+    font-size: 18px !important;
+    padding: 0 !important;
+}
+
+div.mage_form_group .mage_form:focus,
+form .mage_form:focus,
+form .mage_form_full:focus {
+    border: 1px solid #aaa;
+}
+
+[class*="mage_qty"] {
+    width: 25%;
+    color: #777;
+    font-size: 14px !important;
+    cursor: pointer;
+}
+
+.mage_customer_info_area .mage_form_list {
+    margin: 15px 0 0 0;
+    display: none;
+    border: 1px solid #ddd;
+}
+
+div.mage_form_list_title h4 {
+    background-color: #f5f5f5;
+    color: #000;
+    text-align: center;
+    padding: 10px 0;
+    font-weight: 600;
+    font-size: 14px !important;
+    margin: 0;
+}
+
+.mage_form_list_body {
+    padding: 0 15px 15px 15px;
+}
+
+.mage_form_list .mage_form_full,
+.mage_customer_info_area label {
+    margin: 15px 0 0 0;
+    /* width: calc(50% - 8px); */
+    display: inline-block;
+    font-size: 14px !important;
+}
+
+.mage_customer_info_area .mage_form_list label>span {
+    width: 50%;
+    display: inline-block;
+   /* text-align: center; */
+}
+
+.mage_customer_info_area .mage_form_list label .mage_form_full {
+   /* width: 50%; */
+    margin: 0;
+}
+
+.mage_form_radio label input {
+    margin: 0 7px 0 0;
+}
+
+.mage_form_list textarea.mage_form_full {
+    height: auto !important;
+    padding: 15px !important;
+}
+
+.search_form_horizontal {
+    background-color: #fff;
+    padding: 15px 15px 15px 15px;
+    border: 1px solid #ddd;
+}
+
+div.mage_container .search_form_horizontal h2 {
+    margin-bottom: 20px;
+}
+
+.search_form_horizontal form.mage_form .mage_form_list {
+    margin: 2px;
+    display: flex;
+flex-direction: column;
+}
+
+.search_form_horizontal div.mage_form_radio,
+.search_form_horizontal div.mage_form_search {
+    display: -webkit-flex;
+    display: flex;
+    -webkit-align-items: flex-end;
+    align-items: flex-end;
+}
+
+.search_form_horizontal form.mage_form label {
+    font-size: 16px;
+    position: relative;
+    margin-bottom: 5px;
+    margin-top: 5px;
+    color: #000;
+    width: auto;
+}
+
+.search_form_horizontal form .mage_form_control {
+    font-size: 14px !important;
+    width: 100%;
+    height: 40px !important;
+}
+
+.search_form_horizontal form.mage_form label span {
+    padding: 0 5px 0 0;
+}
+
+.search_form_horizontal button.mage_button {
+    height: 52px;
+    border: none
+}
+
+
+/**********************/
+
+.mage_mini_cart {
+    position: fixed;
+    right: 0;
+    top: 47%;
+    background-color: #ddd;
+    padding: 10px;
+    text-align: center;
+    min-width: 120px;
+}
+
+
+/**********************/
+
+.mage_thumb {
+    width: 20%;
+}
+
+.mage_thumb img {
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+}
+
+.mage_bus_details,
+.mage_book_now_area .mage_flex_equal {
+    width: 80%;
+}
+
+.mage_bus_info,
+.mage_price_info {
+    padding: 20px;
+    margin: 0 0 0 15px;
+    border: 3px dashed #d3d3d3;
+    background: #fff;
+}
+
+.mage_price_info .mage_center_space {
+    margin: 0 0 7px 0;
+}
+
+.mage_book_now_area {
+    margin: 15px 0 0 0;
+}
+
+.mage_sub_price,
+.mage_book_now {
+    padding: 0 0 0 15px;
+}
+
+div.mage_container p.mage_sub_total {
+    text-align: center;
+    font-size: 18px !important;
+}
+
+div.mage_container p.mage_sub_total strong {
+    margin-left: 10px;
+}
+
+.mage_search_list.booked {
+    border-color: #039f25;
+}
+
+.return_title {
+    margin: 15px 0 15px 0;
+}
+
+p.already_cart {
+    font-size: 20px !important;
+    font-weight: 700;
+    color: #1aa638;
+    margin: 15px 0 0 0 !important;
+}
+
+p.already_cart span {
+    margin: 0 7px 0 0;
+}
+
+div.mage_bus_info p:not(div.mage_center_space p),
+div.mage_bus_info h3,
+.mage_price_info .mage_center_space,
+.mage_bus_info .mage_center_space {
+    margin-bottom: 10px;
+    border-bottom: 1px dashed #d3d3d3;
+    padding-bottom: 10px;
+}
+
+.mar_b {
+    margin-bottom: 10px !important;
+}
+
+.mar_r {
+    margin-right: 7px !important;
+}
+
+.bor_tb {
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    padding: 5px !important;
+    margin-top: 10px !important;
+}
+
+
+/*change search form*/
+
+.mage_input_select {
+    position: relative;
+}
+
+.search_form_horizontal .mage_input_select {
+    position: initial;
+}
+
+.route-input-wrap {
+    position: relative;
+    display: flex;
+}
+
+.mage_form .mage_form_radio {
+    visibility: hidden;
+}
+
+.mage_input_select_list,
+.mage_input_select_list_static {
+    display: none;
+    max-width: 100%;
+    position: absolute;
+    left: 0;
+    top: 103%;
+    right: 0;
+    margin: 0 auto;
+    z-index: 9999;
+    background: #FFF;
+    border-radius: 5px;
+    border: 1px solid #d3d3d3;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 5px;
+}
+
+.mage_input_select_list>ul,
+.mage_input_select_list_static>ul {
+    display: flex;
+    flex-wrap: wrap;
+    max-width: 100%;
+    margin: 0;
+}
+
+.mage_input_select_list>ul>li,
+.mage_input_select_list_static>ul>li {
+    flex-basis: 25%;
+    padding: 10px;
+    margin: 0px;
+    border-bottom: 1px solid #f5f5f5;
+    text-align: center;
+    border-right: 1px solid #f5f5f5;
+}
+
+.mage_input_select_list>ul>li:hover,
+.mage_input_select_list_static>ul>li:hover {
+    color: #fff;
+    cursor: pointer;
+    background: #22D02D;
+    transition: 0.2s;
+}
+
+.mage_input_select_list>ul>li span,
+.mage_input_select_list_static>ul>li span {
+    margin-right: 7px;
+}
+
+#wbtm_show_msg {
+    position: absolute;
+    top: 0px;
+    right: 0;
+    margin-bottom: 0 !important;
+    line-height: .7em;
+    color: #FFC107;
+}
+
+.activeMageSelect:after {
+    content: '';
+    position: absolute;
+    border-left: 3px solid transparent;
+    border-right: 3px solid transparent;
+    border-bottom: 5px solid #00BCD4;
+    top: 97%;
+    left: 0;
+    display: block;
+    right: 0;
+    width: 3px;
+    margin: 0 auto;
+}
+
+
+/*change search form END*/
+
+
+/* Minimal Bus search theme */
+
+.mage-search-res-wrapper .mage-search-res-header,
+.mage-search-res-wrapper .mage-search-brief-row {
+    display: flex;
+    align-items: center;
+}
+
+.mage-search-res-wrapper .mage-search-res-header {
+    padding: 5px 15px;
+    background: #EA2330;
+    border-radius: 0px;
+    font-size: 18px;
+}
+
+.mage-search-res-wrapper .mage-search-brief-row {
+    padding: 5px 15px 5px;
+}
+
+.mage-search-res-wrapper .mage-search-res-header span {
+    font-weight: 700;
+    color: #fff9f9;
+}
+
+.mage-search-res-header .mage-search-res-header--img,
+.mage-search-brief-row .mage-search-res-header--img {
+    flex-basis: 8%;
+    margin-right: 2%;
+    text-align: center;
+}
+
+.mage-search-res-header .mage-search-res-header--left,
+.mage-search-brief-row .mage-search-res-header--left {
+    flex-basis: 45%;
+    display: flex;
+    align-items: center;
+}
+
+.mage-search-brief-row .mage-search-res-header--left p,
+.mage-search-brief-row .mage-search-res-header--left span {
+    font-size: 13px;
+}
+
+.mage-search-res-header .mage-search-res-header--left>span {
+    flex-basis: 50%;
+}
+
+.mage-search-brief-row .mage-search-res-header--left>div {
+    flex-basis: 50%;
+}
+
+.mage-search-res-header .mage-search-res-header--right,
+.mage-search-brief-row .mage-search-res-header--right {
+    flex-basis: 45%;
+    justify-content: space-between;
+    display: flex;
+}
+input#r_date,
+input#j_date{width: auto;}
+.mage-search-brief-row .mage-bus-detail-action {
+    background: #22D02D;
+    color: #fff;
+    padding: 10px 15px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    text-transform: capitalize;
+    width: 100%;
+    transition: 0.5s;
+}
+
+.mage-search-brief-row .mage-bus-detail-action:hover {
+    background: #0FA218;
+    transition: 0.5s;
+}
+
+.mage-search-brief-row .bus-title {
+    line-height: 1.2em;
+    display: block;
+    color: inherit;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.mage-search-brief-row .mage-bus-stopage {
+    line-height: 1.4em;
+}
+
+.mage-search-brief-row .mage-bus-stopage i {
+    color: #4CAF50;
+}
+
+.mage-search-brief-row .mage-bus-stopage+.mage-bus-stopage i {
+    color: #ff5722;
+}
+
+.mage-bus-booking-wrapper .mage_bus_details {
+    width: 100%;
+}
+
+.mage-bus-booking-wrapper {
+    padding: 15px;
+    display: none;
+}
+
+.mage-bus-booking-wrapper .mage_bus_info {
+    padding: 20px;
+    margin: 0;
+    flex-basis: 45%;
+    background-color: #fff;
+}
+
+.mage_search_list .mage_bus_info h3 a {
+    text-decoration: none;
+    color: #000;
+}
+
+.mage-bus-booking-wrapper .mage_bus_info p strong {
+    min-width: 122px;
+    display: inline-block;
+}
+
+.mage-bus-booking-wrapper .mage_bus_info p {
+    line-height: 1.5em;
+}
+
+.mage-bus-booking-wrapper .mage_price_info {
+    flex-basis: 40%;
+    margin-left: 2%;
+    padding: 20px;
+    background: #fff;
+}
+
+.mage-search-res-wrapper--footer {
+    width: 100%;
+    height: 20px;
+    background: #c5c3bb;
+    border-radius: 0 0 3px 3px;
+    margin-top: 8px;
+}
+
+.single-wbbm_bus .mage_search_list {
+    padding: 10px;
+}
+
+.mage-sm-show {
+    display: none;
+}
+
+.mage-notification-area {
+    display: flex;
+    align-items: center;
+}
+
+.mage-notification.mage-seat-available {
+    font-weight: 700;
+    color: #f40101;
+    display: none;
+}
+
+
+/* Minimal Bus search theme END */
+
+@media only screen and (max-width: 1200px) {
+    .mage_search_box_sidebar {
+        max-width: 100%;
+    }
+    .mage_search_area {
+        max-width: 100%;
+        margin: 15px 0 0 0;
+    }
+    .mage_sidebar_search_form form.mage_form {
+        display: -webkit-flex;
+        display: flex;
+        -webkit-flex-wrap: wrap;
+        -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+        -webkit-justify-content: space-between;
+        justify-content: space-between;
+    }
+    .mage_sidebar_search_form form.mage_form .mage_form_list {
+        width: calc(33% - 15px);
+    }
+    .mage_route_title p {
+        font-size: 20px !important;
+    }
+    div.mage_form_radio {
+        padding: 0 0 8px 0;
+    }
+    .search_form_horizontal div.mage_form_radio {
+        padding: 0;
+    }
+    div.mage_form_radio,
+    div.mage_form_search {
+        display: -webkit-flex;
+        display: flex;
+        -webkit-align-items: flex-end;
+        align-items: flex-end;
+    }
+}
+
+@media only screen and (max-width: 1100px) {
+    .search_form_horizontal form.mage_form .mage_form_list {
+        -webkit-flex: inherit;
+        -ms-flex: inherit;
+        flex: inherit;
+        width: calc(50% - 15px);
+    }
+    .search_form_horizontal .mage_input_select {
+        position: relative
+    }
+}
+
+@media only screen and (max-width: 900px) {
+    .search_form_horizontal form .mage_form_control {
+        width: 100%;
+    }
+    .mage-form-field.mage-form-pickpoint-field select {
+        float: right !important;
+    }
+    .mage_sidebar_search_form form.mage_form .mage_form_list {
+        width: calc(50% - 15px);
+    }
+    div.mage_flex_equal.mage_bus_details>* {
+        -webkit-flex: inherit;
+        flex: inherit;
+        width: 100%;
+    }
+    div.mage_flex_equal .mage_price_info,
+    .mage-bus-booking-wrapper .mage_price_info {
+        margin: 15px 0 0 0;
+        padding: 20px;
+    }
+    .mage_container h3 {
+        font-size: 20px !important;
+    }
+    .mage_route_title p {
+        font-size: 18px !important;
+    }
+    div.mage_container p,
+    .mage-form-field.mage-form-pickpoint-field label,
+    .mage_search_list .mage_book_now_area .mage_sub_total div,
+    div.mage_form_group .mage_form,
+    .mage-form-field.mage-form-pickpoint-field select,
+    .mage_form_list .mage_form_full,
+    button.mage_button,
+    .mage-search-brief-row .mage-bus-detail-action,
+    .mage-search-res-wrapper .mage-search-res-header {
+        font-size: 14px !important;
+    }
+    .mage_book_now_area .mage_thumb,
+    .mage_book_now_area .mage_flex_equal {
+        width: 100%;
+    }
+}
+
+@media only screen and (max-width: 768px) {
+    .mage_input_select_list>ul>li,
+    .mage_input_select_list_static>ul>li {
+        flex-basis: 100%;
+        padding: 10px;
+    }
+}
+
+@media only screen and (max-width: 700px) {
+    .xs_not_flex {
+        display: block !important;
+    }
+    .xs_not_flex .mage_bus_details,
+    .xs_not_flex .mage_thumb {
+        width: 100%;
+    }
+    .mage_bus_info,
+    .mage_price_info {
+        border: none;
+        margin: 15px 0 0 15px;
+        padding: 0;
+    }
+}
+
+@media only screen and (max-width: 600px) {
+    .mage-search-res-header--left div,
+    .mage-search-res-header--right div {
+        border-bottom: 1px dashed #d3d3d3;
+        margin-bottom: 10px;
+        padding-bottom: 10px;
+    }
+    .mage-search-res-header--right div p {
+        display: inline-block;
+    }
+    .mage_book_now_area div.mage_flex_equal>* {
+        -webkit-flex: inherit;
+        flex: inherit;
+        width: 100%;
+    }
+    .mage_sub_price {
+        margin: 0 0 15px 0;
+        padding: 0;
+    }
+    .mage_book_now {
+        margin: 0;
+        padding: 0;
+    }
+}
+
+@media only screen and (max-width: 500px) {
+    .mage_container {
+        font-size: 14px !important;
+    }
+    .mage_sidebar_search_form form.mage_form .mage_form_list {
+        width: 100%;
+    }
+    .mage_form_list .mage_form_full,
+    .mage_customer_info_area label {
+        width: 100%;
+    }
+    .mage_container h3 {
+        font-size: 18px !important;
+    }
+    .mage_container h4 {
+        font-size: 15px !important;
+    }
+    .mage_form_list .mage_form_full,
+    .mage_customer_info_area label,
+    .mage_route_title p,
+    div.mage_form_group .mage_form {
+        font-size: 14px !important;
+        ;
+    }
+    .mage_form_group {
+        max-width: 50%;
+    }
+    .search_form_horizontal form.mage_form .mage_form_list {
+        width: 100%;
+    }
+    .mage-search-res-wrapper .mage-search-brief-row {
+        padding: 15px 15px 15px;
+    }
+    .mage-search-res-wrapper .mage-search-brief-row,
+    .mage-search-brief-row .mage-search-res-header--left,
+    .mage-search-brief-row .mage-search-res-header--right {
+        align-items: initial;
+        flex-direction: column;
+    }
+    .mage-sm-show {
+        display: inline-block;
+        min-width: 98px;
+    }
+    .mage-search-brief-row .mage-search-res-header--img {
+        text-align: initial;
+        margin-bottom: 10px;
+    }
+    .mage-search-brief-row .mage-search-res-header--img img {
+        width: 100%;
+    }
+    .mage-search-brief-row .mage-bus-title {
+        font-size: 1.5em;
+        line-height: 1em;
+        margin-bottom: 10px;
+    }
+    .mage-bus-booking-wrapper .mage_price_info {
+        border-left: none;
+        padding: 0;
+        margin-left: 0!important;
+    }
+    .mage-bus-booking-wrapper .mage_price_info>p>strong {
+        text-decoration: underline;
+    }
+    .mage-search-res-wrapper .mage-search-res-header {
+        display: none;
+    }
+    .mage_bus_info,
+    .mage_price_info,
+    div.mage_flex_equal .mage_price_info {
+        margin: 15px 0 0;
+    }
+}
+
+.mage_search_list .mage_book_now_area .mage-notification-area {
+    width: 100%;
+}
+
+.mage_search_list .mage_book_now_area .mage_flex_equal {
+    display: block;
+    width: 100%;
+    margin: 0;
+}
+
+.mage_search_list .mage_book_now_area .mage_flex_equal .mage_sub_price {
+    display: block;
+    margin: 0;
+    padding: 0;
+}
+
+.mage_search_list .mage_book_now_area .mage_book_now {
+    display: block;
+    padding: 0;
+}
+
+.mage_search_list .mage_book_now_area .mage_button.mage_book_now {
+    margin: 0;
+    margin-bottom: 20px;
+}
+
+.mage_search_list .mage_book_now_area .mage_sub_total {
+    display: flex;
+    border: 1px solid #d3d3d3;
+    margin-bottom: 10px;
+    align-items: center;
+}
+
+.mage_search_list .mage_book_now_area .mage_sub_total .mage_subtotal_figure {
+    margin-left: 5px;
+}
+
+.mage_search_list .mage_book_now_area .mage_sub_total div {
+    padding: 8px;
+}
+
+.mage_search_list .mage_book_now_area .mage_sub_total div:nth-child(1) {
+    background-color: #727272;
+    color: #fff;
+    font-weight: bold;
+}
+
+.mage-form-field.mage-form-pickpoint-field label {
+    float: left;
+    display: inline-block;
+    width: auto;
+}
+
+.mage-form-field.mage-form-pickpoint-field select {
+    float: right;
+    display: inline-block;
+    width: auto;
+}
+
+.mage-search-brief-row .mage-search-res-header--img img {
+    width: 100px;
+    height: auto;
+}
+
+.search_form_horizontal div.mage_form_radio {
+    display: none;
+}
+
+.search_form_horizontal div.mage_form_search {
+    padding-top: 35px;
+}
+
+.mage-form-field select {
+    font-size: 14px;
+}
+div.mage_form_list_body .mage_group_input label input{margin:0 10px 0 0;}
+div.mage_form_list_body .mage_group_input label{width: auto;
+margin: 10px 10px 0 0;}
