@@ -232,10 +232,13 @@ class SearchClass extends CommonClass
         $search_date = (isset($_GET['j_date']) ? $_GET['j_date'] : '');
         $current_date = date('Y-m-d');
 
-
+//    $boarding_time = get_wbbm_datetime(boarding_dropping_time(false, $return), 'time');
+//    $dropping_time = get_wbbm_datetime(boarding_dropping_time(true, $return), 'time');
         $boarding_time = boarding_dropping_time(false, $return);
         $dropping_time = boarding_dropping_time(true, $return);
-
+        $style = !empty($style) ? $style : '';
+        // If Current time is greater than bus time
+        // Bus should not be shown in search result
         if($current_date === $search_date) {
             $search_timestamp = strtotime($search_date.' '.$boarding_time);
             if(current_time('timestamp') >= $search_timestamp ) {
@@ -256,9 +259,9 @@ class SearchClass extends CommonClass
             $type_name = '';
         }
 
-
+        // $available_seat = mage_available_seat(wbbm_convert_date_to_php(mage_get_isset($date_var)));
         $available_seat = wbbm_intermidiate_available_seat($_GET[$boarding_var], $_GET[$dropping_var], wbbm_convert_date_to_php(mage_get_isset($date_var)));
-
+        $total_seats = get_post_meta($id, 'wbbm_total_seat', true);
 
         $boarding = mage_get_isset($boarding_var);
         $dropping = mage_get_isset($dropping_var);
@@ -274,7 +277,7 @@ class SearchClass extends CommonClass
         $boarding_point_slug = preg_replace('/[^A-Za-z0-9-]/', '_', $boarding_point_slug);
 
         $coach_no = get_post_meta($id, 'wbbm_bus_no', true);
-        $pickpoints = get_post_meta($id, 'wbbm_selected_pickpoint_name_' . $boarding_point_slug, true);
+        $pickpoints = get_post_meta($id, 'wbbm_selected_pickpoint_name_' . strtolower($boarding_point_slug), true);
 
         if ($pickpoints) {
             $pickpoints = unserialize($pickpoints);
@@ -282,7 +285,6 @@ class SearchClass extends CommonClass
 
         $is_sell_off = get_post_meta($id, 'wbbm_sell_off', true);
         $wbbm_features = get_post_meta($id, 'wbbm_features', true);
-  
         $seat_available = get_post_meta($id, 'wbbm_seat_available', true);
         $total_seat = get_post_meta($id, 'wbbm_total_seat', true);
         $is_price_zero_allow = get_post_meta($id, 'wbbm_price_zero_allow', true);
@@ -295,7 +297,6 @@ class SearchClass extends CommonClass
                 ?>
                 <div style="background-color:<?php echo ($search_form_result_b_color != '' ? $search_form_result_b_color : '#b30c3b12'); ?>" class="mage_search_list theme_minimal <?php echo $in_cart ? 'booked' : ''; ?>" data-seat-available="<?php echo $available_seat; ?>">
                     <div class="mage-search-brief-row" style="color:<?php echo ($search_list_header_text_color != '' ? $search_list_header_text_color : '#000'); ?>">
-
                         <div class="mage-search-res-header--img">
                             <?php
                             if(has_post_thumbnail()) {
@@ -305,11 +306,12 @@ class SearchClass extends CommonClass
                             }
                             ?>
                         </div>
-
                         <div class="mage-search-res-header--left">
                             <div class="mage-bus-title">
                                 <a class="bus-title" href="<?php echo get_the_permalink($id) ?>"><?php echo the_title(); ?></a>
                                 <span><?php echo $coach_no; ?></span>
+
+
                                 <?php if($wbbm_features){ ?>
                                 <p class="wbbm-feature-icon">
                                     <?php foreach ($wbbm_features as $feature_id){ ?>
@@ -572,7 +574,9 @@ class SearchClass extends CommonClass
                                         </div>
                                     <?php endif; ?>
 
+
                                     <?php if (($available_seat == $total_seat) && ($seat_price_entire > 0) ) : ?>
+
                                         <div class="mage_center_space">
                                             <p>
                                                 <strong><?php echo wbbm_get_option('wbbm_entire_bus_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_entire_bus_text', 'wbbm_label_setting_sec') : _e('Entire Bus', 'bus-booking-manager'); echo ':'; ?></strong>

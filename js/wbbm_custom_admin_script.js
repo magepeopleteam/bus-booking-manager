@@ -372,6 +372,11 @@
 		$( ".boarding-point tr" ).each(function( index ) {
 
 			let pick_name = $(this).find(":selected").val()
+			let pick_name_val = '';
+			if(pick_name) {
+				pick_name_val = pick_name.toLowerCase();
+				pick_name_val = pick_name_val.replace(/ /g, '_');
+			}
 
 			options = options+$(this).find(":selected").val();
 
@@ -384,7 +389,7 @@
 			}
 			let term_id = $(this).find(':selected').data('term_id');
 			if(term_id){
-				$('.ra_pick_boarding').append("<option value="+pick_name+">"+pick_name+"</option>")
+				$('.ra_pick_boarding').append("<option value="+pick_name_val+">"+pick_name+"</option>")
 			}
 		});
 
@@ -396,6 +401,15 @@
 		numberOfMonths: [1,3],
 		dateFormat: "yy-mm-dd",
 		minDate: 0,
+	});
+
+	// Admin datepicker loader
+	jQuery("#j_date, #r_date, #ja_date").datepicker({
+		dateFormat: "yy-mm-dd",
+		minDate: 0,
+		// beforeShowDay: function (date){
+		// 	return off_particular(date, global_off_particular_date,global_weekly_offday );
+		// }
 	});
 
 

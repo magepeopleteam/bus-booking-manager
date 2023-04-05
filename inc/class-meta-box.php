@@ -285,7 +285,7 @@ class WBBMMetaBox
         $pickpoints = '';
         if ($bus_pickpoints) {
             foreach ($bus_pickpoints as $points) {
-                $pickpoints .= '<option value="' . $points->slug . '">' . str_replace("'", '', $points->name) . '</option>';
+                $pickpoints .= '<option value="' . $points->name . '">' . str_replace("'", '', $points->name) . '</option>';
             }
         }
 

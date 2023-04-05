@@ -277,6 +277,11 @@ ul.mage_list_inline li a {
         width: auto;
     }
 }
+@media only screen and (max-width: 425px) {
+    .mage_next_date {
+        flex-direction: column;
+    }
+}
 .interface-interface-skeleton__header {
     z-index: 0;
 }
