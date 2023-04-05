@@ -28,11 +28,17 @@ class BusBookingManagerClass
         $NextDateClass = new NextDateClass;
         $AdminMetaBoxClass = new AdminMetaBoxClass;
         $ActiveDataShowClass = new ActiveDataShowClass;
+        $SearchClass = new SearchClass;
 
         add_action('mage_next_date', array($NextDateClass,'mage_next_date_suggestion_single'), 99, 3);
         //Save meta
         add_action('save_post', array($AdminMetaBoxClass, 'wbbm_single_settings_meta_save'));
         add_action('active_date', array($ActiveDataShowClass,'active_date_picker'), 99, 3);
+
+        add_action('mage_search_from_only',array($SearchClass,'search_from_only') ,10,2);
+        add_action('wbbm_prevent_form_resubmission', array($SearchClass,'wbbm_prevent_form_resubmission_fun'));
+
+
     }
 
     private function define_all_filters() {
@@ -48,8 +54,11 @@ class BusBookingManagerClass
 
         $ShortCodeClass = new ShortCodeClass();
 
-        //add_shortcode('bus-search-form', array($ShortCodeClass, 'mage_bus_search_form'));
-        //add_shortcode('bus-search', array($ShortCodeClass, 'mage_bus_search'));
+        add_shortcode('bus-search-form', array($ShortCodeClass, 'mage_bus_search_form'));
+        add_shortcode('bus-search', array($ShortCodeClass, 'mage_bus_search'));
+
+
+
 
     }
 

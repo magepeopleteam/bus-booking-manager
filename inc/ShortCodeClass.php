@@ -26,20 +26,23 @@ class ShortCodeClass extends SearchClass
 
 
     function mage_bus_search($atts){
-        $defaults = array("style" => false, "theme" => 'minimal',);
+        $defaults = array("style" => 'false', "theme" => 'minimal',);
         $params         = shortcode_atts($defaults, $atts);
         global $mage_bus_search_theme;
         $mage_bus_search_theme = $params['theme'];
         //ob_clean();
         ob_start();
         if($params['style']=='vertical'){
-            mage_search_page_vertical();
+            $this->mage_search_page_vertical();
         }
         else{
-            mage_search_page_horizontal();
+            $this->mage_search_page_horizontal();
         }
         return ob_get_clean();
     }
+
+
+
 
 
 
