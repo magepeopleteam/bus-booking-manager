@@ -1,6 +1,6 @@
 <div class="mp_tab_item" data-tab-item="#wbmm_bus_features" style="display: none;">
 
-    <h3 class="wbbm_mp_tab_item_heading"><img src="http://localhost/multiPurpose/wp-content/plugins/bus-booking-manager/images/bus_arrow_left.png"><?php echo $cpt_label.' '. __('Features:', 'bus-booking-manager'); ?></h3>
+    <h3 class="wbbm_mp_tab_item_heading"><img src="<?php echo WBTM_PLUGIN_URL .'images/bus_arrow_left.png';?>"/><?php echo $cpt_label.' '. __('Features:', 'bus-booking-manager'); ?></h3>
 
     <div class="mp_tab_item_inner_wrapper">
         <div class="col-md-6">
