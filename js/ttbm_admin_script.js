@@ -211,16 +211,16 @@
 		parent.find('.ttbm_success_info').slideUp('fast');
 		let feature_name = parent.find('[name="ttbm_feature_name"]').val();
 		let feature_description = parent.find('[name="ttbm_feature_description"]').val();
-		let feature_icon = parent.find('[name="ttbm_feature_icon"]').val();
+		let feature_icon = parent.find('[name="wbbm_feature_icon"]').val();
 		if (!feature_name) {
 			parent.find('[data-required="ttbm_feature_name"]').slideDown('fast');
 		} else {
 			parent.find('[data-required="ttbm_feature_name"]').slideUp('fast');
 		}
 		if (!feature_icon) {
-			parent.find('[data-required="ttbm_feature_icon"]').slideDown('fast');
+			parent.find('[data-required="wbbm_feature_icon"]').slideDown('fast');
 		} else {
-			parent.find('[data-required="ttbm_feature_icon"]').slideUp('fast');
+			parent.find('[data-required="wbbm_feature_icon"]').slideUp('fast');
 		}
 		if (feature_name && feature_icon) {
 			$.ajax({
@@ -238,7 +238,7 @@
 				success: function () {
 					parent.find('[name="ttbm_feature_name"]').val('');
 					parent.find('[name="ttbm_feature_description"]').val('');
-					parent.find('[name="ttbm_feature_icon"]').val('');
+					parent.find('[name="wbbm_feature_icon"]').val('');
 					$this.closest('.popupMainArea').find('.remove_input_icon').trigger('click');
 					parent.find('.ttbm_success_info').slideDown('fast');
 					ttbm_reload_feature_list();

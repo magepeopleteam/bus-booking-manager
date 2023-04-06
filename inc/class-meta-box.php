@@ -53,14 +53,14 @@ class WBBMMetaBox
         if (isset($_POST['name'])) {
             $terms = wp_insert_term($_POST['name'], 'wbbm_bus_feature', $args = array('description' => $_POST['description']));
 
-            if ( isset( $_POST['ttbm_feature_icon'] ) ) {
-                update_term_meta($terms['term_id'], 'feature_icon', $_POST['ttbm_feature_icon']);
+            if ( isset( $_POST['wbbm_feature_icon'] ) ) {
+                update_term_meta($terms['term_id'], 'feature_icon', $_POST['wbbm_feature_icon']);
             }
             ?>
             <p>
                 <label class="customCheckboxLabel">
                     <input type="checkbox" name="wbbm_features[<?php echo $terms['term_id'] ?>]" value="<?php echo $terms['term_id'] ?>">
-                    <span class="customCheckbox"><span class="mR_xs <?php echo $_POST['ttbm_feature_icon'] ?>"></span><?php echo $_POST['name'] ?></span>
+                    <span class="customCheckbox"><span class="mR_xs <?php echo $_POST['wbbm_feature_icon'] ?>"></span><?php echo $_POST['name'] ?></span>
                 </label>
             </p>
             <?php

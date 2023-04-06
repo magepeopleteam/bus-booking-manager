@@ -50,12 +50,12 @@
                                 <textarea id="feature_description" rows="5" cols="50" class="formControl"></textarea>
                             </label>
 
-                            <label for="ttbm_feature_icon">Feature Icon</label>
+                            <label for="wbbm_feature_icon">Feature Icon</label>
 
-                            <div id="field-wrapper-ttbm_feature_icon" class="wbtm_feature field-wrapper field-icon-wrapper field-icon-wrapper-ttbm_feature_icon">
+                            <div id="field-wrapper-wbbm_feature_icon" class="wbtm_feature field-wrapper field-icon-wrapper field-icon-wrapper-wbbm_feature_icon">
                                 <div class="mp_input_add_icon">
                                     <button type="button" class="mp_input_add_icon_button dButton_xs ">
-                                        <input type="hidden" id="feature_icon" name="ttbm_feature_icon" placeholder="" value="fas fa-forward">
+                                        <input type="hidden" id="feature_icon" name="wbbm_feature_icon" placeholder="" value="fas fa-forward">
                                         <span class="fas fa-forward" data-empty-text="Add Icon"></span>
                                         <span class="fas fa-times remove_input_icon active " title="Remove Icon"></span>
                                     </button>

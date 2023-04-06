@@ -61,7 +61,7 @@
 			$(".name_required").show();
 		}else {
 			let description = $("#feature_description").val().trim();
-			let ttbm_feature_icon = $("#feature_icon").val().trim();
+			let wbbm_feature_icon = $("#feature_icon").val().trim();
 
 			$.ajax({
 				type: 'POST',
@@ -72,7 +72,7 @@
 					"action": "wbtm_add_bus_feature",
 					"name": name,
 					"description": description,
-					"ttbm_feature_icon": ttbm_feature_icon,
+					"wbbm_feature_icon": wbbm_feature_icon,
 				},
 
 				beforeSend: function () {
@@ -84,8 +84,10 @@
 					$('.features').append(data);
 
 					$(".name_required").hide();
-					$("#bus_stop_name").val("");
-					$("#bus_stop_description").val("");
+					$("#bus_feature").val("");
+					$("#feature_description").val("");
+					$("#feature_icon").val("fas fa-forward");
+					$('.mp_input_add_icon').find('span[data-empty-text]').removeAttr('class').addClass("fas fa-forward").html('');
 					$(".success_text").slideDown('fast');
 					setTimeout(function() {
 						$('.success_text').fadeOut('fast');

@@ -94,8 +94,8 @@ add_action ( 'edited_wbbm_bus_feature', 'save_wbbm_bus_feature');
 add_action ( 'create_wbbm_bus_feature', 'save_wbbm_bus_feature', 10, 2);
 
 function save_wbbm_bus_feature($term_id) {
-    if ( isset( $_POST['ttbm_feature_icon'] ) ) {
-        update_term_meta($term_id, 'feature_icon', $_POST['ttbm_feature_icon']);
+    if ( isset( $_POST['wbbm_feature_icon'] ) ) {
+        update_term_meta($term_id, 'feature_icon', $_POST['wbbm_feature_icon']);
     }
 }
 
@@ -110,11 +110,11 @@ function wbbm_bus_feature_add_term_fields( $taxonomy ) {
 
     ?>
 
-    <label for="ttbm_feature_icon">Feature Icon</label>
-    <div id="field-wrapper-ttbm_feature_icon" class="wbtm_feature field-wrapper field-icon-wrapper field-icon-wrapper-ttbm_feature_icon">
+    <label for="wbbm_feature_icon">Feature Icon</label>
+    <div id="field-wrapper-wbbm_feature_icon" class="wbtm_feature field-wrapper field-icon-wrapper field-icon-wrapper-wbbm_feature_icon">
         <div class="mp_input_add_icon">
             <button type="button" class="mp_input_add_icon_button dButton_xs ">
-                <input type="hidden" name="ttbm_feature_icon" placeholder="" value="fas fa-forward">
+                <input type="hidden" name="wbbm_feature_icon" placeholder="" value="fas fa-forward">
                 <span class="fas fa-forward" data-empty-text="Add Icon"></span>
                 <span class="fas fa-times remove_input_icon active " title="Remove Icon"></span>
             </button>
@@ -137,15 +137,15 @@ function add_wbbm_bus_feature(){
     ?>
 
     <tr class="form-field">
-        <th scope="row" valign="top"><label for="ttbm_feature_icon">Feature Icon</label></th>
+        <th scope="row" valign="top"><label for="wbbm_feature_icon">Feature Icon</label></th>
         <td>
-            <div id="field-wrapper-ttbm_feature_icon" class="wbtm_feature field-wrapper field-icon-wrapper
-            field-icon-wrapper-ttbm_feature_icon">
+            <div id="field-wrapper-wbbm_feature_icon" class="wbtm_feature field-wrapper field-icon-wrapper
+            field-icon-wrapper-wbbm_feature_icon">
 
 
                 				<div class="mp_input_add_icon">
                     <button type="button" class="mp_input_add_icon_button dButton_xs ">
-                        <input type="hidden" name="ttbm_feature_icon" placeholder="" value="<?php echo $cat_title ?>">
+                        <input type="hidden" name="wbbm_feature_icon" placeholder="" value="<?php echo $cat_title ?>">
                         <span class="<?php echo $cat_title ?>" data-empty-text="Add Icon">
 			                    			                </span>
                         <span class="fas fa-times remove_input_icon active " title="Remove Icon"></span>
