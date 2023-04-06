@@ -717,10 +717,30 @@ class SearchClass extends CommonClass
                     if($single_bus){
 
                         $start_stops = get_post_meta(get_the_id(),'wbbm_bus_prices',true);
+                        $start_stops = array_values(
+                            array_reduce($start_stops, function($r, $a){
+                                if (!isset($r[$a['wbbm_bus_bp_price_stop']])) $r[$a['wbbm_bus_bp_price_stop']] = $a;
+                                return $r;
+                            }, [])
+                        );
+
                         echo '<div class="mage_input_select_list" '; if($search_form_dropdown_b_color){ echo 'style="background-color:'.$search_form_dropdown_b_color.'"'; } echo '><ul>';
-                        foreach ($start_stops as $_start_stops) {
-                            echo '<li '; if($search_form_dropdown_text_color){ echo 'style="color:'.$search_form_dropdown_text_color.'"'; } echo ' data-route="' . $_start_stops['wbbm_bus_bp_price_stop'] . '"><span class="fa fa-map-marker"></span>' . $_start_stops['wbbm_bus_bp_price_stop'] . '</li>';
+
+
+                        if($start_stops) {
+                            foreach ($start_stops as $_start_stops) {
+
+                                    echo '<li ';
+                                    if ($search_form_dropdown_text_color) {
+                                        echo 'style="color:' . $search_form_dropdown_text_color . '"';
+                                    }
+                                    echo ' data-route="' . $_start_stops['wbbm_bus_bp_price_stop'] . '">
+ 
+                                <span class="fa fa-map-marker"></span>' . $_start_stops['wbbm_bus_bp_price_stop'] . '</li>';
+
+                            }
                         }
+
                         echo '</ul></div>';
                     }else {
                         mage_route_list();
@@ -740,6 +760,15 @@ class SearchClass extends CommonClass
                     <?php
                     if($single_bus){
                         $end_stops = get_post_meta(get_the_id(),'wbbm_bus_prices',true);
+
+                        $end_stops = array_values(
+                            array_reduce($end_stops, function($r, $a){
+                                if (!isset($r[$a['wbbm_bus_dp_price_stop']])) $r[$a['wbbm_bus_dp_price_stop']] = $a;
+                                return $r;
+                            }, [])
+                        );
+
+
                         echo '<div class="mage_input_select_list_static"><ul class="">';
                         foreach ($end_stops as $_end_stops) {
                             echo '<li data-route="' . $_end_stops['wbbm_bus_dp_price_stop'] . '"><span class="fa fa-map-marker"></span>' . $_end_stops['wbbm_bus_dp_price_stop'] . '</li>';
