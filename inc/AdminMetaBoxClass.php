@@ -96,12 +96,14 @@ class AdminMetaBoxClass extends CommonClass
             }
         }
 
+        $images = $_POST['my_field'];
+
+        $all_images = explode( ',', $images );
+
+        update_post_meta( $post_id, 'my_field', $all_images );
+
+
         $wbbm_features = $_POST['wbbm_features'];
-
-
-
-       // print_r($wbbm_features);exit;
-
 
         if (!empty($wbbm_features)) {
             $i = 0;
@@ -112,6 +114,10 @@ class AdminMetaBoxClass extends CommonClass
                 $i++;
             }
         }
+
+        $term_condition = $_POST['term_condition'];
+
+        update_post_meta($post_id, 'wbbm_term_condition', $term_condition);
 
         update_post_meta($post_id, 'wbbm_features', $post_feature);
 

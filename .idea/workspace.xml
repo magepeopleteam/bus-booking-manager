@@ -1,22 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="0ca0ca37-c1da-45e4-816c-622567d85a62" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/inc/clean/layout/search-form-horizontal.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/inc/clean/layout/search-form-horizontal.php_backup" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/inc/clean/layout/search-form-only.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/inc/clean/layout/search-form-only.php_backup" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/inc/clean/layout/search-form-vertical.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/inc/clean/layout/search-form-vertical.php_vertical" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/inc/clean/layout/search-item.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/inc/clean/layout/search-item.php_backup" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/inc/clean/layout/search-list.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/inc/clean/layout/search-list.php_backup" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/inc/clean/layout/search-page-horizontal.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/inc/clean/layout/search-page-horizontal.php_backup" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/inc/clean/layout/search-page-vertical.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/inc/clean/layout/search-page-vertical.php_vertical" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/inc/clean/mage_function.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/clean/mage_function.php" afterDir="false" />
+    <list default="true" id="d2353d0f-76e3-4f27-ae0c-37f16e80241f" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/css/mage_css.css" beforeDir="false" afterPath="$PROJECT_DIR$/css/mage_css.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/css/wbbm-custom-style.css" beforeDir="false" afterPath="$PROJECT_DIR$/css/wbbm-custom-style.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inc/AdminMetaBoxClass.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/AdminMetaBoxClass.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inc/SearchClass.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/SearchClass.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inc/class-meta-box.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/class-meta-box.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/js/mage_style.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/mage_style.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/js/wbbm_custom_admin_script.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/wbbm_custom_admin_script.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -32,8 +25,7 @@
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
-  <component name="ProjectId" id="2O02GPq7lKH5FXAID1XNVHODQ6X" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectId" id="2O2f0QneNktYQbTxYpfHX1Z09yE" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -49,14 +41,13 @@
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="0ca0ca37-c1da-45e4-816c-622567d85a62" name="Changes" comment="" />
-      <created>1680683085138</created>
+      <changelist id="d2353d0f-76e3-4f27-ae0c-37f16e80241f" name="Changes" comment="" />
+      <created>1680763373494</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1680683085138</updated>
-      <workItem from="1680683089130" duration="1100000" />
-      <workItem from="1680684493614" duration="445000" />
-      <workItem from="1680748762384" duration="4485000" />
+      <updated>1680763373494</updated>
+      <workItem from="1680763374736" duration="7033000" />
+      <workItem from="1680831615963" duration="14836000" />
     </task>
     <servers />
   </component>

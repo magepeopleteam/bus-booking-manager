@@ -199,10 +199,35 @@
     $(document).on({
         click: function () {
             var $this = $(this);
-            $this.parents('.mage-search-brief-row').toggleClass('opened');
-            $this.parents('.mage-search-brief-row').siblings('.mage-bus-booking-wrapper').slideToggle('fast');
+            $('.mage-bus-booking-gallery').css('display','none');
+            $('.mage-bus-booking-term-conditions').css('display','none');
+            $('.mage-search-brief-row').toggleClass('opened');
+            $('.mage-search-brief-row').siblings('.mage-bus-booking-wrapper').slideToggle('fast');
+
         }
     }, '.mage-bus-detail-action');
+
+
+    $(document).on({
+        click: function () {
+            var $this = $(this);
+            $('.mage-bus-booking-wrapper').hide();
+            $('.mage-bus-booking-term-conditions').hide();
+            $('.mage-search-brief-row').toggleClass('opened');
+            $('.mage-search-brief-row').siblings('.mage-bus-booking-gallery').slideToggle('fast');
+        }
+    }, '.wbbm-bus-gallery');
+
+    $(document).on({
+        click: function () {
+            var $this = $(this);
+            $('.mage-bus-booking-gallery').hide();
+            $('.mage-bus-booking-wrapper').hide();
+            $('.mage-search-brief-row').toggleClass('opened');
+            $('.mage-search-brief-row').siblings('.mage-bus-booking-term-conditions').slideToggle('fast');
+        }
+    }, '.wbbm-bus-term-conditions');
+
     // Minimul Design Script END
 
     $(document).ready(function() {

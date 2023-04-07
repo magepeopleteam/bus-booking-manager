@@ -316,3 +316,37 @@ div.add_icon_list_popup .popupCloseIcon {
 .wbtm_feature{
     padding: 10px;
 }
+
+.misha-gallery li{
+    overflow: hidden;
+    display: inline-block;
+    margin-right: 20px;
+    width: 200px;
+    height: 200px;
+}
+.misha-gallery li img{
+    max-width: 100%;
+    height: 150px;
+}
+
+.misha-gallery span{
+    width: 200px;
+    height: 200px;
+
+}
+.wbbm-bus-details-options{
+    margin-bottom: 20px;
+    padding: 5px 15px 5px
+}
+.wbbm-bus-details-options ul li{
+    display: inline;
+    cursor: pointer;
+}
+.wbbm-bus-details-options li:last-child {
+    float: right;
+}
+.mage-bus-booking-term-conditions, .mage-bus-booking-gallery{
+    background: #fff;
+    padding: 20px;
+    border: 3px dashed #d3d3d3
+}
