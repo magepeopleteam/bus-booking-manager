@@ -212,11 +212,34 @@
     </div>
 
     <div class="mage-bus-booking-gallery" style="display: none">
-        <p>gallery</p>
+        <div class="demo">
+            <div class="item">
+                <div class="clearfix" style="max-width:474px;margin: auto">
+                    <ul id="image-gallery" class="gallery list-unstyled cS-hidden">
+
+                        <?php
+                        $image_ids = ( $image_ids = get_post_meta( $id, 'wbbm_image_gallery', true ) ) ? $image_ids : array();
+                        foreach( $image_ids as $i => &$image_id ) {
+                            $url = wp_get_attachment_image_url( $image_id, 'large' );
+                            if( $url ) {
+                                ?>
+                                <li data-thumb="https://img.freepik.com/free-vector/street-side-scene-with-school-bus-road-scene_1308-52281.jpg?size=626&ext=jpg">
+                                    <img src="<?php echo $url; ?>" alt="<?php esc_attr_e( $url ); ?>" />
+                                </li>
+                                <?php
+                            }
+                        }
+                        ?>
+
+                    </ul>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="mage-bus-booking-term-conditions" style="display: none">
-        <p>term condition</p>
+        <?php $term_condition = get_post_meta($id, 'wbbm_term_condition', true); ?>
+        <p><?php echo $term_condition ?></p>
     </div>
 
 

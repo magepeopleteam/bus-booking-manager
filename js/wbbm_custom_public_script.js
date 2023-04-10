@@ -120,11 +120,21 @@
 			return [true];
 		}
 
+
+
+
+
+
+
+
+
 	});
 
 
 
 	/*  end date picker for global and local search*/
+
+
 
 
 

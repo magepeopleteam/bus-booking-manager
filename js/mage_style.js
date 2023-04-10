@@ -207,14 +207,24 @@
         }
     }, '.mage-bus-detail-action');
 
-
+    var clickcount = 0;
     $(document).on({
         click: function () {
             var $this = $(this);
+            clickcount += 1;
             $('.mage-bus-booking-wrapper').hide();
             $('.mage-bus-booking-term-conditions').hide();
             $('.mage-search-brief-row').toggleClass('opened');
             $('.mage-search-brief-row').siblings('.mage-bus-booking-gallery').slideToggle('fast');
+
+            if(clickcount==1){
+                $('#image-gallery').lightSlider({gallery:false, item:1, thumbItem:2, slideMargin: 0, speed:500, auto:true, loop:true,onSliderLoad: function() {
+                        $('#image-gallery').removeClass('cS-hidden');
+                    } });
+            }
+
+
+
         }
     }, '.wbbm-bus-gallery');
 

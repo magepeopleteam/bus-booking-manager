@@ -6,10 +6,10 @@ class BusBookingManagerClass
     public function __construct()
     {
         $this->load_dependencies();
-
         $this->define_all_hooks();
         $this->define_all_filters();
         $this->define_all_shortcode();
+        $this->define_public_hooks();
 
     }
 
@@ -22,6 +22,8 @@ class BusBookingManagerClass
         require_once plugin_dir_path( dirname( __FILE__ ) ) . 'inc/NextDateClass.php';
         require_once plugin_dir_path( dirname( __FILE__ ) ) . 'inc/AdminMetaBoxClass.php';
         require_once plugin_dir_path( dirname( __FILE__ ) ) . 'inc/ActiveDataShowClass.php';
+        require_once plugin_dir_path( dirname( __FILE__ ) ) . 'inc/WbbmAdminClass.php';
+        require_once plugin_dir_path( dirname( __FILE__ ) ) . 'inc/WbbmPublicClass.php';
     }
 
     private function define_all_hooks() {
@@ -53,12 +55,33 @@ class BusBookingManagerClass
     private function define_all_shortcode() {
 
         $ShortCodeClass = new ShortCodeClass();
-
         add_shortcode('bus-search-form', array($ShortCodeClass, 'mage_bus_search_form'));
         add_shortcode('bus-search', array($ShortCodeClass, 'mage_bus_search'));
 
+    }
 
 
+    private function define_admin_hooks() {
+
+       /* $plugin_admin = new WP_Bookingly_Admin( $this->get_plugin_name(), $this->get_version() );
+
+        $this->loader->add_action( 'admin_enqueue_scripts', array($plugin_admin, 'enqueue_styles' ));
+        $this->loader->add_action( 'admin_enqueue_scripts', array($plugin_admin, 'enqueue_scripts' ));*/
+
+    }
+
+    /**
+     * Register all of the hooks related to the public-facing functionality
+     * of the plugin.
+     *
+     * @since    1.0.0
+     * @access   private
+     */
+    private function define_public_hooks() {
+
+        $WbbmPublicClass = new WbbmPublicClass();
+
+        add_action('wp_enqueue_scripts', array($WbbmPublicClass,'wbbm_bus_enqueue_scripts'));
 
     }
 

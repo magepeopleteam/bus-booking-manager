@@ -16,7 +16,7 @@
                     'post_type' => array( 'page' ),
                     'fields' => array(
                         array(
-                            'id' => 'my_field',
+                            'id' => 'wbbm_image_gallery',
                             'label' => 'Images',
                             'type' => 'gallery'
                         ),
@@ -25,7 +25,7 @@
                 return $metaboxes;
             }
 
-            $image_ids = ( $image_ids = get_post_meta( $post->ID, 'my_field', true ) ) ? $image_ids : array();
+            $image_ids = ( $image_ids = get_post_meta( $post->ID, 'wbbm_image_gallery', true ) ) ? $image_ids : array();
 
             foreach( $image_ids as $i => &$id ) {
                 $url = wp_get_attachment_image_url( $id, 'array( 200, 200 )' );
@@ -42,7 +42,7 @@
             }
             ?>
         </ul>
-        <input type="hidden" name="my_field" value="<?php echo join( ',', $image_ids ) ?>" />
+        <input type="hidden" name="wbbm_image_gallery" value="<?php echo join( ',', $image_ids ) ?>" />
         <a href="#" class="button misha-upload-button">Add Images</a>
 
 

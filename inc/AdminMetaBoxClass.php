@@ -96,11 +96,11 @@ class AdminMetaBoxClass extends CommonClass
             }
         }
 
-        $images = $_POST['my_field'];
+        $images = $_POST['wbbm_image_gallery'];
 
         $all_images = explode( ',', $images );
 
-        update_post_meta( $post_id, 'my_field', $all_images );
+        update_post_meta( $post_id, 'wbbm_image_gallery', $all_images );
 
 
         $wbbm_features = $_POST['wbbm_features'];
