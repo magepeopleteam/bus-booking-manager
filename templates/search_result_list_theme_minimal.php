@@ -1,10 +1,13 @@
-<div style="background-color:<?php echo ($search_form_result_b_color != '' ? $search_form_result_b_color : '#b30c3b12'); ?>" class="mage_search_list theme_minimal <?php echo $in_cart ? 'booked' : ''; ?>" data-seat-available="<?php echo $available_seat; ?>">
-    <div class="mage-search-brief-row" style="color:<?php echo ($search_list_header_text_color != '' ? $search_list_header_text_color : '#000'); ?>">
+<div style="background-color:<?php echo($search_form_result_b_color != '' ? $search_form_result_b_color : '#b30c3b12'); ?>"
+     class="mage_search_list theme_minimal <?php echo $in_cart ? 'booked' : ''; ?>"
+     data-seat-available="<?php echo $available_seat; ?>">
+    <div class="mage-search-brief-row"
+         style="color:<?php echo($search_list_header_text_color != '' ? $search_list_header_text_color : '#000'); ?>">
         <div class="mage-search-res-header--img">
-            <?php if(has_post_thumbnail()) {
+            <?php if (has_post_thumbnail()) {
                 the_post_thumbnail('full');
             } else {
-                echo '<img src="'.PLUGIN_ROOT. '/images/bus-placeholder.png'.'" loading="lazy" />';
+                echo '<img src="' . PLUGIN_ROOT . '/images/bus-placeholder.png' . '" loading="lazy" />';
             }
             ?>
         </div>
@@ -13,39 +16,43 @@
             <div class="mage-bus-title">
                 <a class="bus-title" href="<?php echo get_the_permalink($id) ?>"><?php echo the_title(); ?></a>
                 <span><?php echo $coach_no; ?></span>
-                <?php if($wbbm_features){ ?>
+                <?php if ($wbbm_features) { ?>
                     <p class="wbbm-feature-icon">
-                        <?php foreach ($wbbm_features as $feature_id){ ?>
-                            <span class="customCheckbox"><span title="<?php echo get_term($feature_id)->name ?>" class="mR_xs <?php echo get_term_meta($feature_id, 'feature_icon', true) ?>"></span></span>
+                        <?php foreach ($wbbm_features as $feature_id) { ?>
+                            <span class="customCheckbox"><span title="<?php echo get_term($feature_id)->name ?>"
+                                                               class="mR_xs <?php echo get_term_meta($feature_id, 'feature_icon', true) ?>"></span></span>
                         <?php } ?>
                     </p>
                 <?php } ?>
             </div>
             <div>
-                <?php echo '<p class="mage-bus-stopage"><span class="dashicons dashicons-location"></span> '. wbbm_get_option('wbbm_from_text', 'wbbm_label_setting_sec', __('From: ', 'bus-booking-manager')) .' '. $boarding . ' ( ' . get_wbbm_datetime($boarding_time, 'time') . ' )</p>'; ?>
-                <?php echo '<p class="mage-bus-stopage"><span class="dashicons dashicons-location"></span> '. wbbm_get_option('wbbm_to_text', 'wbbm_label_setting_sec', __('To: ', 'bus-booking-manager')).' '. $dropping . ' ( ' . get_wbbm_datetime($dropping_time, 'time') . ' )</p>'; ?>
+                <?php echo '<p class="mage-bus-stopage"><span class="dashicons dashicons-location"></span> ' . wbbm_get_option('wbbm_from_text', 'wbbm_label_setting_sec', __('From: ', 'bus-booking-manager')) . ' ' . $boarding . ' ( ' . get_wbbm_datetime($boarding_time, 'time') . ' )</p>'; ?>
+                <?php echo '<p class="mage-bus-stopage"><span class="dashicons dashicons-location"></span> ' . wbbm_get_option('wbbm_to_text', 'wbbm_label_setting_sec', __('To: ', 'bus-booking-manager')) . ' ' . $dropping . ' ( ' . get_wbbm_datetime($dropping_time, 'time') . ' )</p>'; ?>
             </div>
         </div>
 
         <div class="mage-search-res-header--right">
-            <?php if(isset($general_setting['wbbm_type_column_switch']) && $general_setting['wbbm_type_column_switch'] == 'on'){ ?>
+            <?php if (isset($general_setting['wbbm_type_column_switch']) && $general_setting['wbbm_type_column_switch'] == 'on') { ?>
                 <div>
                     <strong class="mage-sm-show"><?php echo wbbm_get_option('wbbm_type_text', 'wbbm_label_setting_sec', __('Type', 'bus-booking-manager')); ?></strong>
                     <span><?php echo $type_name; ?></span>
                 </div>
-            <?php  } ?>
-            <div><strong class="mage-sm-show"><?php echo wbbm_get_option('wbbm_fare_text', 'wbbm_label_setting_sec', __('Fare', 'bus-booking-manager')); ?></strong><?php echo wc_price($seat_price_adult); ?> / <?php echo wbbm_get_option('wbbm_seat_text', 'wbbm_label_setting_sec', __('Seat', 'bus-booking-manager')); ?></div>
+            <?php } ?>
+            <div><strong
+                        class="mage-sm-show"><?php echo wbbm_get_option('wbbm_fare_text', 'wbbm_label_setting_sec', __('Fare', 'bus-booking-manager')); ?></strong><?php echo wc_price($seat_price_adult); ?>
+                / <?php echo wbbm_get_option('wbbm_seat_text', 'wbbm_label_setting_sec', __('Seat', 'bus-booking-manager')); ?>
+            </div>
 
-            <?php if(isset($general_setting['wbbm_seat_column_switch']) && $general_setting['wbbm_seat_column_switch'] == 'on'){ ?>
+            <?php if (isset($general_setting['wbbm_seat_column_switch']) && $general_setting['wbbm_seat_column_switch'] == 'on') { ?>
 
-                <?php if($seat_available && $seat_available == 'on') : ?>
-                    <div><strong class="mage-sm-show"><?php echo wbbm_get_option('wbbm_seats_available_text', 'wbbm_label_setting_sec', __('Seat Available', 'bus-booking-manager')); ?></strong>
-                        <?php if( $is_sell_off != 'on' ){
-                            if($available_seat > 0){
-                                echo '<p>'.$available_seat.'</p>';
-                            }
-                            else {
-                                echo '<p class="mage-sm-text">'.wbbm_get_option('wbbm_no_seat_available_text', 'wbbm_label_setting_sec', __('No Seat Available', 'bus-booking-manager')).'</p>';
+                <?php if ($seat_available && $seat_available == 'on') : ?>
+                    <div><strong
+                                class="mage-sm-show"><?php echo wbbm_get_option('wbbm_seats_available_text', 'wbbm_label_setting_sec', __('Seat Available', 'bus-booking-manager')); ?></strong>
+                        <?php if ($is_sell_off != 'on') {
+                            if ($available_seat > 0) {
+                                echo '<p>' . $available_seat . '</p>';
+                            } else {
+                                echo '<p class="mage-sm-text">' . wbbm_get_option('wbbm_no_seat_available_text', 'wbbm_label_setting_sec', __('No Seat Available', 'bus-booking-manager')) . '</p>';
                             }
 
                         } ?>
@@ -53,7 +60,7 @@
                 <?php else : ?>
                     <div>-</div>
                 <?php endif; ?>
-            <?php  } ?>
+            <?php } ?>
 
         </div>
     </div>
@@ -69,8 +76,6 @@
             </li>
         </ul>
     </div>
-
-
 
 
     <div class="mage-bus-booking-wrapper">
@@ -100,7 +105,7 @@
                         <p>
                             <strong><?php echo wbbm_get_option('wbbm_date_text', 'wbbm_label_setting_sec', __('Date', 'bus-booking-manager')); ?>
                             </strong>:
-                            <?php echo ($return)?mage_wp_date(mage_get_isset('r_date')):mage_wp_date(mage_get_isset('j_date')) ?>
+                            <?php echo ($return) ? mage_wp_date(mage_get_isset('r_date')) : mage_wp_date(mage_get_isset('j_date')) ?>
                         </p>
                         <p>
                             <strong><?php echo wbbm_get_option('wbbm_starting_text', 'wbbm_label_setting_sec', __('Start Time', 'bus-booking-manager')); ?>
@@ -110,7 +115,7 @@
                         <p>
                             <strong><?php echo wbbm_get_option('wbbm_fare_text', 'wbbm_label_setting_sec', __('Fare', 'bus-booking-manager')); ?>
                             </strong>:
-                            <?php echo wc_price($seat_price_adult) . ' / '. wbbm_get_option('wbbm_seat_text', 'wbbm_label_setting_sec', __('Seat', 'bus-booking-manager')); ?>
+                            <?php echo wc_price($seat_price_adult) . ' / ' . wbbm_get_option('wbbm_seat_text', 'wbbm_label_setting_sec', __('Seat', 'bus-booking-manager')); ?>
                         </p>
                         <?php if ($in_cart) { ?>
                             <p class="already_cart"><?php echo wbbm_get_option('wbbm_item_in_cart_text', 'wbbm_label_setting_sec', __('Item has been added to cart', 'bus-booking-manager')); ?>
@@ -119,7 +124,9 @@
                     </div>
                     <div class="mage_price_info">
                         <div class="mage_center_space">
-                            <h3><strong><?php echo wbbm_get_option('wbbm_fare_text', 'wbbm_label_setting_sec', __('Fare', 'bus-booking-manager')); ?></strong></h3>
+                            <h3>
+                                <strong><?php echo wbbm_get_option('wbbm_fare_text', 'wbbm_label_setting_sec', __('Fare', 'bus-booking-manager')); ?></strong>
+                            </h3>
                         </div>
                         <div class="mage_center_space">
                             <div>
@@ -134,7 +141,7 @@
                         <?php
                         $is_price_zero_allow = get_post_meta($id, 'wbbm_price_zero_allow', true);
 
-                        if ( ($seat_price_child > 0) || ($is_price_zero_allow == 'on') ) : ?>
+                        if (($seat_price_child > 0) || ($is_price_zero_allow == 'on')) : ?>
                             <div class="mage_center_space">
                                 <p>
                                     <strong><?php echo wbbm_get_option('wbbm_child_text', 'wbbm_label_setting_sec', __('Child :', 'bus-booking-manager')); ?></strong>
@@ -145,7 +152,7 @@
                             </div>
                         <?php endif; ?>
 
-                        <?php if ( ($seat_price_infant > 0) || ($is_price_zero_allow == 'on') ) : ?>
+                        <?php if (($seat_price_infant > 0) || ($is_price_zero_allow == 'on')) : ?>
                             <div class="mage_center_space">
                                 <p>
                                     <strong><?php echo wbbm_get_option('wbbm_infant_text', 'wbbm_label_setting_sec', __('Infant :', 'bus-booking-manager')); ?></strong>
@@ -156,10 +163,11 @@
                             </div>
                         <?php endif; ?>
 
-                        <?php if (($entire_bus_booking == 'on') && ($available_seat == $total_seat) && ($seat_price_entire > 0) ) : ?>
+                        <?php if (($entire_bus_booking == 'on') && ($available_seat == $total_seat) && ($seat_price_entire > 0)) : ?>
                             <div class="mage_center_space">
                                 <p>
-                                    <strong><?php echo wbbm_get_option('wbbm_entire_bus_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_entire_bus_text', 'wbbm_label_setting_sec') : _e('Entire Bus', 'bus-booking-manager'); echo ':'; ?></strong>
+                                    <strong><?php echo wbbm_get_option('wbbm_entire_bus_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_entire_bus_text', 'wbbm_label_setting_sec') : _e('Entire Bus', 'bus-booking-manager');
+                                        echo ':'; ?></strong>
                                     <?php echo wc_price($seat_price_entire); ?>
                                 </p>
                                 <?php echo wbbm_entire_switch($seat_price_entire, 'entire_quantity', false); ?>
@@ -169,12 +177,14 @@
                         <?php if (!empty($pickpoints)) : ?>
                             <div class="mage_center_space">
                                 <div class="mage-form-field mage-form-pickpoint-field">
-                                    <strong><label for="mage_pickpoint"><?php _e('Select Pickup Area', 'bus-booking-manager'); echo ':'; ?></label></strong>
+                                    <strong><label
+                                                for="mage_pickpoint"><?php _e('Select Pickup Area', 'bus-booking-manager');
+                                            echo ':'; ?></label></strong>
                                     <select name="mage_pickpoint" id="mage_pickpoint">
                                         <option value=""><?php _e('Select your Pickup Area', 'bus-booking-manager'); ?></option>
                                         <?php
                                         foreach ($pickpoints as $pickpoint) {
-                                            echo '<option value="' . $pickpoint['pickpoint'] . '->' . $pickpoint['time']. '">' . ucfirst($pickpoint['pickpoint']) . ' <=> ' . $pickpoint['time'] . '</option>';
+                                            echo '<option value="' . $pickpoint['pickpoint'] . '->' . $pickpoint['time'] . '">' . ucfirst($pickpoint['pickpoint']) . ' <=> ' . $pickpoint['time'] . '</option>';
                                         } ?>
                                     </select>
                                 </div>
@@ -200,7 +210,7 @@
                         </div>
                         <?php
                         // Extra Service Section
-                        if($available_seat > 0){
+                        if ($available_seat > 0) {
                             wbbm_extra_services_section($id);
                         }
                         ?>
@@ -212,28 +222,8 @@
     </div>
 
     <div class="mage-bus-booking-gallery" style="display: none">
-        <div class="demo">
-            <div class="item">
-                <div class="clearfix" style="max-width:474px;margin: auto">
-                    <ul id="image-gallery" class="gallery list-unstyled cS-hidden">
-
-                        <?php
-                        $image_ids = ( $image_ids = get_post_meta( $id, 'wbbm_image_gallery', true ) ) ? $image_ids : array();
-                        foreach( $image_ids as $i => &$image_id ) {
-                            $url = wp_get_attachment_image_url( $image_id, 'large' );
-                            if( $url ) {
-                                ?>
-                                <li data-thumb="https://img.freepik.com/free-vector/street-side-scene-with-school-bus-road-scene_1308-52281.jpg?size=626&ext=jpg">
-                                    <img src="<?php echo $url; ?>" alt="<?php esc_attr_e( $url ); ?>" />
-                                </li>
-                                <?php
-                            }
-                        }
-                        ?>
-
-                    </ul>
-                </div>
-            </div>
+        <div class="mpStyle">
+            <?php do_action('add_super_slider',$id,'wbbm_image_gallery'); ?>
         </div>
     </div>
 

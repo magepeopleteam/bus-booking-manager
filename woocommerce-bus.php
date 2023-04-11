@@ -103,7 +103,8 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
     //--------------
     require_once(dirname(__FILE__) . "/inc/class-meta-box.php");
     require_once(dirname(__FILE__) . "/inc/BusBookingManagerClass.php");
-    
+    require_once(dirname(__FILE__) . "/super_slider/MP_Super_Slider.php");
+
    // Language Load
     add_action('init', 'wbbm_language_load');
     function wbbm_language_load()

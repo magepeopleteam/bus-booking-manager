@@ -41,6 +41,7 @@ class BusBookingManagerClass
         add_action('wbbm_prevent_form_resubmission', array($SearchClass,'wbbm_prevent_form_resubmission_fun'));
 
 
+
     }
 
     private function define_all_filters() {

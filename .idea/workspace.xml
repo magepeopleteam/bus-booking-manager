@@ -1,15 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="d2353d0f-76e3-4f27-ae0c-37f16e80241f" name="Changes" comment="">
+    <list default="true" id="c2f54914-e548-4d87-9d6b-8af1311d449e" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/css/wbbm-custom-style.css" beforeDir="false" afterPath="$PROJECT_DIR$/css/wbbm-custom-style.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inc/AdminMetaBoxClass.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/AdminMetaBoxClass.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/inc/BusBookingManagerClass.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/BusBookingManagerClass.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inc/clean/layout/bus_galleries.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/clean/layout/bus_galleries.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inc/wbbm_enque.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/wbbm_enque.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/js/mage_style.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/mage_style.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/wbbm_custom_public_script.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/wbbm_custom_public_script.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/js/mp_script.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/mp_script.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/search_result_list_theme_minimal.php" beforeDir="false" afterPath="$PROJECT_DIR$/templates/search_result_list_theme_minimal.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -26,30 +22,28 @@
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
-  <component name="ProjectId" id="2O2f0QneNktYQbTxYpfHX1Z09yE" />
+  <component name="ProjectId" id="2OG8zWysD0U6cXueQqoHBysqgik" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="d2353d0f-76e3-4f27-ae0c-37f16e80241f" name="Changes" comment="" />
-      <created>1680763373494</created>
+      <changelist id="c2f54914-e548-4d87-9d6b-8af1311d449e" name="Changes" comment="" />
+      <created>1681175821022</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1680763373494</updated>
-      <workItem from="1680763374736" duration="7033000" />
-      <workItem from="1680831615963" duration="14836000" />
-      <workItem from="1681095391749" duration="17710000" />
+      <updated>1681175821022</updated>
+      <workItem from="1681175822244" duration="7875000" />
     </task>
     <servers />
   </component>

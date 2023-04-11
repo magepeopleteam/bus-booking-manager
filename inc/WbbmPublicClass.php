@@ -27,6 +27,8 @@ class WbbmPublicClass
         wp_enqueue_script('lightslider js',plugin_dir_url( __DIR__ ).'js/lightslider.js',array(),1,false);
         wp_enqueue_script('ra_script_public',plugin_dir_url( __DIR__ ).'js/wbbm_custom_public_script.js',array(),time(),false);
         wp_enqueue_script('mage_style',plugin_dir_url( __DIR__ ).'js/mage_style.js',array('jquery'),time(),true);
+        wp_enqueue_script('mp_script',plugin_dir_url( __DIR__ ).'js/mp_script.js',array('jquery'),time(),true);
+        wp_enqueue_style('mp_style',plugin_dir_url( __DIR__ ).'css/mp_style.css',array());
 
 
 
