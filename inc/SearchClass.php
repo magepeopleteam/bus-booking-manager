@@ -172,7 +172,7 @@ class SearchClass extends CommonClass
                         $bus_on_dates = explode( ', ', $bus_on_date );
                         if( in_array( $j_date, $bus_on_dates ) ) {
                             $has_bus = true;
-                            mage_search_item($return);
+                            $this->mage_search_item($return);
                         }
                     } else {
                         // Offday schedule check
