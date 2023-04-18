@@ -19,6 +19,8 @@ class WbbmPublicClass
         wp_enqueue_style('wbbm-ra-bus-style',plugin_dir_url( __DIR__ ).'css/wbbm-custom-style.css',array());
         wp_enqueue_style('mage_css',plugin_dir_url( __DIR__ ).'css/mage_css.css',array(), time());
 
+        wp_enqueue_style('wbbm custom pro', plugin_dir_url( __DIR__ ).'assets/css/wbbm_custom_pro.css', array(), time());
+
         wp_enqueue_script('jquery');
         wp_enqueue_script('jquery-ui-datepicker');
         wp_enqueue_script('jquery-ui-core');
