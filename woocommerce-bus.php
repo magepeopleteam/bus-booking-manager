@@ -105,7 +105,8 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
     require_once(dirname(__FILE__) . "/inc/class-meta-box.php");
     require_once(dirname(__FILE__) . "/inc/BusBookingManagerClass.php");
     
-   // Language Load
+
+    // Language Load
     add_action('init', 'wbbm_language_load');
     function wbbm_language_load()
     {
@@ -211,6 +212,7 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
         $c_nationality = 'nationality';
         $c_flight_arrial_no = 'flight_arrial_no';
         $c_flight_departure_no = 'flight_departure_no';
+        $c_extra_bag_quantity = 'extra_bag_quantity';
 
         $table = $wpdb->prefix . "wbbm_bus_booking_list";
 
@@ -235,6 +237,12 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
             $c_flight_arrial_no
         ));
 
+        $cc_extra_bag_quantity = $wpdb->get_results($wpdb->prepare(
+            "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s AND COLUMN_NAME = %s ",
+            DB_NAME,
+            $table,
+            $c_extra_bag_quantity
+        ));
         $cc_flight_departure_no = $wpdb->get_results($wpdb->prepare(
             "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s AND COLUMN_NAME = %s ",
             DB_NAME,
@@ -250,9 +258,16 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
         if (empty($pickpoint_column)) {
             $wpdb->query(sprintf("ALTER TABLE %s ADD pickpoint VARCHAR (255) NOT NULL AFTER booking_date", $table));
         }
-        if (empty($cc_dob) && empty($cc_nationality) && empty($cc_flight_arrial_no) && empty($cc_flight_departure_no)) {
-            $wpdb->query("ALTER TABLE " . $table . " ADD user_dob varchar(55) NULL AFTER pickpoint, ADD nationality varchar(255) NULL AFTER pickpoint, ADD flight_arrial_no varchar(255) NULL AFTER pickpoint, ADD flight_departure_no varchar(255) NULL AFTER pickpoint");
+        if (empty($cc_dob) && empty($cc_nationality) && empty($cc_flight_arrial_no) && empty($cc_flight_departure_no) && empty($cc_extra_bag_quantity)) {
+            $wpdb->query("ALTER TABLE " . $table . " ADD user_dob varchar(55) NULL AFTER pickpoint, ADD nationality varchar(255) NULL AFTER pickpoint, ADD flight_arrial_no varchar(255) NULL AFTER pickpoint, ADD flight_departure_no varchar(255) NULL AFTER pickpoint, ADD extra_bag_quantity int NULL AFTER pickpoint");
         }
+
+
+        if ( empty($cc_extra_bag_quantity)) {
+            $wpdb->query("ALTER TABLE " . $table . " ADD extra_bag_quantity varchar(55) NULL AFTER pickpoint");
+        }
+
+
         // Add Dob, Nationality, Flight arrival no, Fligh departure no END
 
 
@@ -645,19 +660,19 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
         $terms = get_terms($get_terms_default_attributes);
         if (!empty($terms) && !is_wp_error($terms)) {
             ob_start();
-?>
+            ?>
             <select name="<?php echo $name; ?>" class='seat_type select2'>
                 <?php
                 foreach ($terms as $term) {
-                ?>
+                    ?>
                     <option value="<?php echo $term->name; ?>" <?php if ($type_name == $term->name) {
-                                                                    echo "Selected";
-                                                                } ?>><?php echo $term->name; ?></option>
-                <?php
+                        echo "Selected";
+                    } ?>><?php echo $term->name; ?></option>
+                    <?php
                 }
                 ?>
             </select>
-        <?php
+            <?php
 
         }
         $content = ob_get_clean();
@@ -738,19 +753,19 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
         $terms = get_terms($get_terms_default_attributes);
 
         ?>
-            <select name="<?php echo $name; ?>" class='seat_type select2 <?php echo $class; ?>'>
-                <option value=""><?php _e('Please Select', 'bus-booking-manager'); ?></option>
-                <?php
-        if (!empty($terms) && !is_wp_error($terms)) {
-            ob_start();
-            foreach ($terms as $term) {
-                ?>
+        <select name="<?php echo $name; ?>" class='seat_type select2 <?php echo $class; ?>'>
+            <option value=""><?php _e('Please Select', 'bus-booking-manager'); ?></option>
+            <?php
+            if (!empty($terms) && !is_wp_error($terms)) {
+                ob_start();
+                foreach ($terms as $term) {
+                    ?>
                     <option data-term_id="<?php echo $term->name; ?>" value="<?php echo $term->name; ?>" <?php echo ($type_name == $term->name)?'Selected':''  ?>><?php echo $term->name; ?></option>
-                <?php
+                    <?php
                 }
-        }
-                ?>
-            </select>
+            }
+            ?>
+        </select>
         <?php
 
 
@@ -774,20 +789,20 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
         $terms = get_terms($get_terms_default_attributes);
         if (!empty($terms) && !is_wp_error($terms)) {
             ob_start();
-        ?>
+            ?>
             <select name="<?php echo $name; ?>" class='seat_type select2'>
                 <option value=""><?php _e('Please Select', 'bus-booking-manager'); ?></option>
                 <?php
                 foreach ($terms as $term) {
-                ?>
+                    ?>
                     <option value="<?php echo $term->name; ?>" <?php if ($type_name == $term->name) {
-                                                                    echo "Selected";
-                                                                } ?>><?php echo $term->name; ?></option>
-                <?php
+                        echo "Selected";
+                    } ?>><?php echo $term->name; ?></option>
+                    <?php
                 }
                 ?>
             </select>
-        <?php
+            <?php
 
         }
         $content = ob_get_clean();
@@ -928,12 +943,12 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
             <div class="fields-li">
                 <div class="search-radio-sec">
                     <label for="oneway"><input type="radio" <?php if ($busr == 'oneway') {
-                                                                echo 'checked';
-                                                            } ?> id='oneway' name="bus-r" value='oneway'> <?php _e('One Way', 'bus-booking-manager'); ?>
+                            echo 'checked';
+                        } ?> id='oneway' name="bus-r" value='oneway'> <?php _e('One Way', 'bus-booking-manager'); ?>
                     </label>
                     <label for="return_date"><input type="radio" <?php if ($busr == 'return') {
-                                                                        echo 'checked';
-                                                                    } ?> id='return_date' name="bus-r" value='return'>
+                            echo 'checked';
+                        } ?> id='return_date' name="bus-r" value='return'>
                         <?php _e('Return', 'bus-booking-manager'); ?>
                     </label>
                 </div>
@@ -943,11 +958,11 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
         </div>
         <script>
             <?php if (isset($_GET['bus-r']) && $_GET['bus-r'] == 'oneway') { ?>
-                jQuery('.return-date-sec').hide();
+            jQuery('.return-date-sec').hide();
             <?php } elseif (isset($_GET['bus-r']) && $_GET['bus-r'] == 'return') { ?>
-                jQuery('.return-date-sec').show();
+            jQuery('.return-date-sec').show();
             <?php } else { ?>
-                jQuery('.return-date-sec').hide();
+            jQuery('.return-date-sec').hide();
             <?php } ?>
             jQuery('#oneway').on('click', function() {
                 jQuery('.return-date-sec').hide();
@@ -956,7 +971,7 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
                 jQuery('.return-date-sec').show();
             });
         </script>
-    <?php
+        <?php
         $content = ob_get_clean();
         echo $content;
     }
@@ -1105,7 +1120,7 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
     }
 
 
-    function wbbm_add_passenger($order_id, $bus_id, $user_id, $start, $next_stops, $end, $user_name, $user_email, $user_phone, $user_gender, $user_dob, $nationality, $flight_arrival_no, $flight_departure_no, $user_address, $user_type, $b_time, $j_time, $adult, $adult_per_price, $child, $child_per_price, $infant, $infant_per_price, $entire, $entire_per_price, $total_price, $item_quantity, $j_date, $add_datetime, $pickpoint, $status)
+    function wbbm_add_passenger($order_id, $bus_id, $user_id, $start, $next_stops, $end, $user_name, $user_email, $user_phone, $user_gender, $user_dob, $nationality, $flight_arrival_no, $flight_departure_no,$extra_bag_quantity, $user_address, $user_type, $b_time, $j_time, $adult, $adult_per_price, $child, $child_per_price, $infant, $infant_per_price, $entire, $entire_per_price, $total_price, $item_quantity, $j_date, $add_datetime, $pickpoint, $status)
     {
         global $wpdb;
 
@@ -1128,6 +1143,7 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
                 'nationality' => $nationality,
                 'flight_arrial_no' => $flight_arrival_no,
                 'flight_departure_no' => $flight_departure_no,
+                'extra_bag_quantity' => $extra_bag_quantity,
                 'user_address' => $user_address,
                 'user_type' => $user_type,
                 'bus_start' => $b_time,
@@ -1322,6 +1338,12 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
                         $flight_departure_no = "";
                     }
 
+                    if (isset($usr_inf[$counter]['extra_bag_quantity'])) {
+                        $extra_bag_quantity = $usr_inf[$counter]['extra_bag_quantity'];
+                    } else {
+                        $extra_bag_quantity = "";
+                    }
+
                     if (isset($usr_inf[$counter]['wbbm_user_type'])) {
                         $user_type = $usr_inf[$counter]['wbbm_user_type'];
                     } else {
@@ -1334,7 +1356,7 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
                     $check_before_add = wbbm_get_order_seat_check($bus_id, $order_id, $user_type, $b_time, $j_date);
                     if ($check_before_add == 0) {
 
-                        wbbm_add_passenger($order_id, $bus_id, $user_id, $start, $next_stops, $end, $user_name, $user_email, $user_phone, $user_gender, $user_dob, $nationality, $flight_arrival_no, $flight_departure_no, $user_address, $user_type, $b_time, $j_time, $adult, $adult_per_price, $child, $child_per_price, $infant, $infant_per_price, $entire, $entire_per_price, $total_price, $item_quantity, $j_date, current_time("Y-m-d h:i:s"), $pickpoint, 0);
+                        wbbm_add_passenger($order_id, $bus_id, $user_id, $start, $next_stops, $end, $user_name, $user_email, $user_phone, $user_gender, $user_dob, $nationality, $flight_arrival_no, $flight_departure_no, $extra_bag_quantity, $user_address, $user_type, $b_time, $j_time, $adult, $adult_per_price, $child, $child_per_price, $infant, $infant_per_price, $entire, $entire_per_price, $total_price, $item_quantity, $j_date, current_time("Y-m-d h:i:s"), $pickpoint, 0);
                     }
                     // }
                     $counter++;
@@ -1556,25 +1578,25 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
         $total_seat = get_post_meta($id, 'wbbm_total_seat', true);
         $entire_bus_booking = wbbm_get_option('wbbm_entire_bus_booking_switch', 'wbbm_general_setting_sec');
         ob_start();
-    ?>
+        ?>
         <div class="seat-no-form">
             <?php
             $adult_fare = wbbm_get_bus_price($start, $end, $price_arr);
             if ($adult_fare > 0) {
-            ?>
+                ?>
                 <label for='quantity_<?php echo get_the_id(); ?>'>
                     Adult (<?php //echo get_woocommerce_currency_symbol();
-                            ?><?php echo wc_price($seat_price_adult); ?> )
+                    ?><?php echo wc_price($seat_price_adult); ?> )
                     <input type="number" id="quantity_<?php echo get_the_id(); ?>" class="input-text qty text bqty" step="1" min="0" max="<?php echo $available_seat; ?>" name="adult_quantity" value="0" title="Qty" size="4" pattern="[0-9]*" inputmode="numeric" required aria-labelledby="" placeholder='0' />
                 </label>
-            <?php
+                <?php
             }
             $child_fare = wbbm_get_bus_price_child($start, $end, $price_arr);
             if ($child_fare > 0) {
-            ?>
+                ?>
                 <label for='child_quantity_<?php echo get_the_id(); ?>'>
                     Child (<?php //echo get_woocommerce_currency_symbol();
-                            ?><?php echo wc_price($seat_price_child); ?>)
+                    ?><?php echo wc_price($seat_price_child); ?>)
                     <input type="number" id="child_quantity_<?php echo get_the_id(); ?>" class="input-text qty text bqty" step="1" min="0" max="<?php echo $available_seat; ?>" name="child_quantity" value="0" title="Qty" size="4" pattern="[0-9]*" inputmode="numeric" required aria-labelledby="" placeholder='0' />
                 </label>
             <?php }
@@ -1583,7 +1605,7 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
                 <label for='infant_quantity_<?php echo get_the_id(); ?>'>
                     Infant
                     (<?php //echo get_woocommerce_currency_symbol(); 
-                        ?><?php echo wc_price($seat_price_infant); ?>)
+                    ?><?php echo wc_price($seat_price_infant); ?>)
                     <input type="number" id="infant_quantity_<?php echo get_the_id(); ?>" class="input-text qty text bqty" step="1" min="0" max="<?php echo $available_seat; ?>" name="infant_quantity" value="0" title="Qty" size="4" pattern="[0-9]*" inputmode="numeric" required aria-labelledby="" placeholder='0' />
                 </label>
             <?php endif; ?>
@@ -1593,7 +1615,7 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
                 <label for='entire_quantity_<?php echo get_the_id(); ?>'>
                     <?php echo wbbm_get_option('wbbm_entire_bus_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_entire_bus_text', 'wbbm_label_setting_sec') : __('Entire Bus', 'bus-booking-manager'); ?>
                     (<?php //echo get_woocommerce_currency_symbol(); 
-                        ?><?php echo wc_price($seat_price_entire); ?>)
+                    ?><?php echo wc_price($seat_price_entire); ?>)
                     <input type="number" id="entire_quantity_<?php echo get_the_id(); ?>" class="input-text qty text bqty" step="1" min="0" max="1" name="entire_quantity" value="0" title="Qty" size="1" pattern="[0-9]*" inputmode="numeric" required aria-labelledby="" placeholder='0' maxlength="1" oninput="maxLengthCheck(this)" />
                     <p><?php esc_html_e('Please enter 1 for entire bus booking.', 'bus-booking-manager'); ?></p>
                 </label>
@@ -1605,7 +1627,7 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
                 </script>
             <?php endif; ?>
         </div>
-<?php
+        <?php
         $seat_form = ob_get_clean();
         echo $seat_form;
     }

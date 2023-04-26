@@ -4,10 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d4ffeb06-9438-4353-b12c-5862e3e03c04" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/php.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+    <list default="true" id="46cee12d-35ca-4982-9170-58bfd4197214" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/js/mp_admin_settings.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/mp_admin_settings.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/woocommerce-bus.php" beforeDir="false" afterPath="$PROJECT_DIR$/woocommerce-bus.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -20,7 +20,7 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProjectId" id="2OoORMy1fUN5e8b8pmbX3RrtpzM" />
+  <component name="ProjectId" id="2Oy87uEZN3CuQLb00RxG63YQhlI" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -40,12 +40,12 @@
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="d4ffeb06-9438-4353-b12c-5862e3e03c04" name="Changes" comment="" />
-      <created>1682223458651</created>
+      <changelist id="46cee12d-35ca-4982-9170-58bfd4197214" name="Changes" comment="" />
+      <created>1682521296932</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1682223458651</updated>
-      <workItem from="1682223459789" duration="824000" />
+      <updated>1682521296932</updated>
+      <workItem from="1682521298136" duration="833000" />
     </task>
     <servers />
   </component>
