@@ -25,6 +25,7 @@ function appsero_init_tracker_bus_booking_manager()
     $client->insights()->init();
 }
 
+
 appsero_init_tracker_bus_booking_manager();
 
 
