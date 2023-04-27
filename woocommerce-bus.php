@@ -258,8 +258,8 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
         if (empty($pickpoint_column)) {
             $wpdb->query(sprintf("ALTER TABLE %s ADD pickpoint VARCHAR (255) NOT NULL AFTER booking_date", $table));
         }
-        if (empty($cc_dob) && empty($cc_nationality) && empty($cc_flight_arrial_no) && empty($cc_flight_departure_no) && empty($cc_extra_bag_quantity)) {
-            $wpdb->query("ALTER TABLE " . $table . " ADD user_dob varchar(55) NULL AFTER pickpoint, ADD nationality varchar(255) NULL AFTER pickpoint, ADD flight_arrial_no varchar(255) NULL AFTER pickpoint, ADD flight_departure_no varchar(255) NULL AFTER pickpoint, ADD extra_bag_quantity int NULL AFTER pickpoint");
+        if (empty($cc_dob) && empty($cc_nationality) && empty($cc_flight_arrial_no) && empty($cc_flight_departure_no)) {
+            $wpdb->query("ALTER TABLE " . $table . " ADD user_dob varchar(55) NULL AFTER pickpoint, ADD nationality varchar(255) NULL AFTER pickpoint, ADD flight_arrial_no varchar(255) NULL AFTER pickpoint, ADD flight_departure_no varchar(255) NULL AFTER pickpoint");
         }
 
 
