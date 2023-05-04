@@ -16,7 +16,10 @@ class SearchClass extends CommonClass
             ?>
             <div class="mage_container">
                 <div class="mage_row">
-                    <div style="width:100%">
+                    <div style="width:25%">
+                        hhhhh
+                    </div>
+                    <div style="width:75%">
                         <?php $this->mage_search_list(); ?>
                     </div>
                 </div>
@@ -38,8 +41,7 @@ class SearchClass extends CommonClass
         ?>
         <div class="mage_route_title" style="background-color:<?php echo $route_title_bg_color; ?>;color:<?php echo $route_title_color; ?>">
             <div>
-                <strong><?php echo wbbm_get_option('wbbm_route_text', 'wbbm_label_setting_sec', __('Route', 'bus-booking-manager'));
-                    echo ':'; ?></strong>
+                <strong><?php echo wbbm_get_option('wbbm_route_text', 'wbbm_label_setting_sec', __('Route', 'bus-booking-manager')); echo ':'; ?></strong>
                 <?php echo mage_get_isset('bus_start_route'); ?>
                 <span class="fa fa-long-arrow-right"></span>
                 <?php echo mage_get_isset('bus_end_route'); ?>

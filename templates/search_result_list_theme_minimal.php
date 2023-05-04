@@ -1,8 +1,5 @@
-<div style="background-color:<?php echo($search_form_result_b_color != '' ? $search_form_result_b_color : '#b30c3b12'); ?>"
-     class="mage_search_list theme_minimal <?php echo $in_cart ? 'booked' : ''; ?>"
-     data-seat-available="<?php echo $available_seat; ?>">
-    <div class="mage-search-brief-row"
-         style="color:<?php echo($search_list_header_text_color != '' ? $search_list_header_text_color : '#000'); ?>">
+<div style="background-color:<?php echo($search_form_result_b_color != '' ? $search_form_result_b_color : '#b30c3b12'); ?>" class="mage_search_list theme_minimal <?php echo $in_cart ? 'booked' : ''; ?>" data-seat-available="<?php echo $available_seat; ?>">
+    <div class="mage-search-brief-row" style="color:<?php echo($search_list_header_text_color != '' ? $search_list_header_text_color : '#000'); ?>">
         <div class="mage-search-res-header--img">
             <?php if (has_post_thumbnail()) {
                 the_post_thumbnail('full');
@@ -19,8 +16,9 @@
                 <?php if ($wbbm_features) { ?>
                     <p class="wbbm-feature-icon">
                         <?php foreach ($wbbm_features as $feature_id) { ?>
-                            <span class="customCheckbox"><span title="<?php echo get_term($feature_id)->name ?>"
-                                                               class="mR_xs <?php echo get_term_meta($feature_id, 'feature_icon', true) ?>"></span></span>
+                            <span class="customCheckbox">
+                                <span title="<?php echo get_term($feature_id)->name ?>" class="mR_xs <?php echo get_term_meta($feature_id, 'feature_icon', true) ?>"></span>
+                            </span>
                         <?php } ?>
                     </p>
                 <?php } ?>
@@ -38,30 +36,32 @@
                     <span><?php echo $type_name; ?></span>
                 </div>
             <?php } ?>
-            <div><strong
-                        class="mage-sm-show"><?php echo wbbm_get_option('wbbm_fare_text', 'wbbm_label_setting_sec', __('Fare', 'bus-booking-manager')); ?></strong><?php echo wc_price($seat_price_adult); ?>
-                / <?php echo wbbm_get_option('wbbm_seat_text', 'wbbm_label_setting_sec', __('Seat', 'bus-booking-manager')); ?>
+            <div>
+                <strong class="mage-sm-show">
+                    <?php echo wbbm_get_option('wbbm_fare_text', 'wbbm_label_setting_sec', __('Fare', 'bus-booking-manager')); ?>
+                </strong>
+                <?php echo wc_price($seat_price_adult); ?> / <?php echo wbbm_get_option('wbbm_seat_text', 'wbbm_label_setting_sec', __('Seat', 'bus-booking-manager')); ?>
             </div>
 
             <?php if (isset($general_setting['wbbm_seat_column_switch']) && $general_setting['wbbm_seat_column_switch'] == 'on') { ?>
 
                 <?php if ($seat_available && $seat_available == 'on') : ?>
-                    <div><strong
-                                class="mage-sm-show"><?php echo wbbm_get_option('wbbm_seats_available_text', 'wbbm_label_setting_sec', __('Seat Available', 'bus-booking-manager')); ?></strong>
+                    <div>
+                        <strong class="mage-sm-show">
+                            <?php echo wbbm_get_option('wbbm_seats_available_text', 'wbbm_label_setting_sec', __('Seat Available', 'bus-booking-manager')); ?>
+                        </strong>
                         <?php if ($is_sell_off != 'on') {
                             if ($available_seat > 0) {
                                 echo '<p>' . $available_seat . '</p>';
                             } else {
                                 echo '<p class="mage-sm-text">' . wbbm_get_option('wbbm_no_seat_available_text', 'wbbm_label_setting_sec', __('No Seat Available', 'bus-booking-manager')) . '</p>';
                             }
-
                         } ?>
                     </div>
                 <?php else : ?>
                     <div>-</div>
                 <?php endif; ?>
             <?php } ?>
-
         </div>
     </div>
 
@@ -231,8 +231,6 @@
         <?php $term_condition = get_post_meta($id, 'wbbm_term_condition', true); ?>
         <p><?php echo $term_condition ?></p>
     </div>
-
-
 
     <?php do_action('mage_multipurpose_reg'); ?>
 </div>
