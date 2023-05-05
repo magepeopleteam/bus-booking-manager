@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="AutoImportSettings">
-    <option name="autoReloadType" value="SELECTIVE" />
-  </component>
   <component name="ChangeListManager">
-    <list default="true" id="46cee12d-35ca-4982-9170-58bfd4197214" name="Changes" comment="">
+    <list default="true" id="0fb36a39-07ac-4e9c-b519-d93fd25d8a1a" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/php.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/mp_admin_settings.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/mp_admin_settings.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/woocommerce-bus.php" beforeDir="false" afterPath="$PROJECT_DIR$/woocommerce-bus.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inc/FilterClass.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/FilterClass.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inc/wbbm_extra_price.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/wbbm_extra_price.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -20,7 +19,10 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProjectId" id="2Oy87uEZN3CuQLb00RxG63YQhlI" />
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectId" id="2PJTyciqecS0muuXwifaipQsHxF" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -30,26 +32,33 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="46cee12d-35ca-4982-9170-58bfd4197214" name="Changes" comment="" />
-      <created>1682521296932</created>
+      <changelist id="0fb36a39-07ac-4e9c-b519-d93fd25d8a1a" name="Changes" comment="" />
+      <created>1683174439289</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1682521296932</updated>
-      <workItem from="1682521298136" duration="833000" />
+      <updated>1683174439289</updated>
+      <workItem from="1683174440549" duration="9127000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
 </project>

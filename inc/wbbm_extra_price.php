@@ -55,6 +55,7 @@ function wbbm_add_custom_fields_text_to_order_items($item, $cart_item_key, $valu
     $eid = $values['wbbm_id'];
     if (get_post_type($eid) == 'wbbm_bus') {
         $passenger_info             = $values['wbbm_passenger_info'];
+        $custom_reg_user             = $values['custom_reg_user'];
         $passenger_info_additional  = $values['wbbm_passenger_info_additional'];
         $wbbm_extra_services        = $values['wbbm_extra_services'];
         $wbbm_start_stops           = $values['wbbm_start_stops'];
@@ -116,167 +117,204 @@ function wbbm_add_custom_fields_text_to_order_items($item, $cart_item_key, $valu
         $item->add_meta_data('_droping_point', $wbbm_end_stops);
         $item->add_meta_data('_journey_date', $wbbm_journey_date);
         $item->add_meta_data('_journey_time', $jtime);
+        $p_content = '';
+        if($custom_reg_user=='no'){
 
-        if (is_array($passenger_info) && sizeof($passenger_info) > 0) {
-            $p_content = '';
-            $i = 0;
-            foreach ($passenger_info as $_passenger) {
-
-                $p_content .= '<table style="border: 2px dashed #d3d3d3;margin:0;width: 100%;margin-bottom:10px;">';
-
-            if ($total_adult > 0 && ($_passenger['wbbm_user_type'] == 'adult')):
-                $p_content .='<tr>';
-                $p_content .='<td style="border:1px solid #f5f5f5;">';                
-                $p_content .= $adult_label.': '. ' (' . wc_price($total_adult_fare) . ' x '.$total_adult.') = ' . wc_price($total_adult_fare * $total_adult);
-                $p_content .='</td>';    
-                $p_content .='</tr>';                                
-            endif;
-
-            if ($total_child > 0 && ($_passenger['wbbm_user_type'] == 'child')):
-                $p_content .='<tr>';
-                $p_content .='<td style="border:1px solid #f5f5f5;">';                
-                $p_content .= $child_label.': '. ' (' . wc_price($total_child_fare) . ' x '.$total_child.') = ' . wc_price($total_child_fare * $total_child);
-                $p_content .='</td>';    
-                $p_content .='</tr>';                     
-            endif;
-
-            if ($total_infant > 0 && ($_passenger['wbbm_user_type'] == 'infant')):
-                $p_content .='<tr>';
-                $p_content .='<td style="border:1px solid #f5f5f5;">';                
-                $p_content .= $infant_label.': '. ' (' . wc_price($total_infant_fare) . ' x '.$total_infant.') = ' . wc_price($total_infant_fare * $total_infant);
-                $p_content .='</td>';    
-                $p_content .='</tr>';                    
-            endif;
-
-            if ($total_entire = 1 && $total_entire_fare > 0 && ($_passenger['wbbm_user_type'] == 'entire')): 
-                $p_content .='<tr>';
-                $p_content .='<td style="border:1px solid #f5f5f5;">';                
-                $p_content .= $entire_label.': '.$total_entire;
-                $p_content .='</td>';    
-                $p_content .='</tr>';                
-            endif;
-
-            if(!empty($_passenger['extra_bag_quantity']) && $_passenger['extra_bag_quantity'] > 0):
-                $p_content .='<tr>';
-                $p_content .='<td style="border:1px solid #f5f5f5;">';                
-                $p_content .= $extra_bag_qty_label.': '.$_passenger['extra_bag_quantity'];
-                $p_content .='</td>';    
-                $p_content .='</tr>';                
-            endif;
-
-            if(!empty($_passenger['wbtm_extra_bag_price']) && $_passenger['extra_bag_quantity'] > 0):
-                $p_content .='<tr>';
-                $p_content .='<td style="border:1px solid #f5f5f5;">';                
-                $p_content .= $extra_bag_price_label.': '. ' (' . wc_price($extra_per_bag_price) . ' x '.$_passenger['extra_bag_quantity'].') = ' . wc_price((int)$_passenger['extra_bag_quantity'] * (int)$_passenger['wbtm_extra_bag_price']);
-                $p_content .='</td>';    
-                $p_content .='</tr>';                
-            endif;
-
-            if(!empty($_passenger['wbbm_user_name'])):
-                $p_content .='<tr>';
-                $p_content .='<td style="border:1px solid #f5f5f5;">';                
-                $p_content .= $name_label.': '.$_passenger['wbbm_user_name'];
-                $p_content .='</td>';    
-                $p_content .='</tr>';                
-            endif;
-
-            if(!empty($_passenger['wbbm_user_email'])):
-                $p_content .='<tr>';
-                $p_content .='<td style="border:1px solid #f5f5f5;">';                
-                $p_content .= $email_label.': '.$_passenger['wbbm_user_email'];
-                $p_content .='</td>';    
-                $p_content .='</tr>';                
-            endif;
-            
-            if(!empty($_passenger['wbbm_user_phone'])):
-                $p_content .='<tr>';
-                $p_content .='<td style="border:1px solid #f5f5f5;">';                
-                $p_content .= $phone_label.': '.$_passenger['wbbm_user_phone'];
-                $p_content .='</td>';    
-                $p_content .='</tr>';                
-            endif;
-            
-            if(!empty($_passenger['wbbm_user_address'])):
-                $p_content .='<tr>';
-                $p_content .='<td style="border:1px solid #f5f5f5;">';                
-                $p_content .= $address_label.': '.$_passenger['wbbm_user_address'];
-                $p_content .='</td>';    
-                $p_content .='</tr>';                
-            endif;            
-
-            if(!empty($_passenger['wbbm_user_gender'])):
-                $p_content .='<tr>';
-                $p_content .='<td style="border:1px solid #f5f5f5;">';                
-                $p_content .= $gender_label.': '.$_passenger['wbbm_user_gender'];
-                $p_content .='</td>';    
-                $p_content .='</tr>';                
-            endif;
-
-            if(!empty($_passenger['wbbm_user_dob'])):
-                $p_content .='<tr>';
-                $p_content .='<td style="border:1px solid #f5f5f5;">';                
-                $p_content .= $dofbirth_label.': '.$_passenger['wbbm_user_dob'];
-                $p_content .='</td>';    
-                $p_content .='</tr>';                
-            endif;
-
-            if(!empty($_passenger['wbbm_user_nationality'])):
-                $p_content .='<tr>';
-                $p_content .='<td style="border:1px solid #f5f5f5;">';                
-                $p_content .= $nationality_label.': '.$_passenger['wbbm_user_nationality'];
-                $p_content .='</td>';    
-                $p_content .='</tr>';                
-            endif;
-
-            if(!empty($_passenger['wbbm_user_flight_arrival_no'])):
-                $p_content .='<tr>';
-                $p_content .='<td style="border:1px solid #f5f5f5;">';                
-                $p_content .= $fa_no_label.': '.$_passenger['wbbm_user_flight_arrival_no'];
-                $p_content .='</td>';    
-                $p_content .='</tr>';                
-            endif;
-            
-            if(!empty($_passenger['wbbm_user_flight_departure_no'])):
-                $p_content .='<tr>';
-                $p_content .='<td style="border:1px solid #f5f5f5;">';                
-                $p_content .= $fd_no_label.': '.$_passenger['wbbm_user_flight_departure_no'];
-                $p_content .='</td>';    
-                $p_content .='</tr>';                
-            endif;
-            
-            if (is_array($passenger_info_additional) && sizeof($passenger_info_additional) > 0):
-                foreach ($passenger_info_additional[$i] as $builder):
-                $p_content .='<tr>';
-                $p_content .='<td style="border:1px solid #f5f5f5;">';                
-                $p_content .= $builder['name'].': '.$builder['value'];
-                $p_content .='</td>';    
-                $p_content .='</tr>';                    
-                endforeach;
-            endif;            
-
-                $p_content .= '</table>';
-                $i++;
-            }
-
-            if(!empty($wbbm_extra_services)):
             $p_content .= '<table style="border: 2px dashed #d3d3d3;margin:0;width: 100%;margin-bottom:10px;">';
-            $p_content .='<tr><th>'.$extra_services_label.'</th></tr>';
-
-            foreach ($wbbm_extra_services as $wbbm_extra_service) {
-                if($wbbm_extra_service['wbbm_es_input_qty'] > 0):
+            if ($total_adult > 0 ):
                 $p_content .='<tr>';
-                $p_content .='<td style="border:1px solid #f5f5f5;">';                
-                $p_content .= $wbbm_extra_service['wbbm_es_name'].': '. ' (' . wc_price($wbbm_extra_service['wbbm_es_price']) . ' x '.$wbbm_extra_service['wbbm_es_input_qty'].') = ' . wc_price((int)$wbbm_extra_service['wbbm_es_price'] * (int)$wbbm_extra_service['wbbm_es_input_qty']);
-                $p_content .='</td>';    
+                $p_content .='<td style="border:1px solid #f5f5f5;">';
+                $p_content .= $adult_label.': '. ' (' . wc_price($total_adult_fare) . ' x '.$total_adult.') = ' . wc_price($total_adult_fare * $total_adult);
+                $p_content .='</td>';
                 $p_content .='</tr>';
-                endif;
-            }
-  
-            $p_content .= '</table>';
             endif;
 
-            $item->add_meta_data($passenger_info_label, $p_content);
-        }                
+            if ($total_child > 0 ):
+                $p_content .='<tr>';
+                $p_content .='<td style="border:1px solid #f5f5f5;">';
+                $p_content .= $child_label.': '. ' (' . wc_price($total_child_fare) . ' x '.$total_child.') = ' . wc_price($total_child_fare * $total_child);
+                $p_content .='</td>';
+                $p_content .='</tr>';
+            endif;
+
+            if ($total_infant > 0 ):
+                $p_content .='<tr>';
+                $p_content .='<td style="border:1px solid #f5f5f5;">';
+                $p_content .= $infant_label.': '. ' (' . wc_price($total_infant_fare) . ' x '.$total_infant.') = ' . wc_price($total_infant_fare * $total_infant);
+                $p_content .='</td>';
+                $p_content .='</tr>';
+            endif;
+            $p_content .= '</table>';
+
+        }else{
+            if (is_array($passenger_info) && sizeof($passenger_info) > 0) {
+
+                $i = 0;
+                foreach ($passenger_info as $_passenger) {
+
+                    $p_content .= '<table style="border: 2px dashed #d3d3d3;margin:0;width: 100%;margin-bottom:10px;">';
+
+
+                    if ($total_adult > 0 && ($_passenger['wbbm_user_type'] == 'adult')):
+                        $p_content .='<tr>';
+                        $p_content .='<td style="border:1px solid #f5f5f5;">';
+                        $p_content .= $adult_label.': '. ' (' . wc_price($total_adult_fare) . ' x '.$total_adult.') = ' . wc_price($total_adult_fare * $total_adult);
+                        $p_content .='</td>';
+                        $p_content .='</tr>';
+                    endif;
+
+                    if ($total_child > 0 && ($_passenger['wbbm_user_type'] == 'child')):
+                        $p_content .='<tr>';
+                        $p_content .='<td style="border:1px solid #f5f5f5;">';
+                        $p_content .= $child_label.': '. ' (' . wc_price($total_child_fare) . ' x '.$total_child.') = ' . wc_price($total_child_fare * $total_child);
+                        $p_content .='</td>';
+                        $p_content .='</tr>';
+                    endif;
+
+                    if ($total_infant > 0 && ($_passenger['wbbm_user_type'] == 'infant')):
+                        $p_content .='<tr>';
+                        $p_content .='<td style="border:1px solid #f5f5f5;">';
+                        $p_content .= $infant_label.': '. ' (' . wc_price($total_infant_fare) . ' x '.$total_infant.') = ' . wc_price($total_infant_fare * $total_infant);
+                        $p_content .='</td>';
+                        $p_content .='</tr>';
+                    endif;
+
+
+
+                    if ($total_entire = 1 && $total_entire_fare > 0 && ($_passenger['wbbm_user_type'] == 'entire')):
+                        $p_content .='<tr>';
+                        $p_content .='<td style="border:1px solid #f5f5f5;">';
+                        $p_content .= $entire_label.': '.$total_entire;
+                        $p_content .='</td>';
+                        $p_content .='</tr>';
+                    endif;
+
+                    if(!empty($_passenger['extra_bag_quantity']) && $_passenger['extra_bag_quantity'] > 0):
+                        $p_content .='<tr>';
+                        $p_content .='<td style="border:1px solid #f5f5f5;">';
+                        $p_content .= $extra_bag_qty_label.': '.$_passenger['extra_bag_quantity'];
+                        $p_content .='</td>';
+                        $p_content .='</tr>';
+                    endif;
+
+                    if(!empty($_passenger['wbtm_extra_bag_price']) && $_passenger['extra_bag_quantity'] > 0):
+                        $p_content .='<tr>';
+                        $p_content .='<td style="border:1px solid #f5f5f5;">';
+                        $p_content .= $extra_bag_price_label.': '. ' (' . wc_price($extra_per_bag_price) . ' x '.$_passenger['extra_bag_quantity'].') = ' . wc_price((int)$_passenger['extra_bag_quantity'] * (int)$_passenger['wbtm_extra_bag_price']);
+                        $p_content .='</td>';
+                        $p_content .='</tr>';
+                    endif;
+
+                    if(!empty($_passenger['wbbm_user_name'])):
+                        $p_content .='<tr>';
+                        $p_content .='<td style="border:1px solid #f5f5f5;">';
+                        $p_content .= $name_label.': '.$_passenger['wbbm_user_name'];
+                        $p_content .='</td>';
+                        $p_content .='</tr>';
+                    endif;
+
+                    if(!empty($_passenger['wbbm_user_email'])):
+                        $p_content .='<tr>';
+                        $p_content .='<td style="border:1px solid #f5f5f5;">';
+                        $p_content .= $email_label.': '.$_passenger['wbbm_user_email'];
+                        $p_content .='</td>';
+                        $p_content .='</tr>';
+                    endif;
+
+                    if(!empty($_passenger['wbbm_user_phone'])):
+                        $p_content .='<tr>';
+                        $p_content .='<td style="border:1px solid #f5f5f5;">';
+                        $p_content .= $phone_label.': '.$_passenger['wbbm_user_phone'];
+                        $p_content .='</td>';
+                        $p_content .='</tr>';
+                    endif;
+
+                    if(!empty($_passenger['wbbm_user_address'])):
+                        $p_content .='<tr>';
+                        $p_content .='<td style="border:1px solid #f5f5f5;">';
+                        $p_content .= $address_label.': '.$_passenger['wbbm_user_address'];
+                        $p_content .='</td>';
+                        $p_content .='</tr>';
+                    endif;
+
+                    if(!empty($_passenger['wbbm_user_gender'])):
+                        $p_content .='<tr>';
+                        $p_content .='<td style="border:1px solid #f5f5f5;">';
+                        $p_content .= $gender_label.': '.$_passenger['wbbm_user_gender'];
+                        $p_content .='</td>';
+                        $p_content .='</tr>';
+                    endif;
+
+                    if(!empty($_passenger['wbbm_user_dob'])):
+                        $p_content .='<tr>';
+                        $p_content .='<td style="border:1px solid #f5f5f5;">';
+                        $p_content .= $dofbirth_label.': '.$_passenger['wbbm_user_dob'];
+                        $p_content .='</td>';
+                        $p_content .='</tr>';
+                    endif;
+
+                    if(!empty($_passenger['wbbm_user_nationality'])):
+                        $p_content .='<tr>';
+                        $p_content .='<td style="border:1px solid #f5f5f5;">';
+                        $p_content .= $nationality_label.': '.$_passenger['wbbm_user_nationality'];
+                        $p_content .='</td>';
+                        $p_content .='</tr>';
+                    endif;
+
+                    if(!empty($_passenger['wbbm_user_flight_arrival_no'])):
+                        $p_content .='<tr>';
+                        $p_content .='<td style="border:1px solid #f5f5f5;">';
+                        $p_content .= $fa_no_label.': '.$_passenger['wbbm_user_flight_arrival_no'];
+                        $p_content .='</td>';
+                        $p_content .='</tr>';
+                    endif;
+
+                    if(!empty($_passenger['wbbm_user_flight_departure_no'])):
+                        $p_content .='<tr>';
+                        $p_content .='<td style="border:1px solid #f5f5f5;">';
+                        $p_content .= $fd_no_label.': '.$_passenger['wbbm_user_flight_departure_no'];
+                        $p_content .='</td>';
+                        $p_content .='</tr>';
+                    endif;
+
+                    if (is_array($passenger_info_additional) && sizeof($passenger_info_additional) > 0):
+                        foreach ($passenger_info_additional[$i] as $builder):
+                            $p_content .='<tr>';
+                            $p_content .='<td style="border:1px solid #f5f5f5;">';
+                            $p_content .= $builder['name'].': '.$builder['value'];
+                            $p_content .='</td>';
+                            $p_content .='</tr>';
+                        endforeach;
+                    endif;
+
+                    $p_content .= '</table>';
+                    $i++;
+                }
+
+                if(!empty($wbbm_extra_services)):
+                    $p_content .= '<table style="border: 2px dashed #d3d3d3;margin:0;width: 100%;margin-bottom:10px;">';
+                    $p_content .='<tr><th>'.$extra_services_label.'</th></tr>';
+
+                    foreach ($wbbm_extra_services as $wbbm_extra_service) {
+                        if($wbbm_extra_service['wbbm_es_input_qty'] > 0):
+                            $p_content .='<tr>';
+                            $p_content .='<td style="border:1px solid #f5f5f5;">';
+                            $p_content .= $wbbm_extra_service['wbbm_es_name'].': '. ' (' . wc_price($wbbm_extra_service['wbbm_es_price']) . ' x '.$wbbm_extra_service['wbbm_es_input_qty'].') = ' . wc_price((int)$wbbm_extra_service['wbbm_es_price'] * (int)$wbbm_extra_service['wbbm_es_input_qty']);
+                            $p_content .='</td>';
+                            $p_content .='</tr>';
+                        endif;
+                    }
+
+                    $p_content .= '</table>';
+                endif;
+
+
+            }
+
+        }
+
+        $item->add_meta_data($passenger_info_label, $p_content);
+
 
 
         $item->add_meta_data('Pickpoint', $pickpoint);
