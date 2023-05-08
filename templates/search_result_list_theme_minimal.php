@@ -69,10 +69,8 @@
         <ul>
             <li class="wbbm-bus-gallery">Bus Photos</li>
             <li class="wbbm-bus-term-conditions">Bus Terms & Conditions</li>
-            <li>
-                <button class="mage-bus-detail-action">
-                    <?php echo wbbm_get_option('wbbm_view_text', 'wbbm_label_setting_sec', __('View', 'bus-booking-manager')); ?>
-                </button>
+            <li data-bus_id="<?php echo get_the_id() ?>" data-return="<?php echo $return ?>" data-available_seat="<?php echo $available_seat ?>" data-boarding="<?php echo $boarding ?>" data-dropping="<?php echo $dropping ?>" data-bus_type="<?php echo $type_name ?>" data-boarding_time="<?php echo $boarding_time ?>" data-dropping_time="<?php echo $dropping_time ?>" data-in_cart="<?php echo $in_cart ?>" class="mage-bus-detail-action">
+                <?php echo wbbm_get_option('wbbm_view_text', 'wbbm_label_setting_sec', __('View', 'bus-booking-manager')); ?>
             </li>
         </ul>
     </div>

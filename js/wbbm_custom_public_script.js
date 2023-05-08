@@ -121,10 +121,57 @@
 		}
 
 
+		var temp_filter = $('.temp_filter').html();
+
+		$('.bus_filter').html(temp_filter);
 
 
 
+		$(".mage-bus-detail-action").click(function(e) {
+			e.preventDefault();
+			let bus_id = $(this).data('bus_id');
+			let bus_return = $(this).data('return');
+			let available_seat = $(this).data('available_seat');
+			let boarding = $(this).data('boarding');
+			let dropping = $(this).data('dropping');
+			let bus_type = $(this).data('bus_type');
+			let boarding_time = $(this).data('boarding_time');
+			let dropping_time = $(this).data('dropping_time');
+			let in_cart = $(this).data('in_cart');
 
+
+			$.ajax({
+				type: 'POST',
+				// url:wbtm_ajax.wbtm_ajaxurl,
+				url: wbtm_ajaxurl,
+				dataType: 'HTML',
+				data: {
+					"action": "wbbm_bus_detail",
+					"bus_id": bus_id,
+					"bus_return": bus_return,
+					"available_seat": available_seat,
+					"boarding": boarding,
+					"dropping": dropping,
+					"bus_type": bus_type,
+					"boarding_time": boarding_time,
+					"dropping_time": dropping_time,
+					"in_cart": in_cart,
+				},
+
+				beforeSend: function () {
+					//dLoader(target);
+				},
+
+				success: function (data) {
+
+					$('.mage_bus_details-'+bus_id).html(data);
+					//dLoaderRemove(target);
+
+				}
+			});
+
+
+		});
 
 
 
@@ -187,6 +234,10 @@
 		}
 
 	}
+
+
+
+
 
 
 

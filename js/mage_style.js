@@ -45,18 +45,21 @@
         let value = parseInt(target.val());
         mageTicketQty(target, value);
     });
-    $('.mage_qty_dec').on('click', function () {
+
+    $(document).on('click','.mage_qty_dec',function (e){
         let target = $(this).siblings('input');
         let value = (parseInt(target.val()) - 1) > 0 ? (parseInt(target.val()) - 1) : 0;
         target.trigger('input');
         mageTicketQty(target, value);
     });
-    $('.mage_qty_inc').on('click', function () {
+
+    $(document).on('click','.mage_qty_inc',function (e){
         let target = $(this).siblings('input');
         let value = parseInt(target.val()) + 1;
         target.trigger('input');
         mageTicketQty(target, value);
     });
+
 
     // Extra Service Price
     $('.extra-qty-box').change(function() {
@@ -64,13 +67,13 @@
         const value = target.find('option:selected').val();
         mageExtServiceQty(target, value);
     })
-    $('.mage_es_qty_minus').click(function() {
+    $(document).on('click','.mage_es_qty_minus',function() {
         const target = $(this).siblings('input');
         const value = parseInt(target.val()) - 1;
         target.trigger('input');
         mageExtServiceQty(target, value);
     })
-    $('.mage_es_qty_plus').click(function() {
+    $(document).on('click','.mage_es_qty_plus',function() {
         const target = $(this).siblings('input');
         const value = parseInt(target.val()) + 1;
         target.trigger('input');
@@ -100,7 +103,7 @@
     })
     // Extra Bag price qty change END
 
-    $('button.mage_book_now').on('click', function () {
+    $(document).on('click','button.mage_book_now', function () {
 
         $(this).parents('.mage_search_list').find('.mage-seat-available').hide();
         let ticket = 0;
@@ -199,40 +202,34 @@
     }, '.mage_input_select_list_static li');
 
     // Minimul Design Script
-    $(document).on({
-        click: function () {
-            var $this = $(this);
-            $('.mage-bus-booking-gallery').css('display','none');
-            $('.mage-bus-booking-term-conditions').css('display','none');
-            $('.mage-search-brief-row').toggleClass('opened');
-            $('.mage-search-brief-row').siblings('.mage-bus-booking-wrapper').slideToggle('fast');
-
-        }
-    }, '.mage-bus-detail-action');
 
 
-    $(document).on({
-        click: function () {
-            var $this = $(this);
+    $(document).on('click','.mage-bus-detail-action',function(){
+        var $this = $(this);
+        $this.parent().parent().siblings('.mage-bus-booking-gallery').css('display','none');
+        $this.parent().parent().siblings('.mage-bus-booking-term-conditions').css('display','none');
+        $this.parent().parent().toggleClass('opened');
+        $this.parent().parent().siblings('.mage-bus-booking-wrapper').slideToggle('fast');
+    })
 
-            $('.mage-bus-booking-wrapper').hide();
-            $('.mage-bus-booking-term-conditions').hide();
-            $('.mage-search-brief-row').toggleClass('opened');
-            $('.mage-search-brief-row').siblings('.mage-bus-booking-gallery').slideToggle('fast');
+
+    $(document).on('click','.wbbm-bus-gallery', function () {
+        var $this = $(this);
+        $this.parent().parent().siblings('.mage-bus-booking-wrapper').hide();
+        $this.parent().parent().siblings('.mage-bus-booking-term-conditions').hide();
+        $this.parent().parent().siblings('.mage-search-brief-row').toggleClass('opened');
+        $this.parent().parent().siblings('.mage-search-brief-row').siblings('.mage-bus-booking-gallery').slideToggle('fast');
             loadBgImage();
+    });
 
-        }
-    }, '.wbbm-bus-gallery');
+    $(document).on('click','.wbbm-bus-term-conditions', function () {
+        var $this = $(this);
+        $this.parent().parent().siblings('.mage-bus-booking-gallery').hide();
+        $this.parent().parent().siblings('.mage-bus-booking-wrapper').hide();
+        $this.parent().parent().siblings('.mage-search-brief-row').toggleClass('opened');
+        $this.parent().parent().siblings('.mage-search-brief-row').siblings('.mage-bus-booking-term-conditions').slideToggle('fast');
 
-    $(document).on({
-        click: function () {
-            var $this = $(this);
-            $('.mage-bus-booking-gallery').hide();
-            $('.mage-bus-booking-wrapper').hide();
-            $('.mage-search-brief-row').toggleClass('opened');
-            $('.mage-search-brief-row').siblings('.mage-bus-booking-term-conditions').slideToggle('fast');
-        }
-    }, '.wbbm-bus-term-conditions');
+    });
 
     // Minimul Design Script END
 

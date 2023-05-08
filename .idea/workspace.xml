@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="4422cfa0-a14d-421e-a771-4464ed351bd2" name="Changes" comment="">
+    <list default="true" id="8341fd1c-176c-4401-864e-939c6e1e1a89" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/bus-booking-manager.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inc/FilterClass.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/FilterClass.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inc/BusBookingManagerClass.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/BusBookingManagerClass.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/inc/SearchClass.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/SearchClass.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/js/mage_style.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/mage_style.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/js/wbbm_custom_admin_script.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/wbbm_custom_admin_script.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/js/wbbm_custom_public_script.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/wbbm_custom_public_script.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/search_result_list_theme_default.php" beforeDir="false" afterPath="$PROJECT_DIR$/templates/search_result_list_theme_default.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/search_result_list_theme_minimal.php" beforeDir="false" afterPath="$PROJECT_DIR$/templates/search_result_list_theme_minimal.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -21,7 +27,7 @@
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
-  <component name="ProjectId" id="2PGq9BjmOyqFZmN4TTVjqahaiQL" />
+  <component name="ProjectId" id="2PMOlHR0WcwbOdtMWKWYexFxNYE" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -37,13 +43,13 @@
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="4422cfa0-a14d-421e-a771-4464ed351bd2" name="Changes" comment="" />
-      <created>1683093611686</created>
+      <changelist id="8341fd1c-176c-4401-864e-939c6e1e1a89" name="Changes" comment="" />
+      <created>1683263634100</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1683093611686</updated>
-      <workItem from="1683093612971" duration="4592000" />
-      <workItem from="1683165908881" duration="3034000" />
+      <updated>1683263634100</updated>
+      <workItem from="1683263635320" duration="4289000" />
+      <workItem from="1683508078990" duration="22574000" />
     </task>
     <servers />
   </component>

@@ -101,6 +101,11 @@
 		}
 	});
 
+
+
+
+
+
 	$(document).on('click', 'button.mp_input_add_icon_button', function () { 
 		$(this).attr('data-icon-target', 'icon');
 		$('body').addClass('noScroll').find('.add_icon_list_popup').addClass('in');
