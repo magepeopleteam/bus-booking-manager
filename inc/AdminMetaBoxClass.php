@@ -266,7 +266,9 @@ class AdminMetaBoxClass extends CommonClass
                         $i++;
                     }
 
-                    update_post_meta($post_id, $selected_pickpoint_name . $city, serialize($m_array));
+                    $city_name_slug = str_replace(' ', '_', strtolower($city));
+
+                    update_post_meta($post_id, $selected_pickpoint_name . $city_name_slug, serialize($m_array));
                 }
             }
         } else {

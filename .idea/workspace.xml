@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
+<<<<<<< HEAD
     <list default="true" id="8341fd1c-176c-4401-864e-939c6e1e1a89" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/bus-booking-manager.iml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
@@ -12,6 +13,14 @@
       <change beforePath="$PROJECT_DIR$/js/wbbm_custom_public_script.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/wbbm_custom_public_script.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/search_result_list_theme_default.php" beforeDir="false" afterPath="$PROJECT_DIR$/templates/search_result_list_theme_default.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/search_result_list_theme_minimal.php" beforeDir="false" afterPath="$PROJECT_DIR$/templates/search_result_list_theme_minimal.php" afterDir="false" />
+=======
+    <list default="true" id="0fb36a39-07ac-4e9c-b519-d93fd25d8a1a" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/php.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inc/FilterClass.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/FilterClass.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inc/wbbm_extra_price.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/wbbm_extra_price.php" afterDir="false" />
+>>>>>>> 009d0bee5c50916db811d75d00908fcca51a11bf
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -27,22 +36,27 @@
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
+<<<<<<< HEAD
   <component name="ProjectId" id="2PMOlHR0WcwbOdtMWKWYexFxNYE" />
+=======
+  <component name="ProjectId" id="2PJTyciqecS0muuXwifaipQsHxF" />
+>>>>>>> 009d0bee5c50916db811d75d00908fcca51a11bf
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
+<<<<<<< HEAD
       <changelist id="8341fd1c-176c-4401-864e-939c6e1e1a89" name="Changes" comment="" />
       <created>1683263634100</created>
       <option name="number" value="Default" />
@@ -50,6 +64,14 @@
       <updated>1683263634100</updated>
       <workItem from="1683263635320" duration="4289000" />
       <workItem from="1683508078990" duration="22574000" />
+=======
+      <changelist id="0fb36a39-07ac-4e9c-b519-d93fd25d8a1a" name="Changes" comment="" />
+      <created>1683174439289</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1683174439289</updated>
+      <workItem from="1683174440549" duration="9127000" />
+>>>>>>> 009d0bee5c50916db811d75d00908fcca51a11bf
     </task>
     <servers />
   </component>
