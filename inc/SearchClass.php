@@ -211,11 +211,9 @@ class SearchClass extends CommonClass
 
 
                             $has_bus = true;
-<<<<<<< HEAD
+
                             $this->mage_search_item($return,$type_name,$wbbm_features);
-=======
-                            $this->mage_search_item($return);
->>>>>>> 009d0bee5c50916db811d75d00908fcca51a11bf
+
                         }
                     } else {
                         // Offday schedule check
