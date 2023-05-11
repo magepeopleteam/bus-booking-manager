@@ -69,7 +69,7 @@
         <ul>
             <li class="wbbm-bus-gallery">Bus Photos</li>
             <li class="wbbm-bus-term-conditions">Bus Terms & Conditions</li>
-            <li data-bus_id="<?php echo get_the_id() ?>" data-return="<?php echo $return ?>" data-available_seat="<?php echo $available_seat ?>" data-boarding="<?php echo $boarding ?>" data-dropping="<?php echo $dropping ?>" data-bus_type="<?php echo $type_name ?>" data-boarding_time="<?php echo $boarding_time ?>" data-dropping_time="<?php echo $dropping_time ?>" data-in_cart="<?php echo $in_cart ?>" class="mage-bus-detail-action">
+            <li class="mage-bus-detail-action">
                 <?php echo wbbm_get_option('wbbm_view_text', 'wbbm_label_setting_sec', __('View', 'bus-booking-manager')); ?>
             </li>
         </ul>
@@ -136,6 +136,7 @@
                             </div>
                             <?php mage_qty_box($seat_price_adult, 'adult_quantity', false); ?>
                         </div>
+                        <input type="hidden" name="available_quantity" value="<?php echo $available_seat?>">
                         <?php
                         $is_price_zero_allow = get_post_meta($id, 'wbbm_price_zero_allow', true);
 
@@ -191,13 +192,11 @@
 
                         <div class="mage_customer_info_area">
                             <?php
-                            $date = isset($_GET[$date_var]) ? mage_wp_date($_GET[$date_var], 'Y-m-d') : date('Y-m-d');
-                            $start = isset($_GET[$boarding_var]) ? strip_tags($_GET[$boarding_var]) : '';
-                            $end = isset($_GET[$dropping_var]) ? strip_tags($_GET[$dropping_var]) : '';
+
                             hidden_input_field('bus_id', $id);
                             hidden_input_field('journey_date', $date);
-                            hidden_input_field('start_stops', $start);
-                            hidden_input_field('end_stops', $end);
+                            hidden_input_field('start_stops', $boarding);
+                            hidden_input_field('end_stops', $dropping);
                             hidden_input_field('user_start_time', $boarding_time);
                             hidden_input_field('bus_start_time', $dropping_time);
                             ?>

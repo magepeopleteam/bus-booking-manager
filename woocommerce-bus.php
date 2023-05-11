@@ -104,15 +104,11 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
     //--------------
     require_once(dirname(__FILE__) . "/inc/class-meta-box.php");
     require_once(dirname(__FILE__) . "/inc/BusBookingManagerClass.php");
-<<<<<<< HEAD
+
     require_once(dirname(__FILE__) . "/super_slider/MP_Super_Slider.php");
 
    // Language Load
-=======
-    
 
-    // Language Load
->>>>>>> 009d0bee5c50916db811d75d00908fcca51a11bf
     add_action('init', 'wbbm_language_load');
     function wbbm_language_load()
     {
@@ -1014,6 +1010,8 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
         $bus_start_stops_arr = maybe_unserialize(get_post_meta($bus_id, 'wbbm_bus_bp_stops', true)); // $bus_id bus start points
         $bus_end_stops_arr = maybe_unserialize(get_post_meta($bus_id, 'wbbm_bus_next_stops', true)); // $bus_id bus end points
 
+
+
         $seat_booked_status = wbbm_seat_booked_on_status();
 
         if ($bus_start_stops_arr && $bus_end_stops_arr) {
@@ -1022,13 +1020,14 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
             $bus_stops_merge = array_merge($bus_stops, $bus_ends); // Bus start and stop merge
             $bus_stops_unique = array_values(array_unique($bus_stops_merge)); // Make stops unique
 
-            $sp = array_search($start, $bus_stops_unique); // Get search start position in all bus stops
-            $ep = array_search($end, $bus_stops_unique); // Get search end position in all bus stops
+         /*   $sp = array_search($start, $bus_stops_unique); // Get search start position in all bus stops
+            $ep = array_search($end, $bus_stops_unique); // Get search end position in all bus stops*/
 
-            $f = mage_array_slice($bus_stops_unique, 0, $sp + 1);
-            $l = mage_array_slice($bus_stops_unique, $ep, (count($bus_stops_unique) - 1));
+            /*$f = mage_array_slice($bus_stops_unique, 0, $sp + 1);
+            $l = mage_array_slice($bus_stops_unique, $ep, (count($bus_stops_unique) - 1));*/
 
             $where = mage_intermidiate_available_seat_condition($start, $end, $bus_stops_unique);
+
             $entire_query = "SELECT seat FROM $table_name WHERE bus_id=$bus_id AND journey_date='$date' AND $where AND status IN ($seat_booked_status)";
             if ($wpdb->get_var($entire_query) == -1) { // is entire booking
                 $sold_seats = $total_seats;
@@ -1052,6 +1051,8 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
     {
         $where = '';
         $sp = array_search($start, $all_stops);
+
+
         $ep = array_search($end, $all_stops);
 
         if ($sp == 0) {

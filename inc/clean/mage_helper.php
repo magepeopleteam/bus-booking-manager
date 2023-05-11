@@ -130,8 +130,7 @@ function wbtm_load_dropping_point()
 
 //query for bus list
 function mage_bus_list_query($start, $end) {
-    $start = mage_get_isset($start);
-    $end = mage_get_isset($end);
+
     return array(
         'post_type' => array('wbbm_bus'),
         'posts_per_page' => -1,

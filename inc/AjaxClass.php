@@ -1,7 +1,7 @@
 <?php
 if (!defined('ABSPATH')) exit;  // if direct access
 
-class AjaxClass extends CommonClass
+class AjaxClass
 {
     public function __construct()
     {
@@ -14,6 +14,7 @@ class AjaxClass extends CommonClass
         $bus_id = $_POST['bus_id'];
         $return = $_POST['bus_return'];
         $available_seat = $_POST['available_seat'];
+        $return_or_journey_date = $_POST['return_or_journey_date'];
         $boarding = $_POST['boarding'];
         $dropping = $_POST['dropping'];
         $bus_type = $_POST['bus_type'];
@@ -146,13 +147,11 @@ class AjaxClass extends CommonClass
 
             <div class="mage_customer_info_area">
                 <?php
-                $date = isset($_GET[$date_var]) ? mage_wp_date($_GET[$date_var], 'Y-m-d') : date('Y-m-d');
-                $start = isset($_GET[$boarding_var]) ? strip_tags($_GET[$boarding_var]) : '';
-                $end = isset($_GET[$dropping_var]) ? strip_tags($_GET[$dropping_var]) : '';
-                hidden_input_field('bus_id', $id);
-                hidden_input_field('journey_date', $date);
-                hidden_input_field('start_stops', $start);
-                hidden_input_field('end_stops', $end);
+
+                hidden_input_field('bus_id', $bus_id);
+                hidden_input_field('journey_date', $return_or_journey_date);
+                hidden_input_field('start_stops', $boarding);
+                hidden_input_field('end_stops', $dropping);
                 hidden_input_field('user_start_time', $boarding_time);
                 hidden_input_field('bus_start_time', $dropping_time);
                 ?>
@@ -172,6 +171,38 @@ class AjaxClass extends CommonClass
         <?php
         die;
     }
+
+
+
+    function mage_bus_search($atts){
+
+
+        $boarding =   isset($_GET['bus_start_route']) ? strip_tags($_GET['bus_start_route']) : '';
+        $dropping = isset($_GET['bus_end_route']) ? strip_tags($_GET['bus_end_route']) : '';
+        $journy_date = isset($_GET['j_date']) ? strip_tags($_GET['j_date']) : '';
+        $return_date = isset($_GET['r_date']) ? strip_tags($_GET['r_date']) : '';
+
+        //echo $boarding;die;
+
+
+        $defaults = array("style" => 'false', "theme" => 'minimal',);
+        $params         = shortcode_atts($defaults, $atts);
+        global $mage_bus_search_theme;
+        $mage_bus_search_theme = $params['theme'];
+        //ob_clean();
+        ob_start();
+        if($params['style']=='vertical'){
+            $this->mage_search_page_vertical($boarding,$dropping,$journy_date,$return_date);
+        }
+        else{
+            echo 'ohhhhhhhh';die;
+            $this->mage_search_page_horizontal($boarding,$dropping,$journy_date,$return_date);
+        }
+        return ob_get_clean();
+    }
+
+
+
 
 
     function mage_qty_box($price,$name, $return,$available_seat) {

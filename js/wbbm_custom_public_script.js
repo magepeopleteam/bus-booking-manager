@@ -127,7 +127,7 @@
 
 
 
-		$(".mage-bus-detail-action").click(function(e) {
+		$(".mage-bus-detail-action-ajax").click(function(e) {
 			e.preventDefault();
 			let bus_id = $(this).data('bus_id');
 			let bus_return = $(this).data('return');
@@ -165,6 +165,55 @@
 				success: function (data) {
 
 					$('.mage_bus_details-'+bus_id).html(data);
+					//dLoaderRemove(target);
+
+				}
+			});
+
+
+		});
+
+
+
+
+		$(document).on('click',".individual-bus",function(e) {
+
+			var checkboxes_value = [];
+			$('.individual-bus').each(function(){
+				//if($(this).is(":checked")) {
+				if(this.checked) {
+					checkboxes_value.push($(this).val());
+				}
+			});
+			checkboxes_value = checkboxes_value.toString();
+
+			let bus_start_route = $("#bus_start_route").val();
+			let bus_end_route = $("#bus_end_route").val();
+			let j_date = $("#j_date").val();
+			let r_date = $("#r_date").val();
+
+
+			$.ajax({
+				type: 'GET',
+				// url:wbtm_ajax.wbtm_ajaxurl,
+				url: wbtm_ajaxurl,
+				dataType: 'HTML',
+				data: {
+					"action": "mage_bus_search",
+					"bus_ids": checkboxes_value,
+					"bus_start_route": bus_start_route,
+					"bus_end_route": bus_end_route,
+					"j_date": j_date,
+					"r_date": r_date,
+				},
+
+				beforeSend: function () {
+					//dLoader(target);
+				},
+
+				success: function (data) {
+
+					$('.mage_container').html(data);
 					//dLoaderRemove(target);
 
 				}

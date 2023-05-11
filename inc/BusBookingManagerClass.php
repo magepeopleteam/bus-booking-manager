@@ -33,6 +33,7 @@ class BusBookingManagerClass
         $ActiveDataShowClass = new ActiveDataShowClass;
         $SearchClass = new SearchClass;
         $AjaxClass = new AjaxClass;
+        $ShortCodeClass = new ShortCodeClass();
 
         add_action('mage_next_date', array($NextDateClass,'mage_next_date_suggestion_single'), 99, 3);
         //Save meta
@@ -41,6 +42,11 @@ class BusBookingManagerClass
 
         add_action('mage_search_from_only',array($SearchClass,'search_from_only') ,10,2);
         add_action('wbbm_prevent_form_resubmission', array($SearchClass,'wbbm_prevent_form_resubmission_fun'));
+
+
+        /*Bus global search ajax*/
+        add_action('wp_ajax_mage_bus_search', array($AjaxClass, 'mage_bus_search'));
+        add_action('wp_ajax_nopriv_mage_bus_search', [$AjaxClass, 'mage_bus_search']);
 
         /*Bus detail ajax*/
         add_action('wp_ajax_wbbm_bus_detail', array($AjaxClass, 'wbbm_bus_detail'));
