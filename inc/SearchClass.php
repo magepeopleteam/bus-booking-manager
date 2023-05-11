@@ -204,6 +204,7 @@ class SearchClass extends CommonClass
                         $bus_on_dates = explode( ', ', $bus_on_date );
                         if( in_array( $j_date, $bus_on_dates ) ) {
 <<<<<<< HEAD
+<<<<<<< HEAD
                             if ($seat_price_adult > 0 || $is_price_zero_allow == 'on') {
 
                                 $bus_ids[] =   get_the_ID();
@@ -229,6 +230,32 @@ class SearchClass extends CommonClass
                             $has_bus = true;
                             $this->mage_search_item($return);
 >>>>>>> 009d0bee5c50916db811d75d00908fcca51a11bf
+=======
+                            $bus_ids[] =   get_the_ID();
+                            if((!in_array($type_name, $bus_types))){
+                                $bus_types[] = $type_name;
+                            }
+
+                             if ($wbbm_features) {
+                                   foreach ($wbbm_features as $feature_id) {
+                                       $bus_features['name'] = get_term($feature_id)->name;
+                                       $bus_features['feature_icon'] = get_term_meta($feature_id, 'feature_icon', true);
+                                   }
+                             }
+
+                            if((!in_array($wbbm_boarding_points,$boarding_points ))){
+                                $boarding_points[] = $wbbm_boarding_points;
+                            }
+
+
+
+
+
+                            $has_bus = true;
+
+                            $this->mage_search_item($return,$type_name,$wbbm_features);
+
+>>>>>>> 4e0c1f81b496669edc538d8baefc3d8885dd5a18
                         }
 
                     } else {
