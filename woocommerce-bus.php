@@ -104,11 +104,17 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
     //--------------
     require_once(dirname(__FILE__) . "/inc/class-meta-box.php");
     require_once(dirname(__FILE__) . "/inc/BusBookingManagerClass.php");
+<<<<<<< HEAD
 
     require_once(dirname(__FILE__) . "/super_slider/MP_Super_Slider.php");
 
    // Language Load
 
+=======
+    
+
+    // Language Load
+>>>>>>> 009d0bee5c50916db811d75d00908fcca51a11bf
     add_action('init', 'wbbm_language_load');
     function wbbm_language_load()
     {

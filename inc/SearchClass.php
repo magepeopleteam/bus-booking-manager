@@ -203,6 +203,7 @@ class SearchClass extends CommonClass
 
                         $bus_on_dates = explode( ', ', $bus_on_date );
                         if( in_array( $j_date, $bus_on_dates ) ) {
+<<<<<<< HEAD
                             if ($seat_price_adult > 0 || $is_price_zero_allow == 'on') {
 
                                 $bus_ids[] =   get_the_ID();
@@ -224,6 +225,10 @@ class SearchClass extends CommonClass
 
                             }
 
+=======
+                            $has_bus = true;
+                            $this->mage_search_item($return);
+>>>>>>> 009d0bee5c50916db811d75d00908fcca51a11bf
                         }
 
                     } else {
