@@ -1,9 +1,15 @@
 <?php
 get_header();
 the_post();
+
+$boarding =   isset($_GET['bus_start_route']) ? strip_tags($_GET['bus_start_route']) : '';
+$dropping = isset($_GET['bus_end_route']) ? strip_tags($_GET['bus_end_route']) : '';
+$journy_date = isset($_GET['j_date']) ? strip_tags($_GET['j_date']) : '';
+$return_date = isset($_GET['r_date']) ? strip_tags($_GET['r_date']) : '';
+
 $SearchClass = new SearchClass;
 
-$SearchClass->mage_search_form_horizontal(true);
+$SearchClass->mage_search_form_horizontal(true,'',$boarding,$dropping,$journy_date,$return_date);
 
 $id = get_the_id();
 $return = false;

@@ -1,4 +1,5 @@
 <?php function mage_book_now_area($available_seat = null){
+
     $currency_pos = get_option( 'woocommerce_currency_pos' );
     $is_sell_off = get_post_meta(get_the_ID(), 'wbbm_sell_off', true);
 

@@ -1,40 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-
->>>>>>> 4e0c1f81b496669edc538d8baefc3d8885dd5a18
-    <list default="true" id="8341fd1c-176c-4401-864e-939c6e1e1a89" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/bus-booking-manager.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inc/BusBookingManagerClass.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/BusBookingManagerClass.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inc/SearchClass.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/SearchClass.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/mage_style.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/mage_style.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/wbbm_custom_admin_script.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/wbbm_custom_admin_script.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/wbbm_custom_public_script.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/wbbm_custom_public_script.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/search_result_list_theme_default.php" beforeDir="false" afterPath="$PROJECT_DIR$/templates/search_result_list_theme_default.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/search_result_list_theme_minimal.php" beforeDir="false" afterPath="$PROJECT_DIR$/templates/search_result_list_theme_minimal.php" afterDir="false" />
-<<<<<<< HEAD
-=======
-=======
->>>>>>> 009d0bee5c50916db811d75d00908fcca51a11bf
-    <list default="true" id="0fb36a39-07ac-4e9c-b519-d93fd25d8a1a" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/php.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+    <list default="true" id="267a3a07-8d3d-4542-96e7-a967cdf35190" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/inc/FilterClass.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/FilterClass.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inc/wbbm_extra_price.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/wbbm_extra_price.php" afterDir="false" />
-<<<<<<< HEAD
->>>>>>> 009d0bee5c50916db811d75d00908fcca51a11bf
-=======
->>>>>>> 009d0bee5c50916db811d75d00908fcca51a11bf
-=======
-
->>>>>>> 4e0c1f81b496669edc538d8baefc3d8885dd5a18
+      <change beforePath="$PROJECT_DIR$/inc/clean/layout/book-now-area.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/clean/layout/book-now-area.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/single-bus.php" beforeDir="false" afterPath="$PROJECT_DIR$/templates/single-bus.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/woocommerce-bus.php" beforeDir="false" afterPath="$PROJECT_DIR$/woocommerce-bus.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -50,69 +22,32 @@
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-  <component name="ProjectId" id="2PMOlHR0WcwbOdtMWKWYexFxNYE" />
-=======
   <component name="ProjectId" id="2PJTyciqecS0muuXwifaipQsHxF" />
->>>>>>> 009d0bee5c50916db811d75d00908fcca51a11bf
-=======
-  <component name="ProjectId" id="2PJTyciqecS0muuXwifaipQsHxF" />
->>>>>>> 009d0bee5c50916db811d75d00908fcca51a11bf
-=======
-
-  <component name="ProjectId" id="2PMOlHR0WcwbOdtMWKWYexFxNYE" />
-
->>>>>>> 4e0c1f81b496669edc538d8baefc3d8885dd5a18
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-
->>>>>>> 4e0c1f81b496669edc538d8baefc3d8885dd5a18
-      <changelist id="8341fd1c-176c-4401-864e-939c6e1e1a89" name="Changes" comment="" />
-      <created>1683263634100</created>
-      <option name="number" value="Default" />
-      <option name="presentableId" value="Default" />
-      <updated>1683263634100</updated>
-      <workItem from="1683263635320" duration="4289000" />
-      <workItem from="1683508078990" duration="22574000" />
-<<<<<<< HEAD
-=======
-      <changelist id="0fb36a39-07ac-4e9c-b519-d93fd25d8a1a" name="Changes" comment="" />
+      <changelist id="267a3a07-8d3d-4542-96e7-a967cdf35190" name="Changes" comment="" />
       <created>1683174439289</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1683174439289</updated>
       <workItem from="1683174440549" duration="9127000" />
->>>>>>> 009d0bee5c50916db811d75d00908fcca51a11bf
-=======
-      <changelist id="0fb36a39-07ac-4e9c-b519-d93fd25d8a1a" name="Changes" comment="" />
-      <created>1683174439289</created>
-      <option name="number" value="Default" />
-      <option name="presentableId" value="Default" />
-      <updated>1683174439289</updated>
-      <workItem from="1683174440549" duration="9127000" />
->>>>>>> 009d0bee5c50916db811d75d00908fcca51a11bf
-=======
-
->>>>>>> 4e0c1f81b496669edc538d8baefc3d8885dd5a18
+      <workItem from="1683856463068" duration="9752000" />
+      <workItem from="1684113869730" duration="8725000" />
+      <workItem from="1684130962095" duration="3440000" />
+      <workItem from="1684201771480" duration="1257000" />
     </task>
     <servers />
   </component>

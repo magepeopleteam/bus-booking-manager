@@ -1128,7 +1128,7 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
     }
 
 
-    function wbbm_add_passenger($order_id, $bus_id, $user_id, $start, $next_stops, $end, $user_name, $user_email, $user_phone, $user_gender, $user_dob, $nationality, $flight_arrival_no, $flight_departure_no,$extra_bag_quantity, $user_address, $user_type, $b_time, $j_time, $adult, $adult_per_price, $child, $child_per_price, $infant, $infant_per_price, $entire, $entire_per_price, $total_price, $item_quantity, $j_date, $add_datetime, $pickpoint, $status)
+    function wbbm_add_passenger($order_id, $bus_id, $user_id, $start, $next_stops, $end, $user_name, $user_email, $user_phone, $user_gender, $user_dob, $nationality, $flight_arrival_no, $flight_departure_no,$extra_bag_quantity, $user_address, $user_type, $b_time, $j_time, $adult, $adult_per_price, $child, $child_per_price, $infant, $infant_per_price, $entire, $entire_per_price, $total_price, $item_quantity, $j_date, $add_datetime, $pickpoint, $status=0)
     {
         global $wpdb;
 
@@ -1587,7 +1587,7 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
         $entire_bus_booking = wbbm_get_option('wbbm_entire_bus_booking_switch', 'wbbm_general_setting_sec');
         ob_start();
         ?>
-        <div class="seat-no-form">
+        <div class="seat-no-form" id="item_<?php echo get_the_id(); ?>">
             <?php
             $adult_fare = wbbm_get_bus_price($start, $end, $price_arr);
             if ($adult_fare > 0) {
