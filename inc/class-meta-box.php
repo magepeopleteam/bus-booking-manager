@@ -214,7 +214,14 @@ class WBBMMetaBox
         $bus_ticket_type = get_post_meta($post->ID, 'wbbm_bus_ticket_type_info', true);
         $cpt_label = wbbm_get_option('wbbm_cpt_label', 'wbbm_general_setting_sec', __('Bus', 'bus-booking-manager'));
         $wbbm_bus_category = get_post_meta($post->ID, 'wbbm_bus_category', true);
+
+        $bus_types = count(wbbm_get_bus_categories());
+        if($bus_types==0){
+            wp_insert_term('AC', 'wbbm_bus_cat');
+            wp_insert_term('Non AC', 'wbbm_bus_cat');
+        }
         $bus_categories = wbbm_get_bus_categories();
+
         require_once(dirname(__FILE__) . "/clean/layout/bus_configuration.php");
     }
 
