@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="71703dc6-23c6-455c-b70b-314594dcb3f7" name="Changes" comment="">
+    <list default="true" id="4d24cde7-40e3-4de7-8f4a-f12ed44d2aa5" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inc/wbbm_enque.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/wbbm_enque.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inc/SearchClass.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/SearchClass.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inc/class-plugin-activator.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/class-plugin-activator.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/woocommerce-bus.php" beforeDir="false" afterPath="$PROJECT_DIR$/woocommerce-bus.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -19,7 +21,7 @@
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
-  <component name="ProjectId" id="2PrTvNaugkcffmf4C0Z6jPegU3U" />
+  <component name="ProjectId" id="2PuaHrRra1lSLYZW7AVkm4BNEfg" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -35,13 +37,13 @@
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="71703dc6-23c6-455c-b70b-314594dcb3f7" name="Changes" comment="" />
-      <created>1684214430610</created>
+      <changelist id="4d24cde7-40e3-4de7-8f4a-f12ed44d2aa5" name="Changes" comment="" />
+      <created>1684309335222</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1684214430610</updated>
-      <workItem from="1684214431901" duration="3003000" />
-      <workItem from="1684287298783" duration="595000" />
+      <updated>1684309335222</updated>
+      <workItem from="1684309336409" duration="1954000" />
+      <workItem from="1684372761452" duration="1892000" />
     </task>
     <servers />
   </component>

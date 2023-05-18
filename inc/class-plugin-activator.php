@@ -19,16 +19,16 @@ class WBTM_Plugin_Activator{
 
     public static function activate(){
         if (! (new self())->wbtm_get_page_by_slug('bus-search-list')) {
-          $bus_search_page = array(
-          'post_type' => 'page',
-          'post_name' => 'bus-search-list',
-          'post_title' => 'Bus Search result',
-          'post_content' => '[bus-search]',
-          'post_status' => 'publish',
-          );
+            $bus_search_page = array(
+                'post_type' => 'page',
+                'post_name' => 'bus-search-list',
+                'post_title' => 'Bus Search result',
+                'post_content' => '[bus-search]',
+                'post_status' => 'publish',
+            );
+            wp_insert_post($bus_search_page);
+        }
 
-          wp_insert_post($bus_search_page);
-      }
 
         if (! (new self())->wbtm_get_page_by_slug('bus-global-search')) {
             $bus_global_search_page = array(
@@ -38,7 +38,6 @@ class WBTM_Plugin_Activator{
                 'post_content' => '[bus-search-form]',
                 'post_status' => 'publish',
             );
-
             wp_insert_post($bus_global_search_page);
         }
 

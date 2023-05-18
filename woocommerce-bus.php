@@ -1563,6 +1563,8 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
 
 
     add_action('show_seat_form', 'wbbm_seat_form');
+
+
     function wbbm_seat_form($start, $end, $price_arr, $return = false)
     {
         $date = $return ? mage_get_isset('r_date') : mage_get_isset('j_date');
@@ -1755,19 +1757,7 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
         }
     }
 
-    // function wbbm_convert_date_to_php($date){
 
-    // $date_format        = get_option( 'date_format' );
-    // if($date_format == 'Y-m-d' || $date_format == 'm/d/Y' || $date_format == 'm/d/Y'){
-    // if($date_format == 'd/m/Y'){
-    //   $date = str_replace('/', '-', $date);
-    // }
-    // }
-    // return date('Y-m-d', strtotime($date));
-    // }
-
-
-    // Function for create hidden product for bus
     function wbbm_create_hidden_event_product($post_id, $title)
     {
         $new_post = array(
