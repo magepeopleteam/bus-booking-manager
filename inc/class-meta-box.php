@@ -38,11 +38,17 @@ class WBBMMetaBox
     {
         if (isset($_POST['name'])) {
             $terms = wp_insert_term($_POST['name'], 'wbbm_bus_stops', $args = array('description' => $_POST['description']));
-
-            echo json_encode(array(
-                'text' => $_POST['name'],
-                'term_id' => $terms['term_id']
-            ));
+            if ( is_wp_error($terms) ) {
+                echo json_encode(array(
+                    'text' => $_POST['name'],
+                    'term_id' => 'nothing'
+                ));
+            }else{
+                echo json_encode(array(
+                    'text' => $_POST['name'],
+                    'term_id' => $terms['term_id']
+                ));
+            }
         }
         die();
     }
@@ -77,10 +83,18 @@ class WBBMMetaBox
         if (isset($_POST['name'])) {
             $terms = wp_insert_term($_POST['name'], 'wbbm_bus_pickpoint', $args = array('description' => $_POST['description']));
 
-            echo json_encode(array(
-                'text' => $_POST['name'],
-                'term_id' => $terms['term_id']
-            ));
+            if ( is_wp_error($terms) ) {
+                echo json_encode(array(
+                    'text' => $_POST['name'],
+                    'term_id' => 'nothing'
+                ));
+            }else{
+                echo json_encode(array(
+                    'text' => $_POST['name'],
+                    'term_id' => $terms['term_id']
+                ));
+            }
+
         }
         die();
     }

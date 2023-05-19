@@ -1463,3 +1463,6 @@ a.button.remove-bp-row i {
 .mp_ticket_type_table table th {
     text-align: left;
 }
+.bus-stops-wrapper input::placeholder, .pickpoint-adding-wrap input::placeholder{
+    color: #d9d3d3;
+}

@@ -28,25 +28,47 @@
 					dLoader(target);
 				},
 
-				success: function (data) {
-					$('.bus_stop_add_option').append($('<option>', {
-						value: data.text,
-						text: data.text,
-						'data-term_id': data.term_id
-					}));
 
-					$(".name_required").hide();
-					$("#bus_stop_name").val("");
-					$("#bus_stop_description").val("");
-					$(".success_text").slideDown('fast');
-					setTimeout(function() {
-						$('.success_text').fadeOut('fast');
-					}, 1000); // <-- time in milliseconds
-					dLoaderRemove(target);
-					if ($this.hasClass('close_popup')) {
-						$this.delay(2000).closest('.popupMainArea').find('.popupClose').trigger('click');
+				success: function (data) {
+					if(data.term_id != 'nothing'){
+
+						$('.bus_stop_add_option').append($('<option>', {
+							value: data.text,
+							text: data.text,
+							'data-term_id': data.term_id
+						}));
+
+						$(".name_required").hide();
+						$("#bus_stop_name").val("");
+						$("#bus_stop_description").val("");
+						$(".success_text").slideDown('fast');
+						setTimeout(function() {
+							$('.success_text').fadeOut('fast');
+						}, 1000); // <-- time in milliseconds
+						dLoaderRemove(target);
+						if ($this.hasClass('close_popup')) {
+							$this.delay(2000).closest('.popupMainArea').find('.popupClose').trigger('click');
+						}
+
+					}else{
+
+						$(".duplicate_text").slideDown('fast');
+						setTimeout(function() {
+							$('.duplicate_text').fadeOut('fast');
+						}, 1000); // <-- time in milliseconds
+						dLoaderRemove(target);
+						if ($this.hasClass('close_popup')) {
+							$this.delay(2000).closest('.popupMainArea').find('.popupClose').trigger('click');
+						}
+
+
 					}
 				}
+
+
+
+
+
 			});
 		}
 	});
@@ -183,22 +205,36 @@
 				},
 
 				success: function (data) {
-					$('.pickup_add_option').append($('<option>', {
-						value: data.text,
-						text: data.text,
-						'data-term_id': data.term_id
-					}));
+					if(data.term_id != 'nothing'){
 
-					$(".name_required").hide();
-					$("#pickup_name").val("");
-					$("#pickup_description").val("");
-					$(".success_text").slideDown('fast');
-					setTimeout(function() {
-						$('.success_text').fadeOut('fast');
-					}, 1000); // <-- time in milliseconds
-					dLoaderRemove(target);
-					if ($this.hasClass('close_popup')) {
-						$this.delay(2000).closest('.popupMainArea').find('.popupClose').trigger('click');
+						$('.pickup_add_option').append($('<option>', {
+							value: data.text,
+							text: data.text,
+							'data-term_id': data.term_id
+						}));
+
+						$(".name_required").hide();
+						$("#pickup_name").val("");
+						$("#pickup_description").val("");
+						$(".success_text").slideDown('fast');
+						setTimeout(function() {
+							$('.success_text').fadeOut('fast');
+						}, 1000); // <-- time in milliseconds
+						dLoaderRemove(target);
+						if ($this.hasClass('close_popup')) {
+							$this.delay(2000).closest('.popupMainArea').find('.popupClose').trigger('click');
+						}
+					}else{
+
+						$(".duplicate_text").slideDown('fast');
+						setTimeout(function() {
+							$('.duplicate_text').fadeOut('fast');
+						}, 1000); // <-- time in milliseconds
+						dLoaderRemove(target);
+						if ($this.hasClass('close_popup')) {
+							$this.delay(2000).closest('.popupMainArea').find('.popupClose').trigger('click');
+						}
+
 					}
 				}
 			});
@@ -226,19 +262,7 @@
 	});
 
 
-	$(".add-more-bd-point").click(function(e){
-		e.preventDefault();
-		$(this).siblings().children('.bd-point').append('<tr>'+$(this).siblings().children().children(".more-bd-point").html()+'</tr>');
-		$(this).parent().find('input.text').timepicker({
-			timeFormat: 'H:mm',
-			interval: 15,
-			minTime: '00:00',
-			maxTime: '23:59',
-			dynamic: true,
-			dropdown: true,
-			scrollbar: true
-		});
-	});
+
 
 	$(document).on('click','.remove-bp-row',function (e){
 		e.preventDefault();
@@ -260,6 +284,17 @@
 
 		var new_bus = $('#price_bus_record').val();
 		var discount_price_switch = $('#discount_price_switch').val();
+		var entire_bus_booking = $('#entire_bus_booking').val();
+
+		if(entire_bus_booking=='on'){
+		   var	entire_bus_column = '<td class="wbbm-price-col">\n' +
+			   '                        <input step="0.01" type="number" name="wbbm_bus_price_entire[]" value="" class="text">\n' +
+			   '                        <input step="0.01" type="number" name="wbbm_bus_price_entire_roundtrip[]" placeholder="Entire Bus return discount price" value="" class="text roundtrip-input">\n' +
+			   '                    </td>';
+		}else{
+			var	entire_bus_column = '';
+		}
+
 
 		if(new_bus==''){
 			var route_row = '';
@@ -287,7 +322,8 @@
 										'                </td><td class="wbbm-price-col">\n' +
 										'                    <input step="0.01" type="number" name="wbbm_bus_price_infant[]" value="" class="text">\n' +
 										'                    <input step="0.01" type="number" name="wbbm_bus_price_infant_roundtrip[]" placeholder="Infant return discount price" value="" class="text roundtrip-input">\n' +
-										'                </td><td class="wbbm-price-col"><a class="button remove-price-row" href="#"><i class="fas fa-minus-circle"></i>\n' +
+										'                </td>'+entire_bus_column+'<td class="wbbm-price-col">\n'+
+										'                      <a class="button remove-price-row" href="#"><i class="fas fa-minus-circle"></i>\n' +
 										'                        Remove</a>\n' +
 										'                </td></tr>';
 								}else{
@@ -299,7 +335,7 @@
 										'                    <input step="0.01" type="number" name="wbbm_bus_price_child[]" value="" class="text">\n' +
 										'                </td><td class="wbbm-price-col">\n' +
 										'                    <input step="0.01" type="number" name="wbbm_bus_price_infant[]" value="" class="text">\n' +
-										'                </td><td class="wbbm-price-col"><a class="button remove-price-row" href="#"><i class="fas fa-minus-circle"></i>\n' +
+										'                    </td>'+entire_bus_column+'<td class="wbbm-price-col"><a class="button remove-price-row" href="#"><i class="fas fa-minus-circle"></i>\n' +
 										'                        Remove</a>\n' +
 										'                </td></tr>';
 								}
@@ -373,7 +409,11 @@
 		let options = '';
 		$( ".boarding-point tr" ).each(function( index ) {
 
-			let pick_name = $(this).find(":selected").val()
+			let pick_name = $(this).find(":selected").val();
+
+			let select_city_pickpoints = $("#select_city_pickpoints").val();
+
+			let select_city_pickpoints_array = select_city_pickpoints.split(',');
 
 			options = options+$(this).find(":selected").val();
 
@@ -386,7 +426,11 @@
 			}
 			let term_id = $(this).find(':selected').data('term_id');
 			if(term_id){
-				$('.ra_pick_boarding').append("<option value="+pick_name+">"+pick_name+"</option>")
+				if($.inArray(pick_name, select_city_pickpoints_array) == -1) {
+					$('.ra_pick_boarding').append("<option value="+pick_name+">"+pick_name+"</option>");
+				}
+
+
 			}
 		});
 

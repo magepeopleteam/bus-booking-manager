@@ -74,6 +74,15 @@ class CommonClass
         }
     }
 
+    // Function to get page slug
+    function wbbm_get_page_by_slug($slug)
+    {
+        if ($pages = get_pages())
+            foreach ($pages as $page)
+                if ($slug === $page->post_name) return $page;
+        return false;
+    }
+
 
 
 }

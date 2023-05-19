@@ -37,6 +37,7 @@ class SearchClass extends CommonClass
         $route_title_color = $route_title_color ? $route_title_color : '#fff';
         $search_list_header_b_color = wbbm_get_option('wbbm_search_list_header_b_color', 'wbbm_style_setting_sec');
         $general_setting = get_option('wbbm_general_setting_sec') ? maybe_unserialize(get_option('wbbm_general_setting_sec')) : array();
+
         $wbbm_type_column_switch = array(
             'wbbm_type_column_switch' => 'on'
         );
@@ -52,6 +53,10 @@ class SearchClass extends CommonClass
             $marged_arr2 = array_merge($general_setting, $wbbm_seat_column_switch);
             update_option('wbbm_general_setting_sec', $marged_arr2);
         }
+
+        $general_setting = get_option('wbbm_general_setting_sec') ? maybe_unserialize(get_option('wbbm_general_setting_sec')) : array();
+
+
         ?>
         <div class="mage_route_title" style="background-color:<?php echo $route_title_bg_color; ?>;color:<?php echo $route_title_color; ?>">
             <div>

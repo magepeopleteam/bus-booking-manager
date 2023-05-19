@@ -9,18 +9,26 @@
     ?>
     <input type="hidden" id="price_bus_record" value="<?php echo ($wbbm_bus_prices=='')?$wbbm_bus_prices:count($wbbm_bus_prices) ?>">
     <input type="hidden" id="discount_price_switch" value="<?php echo $discount_price_switch ?>">
+    <input type="hidden" id="entire_bus_booking" value="<?php echo $entire_bus_booking ?>">
 
     <div style="width:100%;overflow-x:auto;">
         <table id="repeatable-fieldset-price-one" width="auto">
             <tbody class="auto-generated">
             <tr>
-                <th><?php _e('Boarding Point', 'bus-booking-manager'); ?></th>
-                <th><?php _e('Dropping Point', 'bus-booking-manager'); ?></th>
-                <th><?php _e(wbbm_get_option('wbbm_adult_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_adult_text', 'wbbm_label_setting_sec') : __('Adult', 'bus-booking-manager') . ' Fare', 'bus-booking-manager'); ?>
+                <th>
+                    <?php _e('Boarding Point', 'bus-booking-manager'); ?>
                 </th>
-                <th><?php _e(wbbm_get_option('wbbm_child_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_child_text', 'wbbm_label_setting_sec') : __('Child', 'bus-booking-manager') . ' Fare', 'bus-booking-manager'); ?>
+                <th>
+                    <?php _e('Dropping Point', 'bus-booking-manager'); ?>
                 </th>
-                <th><?php _e(wbbm_get_option('wbbm_infant_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_infant_text', 'wbbm_label_setting_sec') : __('Infant', 'bus-booking-manager') . ' Fare', 'bus-booking-manager'); ?>
+                <th>
+                    <?php _e(wbbm_get_option('wbbm_adult_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_adult_text', 'wbbm_label_setting_sec') : __('Adult', 'bus-booking-manager') . ' Fare', 'bus-booking-manager'); ?>
+                </th>
+                <th>
+                    <?php _e(wbbm_get_option('wbbm_child_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_child_text', 'wbbm_label_setting_sec') : __('Child', 'bus-booking-manager') . ' Fare', 'bus-booking-manager'); ?>
+                </th>
+                <th>
+                    <?php _e(wbbm_get_option('wbbm_infant_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_infant_text', 'wbbm_label_setting_sec') : __('Infant', 'bus-booking-manager') . ' Fare', 'bus-booking-manager'); ?>
                 </th>
                 <?php if($entire_bus_booking == 'on'): ?>
                     <th><?php _e(wbbm_get_option('wbbm_entire_bus_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_entire_bus_text', 'wbbm_label_setting_sec') : __('Entire Bus', 'bus-booking-manager') . ' Fare', 'bus-booking-manager'); ?></th>

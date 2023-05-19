@@ -217,6 +217,7 @@ class AdminMetaBoxClass extends CommonClass
         update_post_meta($post_id, 'mep_events_extra_prices', $extra_service_new ? $extra_service_new : null);
         // Extra services END
 
+
         /* Bus Pickuppoint */
         $selected_city_key = 'wbbm_pickpoint_selected_city';
         $selected_pickpoint_name = 'wbbm_selected_pickpoint_name_';
@@ -225,19 +226,24 @@ class AdminMetaBoxClass extends CommonClass
         if (isset($_POST['wbbm_pickpoint_selected_city'])) {
             $selected_city = $_POST['wbbm_pickpoint_selected_city'];
 
+
             if (!empty($selected_city)) {
 
                 $selected_city_str = implode(',', $selected_city);
 
                 // If need delete
                 $prev_selected_city = get_post_meta($post_id, $selected_city_key, true);
+
                 if ($prev_selected_city) {
                     $prev_selected_city = explode(',', $prev_selected_city);
 
-                    $diff = array_diff($prev_selected_city, $selected_city);
-                    if (!empty($diff)) {
 
+                    $diff = array_diff($prev_selected_city, $selected_city);
+
+
+                    if (!empty($diff)) {
                         $diff = array_values($diff);
+
                         foreach ($diff as $s) {
                             delete_post_meta($post_id, 'wbbm_selected_pickpoint_name_' . $s);
                         }
@@ -262,12 +268,19 @@ class AdminMetaBoxClass extends CommonClass
 
                     $city_name_slug = str_replace(' ', '_', strtolower($city));
 
-                    update_post_meta($post_id, $selected_pickpoint_name . $city_name_slug, serialize($m_array));
+                   // print_r($m_array);die;
+
+                    update_post_meta($post_id, $selected_pickpoint_name . $city_name_slug, $m_array);
                 }
             }
         } else {
+
+
+            
             // If need delete
             $prev_selected_city = get_post_meta($post_id, $selected_city_key, true);
+
+            echo ($prev_selected_city) ;die;
             if ($prev_selected_city) {
                 $prev_selected_city = explode(',', $prev_selected_city);
 

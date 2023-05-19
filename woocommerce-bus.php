@@ -470,29 +470,38 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
     // Cretae pages on plugin activation
     function wbbm_page_create()
     {
-        if (!wbbm_get_page_by_slug('bus-search')) {
+
+
+
+        if (! wbbm_get_page_by_slug('bus-search-list')) {
             $bus_search_page = array(
                 'post_type' => 'page',
-                'post_name' => 'bus-search',
-                'post_title' => 'Bus Search',
+                'post_name' => 'bus-search-list',
+                'post_title' => 'Bus Search result',
                 'post_content' => '[bus-search]',
                 'post_status' => 'publish',
             );
+
             wp_insert_post($bus_search_page);
         }
-        if (!wbbm_get_page_by_slug('view-ticket')) {
-            $view_ticket_page = array(
+
+        if (! wbbm_get_page_by_slug('bus-global-search')) {
+            $bus_global_search_page = array(
                 'post_type' => 'page',
-                'post_name' => 'view-ticket',
-                'post_title' => 'View Ticket',
-                'post_content' => '[view-ticket]',
+                'post_name' => 'bus-global-search',
+                'post_title' => 'Global search form',
+                'post_content' => '[bus-search-form]',
                 'post_status' => 'publish',
             );
-            wp_insert_post($view_ticket_page);
+
+            wp_insert_post($bus_global_search_page);
         }
+
+
+
     }
 
-    register_activation_hook(__FILE__, 'wbbm_page_create');
+    //register_activation_hook(__FILE__, 'wbbm_page_create');
 
     // Class for Linking with Woocommerce with Bus Pricing 
     add_action('plugins_loaded', 'wbbm_load_wc_class');
@@ -1563,8 +1572,6 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
 
 
     add_action('show_seat_form', 'wbbm_seat_form');
-
-
     function wbbm_seat_form($start, $end, $price_arr, $return = false)
     {
         $date = $return ? mage_get_isset('r_date') : mage_get_isset('j_date');
@@ -1757,7 +1764,19 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
         }
     }
 
+    // function wbbm_convert_date_to_php($date){
 
+    // $date_format        = get_option( 'date_format' );
+    // if($date_format == 'Y-m-d' || $date_format == 'm/d/Y' || $date_format == 'm/d/Y'){
+    // if($date_format == 'd/m/Y'){
+    //   $date = str_replace('/', '-', $date);
+    // }
+    // }
+    // return date('Y-m-d', strtotime($date));
+    // }
+
+
+    // Function for create hidden product for bus
     function wbbm_create_hidden_event_product($post_id, $title)
     {
         $new_post = array(
