@@ -435,6 +435,7 @@ class SearchClass extends CommonClass
                                             </div>
                                             <?php mage_qty_box($seat_price_adult, 'adult_quantity', false); ?>
                                         </div>
+                                        <input type="hidden" name="available_quantity" value="<?php echo $available_seat?>">
                                         <?php
                                         $is_price_zero_allow = get_post_meta($id, 'wbbm_price_zero_allow', true);
 
