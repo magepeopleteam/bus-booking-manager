@@ -135,14 +135,16 @@ class AdminMetaBoxClass extends CommonClass
         $dp_pice_stops = $_POST['wbbm_bus_dp_price_stop'];
 
         $the_price = $_POST['wbbm_bus_price'];
-
-        $the_price_roundtrip = $_POST['wbbm_bus_price_roundtrip'];
+        $the_price_roundtrip = isset($_POST['wbbm_bus_price_roundtrip']) ? $_POST['wbbm_bus_price_roundtrip'] : '';
         $the_price_child = $_POST['wbbm_bus_price_child'];
-        $the_price_child_roundtrip = $_POST['wbbm_bus_price_child_roundtrip'];
+        $the_price_child_roundtrip = isset($_POST['wbbm_bus_price_child_roundtrip']) ? $_POST['wbbm_bus_price_child_roundtrip'] : '';
         $the_price_infant = $_POST['wbbm_bus_price_infant'];
-        $the_price_infant_roundtrip = $_POST['wbbm_bus_price_infant_roundtrip'];
+        $the_price_infant_roundtrip = isset($_POST['wbbm_bus_price_infant_roundtrip']) ? $_POST['wbbm_bus_price_infant_roundtrip'] : '';
         $the_price_entire = $_POST['wbbm_bus_price_entire'];
-        $the_price_entire_roundtrip = $_POST['wbbm_bus_price_entire_roundtrip'];
+        $the_price_entire_roundtrip = isset($_POST['wbbm_bus_price_entire_roundtrip']) ? $_POST['wbbm_bus_price_entire_roundtrip'] : '';
+
+
+
         $order_id = 0;
         if (!empty($bp_pice_stops)) {
             $count = count($bp_pice_stops);
