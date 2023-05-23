@@ -3,8 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="815e1ea7-06ff-4508-98b5-ea1cdaa1f0ce" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inc/AdminMetaBoxClass.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/AdminMetaBoxClass.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inc/clean/layout/bus_pickuppoint.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/clean/layout/bus_pickuppoint.php" afterDir="false" />
+
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
