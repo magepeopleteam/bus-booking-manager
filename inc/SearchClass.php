@@ -56,12 +56,10 @@ class SearchClass extends CommonClass
 
         $general_setting = get_option('wbbm_general_setting_sec') ? maybe_unserialize(get_option('wbbm_general_setting_sec')) : array();
 
-
         ?>
         <div class="mage_route_title" style="background-color:<?php echo $route_title_bg_color; ?>;color:<?php echo $route_title_color; ?>">
             <div>
-                <strong><?php echo wbbm_get_option('wbbm_route_text', 'wbbm_label_setting_sec', __('Route', 'bus-booking-manager'));
-                    echo ':'; ?></strong>
+                <strong><?php echo wbbm_get_option('wbbm_route_text', 'wbbm_label_setting_sec', __('Route', 'bus-booking-manager')); echo ':'; ?></strong>
                 <?php echo mage_get_isset('bus_start_route'); ?>
                 <span class="fa fa-long-arrow-right"></span>
                 <?php echo mage_get_isset('bus_end_route'); ?>
@@ -435,6 +433,7 @@ class SearchClass extends CommonClass
                                             </div>
                                             <?php mage_qty_box($seat_price_adult, 'adult_quantity', false); ?>
                                         </div>
+
                                         <input type="hidden" name="available_quantity" value="<?php echo $available_seat?>">
                                         <?php
                                         $is_price_zero_allow = get_post_meta($id, 'wbbm_price_zero_allow', true);
