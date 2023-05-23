@@ -4,7 +4,8 @@
     <list default="true" id="267a3a07-8d3d-4542-96e7-a967cdf35190" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/inc/AdminMetaBoxClass.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/AdminMetaBoxClass.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inc/SearchClass.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/SearchClass.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inc/clean/layout/bus_pickuppoint.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/clean/layout/bus_pickuppoint.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/js/wbbm_custom_admin_script.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/wbbm_custom_admin_script.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

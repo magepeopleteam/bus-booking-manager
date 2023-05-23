@@ -213,10 +213,20 @@
 							'data-term_id': data.term_id
 						}));
 
+						$('.pickuppoints_first').append($('<option>', {
+							value: data.text,
+							text: data.text,
+							'data-term_id': data.term_id
+						}));
+
 						$(".name_required").hide();
 						$("#pickup_name").val("");
 						$("#pickup_description").val("");
 						$(".success_text").slideDown('fast');
+
+
+
+
 						setTimeout(function() {
 							$('.success_text').fadeOut('fast');
 						}, 1000); // <-- time in milliseconds
@@ -224,6 +234,7 @@
 						if ($this.hasClass('close_popup')) {
 							$this.delay(2000).closest('.popupMainArea').find('.popupClose').trigger('click');
 						}
+
 					}else{
 
 						$(".duplicate_text").slideDown('fast');

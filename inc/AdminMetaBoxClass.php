@@ -232,9 +232,15 @@ class AdminMetaBoxClass extends CommonClass
             $selected_city = $_POST['wbbm_pickpoint_selected_city'];
 
 
+
+
             if (!empty($selected_city)) {
 
                 $selected_city_str = implode(',', $selected_city);
+
+
+
+
 
                 // If need delete
                 $prev_selected_city = get_post_meta($post_id, $selected_city_key, true);
@@ -254,14 +260,19 @@ class AdminMetaBoxClass extends CommonClass
                         }
                     }
                 }
+
+
                 // If need delete END
 
                 update_post_meta($post_id, $selected_city_key, $selected_city_str);
 
                 foreach ($selected_city as $city) {
+                    echo 'eee';die;
                     $m_array = array();
                     $i = 0;
                     foreach ($_POST[$selected_pickpoint_name . $city] as $pickpoint) {
+
+
 
                         $m_array[$i] = array(
                             'pickpoint' => $_POST[$selected_pickpoint_name . $city][$i],
