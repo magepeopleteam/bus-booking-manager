@@ -20,6 +20,8 @@ function wbbm_bus_admin_scripts() {
     wp_enqueue_script('wbbm_custom_admin_script',plugin_dir_url( __DIR__ ).'js/wbbm_custom_admin_script.js',array('jquery'),time(),true);
     wp_enqueue_style('mep-ra-admin-style',plugin_dir_url( __DIR__ ).'css/wbbm-custom-style.css',array(),time());
     wp_enqueue_style('mp-style',plugin_dir_url( __DIR__ ).'css/mp_style.css',array());
+    wp_enqueue_style('mage_css',plugin_dir_url( __DIR__ ).'css/mage_css.css',array(), time());
+    wp_enqueue_script('mage_style',plugin_dir_url( __DIR__ ).'js/mage_style.js',array('jquery'),time(),true);
 }
 
 
@@ -101,7 +103,7 @@ function wbbm_bus_enqueue_scripts() {
     wp_enqueue_script('wbbm-select2-lib',plugin_dir_url( __DIR__ ).'js/select2.full.min.js',array('jquery','jquery-ui-core'),1,false);
     wp_enqueue_script('ra_script_public',plugin_dir_url( __DIR__ ).'js/wbbm_custom_public_script.js',array(),time(),false);
     wp_enqueue_script('mage_style',plugin_dir_url( __DIR__ ).'js/mage_style.js',array('jquery'),time(),true);
-    wp_enqueue_style('font-awesome-css-cdn', "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.2.0/css/all.min.css", null, 1);
+    wp_enqueue_style('font-awesome-css-cdn', '//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css', array(), '5.15.3');
 }
 
 // Ajax Issue

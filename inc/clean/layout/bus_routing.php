@@ -15,6 +15,7 @@
                         </div>
                         <div class="popupBody bus-stop-form">
                             <h6 class="textSuccess success_text" style="display: none;">Added Succesfully</h6>
+                            <h6 class="textduplicate duplicate_text" style="display: none;color: red"><?php esc_html_e( 'This bus stop already exists', 'bus-booking-manager' ); ?></h6>
                             <label>
                                 <span class="w_200"><?php esc_html_e( 'Name:', 'bus-booking-manager' ); ?></span>
                                 <input type="text"  class="formControl" id="bus_stop_name">
@@ -76,7 +77,7 @@
                                 <td align="center">
                                     <div class="wbbm_bus_route_time">
                                         <span class="wbbm_bus_route_icon wbbm_bus_route_icon2"><img src="<?php echo WBTM_PLUGIN_URL .'images/bus_route_clock.png';?>"/></span>
-                                        <input type="text" data-clocklet name='wbbm_bus_bp_start_time[]' value="<?php if (isset($field['wbbm_bus_bp_start_time']) && $field['wbbm_bus_bp_start_time'] != '') echo esc_attr($field['wbbm_bus_bp_start_time']); ?>" class="text" placeholder="15:00">
+                                        <input type="text"  value="<?php if (isset($field['wbbm_bus_bp_start_time']) && $field['wbbm_bus_bp_start_time'] != '') echo esc_attr($field['wbbm_bus_bp_start_time']); ?>" class="text" placeholder="15:00">
                                     </div>
                                 </td>
                                 <td align="center">

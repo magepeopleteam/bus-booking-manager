@@ -470,29 +470,38 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
     // Cretae pages on plugin activation
     function wbbm_page_create()
     {
-        if (!wbbm_get_page_by_slug('bus-search')) {
+
+
+
+        if (! wbbm_get_page_by_slug('bus-search-list')) {
             $bus_search_page = array(
                 'post_type' => 'page',
-                'post_name' => 'bus-search',
-                'post_title' => 'Bus Search',
+                'post_name' => 'bus-search-list',
+                'post_title' => 'Bus Search result',
                 'post_content' => '[bus-search]',
                 'post_status' => 'publish',
             );
+
             wp_insert_post($bus_search_page);
         }
-        if (!wbbm_get_page_by_slug('view-ticket')) {
-            $view_ticket_page = array(
+
+        if (! wbbm_get_page_by_slug('bus-global-search')) {
+            $bus_global_search_page = array(
                 'post_type' => 'page',
-                'post_name' => 'view-ticket',
-                'post_title' => 'View Ticket',
-                'post_content' => '[view-ticket]',
+                'post_name' => 'bus-global-search',
+                'post_title' => 'Global search form',
+                'post_content' => '[bus-search-form]',
                 'post_status' => 'publish',
             );
-            wp_insert_post($view_ticket_page);
+
+            wp_insert_post($bus_global_search_page);
         }
+
+
+
     }
 
-    register_activation_hook(__FILE__, 'wbbm_page_create');
+    //register_activation_hook(__FILE__, 'wbbm_page_create');
 
     // Class for Linking with Woocommerce with Bus Pricing 
     add_action('plugins_loaded', 'wbbm_load_wc_class');

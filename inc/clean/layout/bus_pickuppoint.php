@@ -24,6 +24,7 @@
                     </div>
                     <div class="popupBody pickup-form">
                         <h6 class="textSuccess success_text" style="display: none;"><?php esc_html_e( 'Added Succesfully', 'bus-booking-manager' ); ?></h6>
+                        <h6 class="textduplicate duplicate_text" style="display: none;color: red"><?php esc_html_e( 'This pickup point already exists', 'bus-booking-manager' ); ?></h6>
                         <label>
                             <span class="w_200"><?php esc_html_e( 'Name:', 'bus-booking-manager' ); ?></span>
                             <input type="text"  class="formControl" id="pickup_name">
@@ -67,14 +68,21 @@
                     </button>
                 </div>
             </div>
-            <?php $selected_city_pickpoints = get_post_meta($post->ID, 'wbbm_pickpoint_selected_city', true); ?>
+            <?php
+                 $selected_city_pickpoints = get_post_meta($post->ID, 'wbbm_pickpoint_selected_city', true);
+            ?>
+            <input type="hidden" name="select_city_pickpoints" id="select_city_pickpoints" value="<?php echo $selected_city_pickpoints ?>">
 
             <div class="wbbm_right_col <?php echo($selected_city_pickpoints == '' ? 'all-center' : ''); ?>">
                 <div id="wbbm_pickpoint_selected_city">
                     <?php if ($selected_city_pickpoints != '') {
                         $selected_city_pickpoints = explode(',', $selected_city_pickpoints);
                         foreach ($selected_city_pickpoints as $single) {
-                            $get_pickpoints_data = get_post_meta($post->ID, 'wbbm_selected_pickpoint_name_' . $single, true); ?>
+                            $get_pickpoints_data = get_post_meta($post->ID, 'wbbm_selected_pickpoint_name_' . strtolower($single), true);
+
+                            ?>
+
+
                             <div class="wbbm_selected_city_item">
                                 <span class="remove_city_for_pickpoint"><i class="fas fa-trash-alt"></i></span>
                                 <h4 class="wbbm_pickpoint_title"><?php echo ucfirst($single); ?></h4>
@@ -82,8 +90,11 @@
                                 <div class="pickpoint-adding-wrap-main">
                                     <div class="pickpoint-adding-wrap">
                                         <?php
+
+
                                         if ($get_pickpoints_data) {
-                                            $get_pickpoints_data = unserialize($get_pickpoints_data);
+
+
                                             foreach ($get_pickpoints_data as $pickpoint) : ?>
 
                                                 <div class="pickpoint-adding">
@@ -101,8 +112,7 @@
                                                     </div>
                                                     <div class="pickpoint-adding-col">
                                                     <span class="wbbm_bus_route_icon wbbm_bus_route_icon2"><img src="<?php echo WBTM_PLUGIN_URL .'images/bus_route_clock.png';?>"/></span>
-                                                    <input type="text" name="wbbm_selected_pickpoint_time_<?php echo $single; ?>[]"
-                                                        value="<?php echo $pickpoint['time']; ?>" placeholder="15:00">
+                                                    <input type="text" data-clocklet name="wbbm_selected_pickpoint_time_<?php echo $single; ?>[]" value="<?php echo $pickpoint['time']; ?>" placeholder="15:00">
                                                     </div>
                                                     <button class="wbbm_remove_pickpoint"><i class="fas fa-minus-circle"></i> Remove
                                                     </button>
@@ -149,8 +159,7 @@
                         }); // Not ok!!!
                         return;
                     } else {
-
-
+                        $(".ra_pick_boarding[value="+get_boarding_point+"]").remove();
                     }
 
                     var get_boarding_point_name = $('#wbbm_pick_boarding option:selected').text();
@@ -169,7 +178,7 @@
                         '</div>'+
                         '<div class="pickpoint-adding-col">' +
                         '<span class="wbbm_bus_route_icon wbbm_bus_route_icon2"><img src="<?php echo WBTM_PLUGIN_URL .'images/bus_route_clock.png';?>"/></span>' +
-                        '<input type="text" name="wbbm_selected_pickpoint_time_' + get_boarding_point +
+                        '<input type="text" data-clocklet name="wbbm_selected_pickpoint_time_' + get_boarding_point +
                         '[]" placeholder="15:00">' +
                         '</div>'+
                         '<button class="wbbm_remove_pickpoint"><i class="fas fa-minus-circle"></i> Remove</button>' +

@@ -23,6 +23,8 @@ class SearchClass extends CommonClass
             </div>
             <?php
         }
+
+
     }
 
     function mage_search_list()
@@ -35,11 +37,29 @@ class SearchClass extends CommonClass
         $route_title_color = $route_title_color ? $route_title_color : '#fff';
         $search_list_header_b_color = wbbm_get_option('wbbm_search_list_header_b_color', 'wbbm_style_setting_sec');
         $general_setting = get_option('wbbm_general_setting_sec') ? maybe_unserialize(get_option('wbbm_general_setting_sec')) : array();
+
+        $wbbm_type_column_switch = array(
+            'wbbm_type_column_switch' => 'on'
+        );
+        if (! array_key_exists('wbbm_type_column_switch',$general_setting)) {
+            $marged_arr = array_merge($general_setting, $wbbm_type_column_switch);
+            update_option('wbbm_general_setting_sec', $marged_arr);
+        }
+
+        $wbbm_seat_column_switch = array(
+            'wbbm_seat_column_switch' => 'on'
+        );
+        if (! array_key_exists('wbbm_seat_column_switch',$general_setting)) {
+            $marged_arr2 = array_merge($general_setting, $wbbm_seat_column_switch);
+            update_option('wbbm_general_setting_sec', $marged_arr2);
+        }
+
+        $general_setting = get_option('wbbm_general_setting_sec') ? maybe_unserialize(get_option('wbbm_general_setting_sec')) : array();
+
         ?>
         <div class="mage_route_title" style="background-color:<?php echo $route_title_bg_color; ?>;color:<?php echo $route_title_color; ?>">
             <div>
-                <strong><?php echo wbbm_get_option('wbbm_route_text', 'wbbm_label_setting_sec', __('Route', 'bus-booking-manager'));
-                    echo ':'; ?></strong>
+                <strong><?php echo wbbm_get_option('wbbm_route_text', 'wbbm_label_setting_sec', __('Route', 'bus-booking-manager')); echo ':'; ?></strong>
                 <?php echo mage_get_isset('bus_start_route'); ?>
                 <span class="fa fa-long-arrow-right"></span>
                 <?php echo mage_get_isset('bus_end_route'); ?>
@@ -62,7 +82,7 @@ class SearchClass extends CommonClass
                         <span><?php echo wbbm_get_option('wbbm_schedule_text', 'wbbm_label_setting_sec', __('Schedule', 'bus-booking-manager')); ?></span>
                     </div>
                     <div class="mage-search-res-header--right">
-                        <?php if (isset($general_setting['wbbm_type_column_switch']) && $general_setting['wbbm_type_column_switch'] == 'on') { ?>
+                        <?php if (isset($general_setting['wbbm_type_column_switch']) && $general_setting['wbbm_type_column_switch'] == 'on' || !isset($general_setting['wbbm_type_column_switch'])) { ?>
                             <span><?php echo wbbm_get_option('wbbm_type_text', 'wbbm_label_setting_sec', __('Type', 'bus-booking-manager')); ?></span>
                         <?php  } ?>
                         <span><?php echo wbbm_get_option('wbbm_fare_text', 'wbbm_label_setting_sec', __('Fare', 'bus-booking-manager')); ?></span>
@@ -104,7 +124,7 @@ class SearchClass extends CommonClass
                         <span><?php echo wbbm_get_option('wbbm_schedule_text', 'wbbm_label_setting_sec', __('Schedule', 'bus-booking-manager')); ?></span>
                     </div>
                     <div class="mage-search-res-header--right">
-                        <?php if (isset($general_setting['wbbm_type_column_switch']) && $general_setting['wbbm_type_column_switch'] == 'on') { ?>
+                        <?php if (isset($general_setting['wbbm_type_column_switch']) && $general_setting['wbbm_type_column_switch'] == 'on' || isset($general_setting['wbbm_type_column_switch'])) { ?>
                             <span><?php echo wbbm_get_option('wbbm_type_text', 'wbbm_label_setting_sec', __('Type', 'bus-booking-manager')); ?></span>
                         <?php  } ?>
 
@@ -413,6 +433,8 @@ class SearchClass extends CommonClass
                                             </div>
                                             <?php mage_qty_box($seat_price_adult, 'adult_quantity', false); ?>
                                         </div>
+
+                                        <input type="hidden" name="available_quantity" value="<?php echo $available_seat?>">
                                         <?php
                                         $is_price_zero_allow = get_post_meta($id, 'wbbm_price_zero_allow', true);
 

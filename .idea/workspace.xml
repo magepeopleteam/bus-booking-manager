@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="0fb36a39-07ac-4e9c-b519-d93fd25d8a1a" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/php.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+    <list default="true" id="267a3a07-8d3d-4542-96e7-a967cdf35190" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inc/FilterClass.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/FilterClass.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inc/wbbm_extra_price.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/wbbm_extra_price.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inc/AdminMetaBoxClass.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/AdminMetaBoxClass.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inc/SearchClass.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/SearchClass.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -27,23 +25,28 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="0fb36a39-07ac-4e9c-b519-d93fd25d8a1a" name="Changes" comment="" />
+      <changelist id="267a3a07-8d3d-4542-96e7-a967cdf35190" name="Changes" comment="" />
       <created>1683174439289</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1683174439289</updated>
       <workItem from="1683174440549" duration="9127000" />
+      <workItem from="1683856463068" duration="9752000" />
+      <workItem from="1684113869730" duration="8725000" />
+      <workItem from="1684130962095" duration="3440000" />
+      <workItem from="1684201771480" duration="1257000" />
+      <workItem from="1684806352938" duration="673000" />
     </task>
     <servers />
   </component>

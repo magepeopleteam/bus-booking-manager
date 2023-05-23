@@ -11,6 +11,8 @@ class AdminMetaBoxClass extends CommonClass
 
     public function wbbm_single_settings_meta_save($post_id)
     {
+
+        
         global $post;
         if (
             !isset($_POST['wbbm_single_bus_settings_nonce']) ||
@@ -68,7 +70,7 @@ class AdminMetaBoxClass extends CommonClass
         // Routing
         $bus_boarding_points = array();
         $bus_dropping_points = array();
-        $boarding_points = $_POST['wbbm_bus_bp_stops_name'];
+        $boarding_points = isset($_POST['wbbm_bus_bp_stops_name']) ? $_POST['wbbm_bus_bp_stops_name'] : '';
         $boarding_time = isset($_POST['wbbm_bus_bp_start_time']) ? $_POST['wbbm_bus_bp_start_time'] : '';
         $dropping_points = $_POST['wbbm_bus_next_stops_name'];
         $dropping_time = isset($_POST['wbbm_bus_next_end_time']) ? $_POST['wbbm_bus_next_end_time'] : '';
@@ -96,7 +98,8 @@ class AdminMetaBoxClass extends CommonClass
             }
         }
 
-        $wbbm_features = $_POST['wbbm_features'];
+
+        $wbbm_features = isset($_POST['wbbm_features']) ? $_POST['wbbm_features'] : '';
 
 
 
@@ -113,9 +116,9 @@ class AdminMetaBoxClass extends CommonClass
             }
         }
 
-        update_post_meta($post_id, 'wbbm_features', $post_feature);
+        update_post_meta($post_id, 'wbbm_features', isset($post_feature)?$post_feature:array());
 
-        update_post_meta($post_id, 'wbbm_bus_bp_stops', $bus_bus_bp_stops);
+        update_post_meta($post_id, 'wbbm_bus_bp_stops', isset($bus_bus_bp_stops)?$bus_bus_bp_stops:array());
 
         update_post_meta($post_id, 'wbbm_bus_next_stops', $bus_dropping_points);
 
@@ -135,14 +138,16 @@ class AdminMetaBoxClass extends CommonClass
         $dp_pice_stops = $_POST['wbbm_bus_dp_price_stop'];
 
         $the_price = $_POST['wbbm_bus_price'];
+        $the_price_roundtrip = isset($_POST['wbbm_bus_price_roundtrip']) ? $_POST['wbbm_bus_price_roundtrip'] : '';
+        $the_price_child = isset($_POST['wbbm_bus_price_child']) ? $_POST['wbbm_bus_price_child'] : '';
+        $the_price_child_roundtrip = isset($_POST['wbbm_bus_price_child_roundtrip']) ? $_POST['wbbm_bus_price_child_roundtrip'] : '';
+        $the_price_infant = isset($_POST['wbbm_bus_price_infant']) ? $_POST['wbbm_bus_price_infant'] : '';
+        $the_price_infant_roundtrip = isset($_POST['wbbm_bus_price_infant_roundtrip']) ? $_POST['wbbm_bus_price_infant_roundtrip'] : '';
+        $the_price_entire = isset($_POST['wbbm_bus_price_entire']) ? $_POST['wbbm_bus_price_entire'] : '';
+        $the_price_entire_roundtrip = isset($_POST['wbbm_bus_price_entire_roundtrip']) ? $_POST['wbbm_bus_price_entire_roundtrip'] : '';
 
-        $the_price_roundtrip = $_POST['wbbm_bus_price_roundtrip'];
-        $the_price_child = $_POST['wbbm_bus_price_child'];
-        $the_price_child_roundtrip = $_POST['wbbm_bus_price_child_roundtrip'];
-        $the_price_infant = $_POST['wbbm_bus_price_infant'];
-        $the_price_infant_roundtrip = $_POST['wbbm_bus_price_infant_roundtrip'];
-        $the_price_entire = $_POST['wbbm_bus_price_entire'];
-        $the_price_entire_roundtrip = $_POST['wbbm_bus_price_entire_roundtrip'];
+
+
         $order_id = 0;
         if (!empty($bp_pice_stops)) {
             $count = count($bp_pice_stops);
@@ -217,6 +222,7 @@ class AdminMetaBoxClass extends CommonClass
         update_post_meta($post_id, 'mep_events_extra_prices', $extra_service_new ? $extra_service_new : null);
         // Extra services END
 
+
         /* Bus Pickuppoint */
         $selected_city_key = 'wbbm_pickpoint_selected_city';
         $selected_pickpoint_name = 'wbbm_selected_pickpoint_name_';
@@ -225,19 +231,24 @@ class AdminMetaBoxClass extends CommonClass
         if (isset($_POST['wbbm_pickpoint_selected_city'])) {
             $selected_city = $_POST['wbbm_pickpoint_selected_city'];
 
+
             if (!empty($selected_city)) {
 
                 $selected_city_str = implode(',', $selected_city);
 
                 // If need delete
                 $prev_selected_city = get_post_meta($post_id, $selected_city_key, true);
+
                 if ($prev_selected_city) {
                     $prev_selected_city = explode(',', $prev_selected_city);
 
-                    $diff = array_diff($prev_selected_city, $selected_city);
-                    if (!empty($diff)) {
 
+                    $diff = array_diff($prev_selected_city, $selected_city);
+
+
+                    if (!empty($diff)) {
                         $diff = array_values($diff);
+
                         foreach ($diff as $s) {
                             delete_post_meta($post_id, 'wbbm_selected_pickpoint_name_' . $s);
                         }
@@ -262,12 +273,18 @@ class AdminMetaBoxClass extends CommonClass
 
                     $city_name_slug = str_replace(' ', '_', strtolower($city));
 
-                    update_post_meta($post_id, $selected_pickpoint_name . $city_name_slug, serialize($m_array));
+                   // print_r($m_array);die;
+
+                    update_post_meta($post_id, $selected_pickpoint_name . $city_name_slug, $m_array);
                 }
             }
         } else {
+
+
+            
             // If need delete
             $prev_selected_city = get_post_meta($post_id, $selected_city_key, true);
+
             if ($prev_selected_city) {
                 $prev_selected_city = explode(',', $prev_selected_city);
 
