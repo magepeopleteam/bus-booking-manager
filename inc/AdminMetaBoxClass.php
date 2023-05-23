@@ -267,7 +267,7 @@ class AdminMetaBoxClass extends CommonClass
                 update_post_meta($post_id, $selected_city_key, $selected_city_str);
 
                 foreach ($selected_city as $city) {
-                    echo 'eee';die;
+                
                     $m_array = array();
                     $i = 0;
                     foreach ($_POST[$selected_pickpoint_name . $city] as $pickpoint) {
