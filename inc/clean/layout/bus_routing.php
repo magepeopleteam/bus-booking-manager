@@ -77,7 +77,7 @@
                                 <td align="center">
                                     <div class="wbbm_bus_route_time">
                                         <span class="wbbm_bus_route_icon wbbm_bus_route_icon2"><img src="<?php echo WBTM_PLUGIN_URL .'images/bus_route_clock.png';?>"/></span>
-                                        <input type="text"  value="<?php if (isset($field['wbbm_bus_bp_start_time']) && $field['wbbm_bus_bp_start_time'] != '') echo esc_attr($field['wbbm_bus_bp_start_time']); ?>" class="text" placeholder="15:00">
+                                        <input type="text" data-clocklet name='wbbm_bus_bp_start_time[]' value="<?php if (isset($field['wbbm_bus_bp_start_time']) && $field['wbbm_bus_bp_start_time'] != '') echo esc_attr($field['wbbm_bus_bp_start_time']); ?>" class="text" placeholder="15:00">
                                     </div>
                                 </td>
                                 <td align="center">
