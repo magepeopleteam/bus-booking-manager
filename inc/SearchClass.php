@@ -405,7 +405,7 @@ class SearchClass extends CommonClass
                                         <p>
                                             <strong><?php echo wbbm_get_option('wbbm_starting_text', 'wbbm_label_setting_sec', __('Start Time', 'bus-booking-manager')); ?>
                                             </strong>:
-                                            <?php echo $boarding_time; ?>
+                                            <?php echo get_wbbm_datetime($boarding_time, 'time'); ?>
                                         </p>
                                         <p>
                                             <strong><?php echo wbbm_get_option('wbbm_fare_text', 'wbbm_label_setting_sec', __('Fare', 'bus-booking-manager')); ?>
