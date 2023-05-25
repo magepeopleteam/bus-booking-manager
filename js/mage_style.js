@@ -50,7 +50,7 @@
     });
     $('.mage_qty_inc').on('click', function () {
         let target = $(this).siblings('input');
-        let value = parseInt(target.val()) + 1;
+        let value = target.val() ? parseInt(target.val()) + 1 : 1;
         target.trigger('input');
         mageTicketQty(target, value);
     });
