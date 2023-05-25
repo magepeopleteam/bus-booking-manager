@@ -296,9 +296,7 @@ class SearchClass extends CommonClass
         $coach_no = get_post_meta($id, 'wbbm_bus_no', true);
         $pickpoints = get_post_meta($id, 'wbbm_selected_pickpoint_name_' . $boarding_point_slug, true);
 
-        if ($pickpoints) {
-            $pickpoints = unserialize($pickpoints);
-        }
+        $pickpoints = is_string($pickpoints) ? maybe_unserialize($pickpoints) : $pickpoints;
 
         $is_sell_off = get_post_meta($id, 'wbbm_sell_off', true);
         $wbbm_features = get_post_meta($id, 'wbbm_features', true);
