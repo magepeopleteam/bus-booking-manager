@@ -308,23 +308,27 @@
                     }
 
                     // Extra Service
-                    $extra_service_qty = isset($_POST['extra_service_qty']) ? $_POST['extra_service_qty'] : array();
-                    $extra_services = get_post_meta($bus_id, 'mep_events_extra_prices', true);
                     $es_array = array();
-                    if(!empty($extra_services)):
-                        $c = 0;
-                        $es_price = 0;
-                        foreach ($extra_services as $field) {
-                            $es_array[$c] = array(
-                                'wbbm_es_name' => $field['option_name'],
-                                'wbbm_es_price' => (int)$field['option_price'],
-                                'wbbm_es_input_qty' => $extra_service_qty[$c][0],
-                                'wbbm_es_available_qty' => (int)$field['option_qty'],
-                            );
-                            $es_price += (int)$field['option_price'] * $extra_service_qty[$c][0];
-                            $c++;
-                        }
-                    endif;
+                    if(isset($_POST['extra_service_qty'])) {
+                        $extra_service_qty = $_POST['extra_service_qty'] > 0 ? $_POST['extra_service_qty'] : array();
+                        $extra_services = get_post_meta($bus_id, 'mep_events_extra_prices', true);
+                        if (!empty($extra_services)) :
+                            $c = 0;
+                            $es_price = 0;
+                            foreach ($extra_services as $field) {
+                                if($extra_service_qty[$c] > 0) {
+                                    $es_array[$c] = array(
+                                        'wbbm_es_name' => $field['option_name'],
+                                        'wbbm_es_price' => (int)$field['option_price'],
+                                        'wbbm_es_input_qty' => $extra_service_qty[$c],
+                                        'wbbm_es_available_qty' => (int)$field['option_qty'],
+                                    );
+                                    $es_price += (int)$field['option_price'] * $extra_service_qty[$c][0];
+                                    $c++;
+                                }
+                            }
+                        endif;
+                    }
                     // Extra Service END
 
                     $total_fare = $total_fare + $es_price + $extra_bag_price;
@@ -503,6 +507,31 @@
 
                             </ul>
 
+                            <?php if($total_extra_service_qty): ?>
+                                <li>
+                                    <strong>
+                                        <?php echo wbbm_get_option('wbbm_extra_services_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_extra_services_text', 'wbbm_label_setting_sec') . ': ' : _e('Extra Services', 'bus-booking-manager') . ': '; ?>
+                                    </strong>
+                                    <ol>
+                                        <?php
+                                        foreach ($wbbm_extra_services as $value) {
+                                            if($value['wbbm_es_input_qty'] > $value['wbbm_es_available_qty']):
+                                                ?>
+                                                <li><strong><?php echo $value['wbbm_es_name']; ?>: </strong><?php esc_html_e('Input service quantity has exceeded the limit!','bus-booking-manager'); ?></li>
+                                            <?php
+                                            else:
+                                                if($value['wbbm_es_input_qty'] > 0):
+                                                    ?>
+                                                    <li><strong><?php echo $value['wbbm_es_name']; ?>: </strong>(<?php echo wc_price($value['wbbm_es_price']); ?> x <?php echo $value['wbbm_es_input_qty']; ?>) = <?php echo wc_price((int)$value['wbbm_es_price'] * (int)$value['wbbm_es_input_qty']); ?></li>
+                                                <?php
+                                                endif;
+                                            endif;
+                                        }
+                                        ?>
+                                    </ol>
+                                </li>
+                            <?php endif; ?>
+
                             <?php
 
                         }else{
@@ -566,31 +595,6 @@
                                                     <?php echo wbbm_get_option('wbbm_extra_bag_price_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_extra_bag_price_text', 'wbbm_label_setting_sec') . ': ' : _e('Extra Bag Price', 'bus-booking-manager') . ': '; ?>
                                                 </strong>
                                                 <?php echo " (" . wc_price($extra_per_bag_price) . " x ".$_passenger['extra_bag_quantity'].") = " . wc_price((int)$_passenger['wbtm_extra_bag_price'] * (int)$_passenger['extra_bag_quantity']); ?>
-                                            </li>
-                                        <?php endif; ?>
-
-                                        <?php if($total_extra_service_qty && $i == 0): ?>
-                                            <li>
-                                                <strong>
-                                                    <?php echo wbbm_get_option('wbbm_extra_services_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_extra_services_text', 'wbbm_label_setting_sec') . ': ' : _e('Extra Services', 'bus-booking-manager') . ': '; ?>
-                                                </strong>
-                                                <ol>
-                                                    <?php
-                                                    foreach ($wbbm_extra_services as $value) {
-                                                        if($value['wbbm_es_input_qty'] > $value['wbbm_es_available_qty']):
-                                                            ?>
-                                                            <li><strong><?php echo $value['wbbm_es_name']; ?>: </strong><?php esc_html_e('Input service quantity has exceeded the limit!','bus-booking-manager'); ?></li>
-                                                        <?php
-                                                        else:
-                                                            if($value['wbbm_es_input_qty'] > 0):
-                                                                ?>
-                                                                <li><strong><?php echo $value['wbbm_es_name']; ?>: </strong>(<?php echo wc_price($value['wbbm_es_price']); ?> x <?php echo $value['wbbm_es_input_qty']; ?>) = <?php echo wc_price((int)$value['wbbm_es_price'] * (int)$value['wbbm_es_input_qty']); ?></li>
-                                                            <?php
-                                                            endif;
-                                                        endif;
-                                                    }
-                                                    ?>
-                                                </ol>
                                             </li>
                                         <?php endif; ?>
 
@@ -696,17 +700,39 @@
                                     $i++;
                                 }
                             }
+
+                            ?>
+                            <!-- Extra Service with passenger info -->
+                            <ul>
+                                <?php if($total_extra_service_qty): ?>
+                                    <li>
+                                        <strong>
+                                            <?php echo wbbm_get_option('wbbm_extra_services_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_extra_services_text', 'wbbm_label_setting_sec') . ': ' : _e('Extra Services', 'bus-booking-manager') . ': '; ?>
+                                        </strong>
+                                        <ol>
+                                            <?php
+                                            foreach ($wbbm_extra_services as $value) {
+                                                if($value['wbbm_es_input_qty'] > $value['wbbm_es_available_qty']):
+                                                    ?>
+                                                    <li><strong><?php echo $value['wbbm_es_name']; ?>: </strong><?php esc_html_e('Input service quantity has exceeded the limit!','bus-booking-manager'); ?></li>
+                                                <?php
+                                                else:
+                                                    if($value['wbbm_es_input_qty'] > 0):
+                                                        ?>
+                                                        <li><strong><?php echo $value['wbbm_es_name']; ?>: </strong>(<?php echo wc_price($value['wbbm_es_price']); ?> x <?php echo $value['wbbm_es_input_qty']; ?>) = <?php echo wc_price((int)$value['wbbm_es_price'] * (int)$value['wbbm_es_input_qty']); ?></li>
+                                                    <?php
+                                                    endif;
+                                                endif;
+                                            }
+                                            ?>
+                                        </ol>
+                                    </li>
+                                <?php endif; ?>
+                            </ul>
+                            <?php
                         }
 
-
-
-
-
-
-
-
                     }
-
 
                 }
 

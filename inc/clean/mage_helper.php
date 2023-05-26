@@ -532,110 +532,104 @@ function wbbm_extra_services_section($bus_id)
     $j_date = isset($_GET['j_date']) ? $_GET['j_date'] : '';
 
 
+    $is_enable_extra_services = get_post_meta($bus_id, 'show_extra_service', true);
     $extra_services = get_post_meta($bus_id, 'mep_events_extra_prices', true);
 
-    if ($extra_services) :
-        
-        ?>
+    if ($extra_services && $is_enable_extra_services == 'yes') :
+
+    ?>
         <div class="wbbm_extra_service_wrap">
             <h4 class="mar_b bor_tb"><?php echo __('Extra Service', 'bus-booking-manager'); ?></h4>
             <table class='wbbm_extra_service_table'>
                 <thead>
-                <tr>
-                    <td align="left"><?php echo __('Name:', 'bus-booking-manager'); ?></td>
-                    <td class="mage_text_center"><?php echo __('Quantity:', 'bus-booking-manager'); ?></td>
-                    <td class="mage_text_center"><?php echo __('Price:', 'bus-booking-manager'); ?></td>
-                </tr>
+                    <tr>
+                        <td align="left"><?php echo __('Name:', 'bus-booking-manager'); ?></td>
+                        <td class="mage_text_center"><?php echo __('Quantity:', 'bus-booking-manager'); ?></td>
+                        <td class="mage_text_center"><?php echo __('Price:', 'bus-booking-manager'); ?></td>
+                    </tr>
                 </thead>
                 <tbody>
-                <?php
-                $count_extra = 0;
-                foreach ($extra_services as $field) {
-                    $total_extra_service = (int)$field['option_qty'];
-                    $qty_type = $field['option_qty_type'];
-                    $total_sold = 0;
+                    <?php
+                    $count_extra = 0;
+                    foreach ($extra_services as $field) {
+                        $total_extra_service = (int)$field['option_qty'];
+                        $qty_type = $field['option_qty_type'];
+                        $total_sold = 0;
 
-                    $ext_left = ($total_extra_service - $total_sold);
-                    if(!isset($field['option_name']) || !isset($field['option_price'])) {
-                        continue;
-                    }
-                    $actual_price = strip_tags(wc_price($field['option_price']));
-                    $data_price = str_replace(get_woocommerce_currency_symbol(), '', $actual_price);
-                    $data_price = str_replace(wc_get_price_thousand_separator(), '', $data_price);
-                    $data_price = str_replace(wc_get_price_decimal_separator(), '.', $data_price);
+                        $ext_left = ($total_extra_service - $total_sold);
+                        if (!isset($field['option_name']) || !isset($field['option_price'])) {
+                            continue;
+                        }
+                        $actual_price = strip_tags(wc_price($field['option_price']));
+                        $data_price = str_replace(get_woocommerce_currency_symbol(), '', $actual_price);
+                        $data_price = str_replace(wc_get_price_thousand_separator(), '', $data_price);
+                        $data_price = str_replace(wc_get_price_decimal_separator(), '.', $data_price);
                     ?>
 
-                    <tr data-total="0">
-                        <td align="Left"><?php echo $field['option_name']; ?>
-                            <div class="xtra-item-left"><?php echo $ext_left; ?>
-                                <?php _e('Left:', 'bus-booking-manager'); ?>
-                            </div>
-                        </td>
-                        <td>
-                            <?php
-                            if ($ext_left > 0) {
-                                if ($qty_type == 'dropdown') { ?>
-                                    <select name="extra_service_qty[]" id="eventpxtp_<?php echo $count_extra;
-                                    ?>" class='extra-qty-box mage_form_full' data-price='<?php echo $data_price; ?>'>
-                                        <?php for ($i = 0; $i <= $ext_left; $i++) { ?>
-                                            <option value="<?php echo $i; ?>"><?php echo $i; ?><?php echo $field['option_name']; ?></option>
-                                        <?php } ?>
-                                    </select>
-                                <?php } else { ?>
-                                    <div class="mage_es_form_qty">
-                                        <div class="mage_flex mage_es_qty_minus"><i class="fa fa-minus"></i></div>
-                                        <input size="4" inputmode="numeric" type="number" class='extra-qty-box mage_form_full' step='1'
-                                               name='extra_service_qty[]'
-                                               data-price='<?php echo wbbm_get_price_including_tax($bus_id, $data_price); ?>'
-                                               value='0' min="0" max="<?php echo $ext_left; ?>">
-                                        <div class="mage_flex mage_es_qty_plus"><i class="fa fa-plus"></i></div>
-                                    </div>
+                        <tr data-total="0">
+                            <td align="Left"><?php echo $field['option_name']; ?>
+                                <div class="xtra-item-left"><?php echo $ext_left; ?>
+                                    <?php _e('Left:', 'bus-booking-manager'); ?>
+                                </div>
+                            </td>
+                            <td>
+                                <?php
+                                if ($ext_left > 0) {
+                                    if ($qty_type == 'dropdown') { ?>
+                                        <select name="extra_service_qty[]" id="eventpxtp_<?php echo $count_extra;
+                                                                                            ?>" class='extra-qty-box mage_form_full' data-price='<?php echo $data_price; ?>'>
+                                            <option value=""><?php _e('Select extra service', 'bus-booking-manager') ?></option>
+                                            <?php for ($i = 1; $i <= $ext_left; $i++) { ?>
+                                                <option value="<?php echo $i; ?>"><?php echo $i; ?> <?php echo $field['option_name']; ?></option>
+                                            <?php } ?>
+                                        </select>
+                                    <?php } else { ?>
+                                        <div class="mage_es_form_qty">
+                                            <div class="mage_flex mage_es_qty_minus"><i class="fa fa-minus"></i></div>
+                                            <input size="4" inputmode="numeric" type="number" class='extra-qty-box mage_form_full' step='1' name='extra_service_qty[]' data-price='<?php echo wbbm_get_price_including_tax($bus_id, $data_price); ?>' value='0' min="0" max="<?php echo $ext_left; ?>">
+                                            <div class="mage_flex mage_es_qty_plus"><i class="fa fa-plus"></i></div>
+                                        </div>
                                 <?php }
-                            } else {
-                                echo __('Not Available', 'bus-booking-manager');
-                            } ?>
-                        </td>
-                        <td class="mage_text_center">
-                            <?php
-                            $user = get_current_user_id();
-                            $user_roles = array();
-                            if ($user) {
-                                $user_meta = get_userdata($user);
-                                $user_roles = $user_meta->roles;
-                            }
+                                } else {
+                                    echo __('Not Available', 'bus-booking-manager');
+                                } ?>
+                            </td>
+                            <td class="mage_text_center">
+                                <?php
+                                $user = get_current_user_id();
+                                $user_roles = array();
+                                if ($user) {
+                                    $user_meta = get_userdata($user);
+                                    $user_roles = $user_meta->roles;
+                                }
 
-                            if (in_array('bus_sales_agent', $user_roles, true)) {
-                                echo '<input class="extra_service_per_price" type="text" name="extra_service_price[]" value="' . wbbm_get_price_including_tax($bus_id, $field['option_price']) . '" style="width: 80px"/>';
-                                if ($ext_left > 0) { ?>
-                                    <p style="display: none;"
-                                       class="price_jq"><?php echo $data_price > 0 ? $data_price : 0; ?></p>
-                                    <input type="hidden" name='extra_service_name[]'
-                                           value='<?php echo $field['option_name']; ?>'>
+                                if (in_array('bus_sales_agent', $user_roles, true)) {
+                                    echo '<input class="extra_service_per_price" type="text" name="extra_service_price[]" value="' . wbbm_get_price_including_tax($bus_id, $field['option_price']) . '" style="width: 80px"/>';
+                                    if ($ext_left > 0) { ?>
+                                        <p style="display: none;" class="price_jq"><?php echo $data_price > 0 ? $data_price : 0; ?></p>
+                                        <input type="hidden" name='extra_service_name[]' value='<?php echo $field['option_name']; ?>'>
+                                    <?php }
+                                } else {
+                                    echo wc_price(wbbm_get_price_including_tax($bus_id, $field['option_price']));
+                                    if ($ext_left > 0) { ?>
+                                        <p style="display: none;" class="price_jq"><?php echo $data_price > 0 ? $data_price : 0; ?></p>
+                                        <input type="hidden" name='extra_service_name[]' value='<?php echo $field['option_name']; ?>'>
+                                        <input type="hidden" name='extra_service_price[]' value='<?php echo $field['option_price']; ?>'>
                                 <?php }
-                            } else {
-                                echo wc_price(wbbm_get_price_including_tax($bus_id, $field['option_price']));
-                                if ($ext_left > 0) { ?>
-                                    <p style="display: none;"
-                                       class="price_jq"><?php echo $data_price > 0 ? $data_price : 0; ?></p>
-                                    <input type="hidden" name='extra_service_name[]'
-                                           value='<?php echo $field['option_name']; ?>'>
-                                    <input type="hidden" name='extra_service_price[]'
-                                           value='<?php echo $field['option_price']; ?>'>
-                                <?php }
-                            }
+                                }
 
-                            ?>
-                        </td>
-                    </tr>
+                                ?>
+                            </td>
+                        </tr>
                     <?php
-                    $count_extra++;
-                }
-                ?>
+                        $count_extra++;
+                    }
+                    ?>
                 </tbody>
             </table>
         </div>
 
-        <?php
+<?php
 
     endif;
 }
