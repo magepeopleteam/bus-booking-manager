@@ -203,8 +203,9 @@ endif;
                                 $boarding_point_slug = strtolower($boarding_point);
                                 $boarding_point_slug = preg_replace('/[^A-Za-z0-9-]/', '_', $boarding_point_slug);
                                 $pickpoints = get_post_meta(get_the_id(), 'wbbm_selected_pickpoint_name_'.$boarding_point_slug, true);
-                                if($pickpoints) {
-                                    $pickpoints = unserialize($pickpoints);
+                                $is_enable_pickpoint = get_post_meta($id, 'show_pickup_point', true);
+                                if($pickpoints && $is_enable_pickpoint == 'yes') {
+                                    $pickpoints = is_string($pickpoints) ? maybe_unserialize($pickpoints) : $pickpoints;
                                     if(!empty($pickpoints)) { ?>
                                         <div class="mage-form-field mage-field-inline">
                                             <label for="mage_pickpoint"><?php _e('Select Pickup Area', 'bus-booking-manager'); ?></label>
