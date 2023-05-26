@@ -1409,9 +1409,6 @@ div.mage_customer_info_area label.wbbm_extra_bag_wrap {
     text-align: center;
     display: -webkit-flex;
     display: flex;
-    -webkit-flex-wrap: wrap;
-    -ms-flex-wrap: wrap;
-    flex-wrap: wrap;
     background: #f7f7f7;
     padding: 1px;
     border: 1px solid #ddd;
