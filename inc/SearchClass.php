@@ -294,6 +294,7 @@ class SearchClass extends CommonClass
         $boarding_point_slug = preg_replace('/[^A-Za-z0-9-]/', '_', $boarding_point_slug);
 
         $coach_no = get_post_meta($id, 'wbbm_bus_no', true);
+        $is_enable_pickpoint = get_post_meta($id, 'show_pickup_point', true);
         $pickpoints = get_post_meta($id, 'wbbm_selected_pickpoint_name_' . $boarding_point_slug, true);
 
         $pickpoints = is_string($pickpoints) ? maybe_unserialize($pickpoints) : $pickpoints;
@@ -468,7 +469,7 @@ class SearchClass extends CommonClass
                                             </div>
                                         <?php endif; ?>
 
-                                        <?php if (!empty($pickpoints)) : ?>
+                                        <?php if (!empty($pickpoints) && $is_enable_pickpoint == 'yes') : ?>
                                             <div class="mage_center_space">
                                                 <div class="mage-form-field mage-form-pickpoint-field">
                                                     <strong><label for="mage_pickpoint"><?php _e('Select Pickup Area', 'bus-booking-manager'); echo ':'; ?></label></strong>
@@ -602,7 +603,7 @@ class SearchClass extends CommonClass
                                         </div>
                                     <?php endif; ?>
 
-                                    <?php if (!empty($pickpoints)) : ?>
+                                    <?php if (!empty($pickpoints) && $is_enable_pickpoint == 'yes') : ?>
                                         <div class="mage_center_space">
                                             <div class="mage-form-field mage-form-pickpoint-field">
                                                 <label for="mage_pickpoint"><?php echo wbbm_get_option('wbbm_pickuppoint_area_text', 'wbbm_label_setting_sec', __('Select Pickup Area', 'bus-booking-manager')); echo ':'; ?></label>
