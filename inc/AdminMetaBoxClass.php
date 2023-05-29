@@ -26,6 +26,7 @@ class AdminMetaBoxClass extends CommonClass
         if (!current_user_can('edit_post', $post_id)) {
             return;
         }
+        update_post_meta($post_id, '_sold_individually', 'yes');
         /* Bus Price Zero Allow */
         if (isset($_POST['wbbm_price_zero_allow'])) {
             $wbbm_price_zero_allow = strip_tags($_POST['wbbm_price_zero_allow']);
