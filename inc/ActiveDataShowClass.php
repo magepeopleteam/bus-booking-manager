@@ -13,7 +13,7 @@ class ActiveDataShowClass extends CommonClass
     {
 
         if($singleBus){
-            $wbtm_bus_on_dates = get_post_meta($post_id, 'wbtm_bus_on_dates', true) ? maybe_unserialize(get_post_meta($post_id, 'wbtm_bus_on_dates', true)) : [];
+            $wbtm_bus_on_dates = get_post_meta($post_id, 'wbtm_bus_on_date', true) ? maybe_unserialize(get_post_meta($post_id, 'wbtm_bus_on_date', true)) : [];
             $wbtm_offday_schedules = get_post_meta($post_id, 'wbtm_offday_schedule', true) ? get_post_meta($post_id, 'wbtm_offday_schedule', true) : [];
             $show_operational_on_day = get_post_meta($post_id, 'show_operational_on_day', true) ? get_post_meta($post_id, 'show_operational_on_day', true) : '';
             $show_off_day = get_post_meta($post_id, 'show_off_day', true) ? get_post_meta($post_id, 'show_off_day', true) : '';
@@ -47,7 +47,7 @@ class ActiveDataShowClass extends CommonClass
             $weekly_offday = '[' . $weekly_offday . ']';
             
 
-            echo "<input id=".'all_date_picker_info'." data-single_bus=".$singleBus."  data-enableDates=".$enableDates." data-off_particular_date=".$off_particular_date." data-weekly_offday=".$weekly_offday." data-enable_onday=".$show_operational_on_day." data-enable_offday=".$show_off_day." data-date_format=".$this->convert_datepicker_dateformat()." type=".'hidden'.">";
+            echo "<input id=".'all_date_picker_info'." data-single_bus=".($singleBus ? 1 : 0)."  data-enableDates=".$enableDates." data-off_particular_date=".$off_particular_date." data-weekly_offday=".$weekly_offday." data-enable_onday=".$show_operational_on_day." data-enable_offday=".$show_off_day." data-date_format=".$this->convert_datepicker_dateformat()." type=".'hidden'.">";
 
         }else{
 
