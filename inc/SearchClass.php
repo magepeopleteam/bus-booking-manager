@@ -381,11 +381,13 @@ class SearchClass extends CommonClass
                                     <div class="mage_bus_info">
                                         <h3><a href="<?php echo get_the_permalink($id) ?>"><?php echo the_title(); ?></a>
                                         </h3>
-                                        <p>
-                                            <strong><?php echo wbbm_get_option('wbbm_type_text', 'wbbm_label_setting_sec', __('Type', 'bus-booking-manager')); ?>
-                                            </strong>:
-                                            <?php echo $type_name; ?>
-                                        </p>
+                                        <?php if($type_name) : ?>
+                                            <p>
+                                                <strong><?php echo wbbm_get_option('wbbm_type_text', 'wbbm_label_setting_sec', __('Type', 'bus-booking-manager')); ?>
+                                                </strong>:
+                                                <?php echo $type_name; ?>
+                                            </p>
+                                        <?php endif; ?>
                                         <p>
                                             <strong><?php echo wbbm_get_option('wbbm_boarding_points_text', 'wbbm_label_setting_sec', __('Boarding', 'bus-booking-manager')); ?>
                                             </strong>:
@@ -526,10 +528,12 @@ class SearchClass extends CommonClass
                             <div class="mage_flex_equal mage_bus_details">
                                 <div class="mage_bus_info">
                                     <h3><a href="<?php echo get_the_permalink($id) ?>"><?php echo the_title(); ?></a></h3>
-                                    <p>
-                                        <strong><?php echo wbbm_get_option('wbbm_type_text', 'wbbm_label_setting_sec', __('Type :', 'bus-booking-manager')); ?></strong>
-                                        <?php echo $type_name; ?>
-                                    </p>
+                                    <?php if($type_name) : ?>
+                                        <p>
+                                            <strong><?php echo wbbm_get_option('wbbm_type_text', 'wbbm_label_setting_sec', __('Type :', 'bus-booking-manager')); ?></strong>
+                                            <?php echo $type_name; ?>
+                                        </p>
+                                    <?php endif; ?>
                                     <p>
                                         <strong><?php echo wbbm_get_option('wbbm_boarding_points_text', 'wbbm_label_setting_sec', __('Boarding :', 'bus-booking-manager')); ?></strong>
                                         <?php echo $boarding; ?>
