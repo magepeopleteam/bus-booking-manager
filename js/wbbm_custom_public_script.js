@@ -22,6 +22,7 @@
 			if(enable_onday || enable_offday){
 				if(enable_onday == 'yes') {
 					if(enableDates){
+						console.log(enableDates);
 						jQuery('#j_date').datepicker({
 							dateFormat: date_format,
 							minDate: 0,
@@ -87,8 +88,11 @@
 
 
 		function enableAllTheseDays(date,enableDates) {
+			console.log(enableDates);
 			var sdate = jQuery.datepicker.formatDate('dd-mm-yy', date)
 			if (enableDates.length > 0) {
+				console.log(sdate);
+				
 				if (jQuery.inArray(sdate, enableDates) != -1) {
 					return [true];
 				}
@@ -138,18 +142,18 @@
 	$(document).on('click','.mage_qty_inc, .mage_qty_dec',function (e){
 		var name_value = $(this).siblings('input').attr('name');
 		var  available_quantity =	$('[name="available_quantity"]').val();
-		set_max_quantity( name_value , available_quantity)
+		// set_max_quantity( name_value , available_quantity)
 	});
 	$(document).on('click','.ra_seat_qty',function (e){
 		var name_value = ($(this).attr('name'));
 		var  available_quantity =	$('[name="available_quantity"]').val();
-		set_max_quantity( name_value, available_quantity )
+		// set_max_quantity( name_value, available_quantity )
 	});
 
 	$(document).on('keyup','.ra_seat_qty',function (e){
 		var name_value = ($(this).attr('name'));
 		var  available_quantity =	$('[name="available_quantity"]').val();
-		set_max_quantity( name_value, available_quantity )
+		// set_max_quantity( name_value, available_quantity )
 	});
 
 	function set_max_quantity (name_value,available_quantity){
