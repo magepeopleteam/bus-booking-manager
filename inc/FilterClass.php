@@ -490,7 +490,7 @@
                                 <?php if ($total_child){ ?>
                                     <li>
                                         <strong>
-                                            <?php echo wbbm_get_option('wbbm_adult_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_adult_text', 'wbbm_label_setting_sec') : _e('Adult', 'bus-booking-manager'); echo ' ('.wc_price($total_child_fare).'*'.$total_child.')'.' = ';  ?>
+                                            <?php echo wbbm_get_option('wbbm_child_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_child_text', 'wbbm_label_setting_sec') : _e('Child', 'bus-booking-manager'); echo ' ('.wc_price($total_child_fare).'*'.$total_child.')'.' = ';  ?>
                                         </strong>
                                         <?php echo  wc_price($total_child*$total_child_fare); ?>
                                     </li>
@@ -499,7 +499,7 @@
                                 <?php if ($total_infant){ ?>
                                     <li>
                                         <strong>
-                                            <?php echo wbbm_get_option('wbbm_adult_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_adult_text', 'wbbm_label_setting_sec') : _e('Adult', 'bus-booking-manager');  echo ' ('.wc_price($total_infant_fare).'*'.$total_infant.')'.' = '; ?>
+                                            <?php echo wbbm_get_option('wbbm_infant_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_infant_text', 'wbbm_label_setting_sec') : _e('Infant', 'bus-booking-manager');  echo ' ('.wc_price($total_infant_fare).'*'.$total_infant.')'.' = '; ?>
                                         </strong>
                                         <?php echo  wc_price($total_infant*$total_infant_fare); ?>
                                     </li>
