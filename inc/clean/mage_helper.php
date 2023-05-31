@@ -27,7 +27,7 @@ function mage_qty_box($price,$name, $return) {
                    data-ticket-type="<?php echo $ticket_type; ?>"
                    data-price="<?php echo $price; ?>"
                    name="<?php echo $name; ?>"
-                   value=""
+                   value="0"
                    min="0"
                    max="<?php echo $available_seat; ?>"
                    <?php echo ($ticket_type === 'adult' ? 'required' : '') ?>
