@@ -58,7 +58,7 @@
                     $child_fare_roundtrip = 0;
 
                     if (isset($_POST['child_quantity'])) {
-                        $total_child_seat = sanitize_text_field($_POST['child_quantity']);
+                        $total_child_seat = (int) sanitize_text_field($_POST['child_quantity']);
                         $child_fare = mage_seat_price($product_id, $start_stops, $end_stops, 'child');
                         $child_fare_original = mage_seat_price($product_id, $start_stops, $end_stops, 'child');
                         $child_fare_roundtrip = mage_seat_price($product_id, $start_stops, $end_stops, 'child', true);
@@ -86,7 +86,7 @@
                     $infant_fare_original = 0;
                     $infant_fare_roundtrip = 0;
                     if (isset($_POST['infant_quantity'])) {
-                        $total_infant_seat = sanitize_text_field($_POST['infant_quantity']);
+                        $total_infant_seat = (int) sanitize_text_field($_POST['infant_quantity']);
                         $infant_fare = mage_seat_price($product_id, $start_stops, $end_stops, 'infant');
                         $infant_fare_original = mage_seat_price($product_id, $start_stops, $end_stops, 'infant');
                         $infant_fare_roundtrip = mage_seat_price($product_id, $start_stops, $end_stops, 'infant', true);
