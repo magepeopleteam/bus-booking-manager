@@ -479,7 +479,9 @@ class SearchClass extends CommonClass
                                                         <option value=""><?php _e('Select your Pickup Area', 'bus-booking-manager'); ?></option>
                                                         <?php
                                                         foreach ($pickpoints as $pickpoint) {
-                                                            echo '<option value="' . $pickpoint['pickpoint'] . '->' . $pickpoint['time']. '">' . ucfirst($pickpoint['pickpoint']) . ' <=> ' . $pickpoint['time'] . '</option>';
+                                                            $time_html = $pickpoint["time"] ? '('.get_wbbm_datetime($pickpoint["time"], 'time').')' : '';
+                                                            $time_value = $pickpoint["time"] ? '-'. get_wbbm_datetime($pickpoint["time"], 'time') : '';
+                                                            echo '<option value="'. $pickpoint["pickpoint"] . $time_value .'">'. ucfirst($pickpoint["pickpoint"]) . $time_html. '</option>';
                                                         } ?>
                                                     </select>
                                                 </div>
