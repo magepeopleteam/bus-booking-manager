@@ -833,14 +833,16 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
     function wbbm_get_bus_price_by_type($start, $end, $type = 'adult', $array = null)
     {
         $type = $type;
-        foreach ($array as $key => $val) {
-            if ($val['wbbm_bus_bp_price_stop'] === $start && $val['wbbm_bus_dp_price_stop'] === $end) {
-                if ($type == 'child') {
-                    return (isset($val['wbbm_bus_price_child']) ? $val['wbbm_bus_price_child'] : null);
-                } elseif ($type == 'infant') {
-                    return (isset($val['wbbm_bus_price_infant']) ? $val['wbbm_bus_price_infant'] : null);
-                } else {
-                    return $val['wbbm_bus_price'];
+        if($array) {
+            foreach ($array as $key => $val) {
+                if ($val['wbbm_bus_bp_price_stop'] === $start && $val['wbbm_bus_dp_price_stop'] === $end) {
+                    if ($type == 'child') {
+                        return (isset($val['wbbm_bus_price_child']) ? $val['wbbm_bus_price_child'] : null);
+                    } elseif ($type == 'infant') {
+                        return (isset($val['wbbm_bus_price_infant']) ? $val['wbbm_bus_price_infant'] : null);
+                    } else {
+                        return $val['wbbm_bus_price'];
+                    }
                 }
             }
         }
