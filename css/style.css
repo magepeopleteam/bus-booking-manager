@@ -1404,8 +1404,8 @@ div.mage_customer_info_area label.wbbm_extra_bag_wrap {
 
 .wbbm_extra_bag_wrap div.mage_eb_form_qty,
 .wbbm_extra_service_wrap div.mage_es_form_qty {
-    max-width: 100%;
-    margin: 0;
+    max-width: 140px;
+    margin: 0 auto;
     text-align: center;
     display: -webkit-flex;
     display: flex;
