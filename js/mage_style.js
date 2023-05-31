@@ -104,7 +104,7 @@
         let currentTarget = $(this).parents('.mage_search_list').find('.mage_form[data-price]');
         let seat_available = $(this).parents('.mage_search_list').attr('data-seat-available');
         currentTarget.each(function (index) {
-            ticket += parseInt($(this).val());
+            ticket += $(this).val() ? parseInt($(this).val()) : 0;
         });
         var pic_ele = $(this).parents('.mage_search_list').find('select[name="mage_pickpoint"]');
         var pickpoint = $(this).parents('.mage_search_list').find('select[name="mage_pickpoint"] option:selected').val();

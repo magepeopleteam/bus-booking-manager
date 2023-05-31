@@ -30,7 +30,7 @@ function mage_qty_box($price,$name, $return) {
                    value=""
                    min="0"
                    max="<?php echo $available_seat; ?>"
-                   required
+                   <?php echo ($ticket_type === 'adult' ? 'required' : '') ?>
             />
             <div class="mage_flex mage_qty_inc"><span class="fa fa-plus"></span></div>
         </div>
