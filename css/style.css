@@ -1405,13 +1405,10 @@ div.mage_customer_info_area label.wbbm_extra_bag_wrap {
 .wbbm_extra_bag_wrap div.mage_eb_form_qty,
 .wbbm_extra_service_wrap div.mage_es_form_qty {
     max-width: 140px;
-    margin: 0;
+    margin: 0 auto;
     text-align: center;
     display: -webkit-flex;
     display: flex;
-    -webkit-flex-wrap: wrap;
-    -ms-flex-wrap: wrap;
-    flex-wrap: wrap;
     background: #f7f7f7;
     padding: 1px;
     border: 1px solid #ddd;
@@ -1473,6 +1470,7 @@ div.mage_customer_info_area label.wbbm_extra_bag_wrap {
 .wbbm_extra_service_table {
     margin-top: 20px;
     font-size: 14px;
+    width: 100%;
 }
 
 .wbbm_extra_service_table thead {

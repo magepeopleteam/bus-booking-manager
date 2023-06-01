@@ -82,12 +82,12 @@ class SearchClass extends CommonClass
                         <span><?php echo wbbm_get_option('wbbm_schedule_text', 'wbbm_label_setting_sec', __('Schedule', 'bus-booking-manager')); ?></span>
                     </div>
                     <div class="mage-search-res-header--right">
-                        <?php if (isset($general_setting['wbbm_type_column_switch']) && $general_setting['wbbm_type_column_switch'] == 'on' || !isset($general_setting['wbbm_type_column_switch'])) { ?>
+                        <?php if ((isset($general_setting['wbbm_type_column_switch']) && $general_setting['wbbm_type_column_switch'] == 'on') || !isset($general_setting['wbbm_type_column_switch'])) { ?>
                             <span><?php echo wbbm_get_option('wbbm_type_text', 'wbbm_label_setting_sec', __('Type', 'bus-booking-manager')); ?></span>
                         <?php  } ?>
                         <span><?php echo wbbm_get_option('wbbm_fare_text', 'wbbm_label_setting_sec', __('Fare', 'bus-booking-manager')); ?></span>
 
-                        <?php if (isset($general_setting['wbbm_seat_column_switch']) && $general_setting['wbbm_seat_column_switch'] == 'on') { ?>
+                        <?php if ((isset($general_setting['wbbm_seat_column_switch']) && $general_setting['wbbm_seat_column_switch'] == 'on') || !isset($general_setting['wbbm_seat_column_switch'])) { ?>
                             <span><?php echo wbbm_get_option('wbbm_seats_available_text', 'wbbm_label_setting_sec', __('Seat Available', 'bus-booking-manager')); ?></span>
                         <?php  } ?>
 
@@ -294,6 +294,7 @@ class SearchClass extends CommonClass
         $boarding_point_slug = preg_replace('/[^A-Za-z0-9-]/', '_', $boarding_point_slug);
 
         $coach_no = get_post_meta($id, 'wbbm_bus_no', true);
+        $is_enable_pickpoint = get_post_meta($id, 'show_pickup_point', true);
         $pickpoints = get_post_meta($id, 'wbbm_selected_pickpoint_name_' . $boarding_point_slug, true);
 
         $pickpoints = is_string($pickpoints) ? maybe_unserialize($pickpoints) : $pickpoints;
@@ -342,7 +343,7 @@ class SearchClass extends CommonClass
                             </div>
                         </div>
                         <div class="mage-search-res-header--right">
-                            <?php if(isset($general_setting['wbbm_type_column_switch']) && $general_setting['wbbm_type_column_switch'] == 'on'){ ?>
+                            <?php if((isset($general_setting['wbbm_type_column_switch']) && $general_setting['wbbm_type_column_switch'] == 'on') || !isset($general_setting['wbbm_type_column_switch'])){ ?>
                                 <div>
                                     <strong class="mage-sm-show"><?php echo wbbm_get_option('wbbm_type_text', 'wbbm_label_setting_sec', __('Type', 'bus-booking-manager')); ?></strong>
                                     <span><?php echo $type_name; ?></span>
@@ -380,11 +381,13 @@ class SearchClass extends CommonClass
                                     <div class="mage_bus_info">
                                         <h3><a href="<?php echo get_the_permalink($id) ?>"><?php echo the_title(); ?></a>
                                         </h3>
-                                        <p>
-                                            <strong><?php echo wbbm_get_option('wbbm_type_text', 'wbbm_label_setting_sec', __('Type', 'bus-booking-manager')); ?>
-                                            </strong>:
-                                            <?php echo $type_name; ?>
-                                        </p>
+                                        <?php if($type_name) : ?>
+                                            <p>
+                                                <strong><?php echo wbbm_get_option('wbbm_type_text', 'wbbm_label_setting_sec', __('Type', 'bus-booking-manager')); ?>
+                                                </strong>:
+                                                <?php echo $type_name; ?>
+                                            </p>
+                                        <?php endif; ?>
                                         <p>
                                             <strong><?php echo wbbm_get_option('wbbm_boarding_points_text', 'wbbm_label_setting_sec', __('Boarding', 'bus-booking-manager')); ?>
                                             </strong>:
@@ -405,7 +408,7 @@ class SearchClass extends CommonClass
                                         <p>
                                             <strong><?php echo wbbm_get_option('wbbm_starting_text', 'wbbm_label_setting_sec', __('Start Time', 'bus-booking-manager')); ?>
                                             </strong>:
-                                            <?php echo $boarding_time; ?>
+                                            <?php echo get_wbbm_datetime($boarding_time, 'time'); ?>
                                         </p>
                                         <p>
                                             <strong><?php echo wbbm_get_option('wbbm_fare_text', 'wbbm_label_setting_sec', __('Fare', 'bus-booking-manager')); ?>
@@ -468,7 +471,7 @@ class SearchClass extends CommonClass
                                             </div>
                                         <?php endif; ?>
 
-                                        <?php if (!empty($pickpoints)) : ?>
+                                        <?php if (!empty($pickpoints) && $is_enable_pickpoint == 'yes') : ?>
                                             <div class="mage_center_space">
                                                 <div class="mage-form-field mage-form-pickpoint-field">
                                                     <strong><label for="mage_pickpoint"><?php _e('Select Pickup Area', 'bus-booking-manager'); echo ':'; ?></label></strong>
@@ -476,7 +479,9 @@ class SearchClass extends CommonClass
                                                         <option value=""><?php _e('Select your Pickup Area', 'bus-booking-manager'); ?></option>
                                                         <?php
                                                         foreach ($pickpoints as $pickpoint) {
-                                                            echo '<option value="' . $pickpoint['pickpoint'] . '->' . $pickpoint['time']. '">' . ucfirst($pickpoint['pickpoint']) . ' <=> ' . $pickpoint['time'] . '</option>';
+                                                            $time_html = $pickpoint["time"] ? '('.get_wbbm_datetime($pickpoint["time"], 'time').')' : '';
+                                                            $time_value = $pickpoint["time"] ? '-'. get_wbbm_datetime($pickpoint["time"], 'time') : '';
+                                                            echo '<option value="'. $pickpoint["pickpoint"] . $time_value .'">'. ucfirst($pickpoint["pickpoint"]) . $time_html. '</option>';
                                                         } ?>
                                                     </select>
                                                 </div>
@@ -525,10 +530,12 @@ class SearchClass extends CommonClass
                             <div class="mage_flex_equal mage_bus_details">
                                 <div class="mage_bus_info">
                                     <h3><a href="<?php echo get_the_permalink($id) ?>"><?php echo the_title(); ?></a></h3>
-                                    <p>
-                                        <strong><?php echo wbbm_get_option('wbbm_type_text', 'wbbm_label_setting_sec', __('Type :', 'bus-booking-manager')); ?></strong>
-                                        <?php echo $type_name; ?>
-                                    </p>
+                                    <?php if($type_name) : ?>
+                                        <p>
+                                            <strong><?php echo wbbm_get_option('wbbm_type_text', 'wbbm_label_setting_sec', __('Type :', 'bus-booking-manager')); ?></strong>
+                                            <?php echo $type_name; ?>
+                                        </p>
+                                    <?php endif; ?>
                                     <p>
                                         <strong><?php echo wbbm_get_option('wbbm_boarding_points_text', 'wbbm_label_setting_sec', __('Boarding :', 'bus-booking-manager')); ?></strong>
                                         <?php echo $boarding; ?>
@@ -602,7 +609,7 @@ class SearchClass extends CommonClass
                                         </div>
                                     <?php endif; ?>
 
-                                    <?php if (!empty($pickpoints)) : ?>
+                                    <?php if (!empty($pickpoints) && $is_enable_pickpoint == 'yes') : ?>
                                         <div class="mage_center_space">
                                             <div class="mage-form-field mage-form-pickpoint-field">
                                                 <label for="mage_pickpoint"><?php echo wbbm_get_option('wbbm_pickuppoint_area_text', 'wbbm_label_setting_sec', __('Select Pickup Area', 'bus-booking-manager')); echo ':'; ?></label>

@@ -211,6 +211,10 @@ div[class^='mage'] {
     line-height: 1.25 !important;
 }
 
+.mage-search-res-wrapper .woocommerce-notices-wrapper {
+    margin-bottom: 10px;
+}
+
 ul.mage_list_inline li a {
     color: #fff;
 }

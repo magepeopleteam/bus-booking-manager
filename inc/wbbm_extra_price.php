@@ -348,9 +348,9 @@ function add_the_date_validation( $passed ) {
         $dropping_var = $return ? 'bus_start_route' : 'bus_end_route';
         $date_var = $return ? 'r_date' : 'j_date';
         $available_seat = wbbm_intermidiate_available_seat(@$_GET[$boarding_var], @$_GET[$dropping_var], wbbm_convert_date_to_php(mage_get_isset($date_var)),$eid);
-        $adult_qty = isset($_POST['adult_quantity']) ? $_POST['adult_quantity'] : 0;
-        $child_qty = isset($_POST['child_quantity']) ? $_POST['child_quantity'] : 0;
-        $infant_qty = isset($_POST['infant_quantity']) ? $_POST['infant_quantity'] : 0;
+        $adult_qty = isset($_POST['adult_quantity']) ? (int) $_POST['adult_quantity'] : 0;
+        $child_qty = isset($_POST['child_quantity']) ? (int) $_POST['child_quantity'] : 0;
+        $infant_qty = isset($_POST['infant_quantity']) ? (int) $_POST['infant_quantity'] : 0;
 
         $total_booking_seat = $adult_qty + $child_qty  + $infant_qty ;
 
