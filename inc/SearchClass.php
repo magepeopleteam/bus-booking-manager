@@ -343,7 +343,7 @@ class SearchClass extends CommonClass
                             </div>
                         </div>
                         <div class="mage-search-res-header--right">
-                            <?php if(isset($general_setting['wbbm_type_column_switch']) && $general_setting['wbbm_type_column_switch'] == 'on'){ ?>
+                            <?php if((isset($general_setting['wbbm_type_column_switch']) && $general_setting['wbbm_type_column_switch'] == 'on') || !isset($general_setting['wbbm_type_column_switch'])){ ?>
                                 <div>
                                     <strong class="mage-sm-show"><?php echo wbbm_get_option('wbbm_type_text', 'wbbm_label_setting_sec', __('Type', 'bus-booking-manager')); ?></strong>
                                     <span><?php echo $type_name; ?></span>
