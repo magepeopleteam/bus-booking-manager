@@ -789,6 +789,12 @@ input#j_date{width: auto;}
 .mage-bus-booking-wrapper .mage_bus_info p {
     line-height: 1.5em;
 }
+.wbbm_dropoff-desc {
+    display: block;
+    margin-left: 128px;
+    color: #B37626;
+    font-size: 14px;
+}
 
 .mage-bus-booking-wrapper .mage_price_info {
     flex-basis: 40%;
