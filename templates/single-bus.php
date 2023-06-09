@@ -125,6 +125,13 @@ endif;
                                     <strong><?php echo wbbm_get_option('wbbm_dropping_points_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_dropping_points_text', 'wbbm_label_setting_sec') : _e('Dropping', 'bus-booking-manager'); echo ':'; ?></strong>
                                     <?php echo $dropping; ?>
                                     <strong>(<?php echo $dropping_time; ?>)</strong>
+
+                                    <?php 
+                                        $dropoff_desc = (get_term_by('name', $dropping, 'wbbm_bus_stops') ? get_term_by('name', $dropping, 'wbbm_bus_stops')->description : '');
+                                        if($dropoff_desc) {
+                                            echo '<span class="wbbm_dropoff-desc wbbm_dropoff-desc-single">'.$dropoff_desc.'</span>';
+                                        }
+                                    ?>
                                 </p>
                             <?php  } ?>
                             <p>
@@ -217,7 +224,7 @@ endif;
                                                     $time_value = $pickpoint["time"] ? '-'. get_wbbm_datetime($pickpoint["time"], 'time') : '';
                                                     $pick_desc = (get_term_by('name', $pickpoint["pickpoint"], 'wbbm_bus_pickpoint') ? get_term_by('name', $pickpoint["pickpoint"], 'wbbm_bus_pickpoint')->description : '');
                                                     echo '<option value="'. $pickpoint["pickpoint"] . $time_value .'">'. ucfirst($pickpoint["pickpoint"]) . $time_html .'</option>';
-                                                    echo ($pick_desc ? '<option disabled style="color:#e85b5b;font-style:italic">&nbsp;&nbsp; '.$pick_desc.'</option>' : '');
+                                                    echo ($pick_desc ? '<option disabled>&nbsp;&nbsp; '.$pick_desc.'</option>' : '');
                                                 } ?>
                                             </select>
                                         </div>

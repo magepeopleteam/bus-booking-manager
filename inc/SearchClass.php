@@ -490,7 +490,7 @@ class SearchClass extends CommonClass
                                                             $time_value = $pickpoint["time"] ? '-'. get_wbbm_datetime($pickpoint["time"], 'time') : '';
                                                             $pick_desc = (get_term_by('name', $pickpoint["pickpoint"], 'wbbm_bus_pickpoint') ? get_term_by('name', $pickpoint["pickpoint"], 'wbbm_bus_pickpoint')->description : '');
                                                             echo '<option value="'. $pickpoint["pickpoint"] . $time_value .'">'. ucfirst($pickpoint["pickpoint"]) . $time_html .'</option>';
-                                                            echo ($pick_desc ? '<option disabled style="color:#e85b5b;font-style:italic">&nbsp;&nbsp; '.$pick_desc.'</option>' : '');
+                                                            echo ($pick_desc ? '<option disabled>&nbsp;&nbsp; '.$pick_desc.'</option>' : '');
                                                         } ?>
                                                     </select>
                                                 </div>
@@ -630,7 +630,7 @@ class SearchClass extends CommonClass
                                                         $time_value = $pickpoint["time"] ? '-'. get_wbbm_datetime($pickpoint["time"], 'time') : '';
                                                         $pick_desc = (get_term_by('name', $pickpoint["pickpoint"], 'wbbm_bus_pickpoint') ? get_term_by('name', $pickpoint["pickpoint"], 'wbbm_bus_pickpoint')->description : '');
                                                         echo '<option value="'. $pickpoint["pickpoint"] . $time_value .'">'. ucfirst($pickpoint["pickpoint"]) . $time_html .'</option>';
-                                                        echo ($pick_desc ? '<option disabled style="color:#e85b5b;font-style:italic">&nbsp;&nbsp; '.$pick_desc.'</option>' : '');
+                                                        echo ($pick_desc ? '<option disabled>&nbsp;&nbsp; '.$pick_desc.'</option>' : '');
                                                     } ?>
                                                 </select>
                                             </div>
