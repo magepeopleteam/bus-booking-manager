@@ -399,6 +399,13 @@ class SearchClass extends CommonClass
                                             </strong>:
                                             <?php echo $dropping; ?>
                                             <strong>(<?php echo get_wbbm_datetime($dropping_time, 'time'); ?>)</strong>
+                                            
+                                            <?php 
+                                                $dropoff_desc = (get_term_by('name', $dropping, 'wbbm_bus_stops') ? get_term_by('name', $dropping, 'wbbm_bus_stops')->description : '');
+                                                if($dropoff_desc) {
+                                                    echo '<span class="wbbm_dropoff-desc">'.$dropoff_desc.'</span>';
+                                                }
+                                            ?>                                           
                                         </p>
                                         <p>
                                             <strong><?php echo wbbm_get_option('wbbm_date_text', 'wbbm_label_setting_sec', __('Date', 'bus-booking-manager')); ?>
@@ -479,9 +486,11 @@ class SearchClass extends CommonClass
                                                         <option value=""><?php _e('Select your Pickup Area', 'bus-booking-manager'); ?></option>
                                                         <?php
                                                         foreach ($pickpoints as $pickpoint) {
-                                                            $time_html = $pickpoint["time"] ? '('.get_wbbm_datetime($pickpoint["time"], 'time').')' : '';
+                                                            $time_html = $pickpoint["time"] ? ' ('.get_wbbm_datetime($pickpoint["time"], 'time').')' : '';
                                                             $time_value = $pickpoint["time"] ? '-'. get_wbbm_datetime($pickpoint["time"], 'time') : '';
-                                                            echo '<option value="'. $pickpoint["pickpoint"] . $time_value .'">'. ucfirst($pickpoint["pickpoint"]) . $time_html. '</option>';
+                                                            $pick_desc = (get_term_by('name', $pickpoint["pickpoint"], 'wbbm_bus_pickpoint') ? get_term_by('name', $pickpoint["pickpoint"], 'wbbm_bus_pickpoint')->description : '');
+                                                            echo '<option value="'. $pickpoint["pickpoint"] . $time_value .'">'. ucfirst($pickpoint["pickpoint"]) . $time_html .'</option>';
+                                                            echo ($pick_desc ? '<option disabled>&nbsp;&nbsp; '.$pick_desc.'</option>' : '');
                                                         } ?>
                                                     </select>
                                                 </div>
@@ -617,7 +626,11 @@ class SearchClass extends CommonClass
                                                     <option value=""><?php echo wbbm_get_option('wbbm_pickuppoint_area_text', 'wbbm_label_setting_sec', __('Select Pickup Area', 'bus-booking-manager')); ?></option>
                                                     <?php
                                                     foreach ($pickpoints as $pickpoint) {
-                                                        echo '<option value="' . $pickpoint['pickpoint'] . '->' . $pickpoint['time']. '">' . ucfirst($pickpoint['pickpoint']) . ' <=> ' . $pickpoint['time'] . '</option>';
+                                                        $time_html = $pickpoint["time"] ? ' ('.get_wbbm_datetime($pickpoint["time"], 'time').')' : '';
+                                                        $time_value = $pickpoint["time"] ? '-'. get_wbbm_datetime($pickpoint["time"], 'time') : '';
+                                                        $pick_desc = (get_term_by('name', $pickpoint["pickpoint"], 'wbbm_bus_pickpoint') ? get_term_by('name', $pickpoint["pickpoint"], 'wbbm_bus_pickpoint')->description : '');
+                                                        echo '<option value="'. $pickpoint["pickpoint"] . $time_value .'">'. ucfirst($pickpoint["pickpoint"]) . $time_html .'</option>';
+                                                        echo ($pick_desc ? '<option disabled>&nbsp;&nbsp; '.$pick_desc.'</option>' : '');
                                                     } ?>
                                                 </select>
                                             </div>

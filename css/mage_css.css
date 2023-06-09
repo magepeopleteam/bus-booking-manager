@@ -789,6 +789,15 @@ input#j_date{width: auto;}
 .mage-bus-booking-wrapper .mage_bus_info p {
     line-height: 1.5em;
 }
+.wbbm_dropoff-desc {
+    display: block;
+    margin-left: 128px;
+    color: #B37626;
+    font-size: 14px;
+}
+.wbbm_dropoff-desc-single {
+    margin-left: 82px;
+}
 
 .mage-bus-booking-wrapper .mage_price_info {
     flex-basis: 40%;
@@ -1099,6 +1108,11 @@ input#j_date{width: auto;}
     float: right;
     display: inline-block;
     width: auto;
+}
+
+.mage-form-field.mage-form-pickpoint-field select option:not([disabled]),
+select.mage_pickpoint option:not([disabled]) {
+    font-weight: 700;
 }
 
 .mage-search-brief-row .mage-search-res-header--img img {
