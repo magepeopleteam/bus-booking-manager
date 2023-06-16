@@ -78,6 +78,7 @@
                         <?php if ($selected_city_pickpoints != '') {
                             $selected_city_pickpoints = explode(',', $selected_city_pickpoints);
                             foreach ($selected_city_pickpoints as $single) {
+                                $city_name = $single ? ucfirst(str_replace('_', ' ', $single)) : '';
                                 $get_pickpoints_data = get_post_meta($post->ID, 'wbbm_selected_pickpoint_name_' . strtolower($single), true);
 
                                 ?>
@@ -85,7 +86,7 @@
 
                                 <div class="wbbm_selected_city_item">
                                     <span class="remove_city_for_pickpoint"><i class="fas fa-trash-alt"></i></span>
-                                    <h4 class="wbbm_pickpoint_title"><?php echo ucfirst($single); ?></h4>
+                                    <h4 class="wbbm_pickpoint_title"><?php echo $city_name; ?></h4>
                                     <input type="hidden" name="wbbm_pickpoint_selected_city[]" value="<?php echo $single; ?>">
                                     <div class="pickpoint-adding-wrap-main">
                                         <div class="pickpoint-adding-wrap">
