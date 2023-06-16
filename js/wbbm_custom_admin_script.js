@@ -437,8 +437,9 @@
 			}
 			let term_id = $(this).find(':selected').data('term_id');
 			if(term_id){
+				const pick_slug = pick_name.replace(/ /g, "_");
 				if($.inArray(pick_name, select_city_pickpoints_array) == -1) {
-					$('.ra_pick_boarding').append("<option value="+pick_name+">"+pick_name+"</option>");
+					$('.ra_pick_boarding').append("<option value=" + pick_slug +">"+pick_name+"</option>");
 				}
 
 
