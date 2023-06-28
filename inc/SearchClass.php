@@ -393,6 +393,13 @@ class SearchClass extends CommonClass
                                             </strong>:
                                             <?php echo $boarding; ?>
                                             <strong>(<?php echo get_wbbm_datetime($boarding_time, 'time'); ?>)</strong>
+
+                                            <?php 
+                                                $boarding_desc = (get_term_by('name', $boarding, 'wbbm_bus_stops') ? get_term_by('name', $boarding, 'wbbm_bus_stops')->description : '');
+                                                if($boarding_desc) {
+                                                    echo '<span class="wbbm_dropoff-desc">'.$boarding_desc.'</span>';
+                                                }
+                                            ?> 
                                         </p>
                                         <p>
                                             <strong><?php echo wbbm_get_option('wbbm_dropping_points_text', 'wbbm_label_setting_sec', __('Dropping', 'bus-booking-manager')); ?>
