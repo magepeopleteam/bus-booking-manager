@@ -763,19 +763,24 @@ class SearchClass extends CommonClass
                     <?php
                     if($single_bus){
 
-                        $start_stops = get_post_meta(get_the_id(),'wbbm_bus_prices',true);
-                        $start_stops = array_values(
-                            array_reduce($start_stops, function($r, $a){
-                                if (!isset($r[$a['wbbm_bus_bp_price_stop']])) $r[$a['wbbm_bus_bp_price_stop']] = $a;
-                                return $r;
-                            }, [])
-                        );
-
-                        echo '<div class="mage_input_select_list" '; if($search_form_dropdown_b_color){ echo 'style="background-color:'.$search_form_dropdown_b_color.'"'; } echo '><ul>';
-
-
+                        $start_stops = get_post_meta(get_the_id(),'wbbm_bus_prices',true) ? get_post_meta(get_the_id(), 'wbbm_bus_prices', true) : array();
                         if($start_stops) {
-                            foreach ($start_stops as $_start_stops) {
+                            $start_stops = array_values(
+                                array_reduce($start_stops, function ($r, $a) {
+                                    if (!isset($r[$a['wbbm_bus_bp_price_stop']])) $r[$a['wbbm_bus_bp_price_stop']] = $a;
+                                    return $r;
+                                }, [])
+                            );
+
+                            echo '<div class="mage_input_select_list" ';
+                            if ($search_form_dropdown_b_color) {
+                                echo 'style="background-color:' . $search_form_dropdown_b_color . '"';
+                            }
+                            echo '><ul>';
+
+
+                            if ($start_stops) {
+                                foreach ($start_stops as $_start_stops) {
 
                                     echo '<li ';
                                     if ($search_form_dropdown_text_color) {
@@ -784,11 +789,11 @@ class SearchClass extends CommonClass
                                     echo ' data-route="' . $_start_stops['wbbm_bus_bp_price_stop'] . '">
  
                                 <span class="fa fa-map-marker"></span>' . $_start_stops['wbbm_bus_bp_price_stop'] . '</li>';
-
+                                }
                             }
-                        }
 
-                        echo '</ul></div>';
+                            echo '</ul></div>';
+                        }
                     }else {
                         mage_route_list();
                     }
