@@ -104,6 +104,8 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
     //--------------
     require_once(dirname(__FILE__) . "/inc/class-meta-box.php");
     require_once(dirname(__FILE__) . "/inc/BusBookingManagerClass.php");
+
+    require_once(dirname(__FILE__) . "/inc/wbbm_dummy_import.php");
     
 
     // Language Load
