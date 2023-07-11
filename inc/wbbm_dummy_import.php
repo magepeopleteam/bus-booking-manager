@@ -13,9 +13,15 @@ if (!class_exists('wbbm_dummy_import')) {
         public function __construct()
         {
             //update_option('wbbm_bus_data_update_01', 'completed');
-            //update_option('wbbm_dummy_already_inserted', 'no');
+            add_action('deactivate_plugin', array($this, 'update_option'));
+            add_action('activated_plugin', array($this, 'update_option'));
             add_action('admin_init', array($this, 'dummy_import'), 10);
 
+        }
+
+        function update_option() 
+        {
+            update_option('wbbm_dummy_already_inserted', 'no');
         }
 
         public function test()
