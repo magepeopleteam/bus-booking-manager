@@ -2059,3 +2059,5 @@ function check_woocommerce()
  ***************************/
 require_once(dirname(__FILE__) . "/inc/wbbm-required-plugins.php");
 
+require_once(dirname(__FILE__) . "/inc/wbbm_dummy_import.php");
+
