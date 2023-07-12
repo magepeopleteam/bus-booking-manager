@@ -1,114 +1,110 @@
 <?php
-	if ( ! defined( 'ABSPATH' ) ) {
-        die;
-    } // Cannot access pages directly.
-	if ( ! class_exists( 'WBTM_Quick_Setup' ) ) {
-        class WBTM_Quick_Setup {
-            public function __construct() {
-                //if ( ! class_exists( 'TTBM_Dependencies' ) ) {
+	if (!defined('ABSPATH')) {
+		die;
+	} // Cannot access pages directly.
+	require_once WBTM_PLUGIN_DIR . 'inc/MP_Global_Function.php';
+	require_once WBTM_PLUGIN_DIR . 'inc/MP_Global_Style.php';
+	if (!class_exists('WBTM_Quick_Setup')) {
+		class WBTM_Quick_Setup {
+			public function __construct() {
+				//if ( ! class_exists( 'TTBM_Dependencies' ) ) {
                     add_action( 'admin_enqueue_scripts', array( $this, 'add_admin_scripts' ), 10, 1 );
                 //}
-                add_action( 'admin_menu', array( $this, 'quick_setup_menu' ) );
-                add_action( 'ttbm_quick_setup_content_start', array( $this, 'setup_welcome_content' ) );
-                add_action( 'ttbm_quick_setup_content_general', array( $this, 'setup_general_content' ) );
-                add_action( 'ttbm_quick_setup_content_done', array( $this, 'setup_content_done' ) );
-            }
-            public function add_admin_scripts() {
-                wp_enqueue_script('mp_admin_settingshh', WBTM_PLUGIN_URL . 'js/mp_admin_settings.js', array('jquery'), time(), true);
-                wp_enqueue_style('mp_admin_settingsrtt', WBTM_PLUGIN_URL . 'css/mp_admin_settings.css', array(), time());
-                wp_enqueue_script('ttbm_admin_scripttyy', WBTM_PLUGIN_URL . 'js/ttbm_admin_script.js', array('jquery'), time(), true);
-                wp_enqueue_style('ttbm_admin_styleghgg', WBTM_PLUGIN_URL . 'css/ttbm_admin_style.css', array(), time());
-                wp_enqueue_style('mp_font_awesomettt', '//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css', array(), '5.15.3');
-            }
-            public function quick_setup_menu() {
-                $status = check_woocommerce();
-                //echo $status;
-                if ( $status === 'yes' ) {
-                    //echo $status;exit();
-                    add_submenu_page( 'edit.php?post_type=wbbm_bus', esc_html__( 'Quick Setup', 'bus-ticket-booking-with-seat-reservation' ), '<span style="color:#10dd10">' . esc_html__( 'Quick Setup', 'bus-ticket-booking-with-seat-reservation' ) . '</span>', 'manage_options', 'wbbm_init_quick_setup', array( $this, 'quick_setup' ) );
+				//echo "<pre>";print_r(WBTM_PLUGIN_URL);exit;
+				add_action('admin_menu', array($this, 'quick_setup_menu'));
+			}
+			public function add_admin_scripts() {
+				wp_enqueue_style('mp_plugin_global', WBTM_PLUGIN_URL . '/assets/helper/mp_style/mp_style.css', array(), time());
+				wp_enqueue_script('mp_plugin_global', WBTM_PLUGIN_URL . '/assets/helper/mp_style/mp_script.js', array('jquery'), time(), true);
+				wp_enqueue_style('mp_admin_settings', WBTM_PLUGIN_URL . '/assets/admin/mp_admin_settings.css', array(), time());
+				wp_enqueue_script('mp_admin_settings', WBTM_PLUGIN_URL . '/assets/admin/mp_admin_settings.js', array('jquery'), time(), true);
+				wp_enqueue_style('mpwpb_admin', WBTM_PLUGIN_URL . '/assets/admin/mpwpb_admin.css', array(), time());
+				wp_enqueue_script('mpwpb_admin', WBTM_PLUGIN_URL . '/assets/admin/mpwpb_admin.js', array('jquery'), time(), true);
+				wp_enqueue_style('mp_font_awesome', '//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css', array(), '5.15.4');
+			}
+			public function quick_setup_menu() {
+				$status = MP_Global_Function::check_woocommerce();				
+				if ($status == 1) {
+					add_submenu_page( 'edit.php?post_type=wbbm_bus', esc_html__( 'Quick Setup', 'bus-ticket-booking-with-seat-reservation' ), '<span style="color:#10dd10">' . esc_html__( 'Quick Setup', 'bus-ticket-booking-with-seat-reservation' ) . '</span>', 'manage_options', 'wbbm_init_quick_setup', array( $this, 'quick_setup' ) );
                     add_submenu_page( 'wbbm_bus', esc_html__( 'Quick Setup', 'bus-ticket-booking-with-seat-reservation' ), '<span style="color:#10dd10">' . esc_html__( 'Quick Setup', 'bus-ticket-booking-with-seat-reservation' ) . '</span>', 'manage_options', 'wbtm_quick_setup', array( $this, 'quick_setup' ) );
-                } else {
-                    add_menu_page( esc_html__( 'Bus', 'bus-ticket-booking-with-seat-reservation' ), esc_html__( 'Bus', 'bus-ticket-booking-with-seat-reservation' ), 'manage_options', 'wbbm_bus', array( $this, 'quick_setup' ), 'dashicons-slides', 6 );
+				} else {
+					add_menu_page( esc_html__( 'Bus', 'bus-ticket-booking-with-seat-reservation' ), esc_html__( 'Bus', 'bus-ticket-booking-with-seat-reservation' ), 'manage_options', 'wbbm_bus', array( $this, 'quick_setup' ), 'dashicons-slides', 6 );
                     add_submenu_page( 'wbbm_bus', esc_html__( 'Quick Setup', 'bus-ticket-booking-with-seat-reservation' ), '<span style="color:#10dd17">' . esc_html__( 'Quick Setup', 'bus-ticket-booking-with-seat-reservation' ) . '</span>', 'manage_options', 'wbbm_init_quick_setup', array( $this, 'quick_setup' ) );
-                }
-            }
-            public function quick_setup() {
-                $mep_settings_tab   = array();
-                $mep_settings_tab[] = array(
-                    'id'       => 'start',
-                    'title'    => '<i class="far fa-thumbs-up"></i>' . esc_html__( 'Welcome', 'bus-ticket-booking-with-seat-reservation' ),
-                    'priority' => 1,
-                    'active'   => true,
-                );
-                $mep_settings_tab[] = array(
-                    'id'       => 'general',
-                    'title'    => '<i class="fas fa-list-ul"></i>' . esc_html__( 'General', 'bus-ticket-booking-with-seat-reservation' ),
-                    'priority' => 2,
-                    'active'   => false,
-                );
-                $mep_settings_tab[] = array(
-                    'id'       => 'done',
-                    'title'    => '<i class="fas fa-pencil-alt"></i>' . esc_html__( 'Done', 'bus-ticket-booking-with-seat-reservation' ),
-                    'priority' => 4,
-                    'active'   => false,
-                );
-                $mep_settings_tab   = apply_filters( 'qa_welcome_tabs', $mep_settings_tab );
-                $tabs_sorted        = array();
-                foreach ( $mep_settings_tab as $page_key => $tab ) {
-                    $tabs_sorted[ $page_key ] = $tab['priority'] ?? 0;
-                }
-                array_multisort( $tabs_sorted, SORT_ASC, $mep_settings_tab );
-               // echo '<pre>';print_r($_POST);echo '</pre>';exit();
-                if ( isset( $_POST['active_woo_btn'] ) ) {
-                    activate_plugin( 'woocommerce/woocommerce.php' );
-                    ?>
-                    <script>
-                        let ttbm_admin_location = window.location.href;
-                        ttbm_admin_location = ttbm_admin_location.replace('admin.php?page=wbbm_bus', 'edit.php?post_type=wbbm_bus&page=wbbm_init_quick_setup');
-                        window.location.href = ttbm_admin_location;
-                    </script>
-                    <?php
-                }
-                if ( isset( $_POST['install_and_active_woo_btn'] ) ) {
-                    echo '<div style="display:none">';
-                    include_once( ABSPATH . 'wp-admin/includes/plugin-install.php' ); //for plugins_api..
-                    $plugin = 'woocommerce';
-                    $api    = plugins_api( 'plugin_information', array(
-                        'slug'   => $plugin,
-                        'fields' => array(
-                            'short_description' => false,
-                            'sections'          => false,
-                            'requires'          => false,
-                            'rating'            => false,
-                            'ratings'           => false,
-                            'downloaded'        => false,
-                            'last_updated'      => false,
-                            'added'             => false,
-                            'tags'              => false,
-                            'compatibility'     => false,
-                            'homepage'          => false,
-                            'donate_link'       => false,
-                        ),
-                    ) );
-                    //includes necessary for Plugin_Upgrader and Plugin_Installer_Skin
-                    include_once( ABSPATH . 'wp-admin/includes/file.php' );
-                    include_once( ABSPATH . 'wp-admin/includes/misc.php' );
-                    include_once( ABSPATH . 'wp-admin/includes/class-wp-upgrader.php' );
-                    $woocommerce_plugin = new Plugin_Upgrader( new Plugin_Installer_Skin( compact( 'title', 'url', 'nonce', 'plugin', 'api' ) ) );
-                    $woocommerce_plugin->install( $api->download_link );
-                    activate_plugin( 'woocommerce/woocommerce.php' );
-                    echo '</div>';
-                    ?>
-                    <script>
-                        let ttbm_admin_location = window.location.href;
-                        ttbm_admin_location = ttbm_admin_location.replace('admin.php?page=wbbm_bus', 'edit.php?post_type=wbbm_bus&page=wbbm_init_quick_setup');
-                        window.location.href = ttbm_admin_location;
-                    </script>
-                    <?php
-                }
-                if ( isset( $_POST['finish_quick_setup'] ) ) {
-                    $wbbm_cpt_label                = isset( $_POST['wbbm_cpt_label'] ) ? sanitize_text_field( $_POST['wbbm_cpt_label'] ) : 'Bus';
-                    $wbbm_cpt_slug              = isset( $_POST['wbbm_cpt_slug'] ) ? sanitize_text_field( $_POST['wbbm_cpt_slug'] ) : 'Bus';
+				}
+			}
+			public function quick_setup() 
+			{
+				if (isset($_POST['active_woo_btn'])) 
+				{
+					?>
+					<script>
+						dLoaderBody();
+					</script>
+					<?php
+					activate_plugin('woocommerce/woocommerce.php');
+					?>
+					<script>
+						let mpwpb_admin_location = window.location.href;
+						mpwpb_admin_location = mpwpb_admin_location.replace('admin.php?page=wbbm_bus', 'edit.php?post_type=wbbm_bus&page=mpwpb_quick_setup');
+						window.location.href = mpwpb_admin_location;
+					</script>
+					<?php
+				}
+
+				if (isset($_POST['install_and_active_woo_btn'])) 
+				{
+					echo '<div style="display:none">';
+					include_once(ABSPATH . 'wp-admin/includes/plugin-install.php'); //for plugins_api..
+					$plugin = 'woocommerce';
+					$api = plugins_api('plugin_information', array(
+						'slug' => $plugin,
+						'fields' => array(
+							'short_description' => false,
+							'sections' => false,
+							'requires' => false,
+							'rating' => false,
+							'ratings' => false,
+							'downloaded' => false,
+							'last_updated' => false,
+							'added' => false,
+							'tags' => false,
+							'compatibility' => false,
+							'homepage' => false,
+							'donate_link' => false,
+						),
+					));
+					//includes necessary for Plugin_Upgrade and Plugin_Installer_Skin
+					include_once(ABSPATH . 'wp-admin/includes/file.php');
+					include_once(ABSPATH . 'wp-admin/includes/misc.php');
+					include_once(ABSPATH . 'wp-admin/includes/class-wp-upgrader.php');
+					$woocommerce_plugin = new Plugin_Upgrader(new Plugin_Installer_Skin(compact('title', 'url', 'nonce', 'plugin', 'api')));
+					$woocommerce_plugin->install($api->download_link);
+					activate_plugin('woocommerce/woocommerce.php');
+					echo '</div>';
+					?>
+					<script>
+						let mpwpb_admin_location = window.location.href;
+						mpwpb_admin_location = mpwpb_admin_location.replace('admin.php?page=wbbm_bus', 'edit.php?post_type=wbbm_bus&page=mpwpb_quick_setup');
+						window.location.href = mpwpb_admin_location;
+					</script>
+					<?php
+				}
+
+				if (isset($_POST['finish_quick_setup'])) 
+				{
+					// $label = isset($_POST['mpwpb_label']) ? sanitize_text_field($_POST['mpwpb_label']) : 'bus-ticket-booking-with-seat-reservation';
+					// $slug = isset($_POST['mpwpb_slug']) ? sanitize_text_field($_POST['mpwpb_slug']) : 'bus-ticket-booking-with-seat-reservation';
+					// $general_settings_data = get_option('mpwpb_general_settings');
+					// $update_general_settings_arr = [
+					// 	'label' => $label,
+					// 	'slug' => $slug
+					// ];
+					// $new_general_settings_data = is_array($general_settings_data) ? array_replace($general_settings_data, $update_general_settings_arr) : $update_general_settings_arr;
+					// update_option('mpwpb_general_settings', $new_general_settings_data);
+					// flush_rewrite_rules();
+					// wp_redirect(admin_url('edit.php?post_type=wbbm_bus'));
+					$wbbm_cpt_label                = isset( $_POST['mpwpb_label'] ) ? sanitize_text_field( $_POST['mpwpb_label'] ) : 'Bus';
+                    $wbbm_cpt_slug              = isset( $_POST['mpwpb_slug'] ) ? sanitize_text_field( $_POST['mpwpb_slug'] ) : 'Bus';
 
                     $general_settings_data       = get_option( 'wbbm_general_setting_sec' );
                     $update_general_settings_arr = [
@@ -119,112 +115,138 @@
                     update_option( 'wbbm_general_setting_sec', $new_general_settings_data );
                     flush_rewrite_rules();
                     wp_redirect( admin_url( 'edit.php?post_type=wbbm_bus' ) );
-                }
-                ?>
-                <div id="ttbm_quick_setup" class="wrap">
-                    <div id="icon-tools" class="icon32"><br></div>
-                    <h2></h2>
-                    <form method="post" action="">
-                        <input type="hidden" name="qa_hidden" value="Y">
-                        <div class="welcome-tabs">
-                            <ul class="tab-navs">
-                                <?php
-                                foreach ( $mep_settings_tab as $tab ) {
-                                    $id     = $tab['id'];
-                                    $title  = $tab['title'];
-                                    $active = $tab['active'];
-                                    $hidden = $tab['hidden'] ?? false;
-                                    ?>
-                                    <li class="tab-nav <?php echo $active ? 'active' : ''; ?> <?php echo $hidden ? 'hidden' : ''; ?> " data-id="<?php echo esc_html( $id ); ?>"><?php echo $title; ?></li>
-                                <?php } ?>
-                            </ul>
-                            <?php
-                            foreach ( $mep_settings_tab as $tab ) {
-                                $id     = $tab['id'];
-                                $active = $tab['active'];
-                                ?>
-                                <div class="tab-content <?php echo $active ? 'active' : ''; ?>" id="<?php echo esc_html( $id ); ?>">
-                                    <?php do_action( 'ttbm_quick_setup_content_' . $id ); ?>
-                                    <?php do_action( 'ttbm_quick_setup_content_after', $tab ); ?>
-                                </div>
-                            <?php } ?>
-                            <div class="next-prev">
-                                <div class="prev"><span>&longleftarrow;<?php esc_html_e( 'Previous', 'bus-ticket-booking-with-seat-reservation' ); ?></span></div>
-                                <div class="next"><span><?php esc_html_e( 'Next', 'bus-ticket-booking-with-seat-reservation' ); ?>&longrightarrow;</span></div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <?php
-            }
-            public function setup_welcome_content() {
-                $status = check_woocommerce();
-                ?>
-                <h2><?php esc_html_e( 'Bus Ticket Booking For Woocommerce Plugin', 'bus-ticket-booking-with-seat-reservation' ); ?></h2>
-                <p><?php esc_html_e( 'Thanks for choosing Bus Ticket Booking Plugin for WooCommerce for your site, Please go step by step and choose some options to get started.', 'bus-ticket-booking-with-seat-reservation' ); ?></p>
-                <table class="wc_status_table widefat" id="status">
-                    <tr>
-                        <td data-export-label="WC Version">
-                            <?php if ( $status === 'yes' ) {
-                                esc_html_e( 'Woocommerce already installed and activated', 'bus-ticket-booking-with-seat-reservation' );
-                            } elseif ( $status === 'no' ) {
-                                esc_html_e( 'Woocommerce already install , please activate it', 'bus-ticket-booking-with-seat-reservation' );
-                            } else {
-                                esc_html_e( 'Woocommerce need to install and active', 'bus-ticket-booking-with-seat-reservation' );
-                            } ?>
-                        </td>
-                        <td class="help"><span class="woocommerce-help-tip"></span></td>
-                        <td class="woo_btn_td">
-                            <?php if ( $status === 'yes' ) { ?>
-                                <span class="fas fa-check-circle"></span>
-                            <?php } elseif ( $status === 'no' ) { ?>
-                                <button class="button" type="submit" name="active_woo_btn"><?php esc_html_e( 'Active Now', 'bus-ticket-booking-with-seat-reservation' ); ?></button>
-                            <?php } else { ?>
-                                <button class="button" type="submit" name="install_and_active_woo_btn"><?php esc_html_e( 'Install & Active Now', 'bus-ticket-booking-with-seat-reservation' ); ?></button>
-                            <?php } ?>
-                        </td>
-                    </tr>
-                </table>
-                <?php
-            }
-            public function setup_general_content() {
-                $general_data = get_option( 'wbbm_general_setting_sec' );
+				}
+
+				$next_disable = '';
+
+				$status = MP_Global_Function::check_woocommerce();				
+				if($status != 1)
+				{
+					$next_disable = 'disabled';
+				}
+
+				?>
+				<div class="mpStyle">
+					<div class=_dShadow_6_adminLayout">
+						<form method="post" action="">
+							<div class="mpTabsNext">
+								<div class="tabListsNext _max_700_mAuto">
+									<div data-tabs-target-next="#mpwpb_qs_welcome" class="tabItemNext">
+										<h4 class="circleIcon">1</h4>
+										<h5 class="circleTitle"><?php esc_html_e('Welcome', 'bus-ticket-booking-with-seat-reservation'); ?></h5>
+									</div>
+									<div data-tabs-target-next="#mpwpb_qs_general" class="tabItemNext">
+										<h4 class="circleIcon">2</h4>
+										<h5 class="circleTitle"><?php esc_html_e('General', 'bus-ticket-booking-with-seat-reservation'); ?></h5>
+									</div>
+									<div data-tabs-target-next="#mpwpb_qs_done" class="tabItemNext">
+										<h4 class="circleIcon">3</h4>
+										<h5 class="circleTitle"><?php esc_html_e('Done', 'bus-ticket-booking-with-seat-reservation'); ?></h5>
+									</div>
+								</div>
+								<div class="tabsContentNext _infoLayout_mT">
+									<?php
+										$this->setup_welcome_content();
+										$this->setup_general_content();
+										$this->setup_content_done();
+									?>
+								</div>
+								<div class="justifyBetween">
+									<button type="button" class="mpBtn nextTab_prev">
+										<span>&longleftarrow;<?php esc_html_e('Previous', 'bus-ticket-booking-with-seat-reservation'); ?></span>
+									</button>
+									<div></div>
+
+									<button type="button" class="themeButton nextTab_next" <?php echo $next_disable; ?>>
+										<span><?php esc_html_e('Next', 'bus-ticket-booking-with-seat-reservation'); ?>&longrightarrow;</span>
+									</button>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+				<?php
+			}
+			public function setup_welcome_content() {
+				$status = MP_Global_Function::check_woocommerce();
+				?>
+				<div data-tabs-next="#mpwpb_qs_welcome">
+					<h2><?php esc_html_e('Bus Booking Manager For Woocommerce Plugin', 'bus-ticket-booking-with-seat-reservation'); ?></h2>
+					<p class="mTB_xs"><?php esc_html_e('Bus Booking Manager Plugin for WooCommerce for your site, Please go step by step and choose some options to get started.', 'bus-ticket-booking-with-seat-reservation'); ?></p>
+					<div class="_dLayout_mT_alignCenter justifyBetween">
+						<h5>
+							<?php if ($status == 1) {
+								esc_html_e('Woocommerce already installed and activated', 'bus-ticket-booking-with-seat-reservation');
+							} elseif ($status == 0) {
+								esc_html_e('Woocommerce need to install and active', 'bus-ticket-booking-with-seat-reservation');
+							} else {
+								esc_html_e('Woocommerce already install , please activate it', 'bus-ticket-booking-with-seat-reservation');
+							} ?>
+						</h5>
+						<?php if ($status == 1) { ?>
+							<h5><span class="fas fa-check-circle textSuccess"></span></h5>
+						<?php } elseif ($status == 0) { ?>
+							<button class="warningButton" type="submit"
+								name="install_and_active_woo_btn"><?php esc_html_e('Install & Active Now', 'bus-ticket-booking-with-seat-reservation'); ?></button>
+						<?php } else { ?>
+							<button class="themeButton" type="submit"
+								name="active_woo_btn"><?php esc_html_e('Active Now', 'bus-ticket-booking-with-seat-reservation'); ?></button>
+						<?php } ?>
+					</div>
+				</div>
+				<?php
+			}
+			public function setup_general_content() {
+				// $label = MP_Global_Function::get_settings('mpwpb_general_settings', 'label', 'Bus Booking');
+				// $slug = MP_Global_Function::get_settings('mpwpb_general_settings', 'slug', 'bus-booking');
+				$general_data = get_option( 'wbbm_general_setting_sec' );
                 $label        = $general_data['wbbm_cpt_label'] ?? 'Bus';
                 $slug         = $general_data['wbbm_cpt_slug'] ?? 'Bus';
-                ?>
-                <div class="section">
-                    <h2><?php esc_html_e( 'General settings', 'bus-ticket-booking-with-seat-reservation' ); ?></h2>
-                    <p class="description section-description"><?php echo __( 'Choose some general option.', 'bus-ticket-booking-with-seat-reservation' ); ?></p>
-                    <table class="wc_status_table widefat" id="status">
-                        <tr>
-                            <td><?php esc_html_e( 'Bus Label:', 'bus-ticket-booking-with-seat-reservation' ); ?></td>
-                            <td>
-                                <label><input type="text" name="wbbm_cpt_label" value='<?php echo esc_html( $label ); ?>'/></label>
-                                <p class="info"><?php esc_html_e( 'It will change the Bus post type label on the entire plugin.', 'bus-ticket-booking-with-seat-reservation' ); ?></p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><?php esc_html_e( 'Bus Slug:', 'bus-ticket-booking-with-seat-reservation' ); ?></td>
-                            <td>
-                                <label><input type="text" name="wbbm_cpt_slug" value='<?php echo esc_html( $slug ); ?>'/></label>
-                                <p class="info"><?php esc_html_e( 'It will change the Bus slug on the entire plugin. Remember after changing this slug you need to flush permalinks. Just go to Settings->Permalinks hit the Save Settings button', 'bus-ticket-booking-with-seat-reservation' ); ?></p>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-                <?php
-            }
-            public function setup_content_done() {
-                ?>
-                <div class="section">
-                    <h2><?php esc_html_e( 'Finalize Setup', 'bus-ticket-booking-with-seat-reservation' ); ?></h2>
-                    <p class="description section-description"><?php esc_html_e( 'You are about to Finish & Save Bus Ticket Booking Manager For Woocommerce Plugin setup process', 'bus-ticket-booking-with-seat-reservation' ); ?></p>
-                    <div class="setup_save_finish_area">
-                        <button type="submit" name="finish_quick_setup" class="button setup_save_finish"><?php esc_html_e( 'Finish & Save', 'bus-ticket-booking-with-seat-reservation' ); ?></button>
-                    </div>
-                </div>
-                <?php
-            }
-        }
-        new WBTM_Quick_Setup();
-    }
+				
+				?>
+				<div data-tabs-next="#mpwpb_qs_general">
+					<div class="section">
+						<h2><?php esc_html_e('General settings', 'bus-ticket-booking-with-seat-reservation'); ?></h2>
+						<p class="mTB_xs"><?php esc_html_e('Choose some general option.', 'bus-ticket-booking-with-seat-reservation'); ?></p>
+						<div class="_dLayout_mT">
+							<label class="fullWidth">
+                            <span
+								class="min_300"><?php esc_html_e('Bus Booking Manager Label:', 'bus-ticket-booking-with-seat-reservation'); ?></span>
+								<input type="text" class="formControl" name="mpwpb_label"
+									value='<?php echo esc_attr($label); ?>'/>
+							</label>
+							<i class="info_text">
+								<span class="fas fa-info-circle"></span>
+								<?php esc_html_e('It will change the Bus Booking Manager post type label on the entire plugin.', 'bus-ticket-booking-with-seat-reservation'); ?>
+							</i>
+							<div class="divider"></div>
+							<label class="fullWidth">
+                            <span
+								class="min_300"><?php esc_html_e('Bus Booking Manager Slug:', 'bus-ticket-booking-with-seat-reservation'); ?></span>
+								<input type="text" class="formControl" name="mpwpb_slug"
+									value='<?php echo esc_attr($slug); ?>'/>
+							</label>
+							<i class="info_text">
+								<span class="fas fa-info-circle"></span>
+								<?php esc_html_e('It will change the Bus Booking Manager slug on the entire plugin. Remember after changing this slug you need to flush permalinks. Just go to Settings->Permalinks hit the Save Settings button', 'bus-ticket-booking-with-seat-reservation'); ?>
+							</i>
+						</div>
+					</div>
+				</div>
+				<?php
+			}
+			public function setup_content_done() {
+				?>
+				<div data-tabs-next="#mpwpb_qs_done">
+					<h2><?php esc_html_e('Finalize Setup', 'bus-ticket-booking-with-seat-reservation'); ?></h2>
+					<p class="mTB_xs"><?php esc_html_e('You are about to Finish & Save Bus Booking Manager For Woocommerce Plugin setup process', 'bus-ticket-booking-with-seat-reservation'); ?></p>
+					<div class="mT allCenter">
+						<button type="submit" name="finish_quick_setup"
+							class="themeButton"><?php esc_html_e('Finish & Save', 'bus-ticket-booking-with-seat-reservation'); ?></button>
+					</div>
+				</div>
+				<?php
+			}
+		}
+		new WBTM_Quick_Setup();
+	}
