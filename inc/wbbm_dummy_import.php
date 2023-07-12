@@ -16,14 +16,14 @@ if (!class_exists('wbbm_dummy_import')) {
             
             add_action('deactivate_plugin', array($this, 'update_option'), 98);
             add_action('activated_plugin', array($this, 'update_option'), 98);
-            add_action('admin_init', array($this, 'dummy_import'), 10);
+            add_action('admin_init', array($this, 'dummy_import'), 98);
 
         }
 
         
         function update_option() 
         {
-            update_option('wbbm_dummy_already_inserted', 'no');
+            update_option('wbbm_dummy_already_inserted', 'no');           
         }
 
         public function test()
@@ -85,20 +85,23 @@ if (!class_exists('wbbm_dummy_import')) {
 
         public function dummy_import()
         {
-            $dummy_post_inserted = get_option('wbbm_dummy_already_inserted');
+            
+            $dummy_post_inserted = get_option('wbbm_dummy_already_inserted','no');
             $count_existing_event = wp_count_posts('wbbm_bus')->publish;
-
+            
             $plugin_active = self::check_plugin('bus-booking-manager', 'woocommerce-bus.php');
 			
             if ($count_existing_event == 0 && $plugin_active == 1 && $dummy_post_inserted != 'yes') {
 
-                $dummy_taxonomy = $this->dummy_taxonomy();
+                $dummy_taxonomies = $this->dummy_taxonomy();
 
-                if(array_key_exists('taxonomy', $dummy_taxonomy))
+                if(array_key_exists('taxonomy', $dummy_taxonomies))
                 {
-                    foreach ($dummy_taxonomy['taxonomy'] as $taxonomy => $dummy_taxonomy) 
+                    foreach ($dummy_taxonomies['taxonomy'] as $taxonomy => $dummy_taxonomy) 
                     {
+                        
                         if (taxonomy_exists($taxonomy)) {
+                            
                             $check_terms = get_terms(array('taxonomy' => $taxonomy, 'hide_empty' => false));
 
                             if (is_string($check_terms) || sizeof($check_terms) == 0) {
@@ -117,6 +120,9 @@ if (!class_exists('wbbm_dummy_import')) {
                         }
 
                     }
+
+                    //echo "<pre>";print_r($dummy_taxonomies);exit;
+
                 }
 
                 $dummy_cpt = $this->dummy_cpt();

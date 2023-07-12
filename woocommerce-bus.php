@@ -104,6 +104,8 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
     //--------------
     require_once(dirname(__FILE__) . "/inc/class-meta-box.php");
     require_once(dirname(__FILE__) . "/inc/BusBookingManagerClass.php");
+
+    require_once(dirname(__FILE__) . "/inc/wbbm_dummy_import.php");
     
 
     // Language Load
@@ -1949,6 +1951,7 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
 function activation_redirect($plugin)
 {
     if ($plugin == plugin_basename(__FILE__)) {
+        //require_once(dirname(__FILE__) . "/inc/wbbm_dummy_import.php");
         exit(wp_redirect(admin_url('edit.php?post_type=wbbm_bus&page=wbbm_init_quick_setup')));
     }
 }
@@ -1957,6 +1960,7 @@ function activation_redirect($plugin)
 function activation_redirect_setup($plugin)
 {
     if ($plugin == plugin_basename(__FILE__)) {
+        //require_once(dirname(__FILE__) . "/inc/wbbm_dummy_import.php");
         exit(wp_redirect(admin_url('admin.php?post_type=wbtm_bus&page=wbbm_init_quick_setup')));
     }
 }
@@ -2059,5 +2063,4 @@ function check_woocommerce()
  ***************************/
 require_once(dirname(__FILE__) . "/inc/wbbm-required-plugins.php");
 
-require_once(dirname(__FILE__) . "/inc/wbbm_dummy_import.php");
 
