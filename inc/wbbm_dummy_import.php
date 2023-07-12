@@ -323,7 +323,7 @@ if (!class_exists('wbbm_dummy_import')) {
                             ],
                             'post_data' => [
                                 //configuration
-                                'feature_image' => 'https://img.freepik.com/free-photo/tram-street-city_1398-3505.jpg',
+                                'feature_image' => 'https://img.freepik.com/free-photo/runner-training-marathon_23-2149284923.jpg',
                                 
                                 'wbbm_bus_category' => get_term_by('name', 'Non AC', 'wbbm_bus_cat') ? get_term_by('name', 'Non AC', 'wbbm_bus_cat')->term_id : '',
                                 'wbbm_bus_no' => 'Flixbus-01',
@@ -490,7 +490,7 @@ if (!class_exists('wbbm_dummy_import')) {
                             ],
                             'post_data' => [
                                 //configuration
-                                'feature_image' => 'https://img.freepik.com/free-photo/central-hong-kong-jan-10-2016-traffic-scene-tram-hong-kong_1137-317.jpg',
+                                'feature_image' => 'https://img.freepik.com/free-photo/runner-training-marathon_23-2149284923.jpg',
                                 
                                 'wbbm_bus_category' => get_term_by('name', 'AC', 'wbbm_bus_cat') ? get_term_by('name', 'Non AC', 'wbbm_bus_cat')->term_id : '',
                                 'wbbm_bus_no' => 'Megabus-01',
@@ -827,7 +827,7 @@ if (!class_exists('wbbm_dummy_import')) {
                             ],
                             'post_data' => [
                                 //configuration
-                                'feature_image' => 'https://img.freepik.com/free-photo/young-adult-travelling-winter-time_23-2149211143.jpg',
+                                'feature_image' => 'https://img.freepik.com/free-photo/runner-training-marathon_23-2149284923.jpg',
                                 
                                 'wbbm_bus_category' => get_term_by('name', 'AC', 'wbbm_bus_cat') ? get_term_by('name', 'Non AC', 'wbbm_bus_cat')->term_id : '',
                                 'wbbm_bus_no' => 'RED-01',
@@ -1005,7 +1005,7 @@ if (!class_exists('wbbm_dummy_import')) {
                             ],
                             'post_data' => [
                                 //configuration
-                                'feature_image' => 'https://img.freepik.com/free-photo/young-adult-travelling-winter-time_23-2149211135.jpg',
+                                'feature_image' => 'https://img.freepik.com/free-photo/runner-training-marathon_23-2149284923.jpg',
                                 
                                 'wbbm_bus_category' => get_term_by('name', 'Non AC', 'wbbm_bus_cat') ? get_term_by('name', 'Non AC', 'wbbm_bus_cat')->term_id : '',
                                 'wbbm_bus_no' => 'Bonanza-01',

@@ -117,6 +117,14 @@
                     wp_redirect( admin_url( 'edit.php?post_type=wbbm_bus' ) );
 				}
 
+				$next_disable = '';
+
+				$status = MP_Global_Function::check_woocommerce();				
+				if($status != 1)
+				{
+					$next_disable = 'disabled';
+				}
+
 				?>
 				<div class="mpStyle">
 					<div class=_dShadow_6_adminLayout">
@@ -148,7 +156,8 @@
 										<span>&longleftarrow;<?php esc_html_e('Previous', 'bus-ticket-booking-with-seat-reservation'); ?></span>
 									</button>
 									<div></div>
-									<button type="button" class="themeButton nextTab_next">
+
+									<button type="button" class="themeButton nextTab_next" <?php echo $next_disable; ?>>
 										<span><?php esc_html_e('Next', 'bus-ticket-booking-with-seat-reservation'); ?>&longrightarrow;</span>
 									</button>
 								</div>
