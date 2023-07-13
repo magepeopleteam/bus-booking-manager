@@ -5,20 +5,27 @@
     <div class="mp_tab_item_inner_wrapper">
         <div class="col-md-6">
             <div class="mpStyle">
-
+                <?php
+                    $wbbm_features_name = array();
+                    if($wbbm_features) {
+                        foreach($wbbm_features as $feature) {
+                            $wbbm_features_name[] = get_term($feature)->name;
+                        }
+                    }
+                ?>
 
 
                 <div data-collapse="#ttbm_display_include_service" class="" style="display: block;">
                     <div class="groupCheckBox">
                         <label class="dNone">
-                            <input type="text" name="ttbm_service_included_in_price" value="">
+                            <input type="text" name="ttbm_service_included_in_price" value="<?php echo ($wbbm_features_name ? implode(',', $wbbm_features_name) : '') ?>">
                         </label>
 
                         <div class="features">
                             <?php  foreach ($feature_terms as $feature_term){ ?>
                                 <p>
                                     <label class="customCheckboxLabel">
-                                        <input <?php echo (in_array($feature_term->term_id,$wbbm_features))?'checked':'' ?> type="checkbox" name="wbbm_features[<?php echo $feature_term->term_id ?>]" value="<?php echo $feature_term->term_id ?>">
+                                        <input <?php echo (in_array($feature_term->term_id,$wbbm_features))?'checked':'' ?> type="checkbox" name="wbbm_features[<?php echo $feature_term->term_id ?>]" data-checked="<?php echo $feature_term->name ?>" value="<?php echo $feature_term->term_id ?>">
                                         <span class="customCheckbox"><span class="mR_xs <?php echo get_term_meta($feature_term->term_id, 'feature_icon', true) ?>"></span><?php echo $feature_term->name ?></span>
                                     </label>
                                 </p>
