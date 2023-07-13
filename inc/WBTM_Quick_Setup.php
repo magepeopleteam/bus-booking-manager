@@ -113,8 +113,7 @@
                     ];
                     $new_general_settings_data   = is_array( $general_settings_data ) ? array_replace( $general_settings_data, $update_general_settings_arr ) : $update_general_settings_arr;
                     update_option( 'wbbm_general_setting_sec', $new_general_settings_data );
-                    update_option( 'wbbm_quick_setup_done','yes');
-					flush_rewrite_rules();
+                    flush_rewrite_rules();
                     wp_redirect( admin_url( 'edit.php?post_type=wbbm_bus' ) );
 				}
 
