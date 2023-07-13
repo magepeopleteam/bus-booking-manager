@@ -1950,8 +1950,9 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
 
 function activation_redirect($plugin)
 {
-    if ($plugin == plugin_basename(__FILE__)) {
-        //require_once(dirname(__FILE__) . "/inc/wbbm_dummy_import.php");
+    $wbbm_quick_setup_done = get_option('wbbm_quick_setup_done');
+    if ($plugin == plugin_basename(__FILE__) && $wbbm_quick_setup_done != 'yes') {
+
         exit(wp_redirect(admin_url('edit.php?post_type=wbbm_bus&page=wbbm_init_quick_setup')));
     }
 }
@@ -1959,8 +1960,8 @@ function activation_redirect($plugin)
 
 function activation_redirect_setup($plugin)
 {
-    if ($plugin == plugin_basename(__FILE__)) {
-        //require_once(dirname(__FILE__) . "/inc/wbbm_dummy_import.php");
+    $wbbm_quick_setup_done = get_option('wbbm_quick_setup_done');
+    if ($plugin == plugin_basename(__FILE__) && $wbbm_quick_setup_done != 'yes') {
         exit(wp_redirect(admin_url('admin.php?post_type=wbtm_bus&page=wbbm_init_quick_setup')));
     }
 }
