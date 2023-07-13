@@ -30,7 +30,7 @@
 
                 <div class="mage_book_now mage_center_space">
                     <button type="button" class="mage_button mage_book_now <?php if($available_seat == 0){ echo 'cursor-disabled'; } ?>"><?php  echo wbbm_get_option('wbbm_book_now_text', 'wbbm_label_setting_sec',__('Book Now', 'bus-booking-manager')); ?></button>
-                    <button type="submit" class="mage_hidden single_add_to_cart_button" name="add-to-cart" value="<?php echo esc_attr(get_the_id()); ?>"></button>
+                    <button type="submit" class="mage_hidden single_add_to_cart_button" name="add-to-cart" value="<?php echo get_post_meta(get_the_id(), 'link_wc_product', true); // link_wc_product echo esc_attr(get_the_id()); ?>"></button>
                 </div>
             <?php endif; ?>
         </div>
