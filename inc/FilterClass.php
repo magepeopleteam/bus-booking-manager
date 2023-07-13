@@ -33,7 +33,8 @@
             public function wbbm_add_custom_fields_text_to_cart_item($cart_item_data, $product_id, $variation_id = null)
             {
 
-
+				$product_id = get_post_meta($product_id, 'link_wbbm_bus', true) ? get_post_meta($product_id, 'link_wbbm_bus', true) : $product_id;
+				
                 if (get_post_type($product_id) == "wbbm_bus") {
 
 
@@ -42,7 +43,7 @@
                     $return_discount = 0;
                     $return_discount = wbbm_cart_has_opposite_route($_POST['start_stops'], $_POST['end_stops'], $journey_date);
 
-                    $product_id = get_post_meta($product_id, 'link_wbbm_bus', true) ? get_post_meta($product_id, 'link_wbbm_bus', true) : $product_id;
+                    
                     $total_seats = get_post_meta($product_id, 'wbbm_total_seat', true);
                     $tp = get_post_meta($product_id, '_price', true);
                     $price_arr = get_post_meta($product_id, 'wbbm_bus_prices', true);
