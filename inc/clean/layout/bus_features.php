@@ -18,7 +18,7 @@
                 <div data-collapse="#ttbm_display_include_service" class="" style="display: block;">
                     <div class="groupCheckBox">
                         <label class="dNone">
-                            <input type="text" name="ttbm_service_included_in_price" value="<?php echo ($wbbm_features_name ? implode(',', $wbbm_features_name) : '') ?>">
+                            <input type="hidden" name="ttbm_service_included_in_price" value="<?php echo ($wbbm_features_name ? implode(',', $wbbm_features_name) : '') ?>">
                         </label>
 
                         <div class="features">
