@@ -171,8 +171,11 @@ class WBBMMetaBox
         </li>
         <li data-target-tabs="#wbmm_bus_features">
             <span class="dashicons dashicons-calendar-alt"></span><?php echo $cpt_label . ' ' . __('Features', 'bus-booking-manager'); ?>
+        </li>
 
-       
+        <li data-target-tabs="#wbmm_bus_tax">
+            <span class="dashicons dashicons-calculator"></span><?php _e('Tax', 'bus-booking-manager'); ?>
+        </li>
 
         <?php if (is_plugin_active('mage-partial-payment-pro/mage_partial_pro.php')) : ?>
             <li data-target-tabs="#wbtm_bus_partial_payment"><img src="<?php echo WBTM_PLUGIN_URL .'images/bus_partial.png';?>"/><?php echo __('Partial Payment', 'bus-booking-manager'); ?>
@@ -197,7 +200,7 @@ class WBBMMetaBox
         $this->wbbm_bus_pickuppoint($post_id);
         $this->wbbm_bus_ondayoffday();
         $this->wbbm_bus_features();
-
+        $this->wbbm_bus_tax();
         ?>
 
         <?php do_action('wbbm_after_meta_box_tab_content'); ?>
@@ -357,16 +360,14 @@ class WBBMMetaBox
 
         $wbbm_features = maybe_unserialize(get_post_meta($post->ID, 'wbbm_features', true)?get_post_meta($post->ID, 'wbbm_features', true):[]);
 
-
-
-
-
-
         require_once(dirname(__FILE__) . "/clean/layout/bus_features.php");
     }
 
 
-
+    public function wbbm_bus_tax(){
+        global $post;
+        require_once(dirname(__FILE__) . "/clean/layout/bus_tax.php");
+    }
 
     public function wbbm_remove_sidebar_meta_box()
     {
