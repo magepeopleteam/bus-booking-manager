@@ -3,7 +3,7 @@ Contributors: magepeopleteam, aamahin
 Tags: Bus Booking Manager, bus ticket booking for wordpress
 Requires at least: 4.5
 Stable tag: trunk
-Version: 4.1.7
+Version: 4.1.8
 Tested up to: 6.3
 WC requires at least: 3.0
 WC tested up to: 6.5
