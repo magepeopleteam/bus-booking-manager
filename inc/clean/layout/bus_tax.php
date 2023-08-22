@@ -23,6 +23,7 @@
             <label for="_tax_class" class="ra-item-label">Tax Class</label>
             <span>
             <select name="_tax_class" id="_tax_class">
+                <option value="standard" <?php echo ($tax_class == 'standard') ? esc_attr('selected') : ''; ?>><?php esc_html_e('Standard', 'bus-booking-manager'); ?></option>
                 <?php foreach ($tax_lists as $key => $value) { ?>
                     <option value="<?php echo $key; ?>" <?php if($tax_class == $key){ echo 'selected'; } ?>><?php echo $value; ?></option>
                 <?php } ?>
