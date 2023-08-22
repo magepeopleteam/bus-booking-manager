@@ -3,8 +3,8 @@ Contributors: magepeopleteam, aamahin
 Tags: Bus Booking Manager, bus ticket booking for wordpress
 Requires at least: 4.5
 Stable tag: trunk
-Version: 2.0
-Tested up to: 6.0
+Version: 4.0.6
+Tested up to: 6.3
 WC requires at least: 3.0
 WC tested up to: 6.5
 Requires PHP: 7.0
@@ -14,38 +14,55 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Multipurpose Ticket Booking Manager (Bus/Train/Ferry/Boat/Shuttle) is a ticket booking Plugin for WordPress which is based on WooCommerce.
 
 == Description ==
-This is one of the best and simple bus booking plugin in WordPress directory, Its used Woocommerce for making payment so Its freedom to use any payment gateway via WooCommerce. This plugin will run with Woocommerce but it will work as event post it will not take any effect on woocommerce products so if you want you can sale your product along with it.
+The Multipurpose Ticket Booking Manager WordPress Plugin is a versatile tool that allows website owners to integrate a comprehensive ticket booking system into their WordPress websites. This plugin supports various modes of transportation, including buses, trains, ferries, boats, and shuttles, making it suitable for a wide range of businesses. It uses WooCommerce for making payments, so it has freedom to use any payment gateway via WooCommerce.
+
+
 
 ###  Free Version Plugin Features:
 
-➡   Shortcode Powered
-➡   Unlimited Bus
-➡   Unlimited Category
-➡   Unlimited Boarding Point
-➡   Unlimited Dropping Point
-➡   Unlimited boading Point and Dropping Pointwise Pricing
-➡   Operational Offday Settings
-➡   Open Source
-➡   Responsive Design
-➡   Developer Friendly
-➡   Based on Woo-commerce
-➡   Works with any standards compliant WordPress theme
-➡   Plays well with other Plugins
-➡   100% Customizable
-➡   Easy to modify templates
-➡   Template Override feature	
-👉   [Live Demo](https://vaincode.com/bus-ticket-manager/)
+👉 **Multi-Transport Support:** This plugin supports multiple modes of transportation, enabling users to book tickets for buses, trains, ferries, boats, and shuttles. The plugin provides a flexible and scalable solution for businesses in different industries.
+
+👉 **Search and Filter:** Users can search for available routes based on their origin, destination, and preferred travel dates. The plugin offers advanced search and filtering options to help users find the most suitable options.
+
+👉 **Seat type Selection:** For transportation modes that require seat type selection, users can choose their preferred seats type from list. The list updates to show available and booked seats, making it easy for users to make their selections.
+
+👉 **Online Reservation:** Once users have selected their desired route and seats, they can proceed with the online reservation process. The plugin supports secure payment gateways, allowing users to make payments directly on the website.
+
+👉 **Booking Management:** The plugin provides a comprehensive booking management system for both the website owner and the users. The website owner can view and manage all bookings from the WordPress admin panel, while users can access their booking details through their accounts.
+
+👉 **Email Notifications:** The plugin automatically sends email notifications to users after successful bookings, providing them with booking confirmations and e-tickets(Pro Version). Additionally, the website owner receives notifications for new bookings and cancellations.
+
+👉 **Payment Method:** The plugin Works with WooCommerce so it support all payment method that works with woocommerce and website owner has much more option to add as payment method.
+
+👉 **Customization Options:** The plugin offers various customization options to match the website's design and branding. Users can customize colors, fonts, and other visual elements to create a seamless booking experience.
+
+
+👉 **Operational Offday/OnDay Settings:** Admin can setup operational Offday and Onday
+
+👉 **Responsive Design:** The plugin is built with a responsive design, ensuring that it works smoothly on different devices and screen sizes. Users can make bookings and select seats conveniently from their desktops, tablets, or mobile devices.
+
+
+###  Plugin Demo and Documentation:
+
+👉   [Live PRO Version Demo](https://vaincode.com/bus-ticket-manager/)
+👉   [Plugin Documentation](https://docs.mage-people.com/multipurpose-ticket-booking-manager/)
 👉   [Buy Premium Plugin](https://mage-people.com/product/multipurpose-ticket-booking-manager-bus-train-ferry-boat-shuttle/)
 
 
 ###  [Pro Version](https://mage-people.com/product/multipurpose-ticket-booking-manager-bus-train-ferry-boat-shuttle/) Plugin Features 
 
-➡   Download PDF tickets for Passenger.
-➡   Custom Registration Form for Passenger.
-➡   Automatic Email Conformation Message and Pdf Tickets Mailing Features
-➡   Export Passenger List as CSV Format.
-➡   Backend Order Possible, Admin can book for a customer from Counter.  
-➡   [Buy Premium Plugin](https://mage-people.com/product/multipurpose-ticket-booking-manager-bus-train-ferry-boat-shuttle/) 
+
+👉 **Passenger Registration Form:** In Pro Version we have passenger registration form where website owner can collect passenger information like name, email phone etc and admin can field as needed.
+
+👉 **Email Notification with PDF:** Website owner can setup email, when any customer place order after payment then customer will get email notification of order confirmation with PDF ticket.
+
+👉 **Passenger list:** Admin can see passenger details of each bus after filter journey date.
+
+👉 **Passenger list list CSV Export:** Admin Can export all passenger details from admin panel.
+
+👉 **Book Bus Ticket From admin Panel** Admin Can Book ticket and issue from admin panel mostly this can be used for counter ticket or phone order.
+
+
 
 
 ### Shortcodes included with Bus Booking Manager 
@@ -249,3 +266,40 @@ Upload the Bus Booking Manager to your blog, Activate it, then use shortcode as 
 -  Required plugin notification improved
 -  Language POT file updated
 -  More.........
+
+
+= 4.0.8 =
+*Date - 07 March 2023*
+
+**New Features:**
+- Search issue fixed
+- Global onday & offday issue fixed
+- Code Optimize
+-  More.........
+
+
+= 4.0.9 =
+*Date - 10 March 2023*
+
+**New Features:**
+- Bug Fixed
+- Code Optimize
+-  More.........
+
+
+= 4.1.1 =
+*Date - 06 March 2023*
+
+**New Features:**
+- Bug Fixed
+- Code Optimize
+-  More.........
+
+
+= 4.1.4 =
+*Date - 01 June 2023*
+
+**New Features:**
+- Bug Fixed
+- Code Optimize
+- More.........
