@@ -1811,7 +1811,7 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
 
     function wbbm_on_post_publish($post_id, $post, $update)
     {
-        if ($post->post_type == 'wbtm_bus' && $post->post_status == 'publish' && empty(get_post_meta($post_id, 'check_if_run_once'))) {
+        if ($post->post_type == 'wbbm_bus' && $post->post_status == 'publish' && empty(get_post_meta($post_id, 'check_if_run_once'))) {
 
             // ADD THE FORM INPUT TO $new_post ARRAY
             $new_post = array(

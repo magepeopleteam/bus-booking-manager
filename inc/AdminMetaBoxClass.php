@@ -76,6 +76,7 @@ class AdminMetaBoxClass extends CommonClass
         $dropping_points = $_POST['wbbm_bus_next_stops_name'];
         $dropping_time = isset($_POST['wbbm_bus_next_end_time']) ? $_POST['wbbm_bus_next_end_time'] : '';
 
+
         if (!empty($boarding_points)) {
             $i = 0;
             foreach ($boarding_points as $point) {
@@ -362,6 +363,12 @@ class AdminMetaBoxClass extends CommonClass
         // Partial Payment
         do_action('wcpp_partial_settings_saved', $post_id);
         // Partial Payment END
+
+        // Tax Settings
+        $tax_status = isset($_POST['_tax_status']) ? $_POST['_tax_status'] : '';
+        $tax_class = isset($_POST['_tax_class']) ? $_POST['_tax_class'] : '';
+        update_post_meta($post_id, '_tax_status', $tax_status);
+        update_post_meta($post_id, '_tax_class', $tax_class);
     }
 
 
