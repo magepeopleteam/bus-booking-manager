@@ -392,6 +392,8 @@
 			public static function get_taxonomy($name) {
 				return get_terms(array('taxonomy' => $name, 'hide_empty' => false));
 			}
+
+
 		}
 		new MP_Global_Function();
 	}
