@@ -291,7 +291,7 @@ class WBBM_Required_Plugins
 	public function wbbm_admin_notices(){
 
 		$pdfsetting = is_array(get_option( 'wbbm_pdf_setting_sec' )) ? maybe_unserialize(get_option( 'wbbm_pdf_setting_sec' )) : array();
-		$pdflibrary = 'mpdf';
+		$pdflibrary = isset($pdfsetting['wbtm_pdf_lib']) ? $pdfsetting['wbtm_pdf_lib'] : 'mpdf';
 
 		$url = admin_url($this->wbbm_plugin_page_location()).'?page=wbbm-plugins';	
 		

@@ -8,11 +8,6 @@
 
 			}
 
-		/*	public function load_single_template($t ) {
-                $t = plugin_dir_path( dirname( __FILE__ ) ) .'public/partials/single_page.php';
-                return $t;
-			}*/
-
             function wbbm_load_bus_templates($template)
             {
                 global $post;
@@ -320,19 +315,20 @@
                                 if($extra_service_qty[$c] > 0) {
                                     $es_array[$c] = array(
                                         'wbbm_es_name' => $field['option_name'],
-                                        'wbbm_es_price' => (int)$field['option_price'],
+                                        'wbbm_es_price' => (float)$field['option_price'],
                                         'wbbm_es_input_qty' => $extra_service_qty[$c],
                                         'wbbm_es_available_qty' => (int)$field['option_qty'],
                                     );
-                                    $es_price += (int)$field['option_price'] * $extra_service_qty[$c][0];
+                                    $es_price += (float)$field['option_price'] * (int)$extra_service_qty[$c];
                                     $c++;
                                 }
                             }
                         endif;
                     }
+
                     // Extra Service END
 
-                    $total_fare = $total_fare + $es_price + $extra_bag_price;
+                    $total = $total_fare + $es_price + $extra_bag_price;
 
 
                     $cart_item_data['wbbm_start_stops'] = $start_stops;
@@ -370,10 +366,10 @@
                     $cart_item_data['custom_reg_user'] = $_POST['custom_reg_user'];
                     $cart_item_data['wbbm_passenger_info_additional'] = $custom_reg_additional;
                     $cart_item_data['wbbm_extra_services'] = $es_array;
-                    $cart_item_data['wbbm_tp'] = $total_fare;
+                    $cart_item_data['wbbm_tp'] = $total;
                     $cart_item_data['wbbm_bus_id'] = $bus_id;
-                    $cart_item_data['line_total'] = $total_fare;
-                    $cart_item_data['line_subtotal'] = $total_fare;
+                    $cart_item_data['line_total'] = $total;
+                    $cart_item_data['line_subtotal'] = $total;
                     $cart_item_data['quantity'] = $total_seat;
                     $cart_item_data['wbbm_id'] = $product_id;
                     $cart_item_data['is_return'] = $is_return;
