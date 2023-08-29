@@ -13,7 +13,7 @@ function wbbm_add_custom_price($cart_object)
         $eid = $value['wbbm_id'];
         if (get_post_type($eid) == 'wbbm_bus') {
             $t_price = $value['wbbm_tp'];
-            
+
             $p_info = $value['wbbm_passenger_info'];
             $ext_services = ($value['wbbm_extra_services'])?$value['wbbm_extra_services']:[];
             $ext_bag_price = 0;
@@ -31,12 +31,6 @@ function wbbm_add_custom_price($cart_object)
                 }   
             }
 
-            // if($ext_bag_price > 0 || $ext_service_price > 0){
-            //     $total = (int)$t_price + (int)$ext_bag_price + (int)$ext_service_price;
-            // }
-            // else{
-            //     $total = (int)$t_price;
-            // }
             $total = (float)$t_price;
 
             $value['data']->set_price($total);
@@ -80,9 +74,7 @@ function wbbm_add_custom_fields_text_to_order_items($item, $cart_item_key, $valu
         endif;
         $extra_per_bag_price        = get_post_meta($eid, 'wbbm_extra_bag_price', true);
         $extra_per_bag_price        = $extra_per_bag_price ? $extra_per_bag_price : 0;
-        // $timezone                = wp_timezone_string();
-        // $timestamp               = strtotime( $wbbm_journey_time . ' '. $timezone);
-        // $jtime                   = wp_date( 'H:i A', $timestamp ); 
+
         $jtime                      = $wbbm_journey_time;
 
         $adult_label            = wbbm_get_option('wbbm_adult_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_adult_text', 'wbbm_label_setting_sec') : __('Adult','bus-booking-manager');
@@ -354,7 +346,6 @@ function add_the_date_validation( $passed ) {
 
         $total_booking_seat = $adult_qty + $child_qty  + $infant_qty ;
 
-        //echo $available_seat.' '.$total_booking_seat;
 
         if($available_seat<$total_booking_seat){
             wc_add_notice( __( 'You have booked more than available seats', 'bus-booking-manager' ), 'error' );

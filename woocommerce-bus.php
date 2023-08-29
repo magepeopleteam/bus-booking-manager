@@ -2065,4 +2065,16 @@ function check_woocommerce()
  ***************************/
 require_once(dirname(__FILE__) . "/inc/wbbm-required-plugins.php");
 
+/***********************************************************
+ * Flush rewrite rules on plugin activation and deactivation.
+ ***********************************************************/
+register_activation_hook( __FILE__, 'wbbm_register_activation_func' );
+register_deactivation_hook( __FILE__, 'wbbm_register_deactivation_func' );
 
+function wbbm_register_activation_func() {
+	flush_rewrite_rules();
+}
+
+function wbbm_register_deactivation_func() {
+	flush_rewrite_rules();
+}
