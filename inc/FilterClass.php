@@ -305,23 +305,27 @@
 
                     // Extra Service
                     $es_array = array();
+                    $es_price = 0;
+
                     if(isset($_POST['extra_service_qty'])) {
-                        $extra_service_qty = $_POST['extra_service_qty'] > 0 ? $_POST['extra_service_qty'] : array();
+
+                        $extra_service_qty =  $_POST['extra_service_qty'];
                         $extra_services = get_post_meta($bus_id, 'mep_events_extra_prices', true);
+
                         if (!empty($extra_services)) :
                             $c = 0;
-                            $es_price = 0;
-                            foreach ($extra_services as $field) {
-                                if($extra_service_qty[$c] > 0) {
+
+                            foreach ($extra_services as $key => $field) {
+
                                     $es_array[$c] = array(
                                         'wbbm_es_name' => $field['option_name'],
                                         'wbbm_es_price' => (float)$field['option_price'],
-                                        'wbbm_es_input_qty' => $extra_service_qty[$c],
+                                        'wbbm_es_input_qty' => (int)$extra_service_qty[$c],
                                         'wbbm_es_available_qty' => (int)$field['option_qty'],
                                     );
                                     $es_price += (float)$field['option_price'] * (int)$extra_service_qty[$c];
                                     $c++;
-                                }
+
                             }
                         endif;
                     }
