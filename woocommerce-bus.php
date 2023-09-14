@@ -4,7 +4,7 @@
  * Plugin Name: Multipurpose Ticket Booking Manager (Bus/Train/Ferry/Boat/Shuttle)
  * Plugin URI: http://mage-people.com
  * Description: A Complete Ticket Booking System for WordPress & WooCommerce
- * Version: 4.1.8
+ * Version: 4.1.9
  * Author: MagePeople Team
  * Author URI: http://www.mage-people.com/
  * Text Domain: bus-booking-manager
@@ -1214,7 +1214,6 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
         );
     }
 
-
     add_action('woocommerce_checkout_order_processed', 'wbbm_add_passenger_to_db', 1, 1);
     function wbbm_add_passenger_to_db($order_id)
     {
@@ -1223,6 +1222,13 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
         $order = wc_get_order($order_id);
         $order_meta = get_post_meta($order_id);
 
+        $order_status  = $order->get_status();
+
+        if ($order_status == 'processing' || $order_status == 'completed') {
+            $status = 1;
+        } else {
+            $status = 0;
+        }
         # Iterating through each order items (WC_Order_Item_Product objects in WC 3+)
         foreach ($order->get_items() as $item_id => $item_values) {
             $product_id = $item_values->get_product_id();
@@ -1236,7 +1242,7 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
             // $item_data = $item_values->get_data();
 
             $user_id = $order_meta['_customer_user'][0];
-            $order_status = $order->status;
+
             $eid = wbbm_get_order_meta($item_id, '_wbbm_bus_id');
             if (get_post_type($eid) == 'wbbm_bus') {
                 $user_info_arr = wbbm_get_order_meta($item_id, '_wbbm_passenger_info');
@@ -1381,6 +1387,34 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
         return 0;
     }
 
+    add_action('woocommerce_thankyou', 'wbbm_update_order_status', 10, 1);
+    function wbbm_update_order_status($order_id){
+        $order = wc_get_order($order_id);
+
+        $order_status  = $order->get_status();
+
+        if ($order_status == 'processing' || $order_status == 'completed') {
+            $status = 1;
+        } else {
+            $status = 0;
+        }
+
+        global $wpdb;
+        $table_name = $wpdb->prefix . "wbbm_bus_booking_list";
+
+        $data =array(
+            'status' => $status
+        );
+
+        $wherecondition=array(
+            'order_id'=> $order_id
+        );
+
+        if ($order_status == 'processing' || $order_status == 'completed') {
+            $wpdb->update($table_name, $data, $wherecondition);
+        }
+
+    }
 
     add_action('woocommerce_order_status_changed', 'wbbm_bus_ticket_seat_management', 10, 4);
     function wbbm_bus_ticket_seat_management($order_id, $from_status, $to_status, $order)
