@@ -3,7 +3,7 @@ Contributors: magepeopleteam, aamahin
 Tags: Bus Booking Manager, bus ticket booking for wordpress
 Requires at least: 4.5
 Stable tag: trunk
-Version: 4.1.8
+Version: 4.1.9
 Tested up to: 6.3
 WC requires at least: 3.0
 WC tested up to: 6.5
@@ -11,10 +11,10 @@ Requires PHP: 7.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Multipurpose Ticket Booking Manager (Bus/Train/Ferry/Boat/Shuttle) is a ticket booking Plugin for WordPress which is based on WooCommerce.
+Multipurpose Ticket Booking Manager (Bus/Train/Ferry/Boat/Shuttle) is a ticket booking Plugin for WordPress that is based on WooCommerce.
 
 == Description ==
-The Multipurpose Ticket Booking Manager WordPress Plugin is a versatile tool that allows website owners to integrate a comprehensive ticket booking system into their WordPress websites. This plugin supports various modes of transportation, including buses, trains, ferries, boats, and shuttles, making it suitable for a wide range of businesses. It uses WooCommerce for making payments, so it has freedom to use any payment gateway via WooCommerce.
+The Multipurpose Ticket Booking Manager WordPress Plugin is a versatile tool that allows website owners to integrate a comprehensive ticket booking system into their WordPress websites. This plugin supports various modes of transportation, including buses, trains, ferries, boats, and shuttles, making it suitable for a wide range of businesses. It uses WooCommerce for making payments, so it has the freedom to use any payment gateway via WooCommerce.
 
 
 
@@ -24,15 +24,15 @@ The Multipurpose Ticket Booking Manager WordPress Plugin is a versatile tool tha
 
 👉 **Search and Filter:** Users can search for available routes based on their origin, destination, and preferred travel dates. The plugin offers advanced search and filtering options to help users find the most suitable options.
 
-👉 **Seat type Selection:** For transportation modes that require seat type selection, users can choose their preferred seats type from list. The list updates to show available and booked seats, making it easy for users to make their selections.
+👉 **Seat type Selection:** For transportation modes requiring seat type selection, users can choose their preferred seats from the list. The list updates to show available and booked seats, making it easy for users to make their selections.
 
 👉 **Online Reservation:** Once users have selected their desired route and seats, they can proceed with the online reservation process. The plugin supports secure payment gateways, allowing users to make payments directly on the website.
 
-👉 **Booking Management:** The plugin provides a comprehensive booking management system for both the website owner and the users. The website owner can view and manage all bookings from the WordPress admin panel, while users can access their booking details through their accounts.
+👉 **Booking Management:** The plugin provides a comprehensive booking management system for the website owner and the users. The website owner can view and manage all bookings from the WordPress admin panel, while users can access their booking details through their accounts.
 
 👉 **Email Notifications:** The plugin automatically sends email notifications to users after successful bookings, providing them with booking confirmations and e-tickets(Pro Version). Additionally, the website owner receives notifications for new bookings and cancellations.
 
-👉 **Payment Method:** The plugin Works with WooCommerce so it support all payment method that works with woocommerce and website owner has much more option to add as payment method.
+👉 **Payment Method:** The plugin Works with WooCommerce so it supports all payment method that works with woocommerce and the website owner has much more option to add as a payment method.
 
 👉 **Customization Options:** The plugin offers various customization options to match the website's design and branding. Users can customize colors, fonts, and other visual elements to create a seamless booking experience.
 
@@ -44,7 +44,7 @@ The Multipurpose Ticket Booking Manager WordPress Plugin is a versatile tool tha
 
 ###  Plugin Demo and Documentation:
 
-👉   [Live PRO Version Demo](https://vaincode.com/bus-ticket-manager/)
+👉   [Live PRO Version Demo](https://multipurpose.mage-people.com/)
 👉   [Plugin Documentation](https://docs.mage-people.com/multipurpose-ticket-booking-manager/)
 👉   [Buy Premium Plugin](https://mage-people.com/product/multipurpose-ticket-booking-manager-bus-train-ferry-boat-shuttle/)
 
@@ -52,9 +52,9 @@ The Multipurpose Ticket Booking Manager WordPress Plugin is a versatile tool tha
 ###  [Pro Version](https://mage-people.com/product/multipurpose-ticket-booking-manager-bus-train-ferry-boat-shuttle/) Plugin Features 
 
 
-👉 **Passenger Registration Form:** In Pro Version we have passenger registration form where website owner can collect passenger information like name, email phone etc and admin can field as needed.
+👉 **Passenger Registration Form:** In the Pro Version we have a passenger registration form where the website owner can collect passenger information like name, email phone etc and admin can field as needed.
 
-👉 **Email Notification with PDF:** Website owner can setup email, when any customer place order after payment then customer will get email notification of order confirmation with PDF ticket.
+👉 **Email Notification with PDF:** Website owner can set up email when any customer place order after payment then customer will get email notification of order confirmation with PDF ticket.
 
 👉 **Passenger list:** Admin can see passenger details of each bus after filter journey date.
 
@@ -68,12 +68,12 @@ The Multipurpose Ticket Booking Manager WordPress Plugin is a versatile tool tha
 ### Shortcodes included with Bus Booking Manager 
 
 
-To display Search form in Horizontal view then need to use this shortcode and  [Here is Example](https://vaincode.com/bus-ticket-manager/)
+To display Search form in Horizontal view then need to use this shortcode and  [Here is Example](https://multipurpose.mage-people.com/)
 
 `
 [bus-search-form]
 `
-but if Someone like to display Search form in Vertical view then use this Sortcode. and [here is Example](https://vaincode.com/bus-ticket-manager/home-page-vertical-search-form/)
+but if Someone like to display Search form in Vertical view then use this Sortcode. and [here is Example](https://multipurpose.mage-people.com/home-page-vertical-search-form/)
 
 `
 [bus-search-form style="vertical"]
@@ -300,6 +300,17 @@ Upload the Bus Booking Manager to your blog, Activate it, then use shortcode as 
 *Date - 01 June 2023*
 
 **New Features:**
+- Bug Fixed
+- Code Optimize
+- More.........
+
+
+= 4.1.9 =
+*Date - 31 Aug 2023*
+
+**New Features:**
+- Details page search issue fixed
+- Price Calculation issue fixed
 - Bug Fixed
 - Code Optimize
 - More.........
