@@ -137,6 +137,7 @@ function mage_bus_list_query($start, $end) {
         'posts_per_page' => -1,
         'order' => 'ASC',
         'orderby' => 'meta_value',
+        'post_status' => array('publish'),
         // 'meta_key' => 'wbbm_bus_start_time',
         'meta_query' => array(
             'relation' => 'AND',
