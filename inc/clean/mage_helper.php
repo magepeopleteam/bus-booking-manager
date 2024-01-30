@@ -215,7 +215,7 @@ function mage_find_product_in_cart() {
 }
 
 // get available seat
-function mage_available_seat($date) {
+function mage_available_seat($date) { echo "<pre>";print_r($date);echo "</pre>";exit;
     $values = get_post_custom(get_the_id());
     $total_seat = $values['wbbm_total_seat'][0];
     $sold_seat = wbbm_get_available_seat(get_the_id(), $date);
@@ -229,7 +229,7 @@ function wbbm_intermidiate_available_seat($start, $end, $date,$eid=null): int
     $post_id = $eid?:get_the_id();
     $values = get_post_custom($post_id);
     $total_seat = (int)$values['wbbm_total_seat'][0];
-    $sold_seat = (int)wbbm_get_available_seat_new($post_id, $start, $end, $date);
+    $sold_seat = (int)wbbm_get_available_seat_new($post_id, $start, $end, $date); 
     return ($total_seat - $sold_seat) > 0 ? ($total_seat - $sold_seat) : 0;
 }
 

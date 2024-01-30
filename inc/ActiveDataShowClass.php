@@ -47,7 +47,7 @@ class ActiveDataShowClass extends CommonClass
             $weekly_offday = '[' . $weekly_offday . ']';
             
 
-            echo "<input id=".'all_date_picker_info'." data-single_bus=".($singleBus ? 1 : 0)."  data-enableDates=".$enableDates." data-off_particular_date=".$off_particular_date." data-weekly_offday=".$weekly_offday." data-enable_onday=".$show_operational_on_day." data-enable_offday=".$show_off_day." data-date_format=".$this->convert_datepicker_dateformat()." type=".'hidden'.">";
+            echo "<input id='".'all_date_picker_info'."' data-single_bus='".($singleBus ? 1 : 0)."'  data-enableDates='".$enableDates."' data-off_particular_date='".$off_particular_date."' data-weekly_offday='".$weekly_offday."' data-enable_onday='".$show_operational_on_day."' data-enable_offday='".$show_off_day."' data-date_format='".$this->convert_datepicker_dateformat()."' type='".'hidden'."' />";
 
         }else{
 
@@ -78,7 +78,7 @@ class ActiveDataShowClass extends CommonClass
                 $disableDays = '['.']';
             }
 
-            echo "<input id=".'all_date_picker_info'." data-single_bus=".'0'."  data-disableDates=".$disableDates." data-disableDays=".$disableDays."  data-date_format=".$this->convert_datepicker_dateformat()." type=".'hidden'.">";
+            echo "<input id='".'all_date_picker_info'."' data-single_bus='".'0'."'  data-disableDates='".$disableDates."' data-disableDays='".$disableDays."'  data-date_format='".$this->convert_datepicker_dateformat()."' type='".'hidden'."' />";
 
         }
 

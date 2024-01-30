@@ -4,7 +4,7 @@
  * Plugin Name: Multipurpose Ticket Booking Manager (Bus/Train/Ferry/Boat/Shuttle)
  * Plugin URI: http://mage-people.com
  * Description: A Complete Ticket Booking System for WordPress & WooCommerce
- * Version: 4.1.9
+ * Version: 4.2.0
  * Author: MagePeople Team
  * Author URI: http://www.mage-people.com/
  * Text Domain: bus-booking-manager
@@ -115,6 +115,36 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
         $plugin_dir = basename(dirname(__FILE__)) . "/languages/";
         load_plugin_textdomain('bus-booking-manager', false, $plugin_dir);
     }
+    add_action('init', 'wbbm_change_field_of_table');
+    function wbbm_change_field_of_table()
+    {
+        global $wpdb;
+        $table_name = esc_sql($wpdb->prefix . 'wbbm_bus_booking_list');
+
+        if ($wpdb->get_var("SHOW TABLES LIKE '$table_name'") === $table_name) 
+        {
+            $alterations_applied = sanitize_text_field(get_option('wbbm_table_alterations_applied', ''));
+
+            if (!$alterations_applied) 
+            {
+                $wpdb->query("ALTER TABLE $table_name CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;");
+                
+                $wpdb->query("
+                    ALTER TABLE $table_name
+                    MODIFY COLUMN user_name VARCHAR(255) NULL,
+                    MODIFY COLUMN user_email VARCHAR(255) NULL,
+                    MODIFY COLUMN user_phone VARCHAR(255) NULL,
+                    MODIFY COLUMN user_gender VARCHAR(255) NULL,
+                    MODIFY COLUMN user_dob VARCHAR(255) NULL,
+                    MODIFY COLUMN nationality VARCHAR(255) NULL,
+                    MODIFY COLUMN pickpoint VARCHAR(255) NULL
+                ");
+
+                update_option('wbbm_table_alterations_applied', 'true');
+            }
+        }
+    }
+
 
     flush_rewrite_rules();
     require_once WBTM_PLUGIN_DIR . '/inc/WBTM_Quick_Setup.php';
@@ -1037,11 +1067,13 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
 
             $where = mage_intermidiate_available_seat_condition($start, $end, $bus_stops_unique);
             $entire_query = "SELECT seat FROM $table_name WHERE bus_id=$bus_id AND journey_date='$date' AND $where AND status IN ($seat_booked_status)";
+            //echo "<pre>"; print_r(array($start, $end, $bus_stops_unique,$where,$entire_query,$wpdb->get_var($entire_query)));echo "<pre>"; //exit;
             if ($wpdb->get_var($entire_query) == -1) { // is entire booking
                 $sold_seats = $total_seats;
             } else { // is single booking
                 $query = "SELECT COUNT(booking_id) FROM $table_name WHERE bus_id=$bus_id AND journey_date='$date' AND $where AND ticket_status != 99 AND status IN ($seat_booked_status)";
                 $sold_seats = $wpdb->get_var($query);
+                //echo "<pre>"; print_r(array($start, $end, $bus_stops_unique,$where,$entire_query,$wpdb->get_var($query)));echo "<pre>";
             }
         }
 
@@ -1138,7 +1170,7 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
         global $wpdb;
 
         $table_name = $wpdb->prefix . 'wbbm_bus_booking_list';
-        // $add_datetime = current_time("Y-m-d h:i:s");
+        $add_datetime = current_time("Y-m-d h:i:s");        
         $wpdb->insert(
             $table_name,
             array(
@@ -1212,6 +1244,7 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
                 '%d'
             )
         );
+        $wpdb->print_error();
     }
 
     add_action('woocommerce_checkout_order_processed', 'wbbm_add_passenger_to_db', 1, 1);
@@ -1222,164 +1255,168 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
         $order = wc_get_order($order_id);
         $order_meta = get_post_meta($order_id);
 
-        $order_status  = $order->get_status();
+        if ($order) 
+        {
 
-        if ($order_status == 'processing' || $order_status == 'completed') {
-            $status = 1;
-        } else {
-            $status = 0;
-        }
-        # Iterating through each order items (WC_Order_Item_Product objects in WC 3+)
-        foreach ($order->get_items() as $item_id => $item_values) {
-            $product_id = $item_values->get_product_id();
-            $item_data = $item_values->get_data();
-            $product_id = $item_data['product_id'];
-            $item_quantity = $item_values->get_quantity();
-            $product = get_page_by_title($item_data['name'], OBJECT, 'wbbm_bus');
-            $event_name = $item_data['name'];
-            $event_id = $product->ID;
-            $item_id = $item_id;
-            // $item_data = $item_values->get_data();
+            $order_status  = $order->get_status();
 
-            $user_id = $order_meta['_customer_user'][0];
+            if ($order_status == 'processing' || $order_status == 'completed') {
+                $status = 1;
+            } else {
+                $status = 0;
+            }
+            # Iterating through each order items (WC_Order_Item_Product objects in WC 3+)
+            foreach ($order->get_items() as $item_id => $item_values) {
+                $product_id = $item_values->get_product_id();
+                $item_data = $item_values->get_data();
+                $product_id = $item_data['product_id'];
+                $item_quantity = $item_values->get_quantity();
+                $product = get_page_by_title($item_data['name'], OBJECT, 'wbbm_bus');
+                $event_name = $item_data['name'];
+                $event_id = $product->ID;
+                $item_id = $item_id;
+                // $item_data = $item_values->get_data();
 
-            $eid = wbbm_get_order_meta($item_id, '_wbbm_bus_id');
-            if (get_post_type($eid) == 'wbbm_bus') {
-                $user_info_arr = wbbm_get_order_meta($item_id, '_wbbm_passenger_info');
-                $start = wbbm_get_order_meta($item_id, '_boarding_point');
-                $end = wbbm_get_order_meta($item_id, '_droping_point');
-                $j_date = wbbm_get_order_meta($item_id, '_journey_date');
-                // $j_date = wbbm_convert_date_to_php($j_date);
-                $j_time = wbbm_get_order_meta($item_id, '_journey_time');
-                $bus_id = wbbm_get_order_meta($item_id, '_bus_id');
-                $b_time = wbbm_get_order_meta($item_id, '_btime');
+                $user_id = $order_meta['_customer_user'][0]??0;
 
-                $adult = wbbm_get_order_meta($item_id, '_Adult');
-                $child = wbbm_get_order_meta($item_id, '_Child');
-                $infant = wbbm_get_order_meta($item_id, '_Infant');
-                $entire = wbbm_get_order_meta($item_id, '_Entire');
-                $adult_per_price = wbbm_get_order_meta($item_id, '_adult_per_price');
-                $child_per_price = wbbm_get_order_meta($item_id, '_child_per_price');
-                $infant_per_price = wbbm_get_order_meta($item_id, '_infant_per_price');
-                $entire_per_price = wbbm_get_order_meta($item_id, '_entire_per_price');
-                $total_price = wbbm_get_order_meta($item_id, '_total_price');
-                $next_stops = maybe_serialize(wbbm_get_all_stops_after_this($bus_id, $start, $end));
-                $pickpoint = wbbm_get_order_meta($item_id, 'Pickpoint');
+                $eid = wbbm_get_order_meta($item_id, '_wbbm_bus_id');
+                if (get_post_type($eid) == 'wbbm_bus') {
+                    $user_info_arr = wbbm_get_order_meta($item_id, '_wbbm_passenger_info');
+                    $start = wbbm_get_order_meta($item_id, '_boarding_point');
+                    $end = wbbm_get_order_meta($item_id, '_droping_point');
+                    $j_date = wbbm_get_order_meta($item_id, '_journey_date');
+                    // $j_date = wbbm_convert_date_to_php($j_date);
+                    $j_time = wbbm_get_order_meta($item_id, '_journey_time');
+                    $bus_id = wbbm_get_order_meta($item_id, '_bus_id');
+                    $b_time = wbbm_get_order_meta($item_id, '_btime');
 
-                $usr_inf = maybe_unserialize($user_info_arr);
-                $counter = 0;
-                $_seats = 'None';
+                    $adult = wbbm_get_order_meta($item_id, '_Adult');
+                    $child = wbbm_get_order_meta($item_id, '_Child');
+                    $infant = wbbm_get_order_meta($item_id, '_Infant');
+                    $entire = wbbm_get_order_meta($item_id, '_Entire');
+                    $adult_per_price = wbbm_get_order_meta($item_id, '_adult_per_price');
+                    $child_per_price = wbbm_get_order_meta($item_id, '_child_per_price');
+                    $infant_per_price = wbbm_get_order_meta($item_id, '_infant_per_price');
+                    $entire_per_price = wbbm_get_order_meta($item_id, '_entire_per_price');
+                    $total_price = wbbm_get_order_meta($item_id, '_total_price');
+                    $next_stops = maybe_serialize(wbbm_get_all_stops_after_this($bus_id, $start, $end));
+                    $pickpoint = wbbm_get_order_meta($item_id, 'Pickpoint');
 
-                $item_quantity = $adult;
-                if ($child) {
-                    $item_quantity = $item_quantity + $child;
-                } else {
-                    $child = 0;
-                    $child_per_price = 0;
-                }
+                    $usr_inf = maybe_unserialize($user_info_arr);
+                    $counter = 0;
+                    $_seats = 'None';
 
-                if ($infant) {
-                    $item_quantity = $item_quantity + $infant;
-                } else {
-                    $infant = 0;
-                    $infant_per_price = 0;
-                }
-
-                if ($entire) {
-                    $item_quantity = $item_quantity + $entire;
-                } else {
-                    $entire = 0;
-                    $entire_per_price = 0;
-                }
-
-                $user_name = "";
-                $user_email = "";
-                $user_phone = "";
-                $user_address = "";
-                $user_gender = "";
-                $user_dob = "";
-                $nationality = "";
-                $flight_arrival_no = "";
-                $flight_departure_no = "";
-                $user_type = "";
-
-                // For Entire Bus booking
-                if ($entire) {
-                    $item_quantity = 1;
-                }
-
-                for ($x = 1; $x <= $item_quantity; $x++) {
-
-                    // if(!empty($_seats)){
-
-                    if (isset($usr_inf[$counter]['wbbm_user_name'])) {
-                        $user_name = $usr_inf[$counter]['wbbm_user_name'];
+                    $item_quantity = $adult;
+                    if ($child) {
+                        $item_quantity = $item_quantity + $child;
                     } else {
-                        $user_name = "";
-                    }
-                    if (isset($usr_inf[$counter]['wbbm_user_email'])) {
-                        $user_email = $usr_inf[$counter]['wbbm_user_email'];
-                    } else {
-                        $user_email = "";
-                    }
-                    if (isset($usr_inf[$counter]['wbbm_user_phone'])) {
-                        $user_phone = $usr_inf[$counter]['wbbm_user_phone'];
-                    } else {
-                        $user_phone = "";
-                    }
-                    if (isset($usr_inf[$counter]['wbbm_user_address'])) {
-                        $user_address = $usr_inf[$counter]['wbbm_user_address'];
-                    } else {
-                        $user_address = "";
-                    }
-                    if (isset($usr_inf[$counter]['wbbm_user_gender'])) {
-                        $user_gender = $usr_inf[$counter]['wbbm_user_gender'];
-                    } else {
-                        $user_gender = "";
-                    }
-                    if (isset($usr_inf[$counter]['wbbm_user_dob'])) {
-                        $user_dob = $usr_inf[$counter]['wbbm_user_dob'];
-                    } else {
-                        $user_dob = "";
-                    }
-                    if (isset($usr_inf[$counter]['wbbm_user_nationality'])) {
-                        $nationality = $usr_inf[$counter]['wbbm_user_nationality'];
-                    } else {
-                        $nationality = "";
-                    }
-                    if (isset($usr_inf[$counter]['wbbm_user_flight_arrival_no'])) {
-                        $flight_arrival_no = $usr_inf[$counter]['wbbm_user_flight_arrival_no'];
-                    } else {
-                        $flight_arrival_no = "";
-                    }
-                    if (isset($usr_inf[$counter]['wbbm_user_flight_departure_no'])) {
-                        $flight_departure_no = $usr_inf[$counter]['wbbm_user_flight_departure_no'];
-                    } else {
-                        $flight_departure_no = "";
+                        $child = 0;
+                        $child_per_price = 0;
                     }
 
-                    if (isset($usr_inf[$counter]['extra_bag_quantity'])) {
-                        $extra_bag_quantity = $usr_inf[$counter]['extra_bag_quantity'];
+                    if ($infant) {
+                        $item_quantity = $item_quantity + $infant;
                     } else {
-                        $extra_bag_quantity = "";
+                        $infant = 0;
+                        $infant_per_price = 0;
                     }
 
-                    if (isset($usr_inf[$counter]['wbbm_user_type'])) {
-                        $user_type = $usr_inf[$counter]['wbbm_user_type'];
-                    } else {
-                        $user_type = "Adult";
-                    }
                     if ($entire) {
-                        $item_quantity = -1;
+                        $item_quantity = $item_quantity + $entire;
+                    } else {
+                        $entire = 0;
+                        $entire_per_price = 0;
                     }
-                    $_seats = $item_quantity;
-                    $check_before_add = wbbm_get_order_seat_check($bus_id, $order_id, $user_type, $b_time, $j_date);
-                    if ($check_before_add == 0) {
+
+                    $user_name = "";
+                    $user_email = "";
+                    $user_phone = "";
+                    $user_address = "";
+                    $user_gender = "";
+                    $user_dob = "";
+                    $nationality = "";
+                    $flight_arrival_no = "";
+                    $flight_departure_no = "";
+                    $user_type = "";
+
+                    // For Entire Bus booking
+                    if ($entire) {
+                        $item_quantity = 1;
+                    }
+                    
+                    for ($x = 1; $x <= $item_quantity; $x++) {
+
+                        // if(!empty($_seats)){
+
+                        if (isset($usr_inf[$counter]['wbbm_user_name'])) {
+                            $user_name = $usr_inf[$counter]['wbbm_user_name'];
+                        } else {
+                            $user_name = "";
+                        }
+                        if (isset($usr_inf[$counter]['wbbm_user_email'])) {
+                            $user_email = $usr_inf[$counter]['wbbm_user_email'];
+                        } else {
+                            $user_email = "";
+                        }
+                        if (isset($usr_inf[$counter]['wbbm_user_phone'])) {
+                            $user_phone = $usr_inf[$counter]['wbbm_user_phone'];
+                        } else {
+                            $user_phone = "";
+                        }
+                        if (isset($usr_inf[$counter]['wbbm_user_address'])) {
+                            $user_address = $usr_inf[$counter]['wbbm_user_address'];
+                        } else {
+                            $user_address = "";
+                        }
+                        if (isset($usr_inf[$counter]['wbbm_user_gender'])) {
+                            $user_gender = $usr_inf[$counter]['wbbm_user_gender'];
+                        } else {
+                            $user_gender = "";
+                        }
+                        if (isset($usr_inf[$counter]['wbbm_user_dob'])) {
+                            $user_dob = $usr_inf[$counter]['wbbm_user_dob'];
+                        } else {
+                            $user_dob = "";
+                        }
+                        if (isset($usr_inf[$counter]['wbbm_user_nationality'])) {
+                            $nationality = $usr_inf[$counter]['wbbm_user_nationality'];
+                        } else {
+                            $nationality = "";
+                        }
+                        if (isset($usr_inf[$counter]['wbbm_user_flight_arrival_no'])) {
+                            $flight_arrival_no = $usr_inf[$counter]['wbbm_user_flight_arrival_no'];
+                        } else {
+                            $flight_arrival_no = "";
+                        }
+                        if (isset($usr_inf[$counter]['wbbm_user_flight_departure_no'])) {
+                            $flight_departure_no = $usr_inf[$counter]['wbbm_user_flight_departure_no'];
+                        } else {
+                            $flight_departure_no = "";
+                        }
+
+                        if (isset($usr_inf[$counter]['extra_bag_quantity'])) {
+                            $extra_bag_quantity = $usr_inf[$counter]['extra_bag_quantity'];
+                        } else {
+                            $extra_bag_quantity = "";
+                        }
+
+                        if (isset($usr_inf[$counter]['wbbm_user_type'])) {
+                            $user_type = $usr_inf[$counter]['wbbm_user_type'];
+                        } else {
+                            $user_type = "Adult";
+                        }
+                        if ($entire) {
+                            $item_quantity = -1;
+                        }
+                        $_seats = $item_quantity;
+                        $check_before_add = wbbm_get_order_seat_check($bus_id, $order_id, $user_type, $b_time, $j_date);
+                        if ($check_before_add == 0) {
 
                         wbbm_add_passenger($order_id, $bus_id, $user_id, $start, $next_stops, $end, $user_name, $user_email, $user_phone, $user_gender, $user_dob, $nationality, $flight_arrival_no, $flight_departure_no, $extra_bag_quantity, $user_address, $user_type, $b_time, $j_time, $adult, $adult_per_price, $child, $child_per_price, $infant, $infant_per_price, $entire, $entire_per_price, $total_price, $item_quantity, $j_date, current_time("Y-m-d h:i:s"), $pickpoint, 0);
+                        }
+                        // }
+                        $counter++;
                     }
-                    // }
-                    $counter++;
                 }
             }
         }
@@ -1424,155 +1461,158 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
         $order = wc_get_order($order_id);
         $order_meta = get_post_meta($order_id);
 
+        if($order)
+        {
         # Iterating through each order items (WC_Order_Item_Product objects in WC 3+)
-        foreach ($order->get_items() as $item_id => $item_values) {
-            $product_id = $item_values->get_product_id();
-            $item_data = $item_values->get_data();
-            $product_id = $item_data['product_id'];
-            $item_quantity = $item_values->get_quantity();
-            $product = get_page_by_title($item_data['name'], OBJECT, 'wbbm_bus');
-            $event_name = $item_data['name'];
-            $event_id = $product->ID;
-            $item_id = $item_id;
-            // $item_data = $item_values->get_data();
+            foreach ($order->get_items() as $item_id => $item_values) {
+                $product_id = $item_values->get_product_id();
+                $item_data = $item_values->get_data();
+                $product_id = $item_data['product_id'];
+                $item_quantity = $item_values->get_quantity();
+                $product = get_page_by_title($item_data['name'], OBJECT, 'wbbm_bus');
+                $event_name = $item_data['name'];
+                $event_id = $product->ID;
+                $item_id = $item_id;
+                // $item_data = $item_values->get_data();
 
-            $user_id = $order_meta['_customer_user'][0];
-            $order_status = $order->status;
-            $eid = wbbm_get_order_meta($item_id, '_wbbm_bus_id');
+                $user_id = $order_meta['_customer_user'][0];
+                $order_status  = $order->get_status();
+                $eid = wbbm_get_order_meta($item_id, '_wbbm_bus_id');
 
-            if (get_post_type($eid) == 'wbbm_bus') {
-
-
-                $user_info_arr = wbbm_get_order_meta($item_id, '_wbbm_passenger_info');
-                $start = wbbm_get_order_meta($item_id, 'Boarding Point');
-                $end = wbbm_get_order_meta($item_id, 'Dropping Point');
-                $j_date = wbbm_get_order_meta($item_id, 'Journey Date');
-                $j_time = wbbm_get_order_meta($item_id, 'Journey Time');
-                $bus_id = wbbm_get_order_meta($item_id, '_bus_id');
-                $b_time = wbbm_get_order_meta($item_id, '_btime');
-
-                $adult = wbbm_get_order_meta($item_id, 'Adult');
-                $child = wbbm_get_order_meta($item_id, 'Child');
-                $infant = wbbm_get_order_meta($item_id, 'Infant');
-                $entire = wbbm_get_order_meta($item_id, 'Entire');
-                $adult_per_price = wbbm_get_order_meta($item_id, '_adult_per_price');
-                $child_per_price = wbbm_get_order_meta($item_id, '_child_per_price');
-                $infant_per_price = wbbm_get_order_meta($item_id, '_infant_per_price');
-                $entire_per_price = wbbm_get_order_meta($item_id, '_entire_per_price');
-                $total_price = wbbm_get_order_meta($item_id, '_total_price');
-                $next_stops = maybe_serialize(wbbm_get_all_stops_after_this($bus_id, $start, $end));
+                if (get_post_type($eid) == 'wbbm_bus') {
 
 
-                $usr_inf = unserialize($user_info_arr);
-                $counter = 0;
-                $_seats = 'None';
+                    $user_info_arr = wbbm_get_order_meta($item_id, '_wbbm_passenger_info');
+                    $start = wbbm_get_order_meta($item_id, 'Boarding Point');
+                    $end = wbbm_get_order_meta($item_id, 'Dropping Point');
+                    $j_date = wbbm_get_order_meta($item_id, 'Journey Date');
+                    $j_time = wbbm_get_order_meta($item_id, 'Journey Time');
+                    $bus_id = wbbm_get_order_meta($item_id, '_bus_id');
+                    $b_time = wbbm_get_order_meta($item_id, '_btime');
 
-                $item_quantity = ($adult + $child + $infant + $entire);
-                // $_seats         =   $item_quantity;
-                // foreach ($seats as $_seats) {
-                for ($x = 1; $x <= $item_quantity; $x++) {
+                    $adult = wbbm_get_order_meta($item_id, 'Adult');
+                    $child = wbbm_get_order_meta($item_id, 'Child');
+                    $infant = wbbm_get_order_meta($item_id, 'Infant');
+                    $entire = wbbm_get_order_meta($item_id, 'Entire');
+                    $adult_per_price = wbbm_get_order_meta($item_id, '_adult_per_price');
+                    $child_per_price = wbbm_get_order_meta($item_id, '_child_per_price');
+                    $infant_per_price = wbbm_get_order_meta($item_id, '_infant_per_price');
+                    $entire_per_price = wbbm_get_order_meta($item_id, '_entire_per_price');
+                    $total_price = wbbm_get_order_meta($item_id, '_total_price');
+                    $next_stops = maybe_serialize(wbbm_get_all_stops_after_this($bus_id, $start, $end));
 
-                    // if(!empty($_seats)){
 
-                    if (isset($usr_inf[$counter]['wbbm_user_name'])) {
-                        $user_name = $usr_inf[$counter]['wbbm_user_name'];
-                    } else {
-                        $user_name = "";
+                    $usr_inf = unserialize($user_info_arr);
+                    $counter = 0;
+                    $_seats = 'None';
+
+                    $item_quantity = ($adult + $child + $infant + $entire);
+                    // $_seats         =   $item_quantity;
+                    // foreach ($seats as $_seats) {
+                    for ($x = 1; $x <= $item_quantity; $x++) {
+
+                        // if(!empty($_seats)){
+
+                        if (isset($usr_inf[$counter]['wbbm_user_name'])) {
+                            $user_name = $usr_inf[$counter]['wbbm_user_name'];
+                        } else {
+                            $user_name = "";
+                        }
+                        if (isset($usr_inf[$counter]['wbbm_user_email'])) {
+                            $user_email = $usr_inf[$counter]['wbbm_user_email'];
+                        } else {
+                            $user_email = "";
+                        }
+                        if (isset($usr_inf[$counter]['wbbm_user_phone'])) {
+                            $user_phone = $usr_inf[$counter]['wbbm_user_phone'];
+                        } else {
+                            $user_phone = "";
+                        }
+                        if (isset($usr_inf[$counter]['wbbm_user_address'])) {
+                            $user_address = $usr_inf[$counter]['wbbm_user_address'];
+                        } else {
+                            $user_address = "";
+                        }
+                        if (isset($usr_inf[$counter]['wbbm_user_gender'])) {
+                            $user_gender = $usr_inf[$counter]['wbbm_user_gender'];
+                        } else {
+                            $user_gender = "";
+                        }
+                        if (isset($usr_inf[$counter]['wbbm_user_dob'])) {
+                            $user_dob = $usr_inf[$counter]['wbbm_user_dob'];
+                        } else {
+                            $user_dob = "";
+                        }
+                        if (isset($usr_inf[$counter]['wbbm_user_type'])) {
+                            $user_type = $usr_inf[$counter]['wbbm_user_type'];
+                        } elseif (isset($entire)) {
+                            $user_type = "Entire";
+                        } else {
+                            $user_type = "Adult";
+                        }
+                        $_seats = $item_quantity;
+                        $check_before_add = wbbm_get_order_seat_check($bus_id, $order_id, $user_type, $b_time, $j_date);
+                        // }
+                        $counter++;
                     }
-                    if (isset($usr_inf[$counter]['wbbm_user_email'])) {
-                        $user_email = $usr_inf[$counter]['wbbm_user_email'];
-                    } else {
-                        $user_email = "";
+
+
+                    if ($order->has_status('processing')) {
+                        $status = 1;
+                        $table_name = $wpdb->prefix . 'wbbm_bus_booking_list';
+                        $wpdb->query(
+                            $wpdb->prepare("UPDATE $table_name SET status = %d WHERE order_id = %d AND bus_id = %d", $status, $order_id, $event_id)
+                        );
                     }
-                    if (isset($usr_inf[$counter]['wbbm_user_phone'])) {
-                        $user_phone = $usr_inf[$counter]['wbbm_user_phone'];
-                    } else {
-                        $user_phone = "";
+
+
+                    if ($order->has_status('pending')) {
+                        $status = 3;
+                        $table_name = $wpdb->prefix . 'wbbm_bus_booking_list';
+                        $wpdb->query(
+                            $wpdb->prepare("UPDATE $table_name SET status = %d WHERE order_id = %d AND bus_id = %d", $status, $order_id, $event_id)
+                        );
                     }
-                    if (isset($usr_inf[$counter]['wbbm_user_address'])) {
-                        $user_address = $usr_inf[$counter]['wbbm_user_address'];
-                    } else {
-                        $user_address = "";
+
+                    if ($order->has_status('on-hold')) {
+                        $status = 6;
+                        $table_name = $wpdb->prefix . 'wbbm_bus_booking_list';
+                        $wpdb->query(
+                            $wpdb->prepare("UPDATE $table_name SET status = %d WHERE order_id = %d AND bus_id = %d", $status, $order_id, $event_id)
+                        );
                     }
-                    if (isset($usr_inf[$counter]['wbbm_user_gender'])) {
-                        $user_gender = $usr_inf[$counter]['wbbm_user_gender'];
-                    } else {
-                        $user_gender = "";
+
+                    if ($order->has_status('failed')) {
+                        $status = 7;
+                        $table_name = $wpdb->prefix . 'wbbm_bus_booking_list';
+                        $wpdb->query(
+                            $wpdb->prepare("UPDATE $table_name SET status = %d WHERE order_id = %d AND bus_id = %d", $status, $order_id, $event_id)
+                        );
                     }
-                    if (isset($usr_inf[$counter]['wbbm_user_dob'])) {
-                        $user_dob = $usr_inf[$counter]['wbbm_user_dob'];
-                    } else {
-                        $user_dob = "";
+
+                    if ($order->has_status('cancelled')) {
+                        $status = 5;
+                        $table_name = $wpdb->prefix . 'wbbm_bus_booking_list';
+                        $wpdb->query(
+                            $wpdb->prepare("UPDATE $table_name SET status = %d WHERE order_id = %d AND bus_id = %d", $status, $order_id, $event_id)
+                        );
                     }
-                    if (isset($usr_inf[$counter]['wbbm_user_type'])) {
-                        $user_type = $usr_inf[$counter]['wbbm_user_type'];
-                    } elseif (isset($entire)) {
-                        $user_type = "Entire";
-                    } else {
-                        $user_type = "Adult";
+
+                    if ($order->has_status('completed')) {
+                        $status = 2;
+                        $table_name = $wpdb->prefix . 'wbbm_bus_booking_list';
+                        $wpdb->query(
+                            $wpdb->prepare("UPDATE $table_name SET status = %d WHERE order_id = %d AND bus_id = %d", $status, $order_id, $event_id)
+                        );
                     }
-                    $_seats = $item_quantity;
-                    $check_before_add = wbbm_get_order_seat_check($bus_id, $order_id, $user_type, $b_time, $j_date);
-                    // }
-                    $counter++;
-                }
 
-
-                if ($order->has_status('processing')) {
-                    $status = 1;
-                    $table_name = $wpdb->prefix . 'wbbm_bus_booking_list';
-                    $wpdb->query(
-                        $wpdb->prepare("UPDATE $table_name SET status = %d WHERE order_id = %d AND bus_id = %d", $status, $order_id, $event_id)
-                    );
-                }
-
-
-                if ($order->has_status('pending')) {
-                    $status = 3;
-                    $table_name = $wpdb->prefix . 'wbbm_bus_booking_list';
-                    $wpdb->query(
-                        $wpdb->prepare("UPDATE $table_name SET status = %d WHERE order_id = %d AND bus_id = %d", $status, $order_id, $event_id)
-                    );
-                }
-
-                if ($order->has_status('on-hold')) {
-                    $status = 6;
-                    $table_name = $wpdb->prefix . 'wbbm_bus_booking_list';
-                    $wpdb->query(
-                        $wpdb->prepare("UPDATE $table_name SET status = %d WHERE order_id = %d AND bus_id = %d", $status, $order_id, $event_id)
-                    );
-                }
-
-                if ($order->has_status('failed')) {
-                    $status = 7;
-                    $table_name = $wpdb->prefix . 'wbbm_bus_booking_list';
-                    $wpdb->query(
-                        $wpdb->prepare("UPDATE $table_name SET status = %d WHERE order_id = %d AND bus_id = %d", $status, $order_id, $event_id)
-                    );
-                }
-
-                if ($order->has_status('cancelled')) {
-                    $status = 5;
-                    $table_name = $wpdb->prefix . 'wbbm_bus_booking_list';
-                    $wpdb->query(
-                        $wpdb->prepare("UPDATE $table_name SET status = %d WHERE order_id = %d AND bus_id = %d", $status, $order_id, $event_id)
-                    );
-                }
-
-                if ($order->has_status('completed')) {
-                    $status = 2;
-                    $table_name = $wpdb->prefix . 'wbbm_bus_booking_list';
-                    $wpdb->query(
-                        $wpdb->prepare("UPDATE $table_name SET status = %d WHERE order_id = %d AND bus_id = %d", $status, $order_id, $event_id)
-                    );
-                }
-
-                if ($order->has_status('refunded')) {
-                    $status = 4;
-                    $table_name = $wpdb->prefix . 'wbbm_bus_booking_list';
-                    $wpdb->query(
-                        $wpdb->prepare("UPDATE $table_name SET status = %d WHERE order_id = %d AND bus_id = %d", $status, $order_id, $event_id)
-                    );
+                    if ($order->has_status('refunded')) {
+                        $status = 4;
+                        $table_name = $wpdb->prefix . 'wbbm_bus_booking_list';
+                        $wpdb->query(
+                            $wpdb->prepare("UPDATE $table_name SET status = %d WHERE order_id = %d AND bus_id = %d", $status, $order_id, $event_id)
+                        );
+                    }
                 }
             }
         }
