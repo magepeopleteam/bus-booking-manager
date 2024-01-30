@@ -279,6 +279,7 @@ class SearchClass extends CommonClass
 
         $available_seat = wbbm_intermidiate_available_seat($_GET[$boarding_var], $_GET[$dropping_var], wbbm_convert_date_to_php(mage_get_isset($date_var)));
 
+        //echo "<pre>";print_r($available_seat);echo "</pre>";exit;
 
         $boarding = mage_get_isset($boarding_var);
         $dropping = mage_get_isset($dropping_var);
