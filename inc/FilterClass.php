@@ -391,7 +391,6 @@
             public function wbbm_display_custom_fields_text_cart($item_data, $cart_item)
             {
 
-
                 if(!is_admin()){
 
                     $total_extra_service_qty = 0;
@@ -428,50 +427,48 @@
                             }
                         }
 
+                        ob_start();
                         ?>
+                            <div class="mpStyles">
+                                <div class="cart-item-details">
+                                    <ul>
 
-                        <ul>
+                                        <li>
+                                            <strong>
+                                                <?php echo wbbm_get_option('wbbm_select_journey_date_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_select_journey_date_text', 'wbbm_label_setting_sec') . ': ' : _e('Journey Date', 'bus-booking-manager') . ': '; ?>
+                                            </strong>
+                                            <?php echo ' ' . get_wbbm_datetime($cart_item['wbbm_journey_date'], 'date'); ?>
+                                        </li>
+                                        <li>
+                                            <strong>
+                                                <?php echo wbbm_get_option('wbbm_starting_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_starting_text', 'wbbm_label_setting_sec') . ': ' : _e('Journey Time', 'bus-booking-manager') . ': '; ?>
+                                            </strong>
+                                            <?php echo get_wbbm_datetime($cart_item['wbbm_journey_time'], 'time'); ?>
+                                        </li>
+                                        <li>
+                                            <strong>
+                                                <?php echo wbbm_get_option('wbbm_boarding_points_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_boarding_points_text', 'wbbm_label_setting_sec') . ': ' : _e('Boarding Point', 'bus-booking-manager') . ': '; ?>
+                                            </strong>
+                                            <?php echo $cart_item['wbbm_start_stops']; ?>
+                                        </li>
+                                        <li>
+                                            <strong>
+                                                <?php echo wbbm_get_option('wbbm_dropping_points_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_dropping_points_text', 'wbbm_label_setting_sec') . ': ' : _e('Dropping Point', 'bus-booking-manager') . ': '; ?>
+                                            </strong>
+                                            <?php echo $cart_item['wbbm_end_stops']; ?>
+                                        </li>
 
-                            <li>
-                                <strong>
-                                    <?php echo wbbm_get_option('wbbm_select_journey_date_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_select_journey_date_text', 'wbbm_label_setting_sec') . ': ' : _e('Journey Date', 'bus-booking-manager') . ': '; ?>
-                                </strong>
-                                <?php echo ' ' . get_wbbm_datetime($cart_item['wbbm_journey_date'], 'date'); ?>
-                            </li>
-                            <li>
-                                <strong>
-                                    <?php echo wbbm_get_option('wbbm_starting_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_starting_text', 'wbbm_label_setting_sec') . ': ' : _e('Journey Time', 'bus-booking-manager') . ': '; ?>
-                                </strong>
-                                <?php echo get_wbbm_datetime($cart_item['wbbm_journey_time'], 'time'); ?>
-                            </li>
-                            <li>
-                                <strong>
-                                    <?php echo wbbm_get_option('wbbm_boarding_points_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_boarding_points_text', 'wbbm_label_setting_sec') . ': ' : _e('Boarding Point', 'bus-booking-manager') . ': '; ?>
-                                </strong>
-                                <?php echo $cart_item['wbbm_start_stops']; ?>
-                            </li>
-                            <li>
-                                <strong>
-                                    <?php echo wbbm_get_option('wbbm_dropping_points_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_dropping_points_text', 'wbbm_label_setting_sec') . ': ' : _e('Dropping Point', 'bus-booking-manager') . ': '; ?>
-                                </strong>
-                                <?php echo $cart_item['wbbm_end_stops']; ?>
-                            </li>
+                                        <?php if ($pickpoint && $pickpoint != 'n_a'): ?>
+                                            <li>
+                                                <strong>
+                                                    <?php echo __('Pickup Area', 'bus-booking-manager') . ': '; ?>
+                                                </strong>
+                                                <?php echo ucfirst($pickpoint); ?> </li>
+                                        <?php endif; ?>
 
-                            <?php if ($pickpoint && $pickpoint != 'n_a'): ?>
-                                <li>
-                                    <strong>
-                                        <?php echo __('Pickup Area', 'bus-booking-manager') . ': '; ?>
-                                    </strong>
-                                    <?php echo ucfirst($pickpoint); ?> </li>
-                            <?php endif; ?>
-
-
-
-
-
-                        </ul>
-
-
+                                    </ul>                                    
+                                </div>
+                            </div>
                         <?php
 
                         if($custom_reg_user=='no'){
@@ -736,7 +733,7 @@
                     }
 
                 }
-
+                $item_data[] = array('key' => '','value'=>ob_get_clean());
                 return $item_data;
 
 
