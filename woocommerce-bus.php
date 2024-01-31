@@ -129,16 +129,25 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
             {
                 $wpdb->query("ALTER TABLE $table_name CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;");
                 
-                $wpdb->query("
-                    ALTER TABLE $table_name
-                    MODIFY COLUMN user_name VARCHAR(255) NULL,
-                    MODIFY COLUMN user_email VARCHAR(255) NULL,
-                    MODIFY COLUMN user_phone VARCHAR(255) NULL,
-                    MODIFY COLUMN user_gender VARCHAR(255) NULL,
-                    MODIFY COLUMN user_dob VARCHAR(255) NULL,
-                    MODIFY COLUMN nationality VARCHAR(255) NULL,
-                    MODIFY COLUMN pickpoint VARCHAR(255) NULL
-                ");
+                $columns_to_modify = array(
+                    'user_name' => 'VARCHAR(255) NULL',
+                    'user_email' => 'VARCHAR(255) NULL',
+                    'user_phone' => 'VARCHAR(255) NULL',
+                    'user_gender' => 'VARCHAR(255) NULL',
+                    'user_dob' => 'VARCHAR(255) NULL',
+                    'nationality' => 'VARCHAR(255) NULL',
+                    'pickpoint' => 'VARCHAR(255) NULL',
+                );
+
+                foreach ($columns_to_modify as $column => $definition) 
+                {
+                    $column_exists = $wpdb->get_var("SHOW COLUMNS FROM $table_name LIKE '$column'");
+                    
+                    if ($column_exists !== null) 
+                    {
+                        $wpdb->query("ALTER TABLE $table_name MODIFY COLUMN $column $definition");
+                    }
+                }
 
                 update_option('wbbm_table_alterations_applied', 'true');
             }

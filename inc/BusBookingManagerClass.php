@@ -46,7 +46,7 @@ class BusBookingManagerClass
         $FilterClass = new FilterClass();
         add_filter('single_template',array($FilterClass, 'wbbm_load_bus_templates'), 20, 2);
         add_filter('woocommerce_add_cart_item_data', array($FilterClass, 'wbbm_add_custom_fields_text_to_cart_item'), 20, 2);
-        add_filter('woocommerce_get_item_data', array($FilterClass, 'wbbm_display_custom_fields_text_cart'), 20, 2);
+        add_filter('woocommerce_get_item_data', array($FilterClass, 'wbbm_display_custom_fields_text_cart'), 99, 2);
 
     }
 
