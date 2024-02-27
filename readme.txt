@@ -73,29 +73,30 @@ Admins can conveniently book tickets and issue them from the admin panel, which 
 The shortcode we developed is a convenient way to integrate those exciting features into your WordPress website.
 Let’s take a look at what kinds of integration those short code offer
 
+
 To display the Search form in Horizontal view then need to use this shortcode and [Here is Example](https://multipurpose.mage-people.com/)
-'[bus-search-form]'
+`[bus-search-form]`
 
 but if Someone like to display Search form in Vertical view then use this Sortcode. and [here is Example](https://multipurpose.mage-people.com/home-page-vertical-search-form/)
-'[bus-search-form style="vertical"]'
+`[bus-search-form style="vertical"]`
 
 To display search result, In any page use this shortcode: [bus-search] and then that page need select as search result page in general settings area.
-'[bus-search]'
+`[bus-search]`
 
 To display search result in minimal theme, use this shortcode [bus-search theme=”minimal”]. Then that page need select as search result page in general settings area.
-'[bus-search theme="minimal"]'
+`[bus-search theme="minimal"]`
 
 ### List of Bus/Train/Ferry/Boat/Shuttle:
 To Display all bus list to any page then need to use this shortcode.
-'[bus-list]'
+`[bus-list]`
 
 ### List show by cat:
 By default showing all bus, but if you want to show bus list of a particular category you can use this attribute, just put the category id with this. example:
-'[bus-list cat='ID']'
+`[bus-list cat='ID']`
 
 ### Show list in specific number:
 By default showing 20 bus per page. If you want to change it and set limit input the limit number. example:
-'[bus-list show='10']'
+`[bus-list show='10']`
 
 
 
