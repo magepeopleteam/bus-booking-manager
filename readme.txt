@@ -1,4 +1,4 @@
-=== Multipurpose Ticket Booking Manager (Bus/Train/Ferry/Boat/Shuttle) ===
+=== Multipurpose Ticket Booking Manager (Bus/Train/Ferry/Boat/Shuttle) | WordPress Plugin ===
 Contributors: magepeopleteam, aamahin
 Tags: Bus Booking Manager, bus ticket booking for wordpress
 Requires at least: 4.5
@@ -11,101 +11,98 @@ Requires PHP: 7.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Multipurpose Ticket Booking Manager (Bus/Train/Ferry/Boat/Shuttle) is a ticket booking Plugin for WordPress that is based on WooCommerce.
+The Multipurpose Ticket Booking Manager is a reliable plugin to book tickets for transportation, such as buses, trains, and ferries in one place.
 
 == Description ==
-The Multipurpose Ticket Booking Manager WordPress Plugin is a versatile tool that allows website owners to integrate a comprehensive ticket booking system into their WordPress websites. This plugin supports various modes of transportation, including buses, trains, ferries, boats, and shuttles, making it suitable for a wide range of businesses. It uses WooCommerce for making payments, so it has the freedom to use any payment gateway via WooCommerce.
+[Multipurpose Ticket Booking Manager](https://mage-people.com/product/multipurpose-ticket-booking-manager-bus-train-ferry-boat-shuttle/) provides website owners the ability to easily integrate a comprehensive ticket booking system into their WordPress websites. With support for various modes of transportation such as buses, trains, ferries, boats, and shuttles, this plugin is tailored for a wide array of businesses. The use of WooCommerce for payments allows you to use available payment gateway.
+
+Regardless of whether you run a traditional or nontraditional transportation business, we designed the solution so that it can be easily integrated with any transportation system, removing all ticket management hassles and saving you time and money.
 
 
-
-###  Free Version Plugin Features:
-
-👉 **Multi-Transport Support:** This plugin supports multiple modes of transportation, enabling users to book tickets for buses, trains, ferries, boats, and shuttles. The plugin provides a flexible and scalable solution for businesses in different industries.
-
-👉 **Search and Filter:** Users can search for available routes based on their origin, destination, and preferred travel dates. The plugin offers advanced search and filtering options to help users find the most suitable options.
-
-👉 **Seat type Selection:** For transportation modes requiring seat type selection, users can choose their preferred seats from the list. The list updates to show available and booked seats, making it easy for users to make their selections.
-
-👉 **Online Reservation:** Once users have selected their desired route and seats, they can proceed with the online reservation process. The plugin supports secure payment gateways, allowing users to make payments directly on the website.
-
-👉 **Booking Management:** The plugin provides a comprehensive booking management system for the website owner and the users. The website owner can view and manage all bookings from the WordPress admin panel, while users can access their booking details through their accounts.
-
-👉 **Email Notifications:** The plugin automatically sends email notifications to users after successful bookings, providing them with booking confirmations and e-tickets(Pro Version). Additionally, the website owner receives notifications for new bookings and cancellations.
-
-👉 **Payment Method:** The plugin Works with WooCommerce so it supports all payment method that works with woocommerce and the website owner has much more option to add as a payment method.
-
-👉 **Customization Options:** The plugin offers various customization options to match the website's design and branding. Users can customize colors, fonts, and other visual elements to create a seamless booking experience.
+## Exclusive Features That Come With Free Version OF the Plugin
 
 
-👉 **Operational Offday/OnDay Settings:** Admin can setup operational Offday and Onday
+### 🌐 Multi-Transport Support:
+This plugin facilitates booking for buses, trains, ferries, boats, and shuttles, providing a flexible and scalable solution for diverse industries.
 
-👉 **Responsive Design:** The plugin is built with a responsive design, ensuring that it works smoothly on different devices and screen sizes. Users can make bookings and select seats conveniently from their desktops, tablets, or mobile devices.
+### 🔍 Search and Filter:
+Users can easily find available routes based on origin, destination, and travel dates, thanks to advanced search and filtering options.
+
+### 🚦 Seat Type Selection:
+For transportation modes requiring seat selection, users can conveniently choose their preferred seats from the updated list.
+
+### 💳 Online Reservation:
+After selecting routes and seats, users can securely make payments directly on the website using WooCommerce-supported payment gateways.
+
+### 📅 Booking Management:
+Comprehensive booking management for both website owners and users, allowing seamless control and access to booking details.
+
+### 📧 Email Notifications:
+Automatic email notifications for users with booking confirmations and e-tickets (Pro Version), and alerts for website owners on new bookings and cancellations.
+
+### 💰 Payment Method:
+Works seamlessly with WooCommerce, supporting various payment methods, and giving website owners flexibility in payment options.
+
+### 🖌️ Customization Options:
+Customize colours, fonts, and visual elements to match the website's design and branding for a seamless booking experience.
+
+### 🗓️ Operational Offday/OnDay Settings:
+Admins can easily set up operational offdays and ondays.
+
+### 📱 Responsive Design:
+Built with a responsive design, ensuring smooth functionality on different devices and screen sizes.
 
 
-###  Plugin Demo and Documentation:
-
-👉   [Live PRO Version Demo](https://multipurpose.mage-people.com/)
-👉   [Plugin Documentation](https://docs.mage-people.com/multipurpose-ticket-booking-manager/)
-👉   [Buy Premium Plugin](https://mage-people.com/product/multipurpose-ticket-booking-manager-bus-train-ferry-boat-shuttle/)
+If you run a small business and you don't need too many features, the free version is fine, but if your business covers a wide area, then the customization and other premium features would be more beneficial.
 
 
-###  [Pro Version](https://mage-people.com/product/multipurpose-ticket-booking-manager-bus-train-ferry-boat-shuttle/) Plugin Features 
+## Let's take a look at the Premium features coves:
 
+### 📝 Passenger Registration Form:
+ Collect passenger information like name, email, and phone with a customizable registration form.
 
-👉 **Passenger Registration Form:** In the Pro Version we have a passenger registration form where the website owner can collect passenger information like name, email phone etc and admin can field as needed.
+### 📧 Email Notification with PDF:
+Set up email notifications with PDF tickets upon order confirmation.
 
-👉 **Email Notification with PDF:** Website owner can set up email when any customer place order after payment then customer will get email notification of order confirmation with PDF ticket.
+### 📋 Passenger List:
+Admins can filter and view passenger details for each journey.
 
-👉 **Passenger list:** Admin can see passenger details of each bus after filter journey date.
+### 📊 Passenger List CSV Export:
+Easily export all passenger details from the admin panel.
 
-👉 **Passenger list list CSV Export:** Admin Can export all passenger details from admin panel.
+### 🎫 Book Bus Ticket From Admin Panel:
+Admins can conveniently book tickets and issue them from the admin panel, which is useful for counter tickets or phone orders.
 
-👉 **Book Bus Ticket From admin Panel** Admin Can Book ticket and issue from admin panel mostly this can be used for counter ticket or phone order.
+## Shortcodes Included With Bus Booking Manager
 
+The shortcode we developed is a convenient way to integrate those exciting features into your WordPress website.
 
+Let’s take a look at what kinds of integration those short code offer
 
+To display the Search form in Horizontal view then need to use this shortcode and [Here is Example](https://multipurpose.mage-people.com/)
+'[bus-search-form]'
 
-### Shortcodes included with Bus Booking Manager 
-
-
-To display Search form in Horizontal view then need to use this shortcode and  [Here is Example](https://multipurpose.mage-people.com/)
-
-`
-[bus-search-form]
-`
 but if Someone like to display Search form in Vertical view then use this Sortcode. and [here is Example](https://multipurpose.mage-people.com/home-page-vertical-search-form/)
+'[bus-search-form style="vertical"]'
 
-`
-[bus-search-form style="vertical"]
-`
 To display search result, In any page use this shortcode: [bus-search] and then that page need select as search result page in general settings area.
+'[bus-search]'
 
-`
-[bus-search]
-`
-To display search result in minimal theme, use this shortcode [bus-search theme="minimal"]. Then that page need select as search result page in general settings area.
+To display search result in minimal theme, use this shortcode [bus-search theme=”minimal”]. Then that page need select as search result page in general settings area.
+'[bus-search theme="minimal"]'
 
-`
-[bus-search theme="minimal"]
-`
-
-**List of Bus/Train/Ferry/Boat/Shuttle:**  
+### List of Bus/Train/Ferry/Boat/Shuttle:
 To Display all bus list to any page then need to use this shortcode.
-
-`
 [bus-list]
-`
-**List show by cat:**  
-By default showing all bus, but if you want to show bus list of a particular category you can use this attribute, just put the category id with this. example:  
-`
-[bus-list cat='ID']
-`
-**Show list in specific number:**  
-By default showing 20 bus per page. If you want to change it and set limit input the limit number. example:  
 
-`
+### List show by cat:
+By default showing all bus, but if you want to show bus list of a particular category you can use this attribute, just put the category id with this. example:
+[bus-list cat='ID']
+
+### Show list in specific number:
+By default showing 20 bus per page. If you want to change it and set limit input the limit number. example:
 [bus-list show='10']
-`
+
 
 
 **Available Addons**
