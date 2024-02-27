@@ -2,8 +2,8 @@
 Contributors: magepeopleteam, aamahin
 Tags: Bus Booking Manager, bus ticket booking for wordpress
 Requires at least: 4.5
-Stable tag: trunk
-Version: 4.1.9
+Stable tag: 4.2.1
+Version: 4.2.1
 Tested up to: 6.3
 WC requires at least: 3.0
 WC tested up to: 6.5
@@ -17,6 +17,13 @@ The Multipurpose Ticket Booking Manager is a reliable plugin to book tickets for
 [Multipurpose Ticket Booking Manager](https://mage-people.com/product/multipurpose-ticket-booking-manager-bus-train-ferry-boat-shuttle/) provides website owners the ability to easily integrate a comprehensive ticket booking system into their WordPress websites. With support for various modes of transportation such as buses, trains, ferries, boats, and shuttles, this plugin is tailored for a wide array of businesses. The use of WooCommerce for payments allows you to use available payment gateway.
 
 Regardless of whether you run a traditional or nontraditional transportation business, we designed the solution so that it can be easily integrated with any transportation system, removing all ticket management hassles and saving you time and money.
+
+###  Explore The Demo:
+
+🌐 [Live Demo](https://multipurpose.mage-people.com/)
+📘 [Online Documentation](https://docs.mage-people.com/multipurpose-ticket-booking-manager/)
+🛍️ [Buy Pro](https://mage-people.com/product/multipurpose-ticket-booking-manager-bus-train-ferry-boat-shuttle/)
+
 
 ## Exclusive Features That Come With Free Version OF the Plugin
 
