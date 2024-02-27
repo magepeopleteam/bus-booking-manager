@@ -18,9 +18,7 @@ The Multipurpose Ticket Booking Manager is a reliable plugin to book tickets for
 
 Regardless of whether you run a traditional or nontraditional transportation business, we designed the solution so that it can be easily integrated with any transportation system, removing all ticket management hassles and saving you time and money.
 
-
 ## Exclusive Features That Come With Free Version OF the Plugin
-
 
 ### 🌐 Multi-Transport Support:
 This plugin facilitates booking for buses, trains, ferries, boats, and shuttles, providing a flexible and scalable solution for diverse industries.
@@ -52,14 +50,12 @@ Admins can easily set up operational offdays and ondays.
 ### 📱 Responsive Design:
 Built with a responsive design, ensuring smooth functionality on different devices and screen sizes.
 
-
 If you run a small business and you don't need too many features, the free version is fine, but if your business covers a wide area, then the customization and other premium features would be more beneficial.
-
 
 ## Let's take a look at the Premium features coves:
 
 ### 📝 Passenger Registration Form:
- Collect passenger information like name, email, and phone with a customizable registration form.
+Collect passenger information like name, email, and phone with a customizable registration form.
 
 ### 📧 Email Notification with PDF:
 Set up email notifications with PDF tickets upon order confirmation.
@@ -74,9 +70,7 @@ Easily export all passenger details from the admin panel.
 Admins can conveniently book tickets and issue them from the admin panel, which is useful for counter tickets or phone orders.
 
 ## Shortcodes Included With Bus Booking Manager
-
 The shortcode we developed is a convenient way to integrate those exciting features into your WordPress website.
-
 Let’s take a look at what kinds of integration those short code offer
 
 To display the Search form in Horizontal view then need to use this shortcode and [Here is Example](https://multipurpose.mage-people.com/)
@@ -93,15 +87,15 @@ To display search result in minimal theme, use this shortcode [bus-search theme=
 
 ### List of Bus/Train/Ferry/Boat/Shuttle:
 To Display all bus list to any page then need to use this shortcode.
-[bus-list]
+'[bus-list]'
 
 ### List show by cat:
 By default showing all bus, but if you want to show bus list of a particular category you can use this attribute, just put the category id with this. example:
-[bus-list cat='ID']
+'[bus-list cat='ID']'
 
 ### Show list in specific number:
 By default showing 20 bus per page. If you want to change it and set limit input the limit number. example:
-[bus-list show='10']
+'[bus-list show='10']'
 
 
 
