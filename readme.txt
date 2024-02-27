@@ -27,83 +27,104 @@ Regardless of whether you run a traditional or nontraditional transportation bus
 
 ## Exclusive Features That Come With Free Version OF the Plugin
 
-### 🌐 Multi-Transport Support:
+**🌐 Multi-Transport Support:**
 This plugin facilitates booking for buses, trains, ferries, boats, and shuttles, providing a flexible and scalable solution for diverse industries.
 
-### 🔍 Search and Filter:
+**🔍 Search and Filter:**
 Users can easily find available routes based on origin, destination, and travel dates, thanks to advanced search and filtering options.
 
-### 🚦 Seat Type Selection:
+**🚦 Seat Type Selection:**
 For transportation modes requiring seat selection, users can conveniently choose their preferred seats from the updated list.
 
-### 💳 Online Reservation:
+**💳 Online Reservation:**
 After selecting routes and seats, users can securely make payments directly on the website using WooCommerce-supported payment gateways.
 
-### 📅 Booking Management:
+**📅 Booking Management:**
 Comprehensive booking management for both website owners and users, allowing seamless control and access to booking details.
 
-### 📧 Email Notifications:
+**📧 Email Notifications:**
 Automatic email notifications for users with booking confirmations and e-tickets (Pro Version), and alerts for website owners on new bookings and cancellations.
 
-### 💰 Payment Method:
+**💰 Payment Method:**
 Works seamlessly with WooCommerce, supporting various payment methods, and giving website owners flexibility in payment options.
 
-### 🖌️ Customization Options:
+**🖌️ Customization Options:**
 Customize colours, fonts, and visual elements to match the website's design and branding for a seamless booking experience.
 
-### 🗓️ Operational Offday/OnDay Settings:
+**🗓️ Operational Offday/OnDay Settings:**
 Admins can easily set up operational offdays and ondays.
 
-### 📱 Responsive Design:
+**📱 Responsive Design:**
 Built with a responsive design, ensuring smooth functionality on different devices and screen sizes.
 
 If you run a small business and you don't need too many features, the free version is fine, but if your business covers a wide area, then the customization and other premium features would be more beneficial.
 
 ## Let's take a look at the Premium features coves:
 
-### 📝 Passenger Registration Form:
+**📝 Passenger Registration Form:**
 Collect passenger information like name, email, and phone with a customizable registration form.
 
-### 📧 Email Notification with PDF:
+**📧 Email Notification with PDF:**
 Set up email notifications with PDF tickets upon order confirmation.
 
-### 📋 Passenger List:
+**📋 Passenger List:**
 Admins can filter and view passenger details for each journey.
 
-### 📊 Passenger List CSV Export:
+**📊 Passenger List CSV Export:**
 Easily export all passenger details from the admin panel.
 
-### 🎫 Book Bus Ticket From Admin Panel:
+**🎫 Book Bus Ticket From Admin Panel:**
 Admins can conveniently book tickets and issue them from the admin panel, which is useful for counter tickets or phone orders.
 
-## Shortcodes Included With Bus Booking Manager
+**Shortcodes Included With Bus Booking Manager**
 The shortcode we developed is a convenient way to integrate those exciting features into your WordPress website.
-Let’s take a look at what kinds of integration those short code offer
+Let’s take a look at what kinds of integration those shortcodes offer
 
 
 To display the Search form in Horizontal view then need to use this shortcode and [Here is Example](https://multipurpose.mage-people.com/)
-`[bus-search-form]`
+
+`
+[bus-search-form]
+`
 
 but if Someone like to display Search form in Vertical view then use this Sortcode. and [here is Example](https://multipurpose.mage-people.com/home-page-vertical-search-form/)
-`[bus-search-form style="vertical"]`
 
-To display search result, In any page use this shortcode: [bus-search] and then that page need select as search result page in general settings area.
-`[bus-search]`
+`
+[bus-search-form style="vertical"]
+`
+
+To display search results, In any page use this shortcode: [bus-search] and then that page need select as search result page in general settings area.
+
+`
+[bus-search]
+`
 
 To display search result in minimal theme, use this shortcode [bus-search theme=”minimal”]. Then that page need select as search result page in general settings area.
-`[bus-search theme="minimal"]`
 
-### List of Bus/Train/Ferry/Boat/Shuttle:
+`
+[bus-search theme="minimal"]
+`
+
+**List of Bus/Train/Ferry/Boat/Shuttle:**
 To Display all bus list to any page then need to use this shortcode.
-`[bus-list]`
 
-### List show by cat:
+`
+[bus-list]
+`
+
+**List show by cat:**
 By default showing all bus, but if you want to show bus list of a particular category you can use this attribute, just put the category id with this. example:
-`[bus-list cat='ID']`
 
-### Show list in specific number:
+`
+[bus-list cat='ID']
+`
+
+**Show list in specific number:**
 By default showing 20 bus per page. If you want to change it and set limit input the limit number. example:
-`[bus-list show='10']`
+
+`
+[bus-list show='10']
+`
 
 
 
