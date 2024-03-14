@@ -4,7 +4,7 @@
  * Plugin Name: Multipurpose Ticket Booking Manager (Bus/Train/Ferry/Boat/Shuttle)
  * Plugin URI: http://mage-people.com
  * Description: A Complete Ticket Booking System for WordPress & WooCommerce
- * Version: 4.2.0
+ * Version: 4.2.1
  * Author: MagePeople Team
  * Author URI: http://www.mage-people.com/
  * Text Domain: bus-booking-manager
@@ -1082,10 +1082,11 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
             } else { // is single booking
                 $query = "SELECT COUNT(booking_id) FROM $table_name WHERE bus_id=$bus_id AND journey_date='$date' AND $where AND ticket_status != 99 AND status IN ($seat_booked_status)";
                 $sold_seats = $wpdb->get_var($query);
-                //echo "<pre>"; print_r(array($start, $end, $bus_stops_unique,$where,$entire_query,$wpdb->get_var($query)));echo "<pre>";
+                //echo "<pre>"; print_r(array($start, $end, $bus_stops_unique,$where,$entire_query,$seat_booked_status,$wpdb->get_var($query)));echo "<pre>";
             }
         }
-
+        // echo "<pre>";print_r(debug_backtrace());echo "</pre>";
+        //echo "<pre>"; print_r(array($start, $end, $bus_stops_unique,$where,$entire_query,$wpdb->get_var($entire_query),$sold_seats,$seat_booked_status));echo "<pre>"; exit;
         return $sold_seats;
     }
 
@@ -1462,7 +1463,7 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
 
     }
 
-    add_action('woocommerce_order_status_changed', 'wbbm_bus_ticket_seat_management', 10, 4);
+    add_action('woocommerce_order_status_changed', 'wbbm_bus_ticket_seat_management', 99, 4);
     function wbbm_bus_ticket_seat_management($order_id, $from_status, $to_status, $order)
     {
         global $wpdb;
@@ -1599,11 +1600,21 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
                         );
                     }
 
-                    if ($order->has_status('cancelled')) {
-                        $status = 5;
+                    if (!$order->has_status('cancelled')) {
+                        $ticket_status = "0";
                         $table_name = $wpdb->prefix . 'wbbm_bus_booking_list';
                         $wpdb->query(
-                            $wpdb->prepare("UPDATE $table_name SET status = %d WHERE order_id = %d AND bus_id = %d", $status, $order_id, $event_id)
+                            $wpdb->prepare("UPDATE $table_name SET ticket_status = %s WHERE order_id = %d AND bus_id = %d",$ticket_status,$order_id,$event_id)
+                        );
+                    }
+
+                    if ($order->has_status('cancelled')) {
+                        $status = 5;
+                        $ticket_status = "99";
+                        $table_name = $wpdb->prefix . 'wbbm_bus_booking_list';
+                        $wpdb->query(
+                            $wpdb->prepare(
+                                "UPDATE $table_name SET status = %d, ticket_status = %s WHERE order_id = %d AND bus_id = %d",$status,$ticket_status,$order_id,$event_id)
                         );
                     }
 
