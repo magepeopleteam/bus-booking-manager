@@ -1498,3 +1498,7 @@ a.button.remove-bp-row i {
     font-weight: 400;
     margin: 20px;
 }
+
+#wbbm-single-settings-meta .bgLight{
+    background-color: var(--color_light);
+}

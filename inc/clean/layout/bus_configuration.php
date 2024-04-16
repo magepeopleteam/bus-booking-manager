@@ -4,11 +4,28 @@
     </h3>
     <p><?php echo $cpt_label.' '. __('Configuration', 'bus-booking-manager'); ?></p>
     <div class="configuration_wrapper">
-
+        <section class="bgLight">
+            <div class="">
+                <label for="wbbm_bus_category" class="ra-item-label">
+                    <?php  esc_html_e('General Settings', 'bus-booking-manager'); ?>
+                </label>
+                <br>
+                <span>
+                    <?php  esc_html_e('Here you can set '.$cpt_label.' type, number, coach etc.', 'bus-booking-manager'); ?>
+                </span>
+            </div>
+        </section>
         <section>
-            <label for="wbbm_bus_category" class="ra-item-label">
-                <?php  esc_html_e('Type', 'bus-booking-manager'); ?>
-            </label>
+            
+            <div>
+                <label for="wbbm_bus_category" class="ra-item-label">
+                    <?php  esc_html_e('Type', 'bus-booking-manager'); ?>
+                </label>
+                <br>
+                <span>
+                    <?php  esc_html_e('Select '.$cpt_label.' type, AC or None AC.', 'bus-booking-manager'); ?>
+                </span>
+            </div>
             <span>
                 <select name="wbbm_bus_category" id="wbbm_bus_category">'
                     <option value=""><?php esc_html_e('Select Type','bus-booking-manager') ?></option>
@@ -26,27 +43,45 @@
             </span>
         </section>
 
-        <div class='sec'>
-            <label for="wbbm_ev_98" class="ra-item-label">
-                <?php _e('Coach No', 'bus-booking-manager'); ?>
-            </label>
+        <section>
+            <div>
+                <label for="wbbm_ev_98" class="ra-item-label">
+                    <?php _e('Coach No', 'bus-booking-manager'); ?>
+                </label>
+                <br>
+                <span>
+                    <?php  esc_html_e('Select unique number for '.$cpt_label, 'bus-booking-manager'); ?>
+                </span>
+            </div>
             <input id='wbbm_ev_98' type="text" name='wbbm_bus_no' value='<?php if (array_key_exists('wbbm_bus_no', $values)) {echo $values['wbbm_bus_no'][0];} ?>' />
-        </div>
+        </section>
 
-        <div class='sec'>
-            <label for="wbbm_ev_99" class="ra-item-label">
-                <?php _e('Total Seat', 'bus-booking-manager'); ?>
-            </label>
+        <section>
+            <div>
+                <label for="wbbm_ev_99" class="ra-item-label">
+                    <?php _e('Total Seat', 'bus-booking-manager'); ?>
+                </label>
+                <br>
+                <span>
+                    <?php  esc_html_e('Select total seat number for '.$cpt_label, 'bus-booking-manager'); ?>
+                </span>
+            </div>
             <input id='wbbm_ev_99' type="text" name='wbbm_total_seat' value='<?php if (array_key_exists('wbbm_total_seat', $values)) {
                 echo $values['wbbm_total_seat'][0];
             } ?>' />
             </span>
-        </div>
+        </section>
 
-        <div class='sec'>
-            <label for="wbbm_price_zero_allow" class="ra-item-label">
-                <?php echo wbbm_get_option('wbbm_bus_price_zero_allow_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_bus_price_zero_allow_text', 'wbbm_label_setting_sec') : __('Bus Price Zero Allow','bus-booking-manager'); ?>
-            </label>
+        <section>
+            <div>
+                <label for="wbbm_price_zero_allow" class="ra-item-label">
+                    <?php echo wbbm_get_option('wbbm_bus_price_zero_allow_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_bus_price_zero_allow_text', 'wbbm_label_setting_sec') : __('Price Zero Allow','bus-booking-manager'); ?>
+                </label>
+                <br>
+                <span>
+                    <?php  esc_html_e('To allow seat price zero.', 'bus-booking-manager'); ?>
+                </span>
+            </div>
             <label class="switch">
                 <input type="checkbox" id="wbbm_price_zero_allow" name='wbbm_price_zero_allow' <?php if (array_key_exists('wbbm_price_zero_allow', $values)) {
                     if ($values['wbbm_price_zero_allow'][0] == 'on') {
@@ -58,12 +93,18 @@
                 <span class="slider round"></span>
 
             </label>
-        </div>
+        </section>
 
-        <div class='sec'>
-            <label for="wbbm_sell_off" class="ra-item-label">
-                <?php echo wbbm_get_option('wbbm_bus_sell_off_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_bus_sell_off_text', 'wbbm_label_setting_sec') : __('Bus Sell Off','bus-booking-manager'); ?>
-            </label>
+        <section>
+            <div>
+                <label for="wbbm_sell_off" class="ra-item-label">
+                    <?php echo wbbm_get_option('wbbm_bus_sell_off_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_bus_sell_off_text', 'wbbm_label_setting_sec') : __('Sell Off','bus-booking-manager'); ?>
+                </label>
+                <br>
+                <span>
+                    <?php  esc_html_e('To allow seat price zero.', 'bus-booking-manager'); ?>
+                </span>
+            </div>
             <label class="switch">
                 <input type="checkbox" id="wbbm_sell_off" name='wbbm_sell_off' <?php if (array_key_exists('wbbm_sell_off', $values)) {
                     if ($values['wbbm_sell_off'][0] == 'on') {
@@ -74,12 +115,18 @@
                 } ?> />
                 <span class="slider round"></span>
             </label>
-        </div>
+        </section>
 
-        <div class='sec'>
-            <label for="wbbm_seat_available" class="ra-item-label">
-                <?php echo wbbm_get_option('wbbm_bus_seat_available_show_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_bus_seat_available_show_text', 'wbbm_label_setting_sec') : __('Bus Seat Available Show','bus-booking-manager'); ?>
-            </label>
+        <section>
+            <div>
+                <label for="wbbm_seat_available" class="ra-item-label">
+                    <?php echo wbbm_get_option('wbbm_bus_seat_available_show_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_bus_seat_available_show_text', 'wbbm_label_setting_sec') : __('Show Seat Available','bus-booking-manager'); ?>
+                </label>
+                <br>
+                <span>
+                    <?php  esc_html_e('To show seat available.', 'bus-booking-manager'); ?>
+                </span>
+            </div>
             <label class="switch">
                 <input type="checkbox" id="wbbm_seat_available" name='wbbm_seat_available' <?php if (array_key_exists('wbbm_seat_available', $values)) {
                     if ($values['wbbm_seat_available'][0] == 'on') {
@@ -91,7 +138,7 @@
                 <span class="slider round"></span>
             </label>
             </label>
-        </div>
+        </section>
 
     </div>
 
