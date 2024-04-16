@@ -493,7 +493,7 @@ label.switch {
     position: relative;
     display: inline-block;
     width: 40px;
-    height: 12px;
+    height: 20px;
     margin-left: 5px;
 }
 
@@ -517,25 +517,24 @@ label .slider.round {
 label .slider:before {
     position: absolute;
     content: "";
-    height: 17px;
-    width: 17px;
-    left: 0px;
-    bottom: 4px;
+    height: 18px;
+    width: 18px;
+    left: 1px;
     background-color: #ffffff;
     -webkit-transition: .4s;
     transition: .4s;
     border-radius: 50%;
-    top: -3px;
+    top: 1px;
     box-shadow: -1px 3px 5px -3px rgba(170, 170, 170, 0.76)
 }
 
 label input:checked+.slider:before {
-    left: -10px;
-    background-color: #5C58A5;
+    left: -12px;
+    background-color: #fff;
 }
 
 label input:checked+.slider {
-    background-color: rgba(92, 88, 165, 0.25);
+    background-color: var(--color_theme);
 }
 
 label input:checked+.slider:before {
@@ -680,11 +679,27 @@ CSS Added By Ariful
     padding: 10px;
 }
 
-#wbbm-single-settings-meta .configuration_wrapper .sec {
-    margin: 0;
-    margin-bottom: 10px;
+#wbbm-single-settings-meta section, #wbbm-single-settings-meta .sec {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--dMP);
+    background-color: var(--color_white);
+    border: 1px solid var(--color_border);
+    margin-top: -1px;
 }
-
+#wbbm-single-settings-meta label{
+    margin: 0;
+    margin-bottom: 0px;
+    margin-bottom: 0px;
+    margin-bottom: 0px;
+    font-size: 14px;
+    font-family: DejaVuSansBold, sans-serif;
+    font-weight: 600;
+    line-height: 1.2;
+    margin-bottom: 8px;
+    color: var(--mpl-secondary);
+}
 #wbbm-single-settings-meta .onday-sec label {
     display: block;
 }
@@ -710,21 +725,7 @@ CSS Added By Ariful
     margin-right: 10px;
 }
 
-#wbbm-single-settings-meta table td,
-#wbbm-single-settings-meta .configuration_wrapper .sec,
-#wbbm-single-settings-meta .wbbm_bus_psngr_regform_wrap .sec {}
 
-#wbbm-single-settings-meta table tr:nth-child(even),
-#wbbm-single-settings-meta .configuration_wrapper .sec:nth-child(even),
-#wbbm-single-settings-meta .wbbm_bus_psngr_regform_wrap .sec:nth-child(even) {
-    background-color: #fff;
-}
-
-#wbbm-single-settings-meta table tr:nth-child(odd),
-#wbbm-single-settings-meta .configuration_wrapper .sec:nth-child(odd),
-#wbbm-single-settings-meta .wbbm_bus_psngr_regform_wrap .sec:nth-child(odd) {
-    background-color: #ffffff;
-}
 
 #wbbm-single-settings-meta .bus-stops-wrapper .bus-stops-left-col table tbody tr:after {
     content: '';
@@ -1059,25 +1060,6 @@ a#add-offday-row.button {
     transition: all .25s ease-in-out;
 }
 
-#wbbm-single-settings-meta label.ra-item-label {
-    display: inline-block;
-    font-size: 16px;
-    background-color: #E2E2FF;
-    margin: 0;
-    padding: 10px;
-    border-radius: 0 10px 10px 0;
-    margin-right: 30px;
-    color: #474747;
-}
-
-#wbbm-single-settings-meta label,
-#wbbm-single-settings-meta label span {
-    display: inline-block;
-}
-
-#wbbm-single-settings-meta .onday-sec label span {
-    display: block;
-}
 
 #wbbm-single-settings-meta input[type="checkbox"] {
     width: auto;
@@ -1228,18 +1210,11 @@ a#add-offday-row.button {
 }
 
 .mp_tab_details select {
-    border-color: #5C58A5;
-    color: #5C58A5;
-    background-color: rgba(237, 239, 251, 0.41);
-    height: 30px;
+    min-width: 180px;
 }
 
 .inside .mp_tab_details input[type=text] {
-    border-color: #5C58A5;
-    color: #5C58A5;
-    padding: 0;
-    background-color: rgba(237, 239, 251, 0.41);
-    padding-left: 5px;
+
 }
 
 .mp_tab_item_inner_wrapper {

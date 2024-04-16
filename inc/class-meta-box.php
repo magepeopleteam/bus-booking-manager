@@ -165,7 +165,7 @@ class WBBMMetaBox
         </li>
 
 
-         <li data-target-tabs="#wbtm_bus_off_on_date">
+        <li data-target-tabs="#wbtm_bus_off_on_date">
             <i class="far fa-calendar-check"></i> <?php echo __('Onday & Offday', 'bus-booking-manager'); ?>
 
         </li>
@@ -174,11 +174,12 @@ class WBBMMetaBox
         </li>
 
         <li data-target-tabs="#wbmm_bus_tax">
-           <i class="fas fa-search-dollar"></i> <?php _e('Tax', 'bus-booking-manager'); ?>
+            <i class="fas fa-search-dollar"></i> <?php _e('Tax', 'bus-booking-manager'); ?>
         </li>
 
         <?php if (is_plugin_active('mage-partial-payment-pro/mage_partial_pro.php')) : ?>
-            <li data-target-tabs="#wbtm_bus_partial_payment"><img src="<?php echo WBTM_PLUGIN_URL .'images/bus_partial.png';?>"/><?php echo __('Partial Payment', 'bus-booking-manager'); ?>
+            <li data-target-tabs="#wbtm_bus_partial_payment">
+                <i class="fas fa-search-dollar"></i> <?php echo __('Partial Payment', 'bus-booking-manager'); ?>
             </li>
         <?php endif; ?>
 

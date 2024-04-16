@@ -5,7 +5,7 @@
     <p><?php echo $cpt_label.' '. __('Configuration', 'bus-booking-manager'); ?></p>
     <div class="configuration_wrapper">
 
-        <div class='sec'>
+        <section>
             <label for="wbbm_bus_category" class="ra-item-label">
                 <?php  esc_html_e('Type', 'bus-booking-manager'); ?>
             </label>
@@ -24,7 +24,7 @@
                     ?>
                 </select>
             </span>
-        </div>
+        </section>
 
         <div class='sec'>
             <label for="wbbm_ev_98" class="ra-item-label">

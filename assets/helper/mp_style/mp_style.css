@@ -606,14 +606,16 @@
     }
     /**************Default************************/
     .mpStyle .dLayout, .mpStyle [class*="_dLayout"] {
-        padding: var(--dMP);margin-bottom: var(--dMP);
-        background-color: var(--color_white);border: 1px solid var(--color_border);
+        padding: var(--dMP);
+        background-color: var(--color_white);
+        border: 1px solid var(--color_black);
+        margin-top: -1px;
+        border-radius: 0;
     }
     .mpStyle .dLayout_xs, .mpStyle [class*="_dLayout_xs"] {
         padding: var(--dMP_xs);
         background-color: var(--color_white);
         border: 1px solid var(--color_border);
-        margin-bottom: var(--dMP_xs);
     }
     /***********info***********/
     .mpStyle .infoLayout, .mpStyle [class*="_infoLayout"] {
