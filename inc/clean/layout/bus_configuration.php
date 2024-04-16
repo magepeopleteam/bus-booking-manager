@@ -1,6 +1,8 @@
 <div class="mp_tab_item" data-tab-item="#wbtm_ticket_panel" style="display:block;">
-    <h3 class="wbbm_mp_tab_item_heading"><img src="<?php echo WBTM_PLUGIN_URL .'images/bus_arrow_left.png';?>"/><?php echo $cpt_label.' '. __('Configuration', 'bus-booking-manager'); ?></h3>
-
+    <h3 class="wbbm_mp_tab_item_heading">
+        <?php echo $cpt_label.' '. __('Configuration', 'bus-booking-manager'); ?>
+    </h3>
+    <p><?php echo $cpt_label.' '. __('Configuration', 'bus-booking-manager'); ?></p>
     <div class="configuration_wrapper">
 
         <div class='sec'>

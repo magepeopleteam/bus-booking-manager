@@ -761,6 +761,21 @@ CSS Added By Ariful
     overflow-x: scroll;
 }
 
+#wbbm-single-settings-meta .postbox-header{
+    background-color: var(--color_theme);
+}
+#wbbm-single-settings-meta .postbox-header h2{
+    
+    font-size: 18px;
+    color: #fff;
+}
+#wbbm-single-settings-meta .postbox-header .handle-order-higher, #wbbm-single-settings-meta .postbox-header  .handle-order-lower, #wbbm-single-settings-meta .postbox-header .toggle-indicator{
+    color: #FFF;
+}
+#wbbm-single-settings-meta .inside{
+    padding: 0;
+    margin: 0;
+}
 a.button.remove-faq-row,
 a.button.remove-bp-row,
 a.button.remove-price-row,
@@ -932,18 +947,17 @@ a#add-offday-row.button {
     display: -webkit-flex;
     display: flex;
     min-height: 300px;
-    border-radius: 10px;
     overflow: hidden;
 }
 
 .mp_tab_menu {
-    width: 200px;
-    max-width: 200px;
-    min-width: 200px;
-    background-color: #081D33;
+    min-width: 250px;
+    max-width: 283px;
+    background-color: var(--color_light);
     color: #fff;
     font-size: 15px;
     font-weight: 600;
+    padding: 25px 0 25px 25px;
 }
 
 .mp_tab_menu ul {
@@ -951,26 +965,47 @@ a#add-offday-row.button {
 }
 
 .mp_tab_menu ul li {
-    padding: 10px;
-    margin: 10px;
-    cursor: pointer;
-    color: #c6d4db;
     position: relative;
-    font-size: 12px;
-    display: -webkit-flex;
-    display: flex;
-    -webkit-align-items: center;
-    border-radius: 20px;
+    text-align: left;
+    cursor: pointer;
+    margin: 0;
+    padding: 15px;
+    color: var(--d_color);
+    border-left: 2px solid transparent;
 }
 
-.mp_tab_menu ul li img {
-    width: 15px;
+.mp_tab_menu ul li.active {
+    background-color: var(--color_theme_alter);
+    color: var(--d_color);
+    border-left: 2px solid var(--color_theme);
+}
+
+.mp_tab_menu ul li.active::after {
+    width: 100%;
+}
+.mp_tab_menu ul li:hover{
+    border-left: 2px solid var(--color_theme);
+    background-color: var(--color_theme_alter);
+}
+.mp_tab_menu ul li:hover::after{
+    width: 100%;
+}
+.mp_tab_menu ul li::after{
+    width: 90%;
+    height: 100%;
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    border-bottom: 1px solid var(--color_border);
+}
+
+.mp_tab_menu ul li i {
+    color: var(--color_theme);
     margin-right: 8px;
 }
 
-.mp_tab_menu ul li:last-child {
-    border: none;
-}
+
 
 .mp_tab_menu ul li span {
     width: initial;
@@ -979,20 +1014,10 @@ a#add-offday-row.button {
     margin-right: 5px
 }
 
-.mp_tab_menu ul li.active {
-    color: #fff;
-    font-size: 12px;
-    background-color: #5C58A5;
-}
-
-.mp_tab_menu ul li:hover {
-    color: #f2f2f2;
-}
-
 .mp_tab_details {
     width: 100%;
     background-color: #FAFAFA;
-    padding: 0;
+    padding: 2% 5%;
     box-sizing: border-box;
     overflow-y: scroll;
     overflow-x: hidden;
@@ -1018,6 +1043,15 @@ a#add-offday-row.button {
 .mp_tab_item {
     display: none;
     overflow: scroll;
+}
+.mp_tab_item > p {
+    color: var(--mpl-secondary);
+    margin: 0;
+    margin-bottom: 30px;
+    font-size: 16px;
+    font-weight: 300;
+    line-height: 24px;
+    font-family: DejaVuSans, sans-serif;
 }
 
 .mp_tab_menu ul li {
@@ -1171,9 +1205,17 @@ a#add-offday-row.button {
 }
 
 .wbbm_mp_tab_item_heading {
-    margin: 0;
-    padding: 20px;
-    background-color: #E2E2FF;
+    padding: 0;
+    color: var(--mpl-secondary);
+    margin: 30px 0 20px 0;
+    margin-bottom: 20px;
+    margin-bottom: 20px;
+    margin-bottom: 20px;
+    font-size: 22px;
+    line-height: 26px;
+    font-family: DejaVuSansBold, sans-serif;
+    margin-bottom: 12px;
+    font-weight: 700;
 }
 
 .wbbm_mp_tab_item_heading img {
