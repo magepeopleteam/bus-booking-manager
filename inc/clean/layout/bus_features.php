@@ -15,6 +15,14 @@
                     }
                 ?>
 
+                <section class="bgLight">
+                    <div>
+                        <label><?php echo $cpt_label.' '. __('Features:', 'bus-booking-manager'); ?></label>
+                        <span>
+                            <?php echo $cpt_label.' '. __('Features:', 'bus-booking-manager'); ?>
+                        </span>
+                    </div>
+                </section>
                 <section>
                 <div data-collapse="#ttbm_display_include_service" class="" style="display: block;">
                     <div class="groupCheckBox">
