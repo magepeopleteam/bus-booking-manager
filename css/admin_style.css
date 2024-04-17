@@ -1199,7 +1199,6 @@ a#add-offday-row.button {
 }
 
 .configuration_wrapper {
-    margin-top: 10px;
 }
 
 .mp_tab_details select {
@@ -1489,7 +1488,6 @@ a.button.remove-bp-row i {
     border-radius: 5px;
     display: inline-block;
     font-weight: 400;
-    margin: 20px;
 }
 
 #wbbm-single-settings-meta .bgLight{

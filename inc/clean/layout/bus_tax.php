@@ -1,9 +1,21 @@
 <div class="mp_tab_item" data-tab-item="#wbmm_bus_tax">
-    <h3 class="wbbm_mp_tab_item_heading"><img src="<?php echo WBTM_PLUGIN_URL .'images/bus_arrow_left.png';?>"/><?php echo __('Tax', 'bus-booking-manager'); ?></h3>
+    <h3 class="wbbm_mp_tab_item_heading"><?php echo __('Tax', 'bus-booking-manager'); ?></h3>
+    <p><?php echo __('Tax', 'bus-booking-manager'); ?></p>
+    <section class="bgLight">
+        <div>
+             <label for="_tax_status" class="ra-item-label">Tax Status</label>
+             <br>
+             <span>Tax Status</span>
+        </div>
+    </section>
     <div class="configuration_wrapper">
         <?php if(get_option( 'woocommerce_calc_taxes' ) == 'yes'){ ?>
-        <div class="sec">
-            <label for="_tax_status" class="ra-item-label">Tax Status</label>
+        <section>
+            <div>
+                <label for="_tax_status" class="ra-item-label">Tax Status</label>
+                <br>
+                <span for="_tax_status" class="ra-item-label">Tax Status</span>
+            </div>
             <span>
             <?php
                 global $post;
@@ -18,9 +30,13 @@
                 <option value="shipping" <?php if($tax_status == 'shipping'){ echo 'selected'; } ?>>Shipping only</option>
                 <option value="none" <?php if($tax_status == 'none'){ echo 'selected'; } ?>>None</option>
             </select>
-        </div>
-        <div class="sec">
-            <label for="_tax_class" class="ra-item-label">Tax Class</label>
+        </section>
+        <section>
+            <div>
+                <label for="_tax_status" class="ra-item-label">Tax class</label>
+                <br>
+                <span for="_tax_status" class="ra-item-label">Tax class</span>
+            </div>
             <span>
             <select name="_tax_class" id="_tax_class">
                 <option value="standard" <?php echo ($tax_class == 'standard') ? esc_attr('selected') : ''; ?>><?php esc_html_e('Standard', 'bus-booking-manager'); ?></option>
@@ -29,11 +45,11 @@
                 <?php } ?>
             </select>
             </span>
-        </div>
+        </section>
         <?php } else { ?>
-            <div class="sec">
+            <section>
                 <div class="wbbm_alert_info"><?php echo __( 'To enable automated tax calculation, first ensure that “enable taxes and tax calculations” is checked on WooCommerce > Settings > General. <a href="https://woocommerce.com/document/woocommerce-shipping-and-tax/woocommerce-tax/">View Documentation</a>', 'bus-booking-manager' ); ?></div>
-            </div>
+            </section>
         <?php } ?>
     </div>
 </div>
