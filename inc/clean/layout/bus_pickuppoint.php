@@ -1,18 +1,43 @@
 <div class="mp_tab_item" data-tab-item="#wbtm_pickuppoint">
-    <h3 class="wbbm_mp_tab_item_heading"><img src="<?php echo WBTM_PLUGIN_URL .'images/bus_arrow_left.png';?>"/><?php echo  __('Pickup Point', 'bus-booking-manager'); ?></h3>
+    <h3 class="wbbm_mp_tab_item_heading"><?php echo  __('Pickup Point', 'bus-booking-manager'); ?></h3>
+    <p><?php echo  __('Pickup Point', 'bus-booking-manager'); ?></p>
+
     <div class="wbbm_pickuppoint_inner_wrapper">
-        <h5 class="dFlex mpStyle">
-        <span class="pb-10"><b class="ra-enable-button"><?php _e('Enable pickup point :', 'bus-booking-manager'); ?></b>
-            <label class="roundSwitchLabel">
-            <input id="pickup-point-control" name="show_pickup_point" <?php echo ($show_pickup_point == "yes" ? " checked" : ""); ?> value="yes" type="checkbox">
-            <span class="roundSwitch" data-collapse-target="#ttbm_display_related"></span>
-        </label>
-        </span>
+        <section class="bgLight">
+            <div>
+                <label for=""><?php _e('Enable pickup point :', 'bus-booking-manager'); ?></label>
+                <br>
+                <span><?php _e('Enable pickup point :', 'bus-booking-manager'); ?></span>
+            </div>
+        </section>
+        <section>
+            <div>
+                <label for=""><?php _e('Enable pickup point :', 'bus-booking-manager'); ?></label>
+                <br>
+                <span><?php _e('Enable pickup point :', 'bus-booking-manager'); ?></span>
+            </div>
+            <label class="switch">
+                <input id="pickup-point-control" name="show_pickup_point" <?php echo ($show_pickup_point == "yes" ? " checked" : ""); ?> value="yes" type="checkbox">
+                <span class="slider round" data-collapse-target="#ttbm_display_related"></span>
+            </label>
+        </section>
 
-            <p><?php _e('Do you have multiple pickup point for single boarding point then enable this to add pickup point ', 'bus-booking-manager'); ?></p>
-        </h5>
         <div style="display: <?php echo ($show_pickup_point == "yes" ? "block" : "none"); ?>" id="pickup-point">
-
+            <section>
+                <div>
+                    <label><?php esc_html_e( "Pickup Point", 'bus-booking-manager' ); ?></label>
+                    <br>
+                    <span class="ra-stopage-desc"><?php esc_html_e( "Pickup Point", 'bus-booking-manager' ); ?></span>
+                </div>
+                <div>
+                    <div class="mpStyle">
+                        <button type="button" class="_dButton_xs_bgBlue ra-picup-point-button" data-target-popup="#wbtm_pickup_popup">
+                            <i class="fas fa-plus"></i>
+                            Add new pickup point
+                        </button>
+                    </div>
+                </div>
+            </section>
             <div class="mpStyle">
                 <div class="mpPopup" data-popup="#wbtm_pickup_popup">
                     <div class="popupMainArea">
@@ -46,20 +71,22 @@
                     </div>
 
                 </div>
-                <div class="ra-text-center">
-                    <button type="button" class="_dButton_xs_bgBlue ra-picup-point-button" data-target-popup="#wbtm_pickup_popup">
-                        <i class="fas fa-plus"></i>
-                        Add new pickup point
-                    </button>
-                    <p class="ra-stopage-desc"><?php esc_html_e( "", 'bus-booking-manager' ); ?></p>
-                </div>
-
             </div>
 
             <div class="wbbm_bus_pickpint_wrapper">
-                <h3>Select Location</h3>
-                <div class="wbbm_left_col">
+                
+                <section>
+                    <div>
+                        <label><?php _e('Select Location', 'bus-booking-manager'); ?></label>
+                        <br>
+                        <span><?php _e('Add Pickup point', 'bus-booking-manager'); ?></span>
+                    </div>
                     <div class="wbbm_field_group <?php echo $boarding_points_class ?>">
+                        <?php
+                        $selected_city_pickpoints = get_post_meta($post->ID, 'wbbm_pickpoint_selected_city', true);
+                        ?>
+                        <input type="hidden" name="select_city_pickpoints" id="select_city_pickpoints" value="<?php echo $selected_city_pickpoints ?>">
+                        
                         <span class="wbbm_bus_route_icon wbbm_bus_route_icon1"><img src="<?php echo WBTM_PLUGIN_URL .'images/bus_route_map.png';?>"/></span>
                         <select name="wbbm_pick_boarding" id="wbbm_pick_boarding" class="ra_pick_boarding">
                         </select>
@@ -67,13 +94,8 @@
                             <i class="fas fa-plus"></i> <?php _e('Add Pickup point', 'bus-booking-manager'); ?>
                         </button>
                     </div>
-                </div>
-                <?php
-                $selected_city_pickpoints = get_post_meta($post->ID, 'wbbm_pickpoint_selected_city', true);
-                ?>
-                <input type="hidden" name="select_city_pickpoints" id="select_city_pickpoints" value="<?php echo $selected_city_pickpoints ?>">
-
-                <div class="wbbm_right_col <?php echo($selected_city_pickpoints == '' ? 'all-center' : ''); ?>">
+                </section>
+                <section class="wbbm_right_col <?php echo($selected_city_pickpoints == '' ? 'all-center' : ''); ?>">
                     <div id="wbbm_pickpoint_selected_city">
                         <?php if ($selected_city_pickpoints != '') {
                             $selected_city_pickpoints = explode(',', $selected_city_pickpoints);
@@ -136,9 +158,8 @@
                             echo '<p class="blank-pickpoint" style="color: #FF9800;font-weight: 700;text-align:left">' . __('No pickup point added yet!', 'bus-booking-manager') . '</p>';
                         }
                         ?>
-
                     </div>
-                </div>
+                </section>
             </div>
 
             <div class="pickuppoints_first" style="display: none">

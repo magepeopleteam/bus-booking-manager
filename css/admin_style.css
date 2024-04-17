@@ -321,7 +321,6 @@ span.wbbm-ticket-confirm {
 
 .wbbm_bus_pickpint_wrapper {
     display: flex;
-    padding-top: 5px;
     flex-direction: column;
 }
 
@@ -1279,7 +1278,7 @@ a.button.remove-bp-row i {
 }
 
 .wbbm_seat_price_inner_wrap {
-    padding: 20px;
+
 }
 
 #add-price-row i {
@@ -1324,7 +1323,7 @@ a.button.remove-bp-row i {
 }
 
 .wbbm_pickuppoint_inner_wrapper {
-    padding: 20px;
+    
 }
 
 .wbbm_pickuppoint_inner_wrapper .ra-text-center {
