@@ -229,12 +229,6 @@ span.wbbm-ticket-confirm {
     color: #fff;
 }
 
-.bus-stops-wrapper {
-    display: flex;
-    justify-content: space-around;
-    width: max-content;
-}
-
 .bus-stops-wrapper:before {
     content: '\f101\f101\f101';
     position: absolute;
@@ -1218,7 +1212,7 @@ a#add-offday-row.button {
 }
 
 .mp_tab_item_inner_wrapper {
-    padding: 20px;
+
 }
 
 div.mpStyle ._dButton_xs_bgBlue.wbtm_route_add_new_bus_btn {
