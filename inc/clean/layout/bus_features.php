@@ -1,6 +1,7 @@
 <div class="mp_tab_item" data-tab-item="#wbmm_bus_features" style="display: none;">
 
-    <h3 class="wbbm_mp_tab_item_heading"><img src="<?php echo WBTM_PLUGIN_URL .'images/bus_arrow_left.png';?>"/><?php echo $cpt_label.' '. __('Features:', 'bus-booking-manager'); ?></h3>
+    <h3 class="wbbm_mp_tab_item_heading"><?php echo $cpt_label.' '. __('Features:', 'bus-booking-manager'); ?></h3>
+    <p><?php echo $cpt_label.' '. __('Features:', 'bus-booking-manager'); ?></p>
 
     <div class="mp_tab_item_inner_wrapper">
         <div class="col-md-6">
@@ -14,7 +15,7 @@
                     }
                 ?>
 
-
+                <section>
                 <div data-collapse="#ttbm_display_include_service" class="" style="display: block;">
                     <div class="groupCheckBox">
                         <label class="dNone">
@@ -32,8 +33,13 @@
                             <?php } ?>
                         </div>
                     </div>
+                    <br>
+                    <button type="button" class="_dButton_xs_bgBlue wbtm_route_add_new_bus_btn" data-target-popup="#wbtm_feature_popup">
+                        <i class="fas fa-plus"></i>
+                        Add New Feature
+                    </button>
                 </div>
-
+                </section>
 
 
                 <div class="mpPopup" data-popup="#wbtm_feature_popup">
@@ -88,11 +94,6 @@
                     </div>
 
                 </div>
-                <br>
-                <button type="button" class="_dButton_xs_bgBlue wbtm_route_add_new_bus_btn" data-target-popup="#wbtm_feature_popup">
-                    <i class="fas fa-plus"></i>
-                    Add New Feature
-                </button>
             </div>
 
         </div>
