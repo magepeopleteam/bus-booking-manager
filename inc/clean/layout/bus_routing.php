@@ -82,7 +82,7 @@
                     </div>
                 </section>
                 <section>
-                    <div>
+                    <div style="margin:auto;">
                         <table id="repeatable-fieldset-bp-one" width="100%"><thead>
                         <tr>
                             <th><?php _e('Boarding Point', 'bus-booking-manager'); ?></th>
@@ -161,9 +161,15 @@
                     </div>
                 </section>
                 <section>
-                    <div>
+                    <div style="margin: auto;">
                         <table id="repeatable-fieldset-faq-one" width="100%">
-                            
+                            <thead>
+                                <tr>
+                                <th><?php _e('Dropping Point', 'bus-booking-manager'); ?></th>
+                                <th><?php _e('Time', 'bus-booking-manager'); ?></th>
+                                <th></th>
+                            </tr>
+                            </thead>
                             <tbody class="dropping-point">
                             <?php
                             if ($wbtm_bus_next_stops) :

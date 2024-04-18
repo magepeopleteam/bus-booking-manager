@@ -1255,6 +1255,24 @@ a.button.remove-bp-row i {
     display: flex;
 }
 
+.wbbm_bus_route_select{
+    position: relative;
+}
+
+#repeatable-fieldset-bp-one,#repeatable-fieldset-faq-one{
+    position: relative;
+}
+
+#repeatable-fieldset-bp-one tbody::before, #repeatable-fieldset-faq-one tbody::before{
+    content: '';
+    border-left: 1px solid var(--color_theme);
+    position: absolute;
+    bottom: 0px;
+    left: 25px;
+    height:100%;
+    top:1px;
+}
+
 .wbbm_bus_route_icon {
     background-color: var(--color_theme);
     width: 30px;
@@ -1493,3 +1511,4 @@ a.button.remove-bp-row i {
 #wbbm-single-settings-meta .bgLight{
     background-color: var(--color_light);
 }
+
