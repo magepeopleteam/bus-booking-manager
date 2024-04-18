@@ -2,16 +2,16 @@
     <h3 class="wbbm_mp_tab_item_heading">
         <?php echo $cpt_label.' '. __('Configuration', 'bus-booking-manager'); ?>
     </h3>
-    <p><?php echo $cpt_label.' '. __('Configuration', 'bus-booking-manager'); ?></p>
+    <p><?php esc_html_e('Main Configuration. This is most important settings for '.$cpt_label, 'bus-booking-manager'); ?></p>
     <div class="configuration_wrapper">
         <section class="bgLight">
             <div class="">
                 <label for="wbbm_bus_category" class="ra-item-label">
-                    <?php  esc_html_e('General Settings', 'bus-booking-manager'); ?>
+                    <?php  esc_html_e($cpt_label.' Settings', 'bus-booking-manager'); ?>
                 </label>
                 <br>
                 <span>
-                    <?php  esc_html_e('Here you can set '.$cpt_label.' type, number, coach etc.', 'bus-booking-manager'); ?>
+                    <?php  esc_html_e('Here you can set '.$cpt_label.' type, coach number, total seat etc.', 'bus-booking-manager'); ?>
                 </span>
             </div>
         </section>
@@ -102,7 +102,7 @@
                 </label>
                 <br>
                 <span>
-                    <?php  esc_html_e('To allow seat price zero.', 'bus-booking-manager'); ?>
+                    <?php  esc_html_e('Turn '.$cpt_label.' ticket sell On/Off. By default on', 'bus-booking-manager'); ?>
                 </span>
             </div>
             <label class="switch">
@@ -124,7 +124,7 @@
                 </label>
                 <br>
                 <span>
-                    <?php  esc_html_e('To show seat available.', 'bus-booking-manager'); ?>
+                    <?php  esc_html_e('Turn On/Off to show seat availablity. By default on.', 'bus-booking-manager'); ?>
                 </span>
             </div>
             <label class="switch">
