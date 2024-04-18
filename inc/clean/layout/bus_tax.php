@@ -1,20 +1,20 @@
 <div class="mp_tab_item" data-tab-item="#wbmm_bus_tax">
-    <h3 class="wbbm_mp_tab_item_heading"><?php echo __('Tax', 'bus-booking-manager'); ?></h3>
-    <p><?php echo __('Tax', 'bus-booking-manager'); ?></p>
+    <h3 class="wbbm_mp_tab_item_heading"><?php echo __('Tax Settings', 'bus-booking-manager'); ?></h3>
+    <p><?php echo __('Here you can configure Tax. To enable automated tax calculation, first ensure that “enable taxes and tax calculations” is checked on WooCommerce > Settings > General. <a href="https://woocommerce.com/document/woocommerce-shipping-and-tax/woocommerce-tax/">View Documentation</a>', 'bus-booking-manager'); ?></p>
     <section class="bgLight">
         <div>
-             <label for="_tax_status" class="ra-item-label">Tax Status</label>
+             <label for="_tax_status" class="ra-item-label"><?php echo __('Tax Settings.', 'bus-booking-manager'); ?></label>
              <br>
-             <span>Tax Status</span>
+             <span><?php echo __('Here you can set tax class and status.', 'bus-booking-manager'); ?></span>
         </div>
     </section>
     <div class="configuration_wrapper">
         <?php if(get_option( 'woocommerce_calc_taxes' ) == 'yes'){ ?>
         <section>
             <div>
-                <label for="_tax_status" class="ra-item-label">Tax Status</label>
+                <label for="_tax_status" class="ra-item-label"><?php echo __('Tax Status.', 'bus-booking-manager'); ?></label>
                 <br>
-                <span for="_tax_status" class="ra-item-label">Tax Status</span>
+                <span for="_tax_status" class="ra-item-label"><?php echo __('Select a tax status.', 'bus-booking-manager'); ?></span>
             </div>
             <span>
             <?php
@@ -33,9 +33,9 @@
         </section>
         <section>
             <div>
-                <label for="_tax_status" class="ra-item-label">Tax class</label>
+                <label for="_tax_status" class="ra-item-label"><?php echo __('Tax Class.', 'bus-booking-manager'); ?></label>
                 <br>
-                <span for="_tax_status" class="ra-item-label">Tax class</span>
+                <span for="_tax_status" class="ra-item-label"><?php echo __('Select a tax class.', 'bus-booking-manager'); ?></span>
             </div>
             <span>
             <select name="_tax_class" id="_tax_class">
