@@ -1,8 +1,8 @@
 <div class="mp_tab_item" data-tab-item="#wbtm_seat_price">
     <h3 class="wbbm_mp_tab_item_heading">
-        <?php echo $cpt_label.' '. __('Seat Price', 'bus-booking-manager'); ?>
+        <?php echo $cpt_label.' '. __('Seat Price Settings', 'bus-booking-manager'); ?>
     </h3>
-    <p><?php echo $cpt_label.' '. __('Seat Price', 'bus-booking-manager'); ?></p>
+    <p><?php _e('Here you can configure seat price.', 'bus-booking-manager'); ?></p>
     <div class="wbbm_seat_price_inner_wrap">
     <?php
     $terms = get_terms($get_terms_default_attributes);
@@ -15,11 +15,11 @@
     <section class="bgLight">
         <div>
             <label for="">
-                test
+                <?php _e('Price Settings', 'bus-booking-manager'); ?>
             </label>
             <br>
         <span>
-            test
+            <?php _e('Configure seat price based on borading and dropping point.', 'bus-booking-manager'); ?>
         </span>
         </div>
     </section>
@@ -216,9 +216,9 @@
 
     <section class="bgLight" style="margin-top: 20px;">
         <div>
-            <label for="">Test</label>
+            <label for=""><?php _e('Extra Service Settings', 'bus-booking-manager'); ?></label>
             <br>
-            <span>test</span>
+            <span><?php _e('Configure extra service price.', 'bus-booking-manager'); ?></span>
         </div>
     </section>
     <section>
