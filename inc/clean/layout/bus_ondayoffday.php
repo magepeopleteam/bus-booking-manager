@@ -1,21 +1,21 @@
 <!-- start offday-onday tab content -->
 <div class="mp_tab_item" data-tab-item="#wbtm_bus_off_on_date">
-    <h3 class="wbbm_mp_tab_item_heading"><?php echo $cpt_label.' '. __('Onday and Offday', 'bus-booking-manager'); ?></h3>
-    <p><?php echo $cpt_label.' '. __('Onday and Offday', 'bus-booking-manager'); ?></p>
+    <h3 class="wbbm_mp_tab_item_heading"><?php echo $cpt_label.' '. __('On & Off Day Settings', 'bus-booking-manager'); ?></h3>
+    <p><?php esc_html_e('Here you can configure '.$cpt_label.' On & Off Day.', 'bus-booking-manager'); ?></p>
     
     <div class="wbtm_bus_off_on_date_inner_wrapper">
         <section class="bgLight">
             <div>
-                <label><?php _e('Enable offday settings :', 'bus-booking-manager'); ?></label>
+                <label><?php _e('Onday Settings', 'bus-booking-manager'); ?></label>
                 <br>
-                <span><?php _e('If you need to keep bus off for a certain date please enable it and configure offday. ', 'bus-booking-manager'); ?></span>
+                <span><?php _e('Congiure onday settings here.', 'bus-booking-manager'); ?></span>
             </div>
         </section>
         <section>
             <div>
-                <label><?php _e('Enable Operation on day settings :', 'bus-booking-manager'); ?></label>
+                <label><?php _e('Enable Operation days', 'bus-booking-manager'); ?></label>
                 <br>
-                <span><?php _e('If you want to operate bus on a certain date please enable it and configure operational day. ', 'bus-booking-manager'); ?></span>
+                <span><?php _e('If you want to operate '.$cpt_label.' on a certain date, please enable it and configure operational day. ', 'bus-booking-manager'); ?></span>
             </div>
             <label class="switch">
                 <input id="operational-on-day-control" name="show_operational_on_day" <?php echo ($show_operational_on_day == "yes" ? " checked" : ""); ?> value="yes" type="checkbox">
@@ -28,10 +28,10 @@
             <section>
                 <div>
                     <label for="bus_on_date">
-                        <?php echo $cpt_label.' '. __('Onday Dates:', 'bus-booking-manager'); ?>
+                        <?php echo $cpt_label.' '. __('Select Dates:', 'bus-booking-manager'); ?>
                     </label>
                     <span>
-                        <?php echo $cpt_label.' '. __('Onday Dates:', 'bus-booking-manager'); ?>
+                        <?php esc_html_e('Select dates to operate '.$cpt_label, 'bus-booking-manager'); ?>
                     </span>
                 </div>
                 <div>
@@ -58,14 +58,14 @@
         ?>
         <section class="bgLight" style="margin-top: 20px;">
             <div>
-                <label><?php _e('Enable offday settings :', 'bus-booking-manager'); ?></label>
+                <label><?php _e('Offday Settings', 'bus-booking-manager'); ?></label>
                 <br>
-                <span><?php _e('If you need to keep bus off for a certain date please enable it and configure offday. ', 'bus-booking-manager'); ?></span>
+                <span><?php _e('If you need to keep '.$cpt_label.' off for a certain date please enable it and configure offday. ', 'bus-booking-manager'); ?></span>
             </div>
         </section>
         <section>
             <div>
-                <label><?php _e('Enable offday settings :', 'bus-booking-manager'); ?></label>
+                <label><?php _e('Enable offday dates', 'bus-booking-manager'); ?></label>
                 <br>
                 <span><?php _e('If you need to keep bus off for a certain date please enable it and configure offday. ', 'bus-booking-manager'); ?></span>
             </div>
@@ -225,9 +225,9 @@
 
             <section>
                 <div>
-                    <label><?php echo $cpt_label.' '.__('Offdays:', 'bus-booking-manager'); ?></label>
+                    <label><?php echo $cpt_label.' '.__('Off days', 'bus-booking-manager'); ?></label>
                     <br>
-                    <span><?php echo $cpt_label.' '.__('Offdays:', 'bus-booking-manager'); ?></span>
+                    <span><?php esc_html_e('Check '.$cpt_label.' off days.', 'bus-booking-manager'); ?></span>
                 </div>
                 <div class='offday-sec'>
                     <label for='sun'>
