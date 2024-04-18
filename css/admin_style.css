@@ -345,7 +345,7 @@ span.wbbm-ticket-confirm {
 }
 
 .wbbm_pickpoint_title {
-    background-color: #081D33;
+    background-color: var(--color_theme);
     color: #fff;
     text-align: center;
     padding: 10px;
@@ -370,7 +370,7 @@ span.wbbm-ticket-confirm {
     background: #fff;
     margin-bottom: 10px;
     position: relative;
-    border: 2px solid var(--color_theme);
+    border: 1px solid var(--color_theme);
     border-radius: 10px;
 }
 
@@ -390,8 +390,8 @@ span.wbbm-ticket-confirm {
     display: inline-block;
     font-size: 15px;
     position: absolute;
-    right: -3px;
-    top: -3px;
+    right: 0px;
+    bottom: 0;
     line-height: 1em;
     text-align: center;
     color: #F06292;
@@ -866,11 +866,9 @@ a#add-offday-row.button {
 
 #wbbm-single-settings-meta .remove_city_for_pickpoint {
     color: #fff;
-    background: #EA2330;
+    background: var(--d_color);
     padding: 8px;
-    border-radius: 50%;
-    right: -10px;
-    top: -10px;
+    border-radius: 0 0 8px 0;
 }
 
 .wbbm_green_btn {
