@@ -1,32 +1,32 @@
 <div class="mp_tab_item" data-tab-item="#wbtm_routing">
 
     <h3 class="wbbm_mp_tab_item_heading">
-    <?php echo $cpt_label.' '. __('Routing', 'bus-booking-manager'); ?>
+    <?php echo $cpt_label.' '. __('Routing Configuration', 'bus-booking-manager'); ?>
     </h3>
-    <p><?php echo $cpt_label.' '. __('Routing', 'bus-booking-manager'); ?></p>
+    <p><?php esc_html_e('Here you can configure '.$cpt_label.' Routing. Specially Boarding and Dropping Stops.', 'bus-booking-manager'); ?></p>
     <section class="bgLight">
         <div>
             <label for="">
-            <?php echo $cpt_label.' '. __('Stops settings', 'bus-booking-manager'); ?>
+            <?php _e('New Stops settings', 'bus-booking-manager'); ?>
         </label><br>
-        <span><?php echo 'Create new '.$cpt_label.' '. __('Stops', 'bus-booking-manager'); ?></span>
+        <span><?php _e('Here you can create new stops for '.$cpt_label, 'bus-booking-manager'); ?></span>
         </div>
     </section>
     <section>
         <div>
             <label for="">
-                <?php echo $cpt_label.' '. __('Stops', 'bus-booking-manager'); ?>
+                <?php esc_html_e('Crete new '.$cpt_label.' Stops', 'bus-booking-manager'); ?>
             </label>
             <br>
             <span class="ra-stopage-desc">
-                <?php esc_html_e( "You can't start routing until you add stoppages. If you haven't added any yet, you can do so from here.", 'bus-booking-manager' ); ?>
+                <?php esc_html_e( "you can do new stops from here.", 'bus-booking-manager' ); ?>
             </span>
         </div>
         <div >
             <div class="mpStyle">
                 <button type="button" class="_dButton_xs_bgBlue wbtm_route_add_new_bus_btn" data-target-popup="#wbtm_route_popup">
                     <i class="fas fa-plus"></i>
-                    Add New Bus Stop
+                    <?php esc_html_e( 'Add New '.$cpt_label.' Stops', 'bus-booking-manager' ); ?>
             </button>
             </div>
         </div>
@@ -39,7 +39,7 @@
                     <div class="popupMainArea">
                         <div class="popupHeader">
                             <h4>
-                                <?php esc_html_e( 'Add New Bus Stop', 'bus-booking-manager' ); ?>
+                                <?php esc_html_e( 'Add New '.$cpt_label.' Stops', 'bus-booking-manager' ); ?>
                             </h4>
                             <span class="fas fa-times popupClose"></span>
                         </div>
@@ -76,9 +76,9 @@
             <div class="bus-stops-wrapper">
                 <section class="bgLight">
                     <div>
-                        <label><?php _e('Boarding Point', 'bus-booking-manager'); ?></label>
+                        <label><?php _e('Boarding Point Settings', 'bus-booking-manager'); ?></label>
                         <br>
-                        <span><?php _e('Boarding Point', 'bus-booking-manager'); ?></span>
+                        <span><?php esc_html_e('Configure '.$cpt_label.' Boarding Point', 'bus-booking-manager'); ?></span>
                     </div>
                 </section>
                 <section>
@@ -155,9 +155,9 @@
             <div class="bus-stops-wrapper">
                 <section class="bgLight">
                     <div>
-                        <label><?php _e('Dropping Point', 'bus-booking-manager'); ?></label>
+                        <label><?php _e('Dropping Point Settings', 'bus-booking-manager'); ?></label>
                         <br>
-                        <span><?php _e('Dropping Point', 'bus-booking-manager'); ?></span>
+                        <span><?php esc_html_e( 'Configure '.$cpt_label.'dropping point.', 'bus-booking-manager' ); ?></span>
                     </div>
                 </section>
                 <section>
