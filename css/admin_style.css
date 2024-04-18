@@ -370,7 +370,7 @@ span.wbbm-ticket-confirm {
     background: #fff;
     margin-bottom: 10px;
     position: relative;
-    border: 2px solid rgb(92, 88, 165);
+    border: 2px solid var(--color_theme);
     border-radius: 10px;
 }
 
@@ -708,7 +708,7 @@ CSS Added By Ariful
 }
 
 #wbbm-single-settings-meta table th {
-    background-color: rgb(92, 88, 165);
+    background-color: var(--color_theme);
     color: #fff;
     font-size: 13px;
     padding: 8px;
@@ -1214,7 +1214,7 @@ a#add-offday-row.button {
 }
 
 div.mpStyle ._dButton_xs_bgBlue.wbtm_route_add_new_bus_btn {
-    background-color: rgb(92, 88, 165);
+    background-color: var(--color_theme);
     margin-bottom: 10px;
 }
 
@@ -1229,7 +1229,7 @@ div.mpStyle ._dButton_xs_bgBlue.wbtm_route_add_new_bus_btn {
 
 #wbbm-single-settings-meta .bus-stops-wrapper .bus-stops-left-col,
 #wbbm-single-settings-meta .bus-stops-wrapper .bus-stops-right-col {
-    border: 2px solid rgb(92, 88, 165);
+    border: 2px solid var(--color_theme);
     border-radius: 10px;
     padding: 0;
 }
@@ -1256,7 +1256,7 @@ a.button.remove-bp-row i {
 }
 
 .wbbm_bus_route_icon {
-    background-color: rgb(92, 88, 165);
+    background-color: var(--color_theme);
     width: 30px;
     height: 30px;
     display: inline-block;
