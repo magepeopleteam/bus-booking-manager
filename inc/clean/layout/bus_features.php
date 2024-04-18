@@ -1,10 +1,19 @@
 <div class="mp_tab_item" data-tab-item="#wbmm_bus_features" style="display: none;">
 
-    <h3 class="wbbm_mp_tab_item_heading"><?php echo $cpt_label.' '. __('Features:', 'bus-booking-manager'); ?></h3>
-    <p><?php echo $cpt_label.' '. __('Features:', 'bus-booking-manager'); ?></p>
+    <h3 class="wbbm_mp_tab_item_heading"><?php echo $cpt_label.' '. __('Features Settings', 'bus-booking-manager'); ?></h3>
+    <p><?php esc_html_e('Here you can add featurs for '.$cpt_label, 'bus-booking-manager'); ?></p>
 
     <div class="mp_tab_item_inner_wrapper">
         <div class="col-md-6">
+            <section class="bgLight">
+                    <div>
+                        <label><?php echo $cpt_label.' '. __('Features', 'bus-booking-manager'); ?></label>
+                        <br>
+                        <span>
+                            <?php echo __('Add Features', 'bus-booking-manager'); ?>
+                        </span>
+                    </div>
+                </section>
             <div class="mpStyle">
                 <?php
                     $wbbm_features_name = array();
@@ -15,14 +24,7 @@
                     }
                 ?>
 
-                <section class="bgLight">
-                    <div>
-                        <label><?php echo $cpt_label.' '. __('Features:', 'bus-booking-manager'); ?></label>
-                        <span>
-                            <?php echo $cpt_label.' '. __('Features:', 'bus-booking-manager'); ?>
-                        </span>
-                    </div>
-                </section>
+                
                 <section>
                 <div data-collapse="#ttbm_display_include_service" class="" style="display: block;">
                     <div class="groupCheckBox">
