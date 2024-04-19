@@ -544,25 +544,27 @@ CSS Added By Ariful
 .wbbm_settings_panel {
     display: -webkit-flex;
     display: flex;
+    border: 1px solid var(--color_border);
 }
 
 .wbbm_settings_panel .nav-tab-wrapper {
     border-bottom: 0px;
-    width: 25%;
-    padding: 0;
-    background: #161b37;
-    border: 5px solid #C6C6C6;
+    width: 20%;
+    padding: 20px 0 20px 20px;
+    background: var(--color_light);
+    
 }
 
 .wbbm_settings_panel .metabox-holder {
-    width: 74%;
+    width: 79%;
     padding: 0 !important;
-    border: 5px solid #C6C6C6;
 }
 
 .wbbm_settings_panel .metabox-holder .postbox {
     margin-bottom: 0;
     padding: 10px;
+    border: 0;
+    padding: 2% 5%;
 }
 
 .wbbm_settings_panel .nav-tab-wrapper .nav-tab {
@@ -574,27 +576,33 @@ CSS Added By Ariful
     transition: 0.2s;
     background-color: transparent;
     border: none;
-    border-bottom: 1px dotted #FFF;
-    color: #fff;
+    border-bottom: 1px dotted var(--color_border);
+    color: var(--d_color);
     font-weight: 500;
+    transition: 0.2s;
+    border-left: 2px solid transparent;
 }
 
 .wbbm_settings_panel .nav-tab.nav-tab-active {
-    background: #D04E4E;
-    color: #FFF;
+    background-color: var(--color_theme_alter);
+    color: var(--d_color);
+    border-left: 2px solid var(--color_theme);
+    
 }
 
 .wbbm_settings_panel .nav-tab-wrapper .nav-tab:hover {
-    background: #D04E4E;
-    transition: 0.2s;
+    background-color: var(--color_theme_alter);
+    color: var(--d_color);
+    border-left: 2px solid var(--color_theme);
+    
 }
 
 .wbbm_settings_panel .metabox-holder h2 {
-    background: #161b37;
-    color: #fff;
-    border-bottom: 2px solid #0071A1;
+    background: #fff;
+    color: var(--d_color);
     font-size: 20px;
-    padding: 15px;
+    padding: 20px;
+    padding-left: 0;
     margin: 0;
     font-weight: 500;
 }
@@ -610,7 +618,7 @@ CSS Added By Ariful
 }
 
 .wbbm_settings_panel .metabox-holder table tr:nth-child(odd) {
-    background-color: #b30c3b12;
+    background-color: var(--color_light);
 }
 
 .wbbm_settings_panel .metabox-holder span.description {
@@ -627,23 +635,24 @@ CSS Added By Ariful
     font-size: 16px;
     padding: 5px 30px;
     border-radius: 0;
-    background: #D04E4E;
-    border-color: #D04E4E;
+    background: var(--color_theme);
+    border-color: var(--color_theme);;
     transition: 0.2s;
 }
 
 .wbbm_settings_panel p.submit input:hover {
-    background: #972222;
-    border-color: #972222;
+    background: var(--color_theme_cc);
+    border-color: var(--color_theme_cc);
     transition: 0.2s;
 }
 
 .wbbm_settings_panel_header {
-    background: #161b37;
-    padding: 30px 20px 30px 20px;
-    color: #fff;
-    font-size: 20px;
+    background: var(--color_theme);
+    padding: 10px;
     margin-top: 30px;
+    color: var(--color_theme_alter);
+    font-weight: bold;
+    font-size: 14px;
 }
 
 .wbbm_settings_panel_header small {
