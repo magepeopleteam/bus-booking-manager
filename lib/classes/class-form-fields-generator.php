@@ -3515,10 +3515,11 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                     id="field-wrapper-<?php echo $id; ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-checkbox-wrapper
             field-checkbox-wrapper-<?php echo $id; ?>">
                 <?php
+                
                 foreach( $args as $key => $argName ):
                     $checked = (  $key == $value ) ? "checked" : "";
                     ?>
-                   
+                    
                     <label  class="switch" for='<?php echo $field_id; ?>'>
                         <input class="<?php echo $field_id; ?>" name='<?php echo $field_name; ?>' type='checkbox' id='<?php echo $field_id; ?>' value='<?php echo $key; ?>' <?php echo $checked; ?>>
                         <span class="slider round"></span>
