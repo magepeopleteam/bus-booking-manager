@@ -3518,7 +3518,11 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                 foreach( $args as $key => $argName ):
                     $checked = (  $key == $value ) ? "checked" : "";
                     ?>
-                    <label for='<?php echo $field_id; ?>'><input class="<?php echo $field_id; ?>" name='<?php echo $field_name; ?>' type='checkbox' id='<?php echo $field_id; ?>' value='<?php echo $key; ?>' <?php echo $checked; ?>><?php echo $argName; ?></label><br>
+                   
+                    <label  class="switch" for='<?php echo $field_id; ?>'>
+                        <input class="<?php echo $field_id; ?>" name='<?php echo $field_name; ?>' type='checkbox' id='<?php echo $field_id; ?>' value='<?php echo $key; ?>' <?php echo $checked; ?>>
+                        <span class="slider round"></span>
+                    </label>
                 <?php
                 endforeach;
                 ?>
