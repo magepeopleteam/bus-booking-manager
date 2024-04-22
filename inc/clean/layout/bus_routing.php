@@ -157,7 +157,7 @@
                     <div>
                         <label><?php _e('Dropping Point Settings', 'bus-booking-manager'); ?></label>
                         <br>
-                        <span><?php esc_html_e( 'Configure '.$cpt_label.'dropping point.', 'bus-booking-manager' ); ?></span>
+                        <span><?php esc_html_e( 'Configure '.$cpt_label.' dropping point.', 'bus-booking-manager' ); ?></span>
                     </div>
                 </section>
                 <section>
