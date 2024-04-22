@@ -79,7 +79,7 @@
                 </label>
                 <br>
                 <span>
-                    <?php  esc_html_e('To allow seat price zero.', 'bus-booking-manager'); ?>
+                    <?php  esc_html_e('If you turn this On then zero price option will show as ticket type.', 'bus-booking-manager'); ?>
                 </span>
             </div>
             <label class="switch">
@@ -102,7 +102,7 @@
                 </label>
                 <br>
                 <span>
-                    <?php  esc_html_e('Turn '.$cpt_label.' ticket sell On/Off. By default on', 'bus-booking-manager'); ?>
+                    <?php  esc_html_e('You can keep ticket sell off by switching this option.', 'bus-booking-manager'); ?>
                 </span>
             </div>
             <label class="switch">
@@ -124,7 +124,7 @@
                 </label>
                 <br>
                 <span>
-                    <?php  esc_html_e('Turn On/Off to show seat availablity. By default on.', 'bus-booking-manager'); ?>
+                    <?php  esc_html_e('By switching this option you can display or hide ticket availability.', 'bus-booking-manager'); ?>
                 </span>
             </div>
             <label class="switch">
