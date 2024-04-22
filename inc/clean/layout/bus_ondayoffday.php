@@ -23,38 +23,75 @@
             </label>
         </section>
 
+        <?php
+            $values = get_post_custom($post->ID);
+            $wbtm_bus_on_date = get_post_meta($post->ID, 'wbtm_bus_on_date', true);
+        ?>
 
         <div style="display: <?php echo ($show_operational_on_day == "yes" ? "block" : "none"); ?>" class='onday-sec operational-on-day'>
             <section>
                 <div>
                     <label for="bus_on_date">
-                        <?php echo $cpt_label.' '. __('Select Dates:', 'bus-booking-manager'); ?>
+                        <?php echo __('Operational Dates:', 'bus-booking-manager'); ?>
                     </label>
                     <span>
-                        <?php esc_html_e('Select dates to operate '.$cpt_label, 'bus-booking-manager'); ?>
+                        <?php esc_html_e('You can add specific dates for operations', 'bus-booking-manager'); ?>
                     </span>
                 </div>
                 <div>
-                    <input type="text" class="ra_bus_on_date"  id='bus_on_date' name='wbtm_bus_on_date' value='<?php if (array_key_exists('wbtm_bus_on_date', $values)) { echo $values['wbtm_bus_on_date'][0]; } ?>' />
+                    <?php 
+                    
+                   
+                    foreach( $wbtm_bus_on_date as $date) :
+                     if( ! empty($date)): ?>
+                        <div class="operate-day-row">
+                            <input type="text" class="ra_bus_on_date datepicker_has"  id='bus_on_date' name='wbtm_bus_on_date[]' value="<?php echo esc_attr($date); ?>" placeholder="2024-04-30" />
+                            <a class="button remove-bp-row" href="#"> <i class="fas fa-minus-circle"></i>Remove</a>
+                        </div>
+                    <?php endif; endforeach;  ?>
+
+                    <div id="operate-date-area">
+                        <div class="empty-row-operate-day screen-reader-text">
+                            <input type="text" class="ra_bus_on_date"  id='bus_on_date' name='wbtm_bus_on_date[]' placeholder="2024-04-30" />
+                            <a class="button remove-bp-row" href="#"> <i class="fas fa-minus-circle"></i>Remove</a>
+                        </div>
+                    </div>
+                    <div class="mpStyle">
+                        <a id="clone-operate-date" class="button" href="#"><i class="fas fa-plus"></i>
+                            <?php _e('Add operate date', 'bus-booking-manager'); ?>
+                        </a>
+                    </div>
                 </div>
             </section>
         </div>
-
+        
         <script type="text/javascript">
             jQuery(document).ready(function($) {
-                jQuery("#bus_on_date").multiDatesPicker({
-                    numberOfMonths: [1,3],
+                var datePickerOpt = {
                     dateFormat: "yy-mm-dd",
-                    minDate: 0,
+                    minDate: 0
+                }
+                $('#clone-operate-date').on('click', function(e) {
+                    e.preventDefault();
+                    var now = Date.now();
+                    var row = $('.empty-row-operate-day.screen-reader-text').clone(true);
+                    row.removeClass('empty-row-operate-day screen-reader-text');
+                    row.addClass('operate-day-row');
+                    row.insertBefore('#operate-date-area:last');
+                    row.find(".ra_bus_on_date").attr('id', 'bus_on_date' + now);
+                    $("#bus_on_date" + now).datepicker(datePickerOpt);
+                });
+                $('.remove-bp-row').on('click', function() {
+                    $(this).parents('div.operate-day-row').remove();
+                    return false;
                 });
             });
         </script>
+        <!-- ============================================End operation day wrapper================================= -->
         
-
-        <!-- Start Offday wrapper-->
+        <!-- ------------------Start Offday wrapper-------------------------------->
         <?php
-        $values = get_post_custom($post->ID);
-        $wbtm_offday_schedule = get_post_meta($post->ID, 'wbtm_offday_schedule', true);
+            $wbtm_offday_schedule = get_post_meta($post->ID, 'wbtm_offday_schedule', true);
         ?>
         <section class="bgLight" style="margin-top: 20px;">
             <div>

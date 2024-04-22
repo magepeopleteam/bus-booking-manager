@@ -1519,3 +1519,19 @@ a.button.remove-bp-row i {
     background-color: var(--color_light);
 }
 
+.operate-day-row{
+    display:flex;
+    background-color: var(--color_light);
+    padding: 5px;
+    margin: 10px 0;
+}
+
+a#clone-operate-date.button{
+  background-color: rgb(59, 201, 124);
+  border-radius: 5px;
+  border: 1px solid rgb(59, 201, 124);
+  color: #fff;
+  display: block;
+  width: max-content;
+  margin: auto;
+}
