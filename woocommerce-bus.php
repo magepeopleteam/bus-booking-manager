@@ -1103,14 +1103,14 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
         $sp = array_search($start, $all_stops);
         $ep = array_search($end, $all_stops);
 
-        if ($sp == 0) {
-            $where = sprintf("(boarding_point IN (\"%s\") AND droping_point IN (\"%s\"))", implode('","', mage_array_slice($all_stops, 0, $ep)), implode('","', mage_array_slice($all_stops, $sp)));
-        } elseif ($ep == (count($all_stops) - 1)) {
-            $where = sprintf("(boarding_point IN (\"%s\") AND droping_point IN (\"%s\"))", implode('","', mage_array_slice($all_stops, 0, $ep)), implode('","', mage_array_slice($all_stops, $sp + 1)));
-        } else {
-            $where = sprintf("(boarding_point IN (\"%s\") AND droping_point IN (\"%s\"))", implode('","', mage_array_slice($all_stops, 0, $ep)), implode('","', mage_array_slice($all_stops, $ep)));
-        }
-
+//        if ($sp == 0) {
+//            $where = sprintf("(boarding_point IN (\"%s\") AND droping_point IN (\"%s\"))", implode('","', mage_array_slice($all_stops, 0, $ep)), implode('","', mage_array_slice($all_stops, $sp)));
+//        } elseif ($ep == (count($all_stops) - 1)) {
+//$where = sprintf("(boarding_point IN (\"%s\") AND droping_point IN (\"%s\"))", implode('","', mage_array_slice($all_stops, 0, $ep)), implode('","', mage_array_slice($all_stops, $sp + 1)));
+//        } else {
+//            $where = sprintf("(boarding_point IN (\"%s\") AND droping_point IN (\"%s\"))", implode('","', mage_array_slice($all_stops, 0, $ep)), implode('","', mage_array_slice($all_stops, $ep)));
+//        }
+	    $where = sprintf("(boarding_point IN (\"%s\") AND droping_point IN (\"%s\"))", implode('","', mage_array_slice($all_stops, 0, $ep)), implode('","', mage_array_slice($all_stops, $sp + 1)));
         return $where;
     }
 
