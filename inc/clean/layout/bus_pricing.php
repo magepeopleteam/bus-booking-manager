@@ -1,6 +1,8 @@
 <div class="mp_tab_item" data-tab-item="#wbtm_seat_price">
-    <h3 class="wbbm_mp_tab_item_heading"><img src="<?php echo WBTM_PLUGIN_URL .'images/bus_arrow_left.png';?>"/><?php echo $cpt_label.' '. __('Seat Price', 'bus-booking-manager'); ?></h3>
-
+    <h3 class="wbbm_mp_tab_item_heading">
+        <?php echo $cpt_label.' '. __('Seat Price Settings', 'bus-booking-manager'); ?>
+    </h3>
+    <p><?php _e('Here you can configure seat price.', 'bus-booking-manager'); ?></p>
     <div class="wbbm_seat_price_inner_wrap">
     <?php
     $terms = get_terms($get_terms_default_attributes);
@@ -10,8 +12,19 @@
     <input type="hidden" id="price_bus_record" value="<?php echo ($wbbm_bus_prices=='')?$wbbm_bus_prices:count($wbbm_bus_prices) ?>">
     <input type="hidden" id="discount_price_switch" value="<?php echo $discount_price_switch ?>">
     <input type="hidden" id="entire_bus_booking" value="<?php echo $entire_bus_booking ?>">
-
-    <div style="width:100%;overflow-x:auto;">
+    <section class="bgLight">
+        <div>
+            <label for="">
+                <?php _e('Price Settings', 'bus-booking-manager'); ?>
+            </label>
+            <br>
+        <span>
+            <?php _e('Configure seat price based on borading and dropping point.', 'bus-booking-manager'); ?>
+        </span>
+        </div>
+    </section>
+    <section>
+        <div style="width:100%;overflow-x:auto;">
         <table id="repeatable-fieldset-price-one" width="auto">
             <tbody class="auto-generated">
             <tr>
@@ -193,6 +206,7 @@
             <a id="add-price-row" class="button" href="#"><i class="fas fa-plus"></i><?php _e('Add More Price', 'bus-booking-manager'); ?></a>
         </p>
     </div>
+    </section>
 
     <?php
 
@@ -200,27 +214,25 @@
     wp_nonce_field('mep_events_extra_price_nonce', 'mep_events_extra_price_nonce');
     ?>
 
-
-    <h5 class="dFlex mpStyle">
-        <span class="pb-10"><b class="ra-enable-button"><?php _e('Enable extra service :', 'bus-booking-manager'); ?></b>
-            <label class="roundSwitchLabel">
-                <input id="extra-service-control" name="show_extra_service" <?php echo ($show_extra_service == "yes" ? " checked" : ""); ?> value="yes" type="checkbox">
-                <span class="roundSwitch" data-collapse-target="#ttbm_display_related"></span>
-            </label>
-        </span>
-        <p><?php _e('You can offer extra services or sell products along with tickets by enabling this option. ', 'bus-booking-manager'); ?></p>
-    </h5>
-
-
-
-    <div style="margin-top:20px;display: <?php echo ($show_extra_service == "yes" ? "block" : "none"); ?>" class="extra-service" id="wbbm_extra_service">
-        <h3><?php _e('Extra service Area :', 'bus-booking-manager'); ?></h3>
-
-        <p class="event_meta_help_txt">
-            <?php _e('Extra Service as Product that you can sell and it is not included on ticket', 'bus-booking-manager'); ?>
-        </p>
-        <hr>
-        <div class="mp_ticket_type_table">
+    <section class="bgLight" style="margin-top: 20px;">
+        <div>
+            <label for=""><?php _e('Extra Service Settings', 'bus-booking-manager'); ?></label>
+            <br>
+            <span><?php _e('Configure extra service price.', 'bus-booking-manager'); ?></span>
+        </div>
+    </section>
+    <section>
+        <div>
+            <label><?php _e('Enable extra service :', 'bus-booking-manager'); ?></label><br>
+            <span><?php _e('You can offer extra services or sell products along with tickets by enabling this option. ', 'bus-booking-manager'); ?></span>   
+        </div>
+        <label class="switch">
+            <input id="extra-service-control" name="show_extra_service" <?php echo ($show_extra_service == "yes" ? " checked" : ""); ?> value="yes" type="checkbox">
+            <span class="slider round" data-collapse-target="#ttbm_display_related"></span>
+        </label>
+    </section>
+    <section style="display: <?php echo ($show_extra_service == "yes" ? "block" : "none"); ?>" class="extra-service" id="wbbm_extra_service">
+        <div class="mp_ticket_type_table" style="width: 100%;">
             <table id="repeatable-fieldset-one">
                 <thead>
                 <tr>
@@ -309,14 +321,11 @@
                 </tr>
                 </tbody>
             </table>
+            <p>
+                <a id="add-row" class="button"><i class="fas fa-plus-circle"></i> <?php _e('Add Extra Price', 'bus-booking-manager'); ?>
+                </a>
+            </p>
         </div>
-        <p>
-            <a id="add-row" class="button"><i class="fas fa-plus-circle"></i> <?php _e('Add Extra Price', 'bus-booking-manager'); ?>
-            </a>
-        </p>
-    </div>
-
-
-
+    </section>
     </div>
 </div>

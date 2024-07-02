@@ -240,7 +240,7 @@
     .mpStyle .mpBtn, .mpStyle [class*="_mpBtn"],
     .mpStyle button {position: relative;font-size: var(--button_fs);font-weight: var(--fw-medium);line-height: 1; cursor: pointer;overflow: visible;border: none;-webkit-appearance: button;text-transform: capitalize;}
     .mpStyle button[disabled] {cursor: not-allowed;opacity: 0.8;background-color: #DDD;}
-    .mpStyle button:hover, .mpStyle button:focus {text-decoration: none;opacity: 0.8;background-color: var(--d_color);color: #FFF;}
+    .mpStyle button:hover, .mpStyle button:focus {text-decoration: none;opacity: 0.8;background-color:var(--color_theme);color: #FFF;}
     .mpStyle button:hover span, .mpStyle button:focus span {color: #FFF;}
     .mpStyle .mpBtn, .mpStyle [class*="_mpBtn"] {padding: var(--dMP_xs) var(--dMP);color: var(--d_color);background-color: transparent;border: 1px solid var(--color_border);}
     .mpStyle .mpBtn_xs, .mpStyle [class*="_mpBtn_xs"] {padding: var(--dMP_xs);}
@@ -255,7 +255,7 @@
     /***/
     .mpStyle .themeButton, .mpStyle [class*="_themeButton"] {background-color: var(--color_theme);color: var(--color_theme_alter);padding: var(--dMP_xs) var(--dMP);border: 2px solid var(--color_theme);}
     .mpStyle .themeButton span, .mpStyle [class*="_themeButton"] span {color: var(--color_theme_alter);}
-    .mpStyle .themeButton:hover, .mpStyle [class*="_themeButton"]:hover {background-color: #000;color: var(--color_theme_alter);border-color: #000;}
+    .mpStyle .themeButton:hover, .mpStyle [class*="_themeButton"]:hover {background-color:var(--color_theme_cc);color: var(--color_theme_alter);border-color: var(--color_theme_cc);}
     .mpStyle .themeButton:hover span, .mpStyle [class*="_themeButton"]:hover span {color: var(--color_theme_alter);}
     /****/
     .mpStyle .warningButton, .mpStyle [class*="_warningButton"] {background-color: var(--color_warning);color: var(--color_theme_alter);padding: var(--dMP_xs) var(--dMP);border: 2px solid var(--color_warning);}
@@ -606,14 +606,16 @@
     }
     /**************Default************************/
     .mpStyle .dLayout, .mpStyle [class*="_dLayout"] {
-        padding: var(--dMP);margin-bottom: var(--dMP);
-        background-color: var(--color_white);border: 1px solid var(--color_border);
+        padding: var(--dMP);
+        background-color: var(--color_white);
+        border: 1px solid var(--color_black);
+        margin-top: -1px;
+        border-radius: 0;
     }
     .mpStyle .dLayout_xs, .mpStyle [class*="_dLayout_xs"] {
         padding: var(--dMP_xs);
         background-color: var(--color_white);
         border: 1px solid var(--color_border);
-        margin-bottom: var(--dMP_xs);
     }
     /***********info***********/
     .mpStyle .infoLayout, .mpStyle [class*="_infoLayout"] {
@@ -766,9 +768,9 @@
     .mpStyle .customCheckbox {padding: 3px 0 0 30px;position: relative;line-height: 1;min-width: auto;}
     .mpStyle .customCheckbox::before { content: "";position: absolute; left: 0;top: 0;height: 20px;width: 20px;
         background-color: var(--color_theme_alter);
-        border: 2px solid var(--d_color); border-radius: 2px; }
+        border: 2px solid var(--color_theme); border-radius: 2px; }
     .mpStyle .customCheckboxLabel {padding: 0 0 10px 0;cursor: pointer;font-weight: var(--fw-medium);}
-    .mpStyle .customCheckboxLabel input:checked ~ .customCheckbox::before {background: var(--d_color);}
+    .mpStyle .customCheckboxLabel input:checked ~ .customCheckbox::before {background: var(--color_theme_cc);}
     /*******************/
     div.mpStyle .selectCheckbox {min-width: 150px;padding: var(--dMP_xs);width: auto;border: 1px solid var(--color_border);cursor: pointer;}
     div.mpStyle .customCheckboxLabel input[type="checkbox"],
