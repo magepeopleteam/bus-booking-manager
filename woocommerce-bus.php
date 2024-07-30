@@ -1110,7 +1110,7 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
 //        } else {
 //            $where = sprintf("(boarding_point IN (\"%s\") AND droping_point IN (\"%s\"))", implode('","', mage_array_slice($all_stops, 0, $ep)), implode('","', mage_array_slice($all_stops, $ep)));
 //        }
-	    $where = sprintf("(boarding_point IN (\"%s\") AND droping_point IN (\"%s\"))", implode('","', mage_array_slice($all_stops, 0, $ep)), implode('","', mage_array_slice($all_stops, $sp + 1)));
+	    $where = sprintf("(boarding_point IN (\"%s\") AND droping_point IN (\"%s\"))", implode('","', array_slice($all_stops, 0, $ep)), implode('","', array_slice($all_stops, $sp + 1)));
         return $where;
     }
 
