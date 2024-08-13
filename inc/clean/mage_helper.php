@@ -22,7 +22,7 @@ function mage_qty_box($price,$name, $return) {
         <div class="mage_form_group">
             <div class="mage_flex mage_qty_dec"><span class="fa fa-minus"></span></div>
             <input type="text"
-                   class="mage_form mage_seat_qty ra_seat_qty"
+                   class="mage_form mage_seat_qty"
                    data-ticket-title="<?php echo $ticket_title.' '.__('Passenger info', 'bus-booking-manager'); ?>"
                    data-ticket-type="<?php echo $ticket_type; ?>"
                    data-price="<?php echo $price; ?>"
@@ -221,7 +221,25 @@ function mage_available_seat($date) { echo "<pre>";print_r($date);echo "</pre>";
     $sold_seat = wbbm_get_available_seat(get_the_id(), $date);
     return ($total_seat - $sold_seat) > 0 ? ($total_seat - $sold_seat) : 0;
 }
-
+function wbbm_get_cart_item($bus_id,$date_var) {
+	$cart_qty=0;
+	$cart_items = WC()->cart->get_cart();
+	if (sizeof($cart_items) > 0) {
+		foreach ($cart_items as $cart_item) {
+			$post_id = array_key_exists('wbbm_bus_id', $cart_item) ? $cart_item['wbbm_bus_id'] : 0;
+			$date = array_key_exists('wbbm_journey_date', $cart_item) ? $cart_item['wbbm_journey_date'] : '';
+			//if (get_post_type($post_id) == 'wbbm_bus' && $bus_id==$post_id) {
+			if (get_post_type($post_id) == 'wbbm_bus' && $bus_id==$post_id && strtotime(wbbm_convert_date_to_php($date))==strtotime(wbbm_convert_date_to_php($date_var))) {
+				$adult_qty= array_key_exists('wbbm_total_adult_qt', $cart_item) ? $cart_item['wbbm_total_adult_qt'] : 0;
+				$child_qty= array_key_exists('wbbm_total_child_qt', $cart_item) ? $cart_item['wbbm_total_child_qt'] : 0;
+				$infant_qty= array_key_exists('wbbm_total_infant_qt', $cart_item) ? $cart_item['wbbm_total_infant_qt'] : 0;
+				$cart_qty=$cart_qty+$adult_qty+$child_qty+$infant_qty;
+                //return strtotime(wbbm_convert_date_to_php($date_var));
+			}
+		}
+	}
+    return $cart_qty;
+}
 // Get intermidiate available seat
 function wbbm_intermidiate_available_seat($start, $end, $date,$eid=null): int
 {

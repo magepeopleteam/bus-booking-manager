@@ -296,7 +296,7 @@
 
     function mageTicketQty(target, value) {
         let minSeat = parseInt(target.attr('min'));
-        let maxSeat = parseInt(target.attr('max'));
+        let maxSeat = get_max_qty(target);
         target.siblings('.mage_qty_inc , .mage_qty_dec').removeClass('mage_disabled');
         if (value < minSeat || isNaN(value) || value === 0) {
             value = minSeat;
@@ -309,6 +309,13 @@
         target.val(value);
         mageError(value, target);
         mageSubTotal(target);
+    }
+    function get_max_qty(target){
+        let available_quantity = parseInt($('[name="available_quantity"]').val())||0;
+        let adult_quantity = parseInt($('[name="adult_quantity"]').val() )|| 0;
+        let child_quantity = parseInt($('[name="child_quantity"]').val()) || 0;
+        let infant_quantity = parseInt($('[name="infant_quantity"]').val()) || 0;
+        return available_quantity-(adult_quantity+child_quantity+infant_quantity)+(parseInt(target.val())||0);
     }
 
     function mageExtBagQty(target, value) {

@@ -21,6 +21,9 @@
 	}
 	// $available_seat = mage_available_seat(mage_get_isset($date_var));
 	$available_seat = wbbm_intermidiate_available_seat(@$_GET[$boarding_var], @$_GET[$dropping_var], wbbm_convert_date_to_php(mage_get_isset($date_var)));
+	$cart_qty=wbbm_get_cart_item($id,mage_get_isset($date_var));
+	$available_seat=$available_seat-$cart_qty;
+
 	$boarding = mage_get_isset($boarding_var);
 	$dropping = mage_get_isset($dropping_var);
 	$seat_price_adult = mage_seat_price($id, $boarding, $dropping, 'adult');
