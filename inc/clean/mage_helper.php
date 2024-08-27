@@ -215,7 +215,7 @@ function mage_find_product_in_cart() {
 }
 
 // get available seat
-function mage_available_seat($date) { echo "<pre>";print_r($date);echo "</pre>";exit;
+function mage_available_seat($date) {
     $values = get_post_custom(get_the_id());
     $total_seat = $values['wbbm_total_seat'][0];
     $sold_seat = wbbm_get_available_seat(get_the_id(), $date);

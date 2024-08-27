@@ -114,6 +114,7 @@ function wbbm_ajax_url() {
     ?>
     <script type="text/javascript">
         var wbtm_ajaxurl = "<?php echo admin_url('admin-ajax.php'); ?>";
+        var mp_date_format = "";
         const wbbm_currency_symbol = "<?php echo html_entity_decode(get_woocommerce_currency_symbol()); ?>";
         const wbbm_currency_position = "<?php echo get_option('woocommerce_currency_pos'); ?>";
         const wbbm_currency_decimal = "<?php echo wc_get_price_decimal_separator(); ?>";

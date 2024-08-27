@@ -13,6 +13,7 @@
 				$show_off_day = get_post_meta($post_id, 'show_off_day', true) ? get_post_meta($post_id, 'show_off_day', true) : '';
 				if ($wbtm_bus_on_dates) {
 					//$wbtm_bus_on_dates_arr = explode(',', $wbtm_bus_on_dates);
+					$wbtm_bus_on_dates =is_array($wbtm_bus_on_dates)?$wbtm_bus_on_dates: explode(', ', $wbtm_bus_on_dates);
 					$onday = array();
 					foreach ($wbtm_bus_on_dates as $ondate) {
 						$onday[] = '"' . date('d-m-Y', strtotime($ondate)) . '"';
