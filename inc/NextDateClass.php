@@ -64,7 +64,7 @@ class NextDateClass extends CommonClass
             <div class="mage_default_xs">
                 <ul class="mage_list_inline flexEqual mage_next_date">
                     <?php
-                    $wbtm_bus_on_dates_arr = explode(',', $wbtm_bus_on_dates);
+                    $wbtm_bus_on_dates_arr = is_array($wbtm_bus_on_dates)?$wbtm_bus_on_dates:explode(',', $wbtm_bus_on_dates);
                     foreach ($wbtm_bus_on_dates_arr as $i => $ondate) {
                         $ondate = mage_wp_date($ondate, 'Y-m-d');
                         if ($j_date <= $ondate) {

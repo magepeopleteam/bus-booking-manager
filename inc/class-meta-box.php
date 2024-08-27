@@ -65,8 +65,8 @@ class WBBMMetaBox
             ?>
             <p>
                 <label class="customCheckboxLabel">
-                    <input type="checkbox" name="wbbm_features[<?php echo $terms['term_id'] ?>]" value="<?php echo $terms['term_id'] ?>">
-                    <span class="customCheckbox"><span class="mR_xs <?php echo $_POST['wbbm_feature_icon'] ?>"></span><?php echo $_POST['name'] ?></span>
+                    <input type="checkbox" name="wbbm_features[<?php echo $terms['term_id']; ?>]" value="<?php echo $terms['term_id']; ?>">
+                    <span class="customCheckbox"><span class="mR_xs <?php echo $_POST['wbbm_feature_icon']; ?>"></span><?php echo $_POST['name']; ?></span>
                 </label>
             </p>
             <?php
