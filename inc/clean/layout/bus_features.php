@@ -1,16 +1,16 @@
 <div class="mp_tab_item" data-tab-item="#wbmm_bus_features" style="display: none;">
 
-    <h3 class="wbbm_mp_tab_item_heading"><?php echo $cpt_label.' '. __('Features Settings', 'bus-booking-manager'); ?></h3>
+<h3 class="wbbm_mp_tab_item_heading"> <?php echo esc_html( $cpt_label ) . ' ' . esc_html__( 'Features Settings', 'bus-booking-manager' ); ?> </h3>
     <p><?php esc_html_e('Here you can add featurs for '.$cpt_label, 'bus-booking-manager'); ?></p>
 
     <div class="mp_tab_item_inner_wrapper">
         <div class="col-md-6">
             <section class="bgLight">
                     <div>
-                        <label><?php echo $cpt_label.' '. __('Features', 'bus-booking-manager'); ?></label>
+                    <label><?php echo esc_html( $cpt_label ) . ' ' . esc_html__( 'Features', 'bus-booking-manager' ); ?></label>
                         <br>
                         <span>
-                            <?php echo __('Add Features', 'bus-booking-manager'); ?>
+                        <?php echo esc_html__( 'Add Features', 'bus-booking-manager' ); ?>
                         </span>
                     </div>
                 </section>
@@ -29,15 +29,18 @@
                 <div data-collapse="#ttbm_display_include_service" class="" style="display: block;">
                     <div class="groupCheckBox">
                         <label class="dNone">
-                            <input type="hidden" name="ttbm_service_included_in_price" value="<?php echo ($wbbm_features_name ? implode(',', $wbbm_features_name) : '') ?>">
+                        <input type="hidden" name="ttbm_service_included_in_price" value="<?php echo esc_attr( $wbbm_features_name ? implode(',', $wbbm_features_name) : '' ); ?>">
                         </label>
 
                         <div class="features">
                             <?php  foreach ($feature_terms as $feature_term){ ?>
                                 <p>
                                     <label class="customCheckboxLabel">
-                                        <input <?php echo (in_array($feature_term->term_id,$wbbm_features))?'checked':'' ?> type="checkbox" name="wbbm_features[<?php echo $feature_term->term_id ?>]" data-checked="<?php echo $feature_term->name ?>" value="<?php echo $feature_term->term_id ?>">
-                                        <span class="customCheckbox"><span class="mR_xs <?php echo get_term_meta($feature_term->term_id, 'feature_icon', true) ?>"></span><?php echo $feature_term->name ?></span>
+                                    <input <?php echo (in_array( $feature_term->term_id, $wbbm_features )) ? esc_attr('checked') : ''; ?> type="checkbox" name="wbbm_features[<?php echo esc_attr( $feature_term->term_id ); ?>]" data-checked="<?php echo esc_attr( $feature_term->name ); ?>" value="<?php echo esc_attr( $feature_term->term_id ); ?>">
+                                    <span class="customCheckbox">
+                                        <span class="mR_xs <?php echo esc_attr( get_term_meta( $feature_term->term_id, 'feature_icon', true ) ); ?>"></span>
+                                        <?php echo esc_html( $feature_term->name ); ?>
+                                    </span>
                                     </label>
                                 </p>
                             <?php } ?>

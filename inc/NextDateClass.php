@@ -24,13 +24,13 @@ class NextDateClass extends CommonClass
                     <?php
                     for ($i = 0; $i < 6; $i++) {
                         ?>
-                        <li class="<?php echo $date == $next_date ? 'mage_active' : ''; ?>">
-                            <a href="<?php echo $single_bus ? '' : get_site_url() . '/' . $target; ?>?bus_start_route=<?php echo strip_tags($_GET['bus_start_route']); ?>&bus_end_route=<?php echo strip_tags($_GET['bus_end_route']); ?>&j_date=<?php echo $return ? strip_tags($_GET['j_date']) : $next_date_text; ?>&r_date=<?php echo $return ? $next_date : (isset($_GET['r_date']) ? strip_tags($_GET['r_date']) : ''); ?>&bus-r=<?php echo (isset($_GET['bus-r']) ? strip_tags($_GET['bus-r']) : ''); ?>&tab_date=<?php echo $tab_date; ?>&tab_date_r=<?php echo $tab_date_r; ?>" data-sroute='<?php echo strip_tags($_GET['bus_start_route']); ?>' data-eroute='<?php echo strip_tags($_GET['bus_end_route']); ?>' data-jdate='<?php echo $return ? strip_tags($_GET['j_date']) : $next_date; ?>' data-rdate='<?php echo $return ? $next_date : (isset($_GET['r_date']) ? strip_tags($_GET['r_date']) : ''); ?>' class='wbtm_next_day_search'>
-                                <?php echo $this->get_wbbm_datetime($next_date, 'date-text') ?>
-                                <?php //echo mage_wp_date($next_date);
-                                ?>
-                            </a>
-                        </li>
+                       <li class="<?php echo esc_attr($date == $next_date ? 'mage_active' : ''); ?>">
+    <a href="<?php echo esc_url($single_bus ? '' : get_site_url() . '/' . esc_attr($target)); ?>?bus_start_route=<?php echo esc_attr(strip_tags($_GET['bus_start_route'])); ?>&bus_end_route=<?php echo esc_attr(strip_tags($_GET['bus_end_route'])); ?>&j_date=<?php echo esc_attr($return ? strip_tags($_GET['j_date']) : $next_date_text); ?>&r_date=<?php echo esc_attr($return ? $next_date : (isset($_GET['r_date']) ? strip_tags($_GET['r_date']) : '')); ?>&bus-r=<?php echo esc_attr(isset($_GET['bus-r']) ? strip_tags($_GET['bus-r']) : ''); ?>&tab_date=<?php echo esc_attr($tab_date); ?>&tab_date_r=<?php echo esc_attr($tab_date_r); ?>" data-sroute='<?php echo esc_attr(strip_tags($_GET['bus_start_route'])); ?>' data-eroute='<?php echo esc_attr(strip_tags($_GET['bus_end_route'])); ?>' data-jdate='<?php echo esc_attr($return ? strip_tags($_GET['j_date']) : $next_date); ?>' data-rdate='<?php echo esc_attr($return ? $next_date : (isset($_GET['r_date']) ? strip_tags($_GET['r_date']) : '')); ?>' class='wbtm_next_day_search'>
+        <?php echo esc_html($this->get_wbbm_datetime($next_date, 'date-text')); ?>
+        <?php //echo mage_wp_date($next_date); ?>
+    </a>
+</li>
+
                         <?php
                         $next_date = date('Y-m-d', strtotime($next_date . ' +1 day'));
 
@@ -71,21 +71,21 @@ class NextDateClass extends CommonClass
                             $ondate = $ondate ?: $j_date;
                             ?>
                             <?php if(!in_array($j_date, $wbtm_bus_on_dates_arr) && $i === 0) : ?>
-                            <li class="mage_active">
-                                <a href="#">
-                                    <?php
-                                    echo $this->get_wbbm_datetime($j_date, 'date-text')
-                                    ?>
-                                </a>
-                            </li>
+                                <li class="mage_active">
+    <a href="#">
+        <?php
+        echo esc_html($this->get_wbbm_datetime($j_date, 'date-text'));
+        ?>
+    </a>
+</li>
+
                             <?php endif; ?>
-                            <li class="<?php echo $j_date == $ondate ? 'mage_active' : ''; ?>">
-                                <a href="<?php echo $single_bus ? '' : get_site_url() . '/' . $target; ?>?bus_start_route=<?php echo strip_tags($_GET['bus_start_route']); ?>&bus_end_route=<?php echo strip_tags($_GET['bus_end_route']); ?>&j_date=<?php echo $return ? strip_tags($_GET['j_date']) : $ondate; ?>&r_date=<?php echo $return ? $ondate : (isset($_GET['r_date']) ? strip_tags($_GET['r_date']) : ''); ?>&bus-r=<?php echo (isset($_GET['bus-r']) ? strip_tags($_GET['bus-r']) : ''); ?>" data-sroute='<?php echo strip_tags($_GET['bus_start_route']); ?>' data-eroute='<?php echo strip_tags($_GET['bus_end_route']); ?>' data-jdate='<?php echo $return ? strip_tags($_GET['j_date']) : ''; ?>' data-rdate='<?php echo $return ? '' : (isset($_GET['r_date']) ? strip_tags($_GET['r_date']) : ''); ?>' class='wbtm_next_day_search'>
-                                    <?php
-                                    echo $this->get_wbbm_datetime($ondate, 'date-text')
-                                    ?>
-                                </a>
-                            </li>
+                            <li class="<?php echo esc_attr($j_date == $ondate ? 'mage_active' : ''); ?>">
+    <a href="<?php echo esc_url($single_bus ? '' : get_site_url() . '/' . esc_attr($target)); ?>?bus_start_route=<?php echo esc_attr(strip_tags($_GET['bus_start_route'])); ?>&bus_end_route=<?php echo esc_attr(strip_tags($_GET['bus_end_route'])); ?>&j_date=<?php echo esc_attr($return ? strip_tags($_GET['j_date']) : $ondate); ?>&r_date=<?php echo esc_attr($return ? $ondate : (isset($_GET['r_date']) ? strip_tags($_GET['r_date']) : '')); ?>&bus-r=<?php echo esc_attr(isset($_GET['bus-r']) ? strip_tags($_GET['bus-r']) : ''); ?>" data-sroute='<?php echo esc_attr(strip_tags($_GET['bus_start_route'])); ?>' data-eroute='<?php echo esc_attr(strip_tags($_GET['bus_end_route'])); ?>' data-jdate='<?php echo esc_attr($return ? strip_tags($_GET['j_date']) : ''); ?>' data-rdate='<?php echo esc_attr($return ? '' : (isset($_GET['r_date']) ? strip_tags($_GET['r_date']) : '')); ?>' class='wbtm_next_day_search'>
+        <?php echo esc_html($this->get_wbbm_datetime($ondate, 'date-text')); ?>
+    </a>
+</li>
+
                             <?php
                         }
                     }
@@ -122,11 +122,12 @@ class NextDateClass extends CommonClass
                         if (!in_array($next_date, $offday) and !in_array(date('w', strtotime($next_date)), $weekly_offday) and $m < 6) {
                             $m++;
                             ?>
-                            <li class="<?php echo $j_date == $next_date ? 'mage_active' : ''; ?>">
-                                <a href="<?php echo $single_bus ? '' : get_site_url() . '/' . $target; ?>?bus_start_route=<?php echo strip_tags($_GET['bus_start_route']); ?>&bus_end_route=<?php echo strip_tags($_GET['bus_end_route']); ?>&j_date=<?php echo $return ? strip_tags($_GET['j_date']) : $next_date_text; ?>&r_date=<?php echo $return ? $next_date : (isset($_GET['r_date']) ? strip_tags($_GET['r_date']) : ''); ?>&bus-r=<?php echo (isset($_GET['bus-r']) ? strip_tags($_GET['bus-r']) : ''); ?>" data-sroute='<?php echo strip_tags($_GET['bus_start_route']); ?>' data-eroute='<?php echo strip_tags($_GET['bus_end_route']); ?>' data-jdate='<?php echo $return ? strip_tags($_GET['j_date']) : $next_date; ?>' data-rdate='<?php echo $return ? $next_date : (isset($_GET['r_date']) ? strip_tags($_GET['r_date']) : ''); ?>' class='wbtm_next_day_search'>
-                                    <?php echo $this->get_wbbm_datetime($next_date, 'date-text') ?>
-                                </a>
-                            </li>
+                            <li class="<?php echo esc_attr($j_date == $next_date ? 'mage_active' : ''); ?>">
+    <a href="<?php echo esc_url($single_bus ? '' : get_site_url() . '/' . esc_url($target)); ?>?bus_start_route=<?php echo esc_attr(strip_tags($_GET['bus_start_route'])); ?>&bus_end_route=<?php echo esc_attr(strip_tags($_GET['bus_end_route'])); ?>&j_date=<?php echo esc_attr($return ? strip_tags($_GET['j_date']) : $next_date_text); ?>&r_date=<?php echo esc_attr($return ? $next_date : (isset($_GET['r_date']) ? strip_tags($_GET['r_date']) : '')); ?>&bus-r=<?php echo esc_attr(isset($_GET['bus-r']) ? strip_tags($_GET['bus-r']) : ''); ?>" data-sroute='<?php echo esc_attr(strip_tags($_GET['bus_start_route'])); ?>' data-eroute='<?php echo esc_attr(strip_tags($_GET['bus_end_route'])); ?>' data-jdate='<?php echo esc_attr($return ? strip_tags($_GET['j_date']) : $next_date); ?>' data-rdate='<?php echo esc_attr($return ? $next_date : (isset($_GET['r_date']) ? strip_tags($_GET['r_date']) : '')); ?>' class='wbtm_next_day_search'>
+        <?php echo esc_html($this->get_wbbm_datetime($next_date, 'date-text')); ?>
+    </a>
+</li>
+
                             <?php
                         }
                         $next_date = date('Y-m-d', strtotime($next_date . ' +1 day'));

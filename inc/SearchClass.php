@@ -45,85 +45,104 @@
 			}
 			$general_setting = get_option('wbbm_general_setting_sec') ? maybe_unserialize(get_option('wbbm_general_setting_sec')) : array();
 			?>
-            <div class="mage_route_title" style="background-color:<?php echo $route_title_bg_color; ?>;color:<?php echo $route_title_color; ?>">
-                <div>
-                    <strong><?php echo wbbm_get_option('wbbm_route_text', 'wbbm_label_setting_sec', __('Route', 'bus-booking-manager'));
-							echo ':'; ?></strong>
-					<?php echo mage_get_isset('bus_start_route'); ?>
-                    <span class="fa fa-long-arrow-right"></span>
-					<?php echo mage_get_isset('bus_end_route'); ?>
-                    <strong><?php echo ' | ';
-							echo wbbm_get_option('wbbm_date_text', 'wbbm_label_setting_sec', __('Date', 'bus-booking-manager'));
-							echo ':'; ?></strong>
-					<?php echo mage_wp_date(mage_get_isset('j_date')); ?>
-                </div>
-            </div>
+            <div class="mage_route_title" style="background-color: <?php echo esc_attr($route_title_bg_color); ?>; color: <?php echo esc_attr($route_title_color); ?>">
+    <div>
+        <strong>
+            <?php
+            echo esc_html(wbbm_get_option('wbbm_route_text', 'wbbm_label_setting_sec', esc_html_e('Route', 'bus-booking-manager')));
+            echo ':';
+            ?>
+        </strong>
+        <?php echo esc_html(mage_get_isset('bus_start_route')); ?>
+        <span class="fa fa-long-arrow-right"></span>
+        <?php echo esc_html(mage_get_isset('bus_end_route')); ?>
+        <strong>
+            <?php
+            echo ' | ';
+            echo esc_html(wbbm_get_option('wbbm_date_text', 'wbbm_label_setting_sec', esc_html_e('Date', 'bus-booking-manager')));
+            echo ':';
+            ?>
+        </strong>
+        <?php echo esc_html(mage_wp_date(mage_get_isset('j_date'))); ?>
+    </div>
+</div>
+
             <div class="mage-search-res-wrapper">
 				<?php do_action('woocommerce_before_single_product'); ?>
 				<?php if ($mage_bus_search_theme == 'minimal') { ?>
-                    <div class="mage-search-res-header" style="background-color:<?php echo($search_list_header_b_color != '' ? $search_list_header_b_color : '#EA2330'); ?>">
-                        <div class="mage-search-res-header--img">
-                            <span><?php echo wbbm_get_option('wbbm_bus_image_text', 'wbbm_label_setting_sec', __('Bus Image', 'bus-booking-manager')); ?></span>
-                        </div>
-                        <div class="mage-search-res-header--left">
-                            <span><?php echo wbbm_get_option('wbbm_bus_name_text', 'wbbm_label_setting_sec', __('Bus Name', 'bus-booking-manager')); ?></span>
-                            <span><?php echo wbbm_get_option('wbbm_schedule_text', 'wbbm_label_setting_sec', __('Schedule', 'bus-booking-manager')); ?></span>
-                        </div>
-                        <div class="mage-search-res-header--right">
-							<?php if ((isset($general_setting['wbbm_type_column_switch']) && $general_setting['wbbm_type_column_switch'] == 'on') || !isset($general_setting['wbbm_type_column_switch'])) { ?>
-                                <span><?php echo wbbm_get_option('wbbm_type_text', 'wbbm_label_setting_sec', __('Type', 'bus-booking-manager')); ?></span>
-							<?php } ?>
-                            <span><?php echo wbbm_get_option('wbbm_fare_text', 'wbbm_label_setting_sec', __('Fare', 'bus-booking-manager')); ?></span>
-							<?php if ((isset($general_setting['wbbm_seat_column_switch']) && $general_setting['wbbm_seat_column_switch'] == 'on') || !isset($general_setting['wbbm_seat_column_switch'])) { ?>
-                                <span><?php echo wbbm_get_option('wbbm_seats_available_text', 'wbbm_label_setting_sec', __('Seat Available', 'bus-booking-manager')); ?></span>
-							<?php } ?>
-                            <span><?php echo wbbm_get_option('wbbm_view_text', 'wbbm_label_setting_sec', __('View', 'bus-booking-manager')); ?></span>
-                        </div>
-                    </div>
+					<div class="mage-search-res-header" style="background-color: <?php echo esc_attr($search_list_header_b_color ? $search_list_header_b_color : '#EA2330'); ?>;">
+    <div class="mage-search-res-header--img">
+        <span><?php echo esc_html(wbbm_get_option('wbbm_bus_image_text', 'wbbm_label_setting_sec', esc_html_e('Bus Image', 'bus-booking-manager'))); ?></span>
+    </div>
+    <div class="mage-search-res-header--left">
+        <span><?php echo esc_html(wbbm_get_option('wbbm_bus_name_text', 'wbbm_label_setting_sec', esc_html_e('Bus Name', 'bus-booking-manager'))); ?></span>
+        <span><?php echo esc_html(wbbm_get_option('wbbm_schedule_text', 'wbbm_label_setting_sec', esc_html_e('Schedule', 'bus-booking-manager'))); ?></span>
+    </div>
+    <div class="mage-search-res-header--right">
+        <?php if ((isset($general_setting['wbbm_type_column_switch']) && $general_setting['wbbm_type_column_switch'] == 'on') || !isset($general_setting['wbbm_type_column_switch'])) { ?>
+            <span><?php echo esc_html(wbbm_get_option('wbbm_type_text', 'wbbm_label_setting_sec', esc_html_e('Type', 'bus-booking-manager'))); ?></span>
+        <?php } ?>
+        <span><?php echo esc_html(wbbm_get_option('wbbm_fare_text', 'wbbm_label_setting_sec', esc_html_e('Fare', 'bus-booking-manager'))); ?></span>
+        <?php if ((isset($general_setting['wbbm_seat_column_switch']) && $general_setting['wbbm_seat_column_switch'] == 'on') || !isset($general_setting['wbbm_seat_column_switch'])) { ?>
+            <span><?php echo esc_html(wbbm_get_option('wbbm_seats_available_text', 'wbbm_label_setting_sec', esc_html_e('Seat Available', 'bus-booking-manager'))); ?></span>
+        <?php } ?>
+        <span><?php echo esc_html(wbbm_get_option('wbbm_view_text', 'wbbm_label_setting_sec', esc_html_e('View', 'bus-booking-manager'))); ?></span>
+    </div>
+</div>
+
 				<?php } ?>
 				<?php $this->mage_search_bus_list(false); ?>
                 <!-- <div class="mage-search-res-wrapper--footer"></div> -->
             </div>
 			<?php if (isset($_GET['r_date']) && $_GET['r_date'] != '' && $_GET['r_date'] != 'yy-mm-dd') { ?>
-                <div class="mage_route_title return_title" style="background-color:<?php echo $route_title_bg_color; ?>">
-                    <div>
-                        <strong><?php echo wbbm_get_option('wbbm_route_text', 'wbbm_label_setting_sec', __('Route', 'bus-booking-manager'));
-								echo ':'; ?></strong>
-						<?php echo mage_get_isset('bus_end_route'); ?>
-                        <span class="fa fa-long-arrow-right"></span>
-						<?php echo mage_get_isset('bus_start_route'); ?>
-                        <strong><?php echo ' | ';
-								echo wbbm_get_option('wbbm_date_text', 'wbbm_label_setting_sec', __('Date', 'bus-booking-manager'));
-								echo ':'; ?></strong>
-						<?php echo mage_wp_date(mage_get_isset('r_date')); ?>
-                    </div>
-                </div>
+				<div class="mage_route_title return_title" style="background-color: <?php echo esc_attr($route_title_bg_color); ?>;">
+    <div>
+        <strong>
+            <?php
+            echo esc_html(wbbm_get_option('wbbm_route_text', 'wbbm_label_setting_sec', esc_html_e('Route', 'bus-booking-manager')));
+            echo ':';
+            ?>
+        </strong>
+        <?php echo esc_html(mage_get_isset('bus_end_route')); ?>
+        <span class="fa fa-long-arrow-right"></span>
+        <?php echo esc_html(mage_get_isset('bus_start_route')); ?>
+        <strong>
+            <?php
+            echo ' | ';
+            echo esc_html(wbbm_get_option('wbbm_date_text', 'wbbm_label_setting_sec', esc_html_e('Date', 'bus-booking-manager')));
+            echo ':';
+            ?>
+        </strong>
+        <?php echo esc_html(mage_wp_date(mage_get_isset('r_date'))); ?>
+    </div>
+</div>
+
                 <div class="mage-search-res-wrapper">
 					<?php if ($mage_bus_search_theme == 'minimal') { ?>
                         <div class="mage-search-res-header">
                             <div class="mage-search-res-header--img">
-                                <span><?php echo wbbm_get_option('wbbm_bus_image_text', 'wbbm_label_setting_sec', __('Bus Image', 'bus-booking-manager')); ?></span>
+                                <span><?php echo wbbm_get_option('wbbm_bus_image_text', 'wbbm_label_setting_sec', esc_html_e('Bus Image', 'bus-booking-manager')); ?></span>
                             </div>
                             <div class="mage-search-res-header--left">
-                                <span><?php echo wbbm_get_option('wbbm_bus_name_text', 'wbbm_label_setting_sec', __('Bus Name', 'bus-booking-manager')); ?></span>
-                                <span><?php echo wbbm_get_option('wbbm_schedule_text', 'wbbm_label_setting_sec', __('Schedule', 'bus-booking-manager')); ?></span>
+                                <span><?php echo wbbm_get_option('wbbm_bus_name_text', 'wbbm_label_setting_sec', esc_html_e('Bus Name', 'bus-booking-manager')); ?></span>
+                                <span><?php echo wbbm_get_option('wbbm_schedule_text', 'wbbm_label_setting_sec', esc_html_e('Schedule', 'bus-booking-manager')); ?></span>
                             </div>
                             <div class="mage-search-res-header--right">
 								<?php if (isset($general_setting['wbbm_type_column_switch']) && $general_setting['wbbm_type_column_switch'] == 'on' || isset($general_setting['wbbm_type_column_switch'])) { ?>
-                                    <span><?php echo wbbm_get_option('wbbm_type_text', 'wbbm_label_setting_sec', __('Type', 'bus-booking-manager')); ?></span>
+                                    <span><?php echo wbbm_get_option('wbbm_type_text', 'wbbm_label_setting_sec', esc_html_e('Type', 'bus-booking-manager')); ?></span>
 								<?php } ?>
-                                <span><?php echo wbbm_get_option('wbbm_fare_text', 'wbbm_label_setting_sec', __('Fare', 'bus-booking-manager')); ?></span>
+                                <span><?php echo wbbm_get_option('wbbm_fare_text', 'wbbm_label_setting_sec', esc_html_e('Fare', 'bus-booking-manager')); ?></span>
 								<?php if (isset($general_setting['wbbm_seat_column_switch']) && $general_setting['wbbm_seat_column_switch'] == 'on') { ?>
-                                    <span><?php echo wbbm_get_option('wbbm_seats_available_text', 'wbbm_label_setting_sec', __('Seat Available', 'bus-booking-manager')); ?></span>
+                                    <span><?php echo wbbm_get_option('wbbm_seats_available_text', 'wbbm_label_setting_sec', esc_html_e('Seat Available', 'bus-booking-manager')); ?></span>
 								<?php } ?>
-                                <span><?php echo wbbm_get_option('wbbm_view_text', 'wbbm_label_setting_sec', __('View', 'bus-booking-manager')); ?></span>
+                                <span><?php echo wbbm_get_option('wbbm_view_text', 'wbbm_label_setting_sec', esc_html_e('View', 'bus-booking-manager')); ?></span>
                             </div>
                         </div>
 					<?php } ?>
 					<?php $this->mage_search_bus_list(true); ?>
                 </div>
                 <div class="mage_mini_cart mage_hidden">
-                    <p><?php echo wbbm_get_option('wbbm_total_text', 'wbbm_label_setting_sec', __('Total', 'bus-booking-manager')); ?></p>
+                    <p><?php echo wbbm_get_option('wbbm_total_text', 'wbbm_label_setting_sec', esc_html_e('Total', 'bus-booking-manager')); ?></p>
                     <p class="mage_total"><strong><span><?php echo wc_price(0); ?></span></strong></p>
                 </div>
 			<?php }
@@ -140,7 +159,7 @@
 				if ($loop->post_count == 0) {
 					?>
                     <div class='wbbm_error' style='text-align:center;padding: 10px;color: red;'>
-                        <span><?php echo __('Sorry, No', 'bus-booking-manager') . ' ' . wbbm_get_option('wbbm_cpt_label', 'wbbm_general_setting_sec', 'Bus') . ' ' . __('Found', 'bus-booking-manager'); ?></span>
+                        <span><?php echo esc_html_e('Sorry, No', 'bus-booking-manager') . ' ' . wbbm_get_option('wbbm_cpt_label', 'wbbm_general_setting_sec', 'Bus') . ' ' . esc_html_e('Found', 'bus-booking-manager'); ?></span>
                     </div>
 					<?php
 				} else {
@@ -203,7 +222,7 @@
 					if (!$has_bus) { // Bus available
 						?>
                         <div class='wbbm_error' style='text-align:center;padding: 10px;color: red;'>
-                            <span><?php echo __('Sorry, No', 'bus-booking-manager') . ' ' . wbbm_get_option('wbbm_cpt_label', 'wbbm_general_setting_sec', 'Bus') . ' ' . __('Found', 'bus-booking-manager'); ?></span>
+                            <span><?php echo esc_html_e('Sorry, No', 'bus-booking-manager') . ' ' . wbbm_get_option('wbbm_cpt_label', 'wbbm_general_setting_sec', 'Bus') . ' ' . esc_html_e('Found', 'bus-booking-manager'); ?></span>
                         </div>
 						<?php
 					}
@@ -286,26 +305,26 @@
 									<?php } ?>
                                 </div>
                                 <div>
-									<?php echo '<p class="mage-bus-stopage"><span class="dashicons dashicons-location"></span> ' . wbbm_get_option('wbbm_from_text', 'wbbm_label_setting_sec', __('From: ', 'bus-booking-manager')) . ' ' . $boarding . ' ( ' . get_wbbm_datetime($boarding_time, 'time') . ' )</p>'; ?>
-									<?php echo '<p class="mage-bus-stopage"><span class="dashicons dashicons-location"></span> ' . wbbm_get_option('wbbm_to_text', 'wbbm_label_setting_sec', __('To: ', 'bus-booking-manager')) . ' ' . $dropping . ' ( ' . get_wbbm_datetime($dropping_time, 'time') . ' )</p>'; ?>
+									<?php echo '<p class="mage-bus-stopage"><span class="dashicons dashicons-location"></span> ' . wbbm_get_option('wbbm_from_text', 'wbbm_label_setting_sec', esc_html_e('From: ', 'bus-booking-manager')) . ' ' . $boarding . ' ( ' . get_wbbm_datetime($boarding_time, 'time') . ' )</p>'; ?>
+									<?php echo '<p class="mage-bus-stopage"><span class="dashicons dashicons-location"></span> ' . wbbm_get_option('wbbm_to_text', 'wbbm_label_setting_sec', esc_html_e('To: ', 'bus-booking-manager')) . ' ' . $dropping . ' ( ' . get_wbbm_datetime($dropping_time, 'time') . ' )</p>'; ?>
                                 </div>
                             </div>
                             <div class="mage-search-res-header--right">
 								<?php if ((isset($general_setting['wbbm_type_column_switch']) && $general_setting['wbbm_type_column_switch'] == 'on') || !isset($general_setting['wbbm_type_column_switch'])) { ?>
                                     <div>
-                                        <strong class="mage-sm-show"><?php echo wbbm_get_option('wbbm_type_text', 'wbbm_label_setting_sec', __('Type', 'bus-booking-manager')); ?></strong>
+                                        <strong class="mage-sm-show"><?php echo wbbm_get_option('wbbm_type_text', 'wbbm_label_setting_sec', esc_html_e('Type', 'bus-booking-manager')); ?></strong>
                                         <span><?php echo $type_name; ?></span>
                                     </div>
 								<?php } ?>
-                                <div><strong class="mage-sm-show"><?php echo wbbm_get_option('wbbm_fare_text', 'wbbm_label_setting_sec', __('Fare', 'bus-booking-manager')); ?></strong><?php echo wc_price($seat_price_adult); ?> / <?php echo wbbm_get_option('wbbm_seat_text', 'wbbm_label_setting_sec', __('Seat', 'bus-booking-manager')); ?></div>
+                                <div><strong class="mage-sm-show"><?php echo wbbm_get_option('wbbm_fare_text', 'wbbm_label_setting_sec', esc_html_e('Fare', 'bus-booking-manager')); ?></strong><?php echo wc_price($seat_price_adult); ?> / <?php echo wbbm_get_option('wbbm_seat_text', 'wbbm_label_setting_sec', esc_html_e('Seat', 'bus-booking-manager')); ?></div>
 								<?php if (isset($general_setting['wbbm_seat_column_switch']) && $general_setting['wbbm_seat_column_switch'] == 'on') { ?>
 									<?php if ($seat_available && $seat_available == 'on') : ?>
-                                        <div><strong class="mage-sm-show"><?php echo wbbm_get_option('wbbm_seats_available_text', 'wbbm_label_setting_sec', __('Seat Available', 'bus-booking-manager')); ?></strong>
+                                        <div><strong class="mage-sm-show"><?php echo wbbm_get_option('wbbm_seats_available_text', 'wbbm_label_setting_sec', esc_html_e('Seat Available', 'bus-booking-manager')); ?></strong>
 											<?php if ($is_sell_off != 'on') {
 												if ($available_seat > 0) {
 													echo '<p>' . $available_seat . '</p>';
 												} else {
-													echo '<p class="mage-sm-text">' . wbbm_get_option('wbbm_no_seat_available_text', 'wbbm_label_setting_sec', __('No Seat Available', 'bus-booking-manager')) . '</p>';
+													echo '<p class="mage-sm-text">' . wbbm_get_option('wbbm_no_seat_available_text', 'wbbm_label_setting_sec', esc_html_e('No Seat Available', 'bus-booking-manager')) . '</p>';
 												}
 											} ?>
                                         </div>
@@ -314,7 +333,7 @@
 									<?php endif; ?>
 								<?php } ?>
                                 <div>
-                                    <button class="mage-bus-detail-action"><?php echo wbbm_get_option('wbbm_view_text', 'wbbm_label_setting_sec', __('View', 'bus-booking-manager')); ?></button>
+                                    <button class="mage-bus-detail-action"><?php echo wbbm_get_option('wbbm_view_text', 'wbbm_label_setting_sec', esc_html_e('View', 'bus-booking-manager')); ?></button>
                                 </div>
                             </div>
                         </div>
@@ -327,13 +346,13 @@
                                             </h3>
 											<?php if ($type_name) : ?>
                                                 <p>
-                                                    <strong><?php echo wbbm_get_option('wbbm_type_text', 'wbbm_label_setting_sec', __('Type', 'bus-booking-manager')); ?>
+                                                    <strong><?php echo wbbm_get_option('wbbm_type_text', 'wbbm_label_setting_sec', esc_html_e('Type', 'bus-booking-manager')); ?>
                                                     </strong>:
 													<?php echo $type_name; ?>
                                                 </p>
 											<?php endif; ?>
                                             <p>
-                                                <strong><?php echo wbbm_get_option('wbbm_boarding_points_text', 'wbbm_label_setting_sec', __('Boarding', 'bus-booking-manager')); ?>
+                                                <strong><?php echo wbbm_get_option('wbbm_boarding_points_text', 'wbbm_label_setting_sec', esc_html_e('Boarding', 'bus-booking-manager')); ?>
                                                 </strong>:
 												<?php echo $boarding; ?>
                                                 <strong>(<?php echo get_wbbm_datetime($boarding_time, 'time'); ?>)</strong>
@@ -345,7 +364,7 @@
 												?>
                                             </p>
                                             <p>
-                                                <strong><?php echo wbbm_get_option('wbbm_dropping_points_text', 'wbbm_label_setting_sec', __('Dropping', 'bus-booking-manager')); ?>
+                                                <strong><?php echo wbbm_get_option('wbbm_dropping_points_text', 'wbbm_label_setting_sec', esc_html_e('Dropping', 'bus-booking-manager')); ?>
                                                 </strong>:
 												<?php echo $dropping; ?>
                                                 <strong>(<?php echo get_wbbm_datetime($dropping_time, 'time'); ?>)</strong>
@@ -357,35 +376,35 @@
 												?>
                                             </p>
                                             <p>
-                                                <strong><?php echo wbbm_get_option('wbbm_date_text', 'wbbm_label_setting_sec', __('Date', 'bus-booking-manager')); ?>
+                                                <strong><?php echo wbbm_get_option('wbbm_date_text', 'wbbm_label_setting_sec', esc_html_e('Date', 'bus-booking-manager')); ?>
                                                 </strong>:
 												<?php echo ($return) ? mage_wp_date(mage_get_isset('r_date')) : mage_wp_date(mage_get_isset('j_date')) ?>
                                             </p>
                                             <p>
-                                                <strong><?php echo wbbm_get_option('wbbm_starting_text', 'wbbm_label_setting_sec', __('Start Time', 'bus-booking-manager')); ?>
+                                                <strong><?php echo wbbm_get_option('wbbm_starting_text', 'wbbm_label_setting_sec', esc_html_e('Start Time', 'bus-booking-manager')); ?>
                                                 </strong>:
 												<?php echo get_wbbm_datetime($boarding_time, 'time'); ?>
                                             </p>
                                             <p>
-                                                <strong><?php echo wbbm_get_option('wbbm_fare_text', 'wbbm_label_setting_sec', __('Fare', 'bus-booking-manager')); ?>
+                                                <strong><?php echo wbbm_get_option('wbbm_fare_text', 'wbbm_label_setting_sec', esc_html_e('Fare', 'bus-booking-manager')); ?>
                                                 </strong>:
-												<?php echo wc_price($seat_price_adult) . ' / ' . wbbm_get_option('wbbm_seat_text', 'wbbm_label_setting_sec', __('Seat', 'bus-booking-manager')); ?>
+												<?php echo wc_price($seat_price_adult) . ' / ' . wbbm_get_option('wbbm_seat_text', 'wbbm_label_setting_sec', esc_html_e('Seat', 'bus-booking-manager')); ?>
                                             </p>
 											<?php if ($in_cart) { ?>
-                                                <p class="already_cart"><?php echo wbbm_get_option('wbbm_item_in_cart_text', 'wbbm_label_setting_sec', __('Item has been added to cart', 'bus-booking-manager')); ?>
+                                                <p class="already_cart"><?php echo wbbm_get_option('wbbm_item_in_cart_text', 'wbbm_label_setting_sec', esc_html_e('Item has been added to cart', 'bus-booking-manager')); ?>
                                                 </p>
 											<?php } ?>
                                         </div>
                                         <div class="mage_price_info">
                                             <div class="mage_center_space">
-                                                <h3><strong><?php echo wbbm_get_option('wbbm_fare_text', 'wbbm_label_setting_sec', __('Fare', 'bus-booking-manager')); ?></strong></h3>
+                                                <h3><strong><?php echo wbbm_get_option('wbbm_fare_text', 'wbbm_label_setting_sec', esc_html_e('Fare', 'bus-booking-manager')); ?></strong></h3>
                                             </div>
                                             <div class="mage_center_space">
                                                 <div>
                                                     <p>
-                                                        <strong><?php echo wbbm_get_option('wbbm_adult_text', 'wbbm_label_setting_sec', __('Adult :', 'bus-booking-manager')); ?></strong>
+                                                        <strong><?php echo wbbm_get_option('wbbm_adult_text', 'wbbm_label_setting_sec', esc_html_e('Adult :', 'bus-booking-manager')); ?></strong>
 														<?php echo wc_price($seat_price_adult); ?>/
-                                                        <small><?php echo wbbm_get_option('wbbm_ticket_text', 'wbbm_label_setting_sec', __('Ticket', 'bus-booking-manager')); ?></small>
+                                                        <small><?php echo wbbm_get_option('wbbm_ticket_text', 'wbbm_label_setting_sec', esc_html_e('Ticket', 'bus-booking-manager')); ?></small>
                                                     </p>
                                                 </div>
 												<?php mage_qty_box($seat_price_adult, 'adult_quantity', false); ?>
@@ -396,9 +415,9 @@
 												if (($seat_price_child > 0) || ($is_price_zero_allow == 'on')) : ?>
                                                     <div class="mage_center_space">
                                                         <p>
-                                                            <strong><?php echo wbbm_get_option('wbbm_child_text', 'wbbm_label_setting_sec', __('Child :', 'bus-booking-manager')); ?></strong>
+                                                            <strong><?php echo wbbm_get_option('wbbm_child_text', 'wbbm_label_setting_sec', esc_html_e('Child :', 'bus-booking-manager')); ?></strong>
 															<?php echo wc_price($seat_price_child); ?>/
-                                                            <small><?php echo wbbm_get_option('wbbm_ticket_text', 'wbbm_label_setting_sec', __('Ticket', 'bus-booking-manager')); ?></small>
+                                                            <small><?php echo wbbm_get_option('wbbm_ticket_text', 'wbbm_label_setting_sec', esc_html_e('Ticket', 'bus-booking-manager')); ?></small>
                                                         </p>
 														<?php mage_qty_box($seat_price_child, 'child_quantity', false); ?>
                                                     </div>
@@ -407,9 +426,9 @@
 											<?php if (($seat_price_infant > 0) || ($is_price_zero_allow == 'on')) : ?>
                                                 <div class="mage_center_space">
                                                     <p>
-                                                        <strong><?php echo wbbm_get_option('wbbm_infant_text', 'wbbm_label_setting_sec', __('Infant :', 'bus-booking-manager')); ?></strong>
+                                                        <strong><?php echo wbbm_get_option('wbbm_infant_text', 'wbbm_label_setting_sec', esc_html_e('Infant :', 'bus-booking-manager')); ?></strong>
 														<?php echo wc_price($seat_price_infant); ?>/
-                                                        <small><?php echo wbbm_get_option('wbbm_ticket_text', 'wbbm_label_setting_sec', __('Ticket', 'bus-booking-manager')); ?></small>
+                                                        <small><?php echo wbbm_get_option('wbbm_ticket_text', 'wbbm_label_setting_sec', esc_html_e('Ticket', 'bus-booking-manager')); ?></small>
                                                     </p>
 													<?php mage_qty_box($seat_price_infant, 'infant_quantity', false); ?>
                                                 </div>
@@ -488,17 +507,17 @@
                                         <h3><a href="<?php echo get_the_permalink($id) ?>"><?php echo the_title(); ?></a></h3>
 										<?php if ($type_name) : ?>
                                             <p>
-                                                <strong><?php echo wbbm_get_option('wbbm_type_text', 'wbbm_label_setting_sec', __('Type :', 'bus-booking-manager')); ?></strong>
+                                                <strong><?php echo wbbm_get_option('wbbm_type_text', 'wbbm_label_setting_sec', esc_html_e('Type :', 'bus-booking-manager')); ?></strong>
 												<?php echo $type_name; ?>
                                             </p>
 										<?php endif; ?>
                                         <p>
-                                            <strong><?php echo wbbm_get_option('wbbm_boarding_points_text', 'wbbm_label_setting_sec', __('Boarding :', 'bus-booking-manager')); ?></strong>
+                                            <strong><?php echo wbbm_get_option('wbbm_boarding_points_text', 'wbbm_label_setting_sec', esc_html_e('Boarding :', 'bus-booking-manager')); ?></strong>
 											<?php echo $boarding; ?>
                                             <strong>(<?php echo $boarding_time; ?>)</strong>
                                         </p>
                                         <p>
-                                            <strong><?php echo wbbm_get_option('wbbm_dropping_points_text', 'wbbm_label_setting_sec', __('Dropping :', 'bus-booking-manager')); ?></strong>
+                                            <strong><?php echo wbbm_get_option('wbbm_dropping_points_text', 'wbbm_label_setting_sec', esc_html_e('Dropping :', 'bus-booking-manager')); ?></strong>
 											<?php echo $dropping; ?>
                                             <strong>(<?php echo $dropping_time; ?>)</strong>
                                         </p>
@@ -506,27 +525,27 @@
 											<?php if ($seat_available && $seat_available == 'on') : ?>
                                                 <p>
                                                     <strong><?php echo $available_seat; ?></strong>
-													<?php echo wbbm_get_option('wbbm_seats_available_text', 'wbbm_label_setting_sec', __('Seat Available', 'bus-booking-manager')); ?>
+													<?php echo wbbm_get_option('wbbm_seats_available_text', 'wbbm_label_setting_sec', esc_html_e('Seat Available', 'bus-booking-manager')); ?>
                                                 </p>
 											<?php endif; ?>
 										<?php endif; ?>
 										<?php if ($in_cart) { ?>
-                                            <p class="already_cart"><?php echo wbbm_get_option('wbbm_item_in_cart_text', 'wbbm_label_setting_sec', __('Item has been added to cart', 'bus-booking-manager')); ?>
+                                            <p class="already_cart"><?php echo wbbm_get_option('wbbm_item_in_cart_text', 'wbbm_label_setting_sec', esc_html_e('Item has been added to cart', 'bus-booking-manager')); ?>
                                             </p>
 										<?php } ?>
                                     </div>
                                     <div class="mage_price_info">
                                         <div class="mage_center_space">
-                                            <h3><strong><?php echo wbbm_get_option('wbbm_fare_text', 'wbbm_label_setting_sec', __('Fare', 'bus-booking-manager')); ?></strong></h3>
+                                            <h3><strong><?php echo wbbm_get_option('wbbm_fare_text', 'wbbm_label_setting_sec', esc_html_e('Fare', 'bus-booking-manager')); ?></strong></h3>
                                         </div>
                                         <input type="hidden" name="available_quantity" value="<?php echo $available_seat ?>">
                                         <div class="mage_center_space">
                                             <div>
                                                 <p>
-                                                    <strong><?php echo wbbm_get_option('wbbm_adult_text', 'wbbm_label_setting_sec', __('Adult', 'bus-booking-manager'));
+                                                    <strong><?php echo wbbm_get_option('wbbm_adult_text', 'wbbm_label_setting_sec', esc_html_e('Adult', 'bus-booking-manager'));
 															echo ':'; ?></strong>
 													<?php echo wc_price($seat_price_adult); ?>/
-                                                    <small><?php echo wbbm_get_option('wbbm_ticket_text', 'wbbm_label_setting_sec', __('Ticket', 'bus-booking-manager')); ?></small>
+                                                    <small><?php echo wbbm_get_option('wbbm_ticket_text', 'wbbm_label_setting_sec', esc_html_e('Ticket', 'bus-booking-manager')); ?></small>
                                                 </p>
                                             </div>
 											<?php mage_qty_box($seat_price_adult, 'adult_quantity', false); ?>
@@ -536,10 +555,10 @@
 											if (($seat_price_child > 0) || ($is_price_zero_allow == 'on')) : ?>
                                                 <div class="mage_center_space">
                                                     <p>
-                                                        <strong><?php echo wbbm_get_option('wbbm_child_text', 'wbbm_label_setting_sec', __('Child', 'bus-booking-manager'));
+                                                        <strong><?php echo wbbm_get_option('wbbm_child_text', 'wbbm_label_setting_sec', esc_html_e('Child', 'bus-booking-manager'));
 																echo ':'; ?></strong>
 														<?php echo wc_price($seat_price_child); ?>/
-                                                        <small><?php echo wbbm_get_option('wbbm_ticket_text', 'wbbm_label_setting_sec', __('Ticket', 'bus-booking-manager')); ?></small>
+                                                        <small><?php echo wbbm_get_option('wbbm_ticket_text', 'wbbm_label_setting_sec', esc_html_e('Ticket', 'bus-booking-manager')); ?></small>
                                                     </p>
 													<?php mage_qty_box($seat_price_child, 'child_quantity', false); ?>
                                                 </div>
@@ -548,10 +567,10 @@
 										<?php if (($seat_price_infant > 0) || ($is_price_zero_allow == 'on')) : ?>
                                             <div class="mage_center_space">
                                                 <p>
-                                                    <strong><?php echo wbbm_get_option('wbbm_infant_text', 'wbbm_label_setting_sec', __('Infant', 'bus-booking-manager'));
+                                                    <strong><?php echo wbbm_get_option('wbbm_infant_text', 'wbbm_label_setting_sec', esc_html_e('Infant', 'bus-booking-manager'));
 															echo ':'; ?></strong>
 													<?php echo wc_price($seat_price_infant); ?>/
-                                                    <small><?php echo wbbm_get_option('wbbm_ticket_text', 'wbbm_label_setting_sec', __('Ticket', 'bus-booking-manager')); ?></small>
+                                                    <small><?php echo wbbm_get_option('wbbm_ticket_text', 'wbbm_label_setting_sec', esc_html_e('Ticket', 'bus-booking-manager')); ?></small>
                                                 </p>
 												<?php mage_qty_box($seat_price_infant, 'infant_quantity', false); ?>
                                             </div>
@@ -571,10 +590,10 @@
 										<?php if (!empty($pickpoints) && $is_enable_pickpoint == 'yes') : ?>
                                             <div class="mage_center_space">
                                                 <div class="mage-form-field mage-form-pickpoint-field">
-                                                    <label for="mage_pickpoint"><?php echo wbbm_get_option('wbbm_pickuppoint_area_text', 'wbbm_label_setting_sec', __('Select Pickup Area', 'bus-booking-manager'));
+                                                    <label for="mage_pickpoint"><?php echo wbbm_get_option('wbbm_pickuppoint_area_text', 'wbbm_label_setting_sec', esc_html_e('Select Pickup Area', 'bus-booking-manager'));
 															echo ':'; ?></label>
                                                     <select name="mage_pickpoint" class="mage_pickpoint">
-                                                        <option value=""><?php echo wbbm_get_option('wbbm_pickuppoint_area_text', 'wbbm_label_setting_sec', __('Select Pickup Area', 'bus-booking-manager')); ?></option>
+                                                        <option value=""><?php echo wbbm_get_option('wbbm_pickuppoint_area_text', 'wbbm_label_setting_sec', esc_html_e('Select Pickup Area', 'bus-booking-manager')); ?></option>
 														<?php
 															foreach ($pickpoints as $pickpoint) {
 																$time_html = $pickpoint["time"] ? ' (' . get_wbbm_datetime($pickpoint["time"], 'time') . ')' : '';
@@ -636,7 +655,7 @@
 		}
 		function mage_search_form_horizontal($single_bus, $target = '') {
 			$search_form_b_color = wbbm_get_option('wbbm_search_form_b_color', 'wbbm_style_setting_sec');
-			$wbbm_buy_ticket_text = wbbm_get_option('wbbm_buy_ticket_text', 'wbbm_label_setting_sec', __('Buy Ticket', 'bus-booking-manager'));
+			$wbbm_buy_ticket_text = wbbm_get_option('wbbm_buy_ticket_text', 'wbbm_label_setting_sec', esc_html_e('Buy Ticket', 'bus-booking-manager'));
 			?>
             <div class="mage_container">
                 <div class="search_form_horizontal" style="background-color:<?php echo($search_form_b_color != '' ? $search_form_b_color : '#b30c3b12'); ?>">
@@ -656,7 +675,7 @@
                     <div class="mage_row">
                         <div class="mage_search_box_sidebar">
                             <div class="mage_sidebar_search_form">
-                                <h2><?php echo wbbm_get_option('wbbm_buy_ticket_text', 'wbbm_label_setting_sec', __('BUY TICKET', 'bus-booking-manager')); ?></h2>
+                                <h2><?php echo wbbm_get_option('wbbm_buy_ticket_text', 'wbbm_label_setting_sec', esc_html_e('BUY TICKET', 'bus-booking-manager')); ?></h2>
 								<?php do_action('mage_search_from_only', $target); ?>
                             </div>
                         </div>
@@ -682,7 +701,7 @@
                 <div class="mage_form_list">
                     <label for="bus_start_route">
                         <span class="fa fa-map-marker"></span>
-						<?php echo wbbm_get_option('wbbm_from_text', 'wbbm_label_setting_sec', __('From :', 'bus-booking-manager')); ?>
+						<?php echo wbbm_get_option('wbbm_from_text', 'wbbm_label_setting_sec', esc_html_e('From :', 'bus-booking-manager')); ?>
                     </label>
                     <div class="mage_input_select mage_bus_boarding_point">
                         <div class="route-input-wrap"><input id="bus_start_route" type="text" class="mage_form_control" name="bus_start_route" value="<?php echo mage_get_isset('bus_start_route'); ?>" placeholder="<?php _e('Please Select', 'bus-booking-manager'); ?>" autocomplete="off" required/></div>
@@ -725,7 +744,7 @@
                     <label for="bus_end_route">
                         <span class="fa fa-map-marker"></span>
                         <span id="wbtm_show_msg"></span>
-						<?php echo wbbm_get_option('wbbm_to_text', 'wbbm_label_setting_sec', __('To :', 'bus-booking-manager')); ?>
+						<?php echo wbbm_get_option('wbbm_to_text', 'wbbm_label_setting_sec', esc_html_e('To :', 'bus-booking-manager')); ?>
                     </label>
                     <div class="mage_input_select mage_bus_dropping_point">
                         <div class="route-input-wrap"><input id="bus_end_route" type="text" class="mage_form_control" name="bus_end_route" value="<?php echo mage_get_isset('bus_end_route'); ?>" placeholder="<?php _e('Please Select', 'bus-booking-manager'); ?>" autocomplete="off" required/></div>
@@ -753,7 +772,7 @@
                 <div class="mage_form_list">
                     <label for="j_date">
                         <span class="fa fa-calendar"></span>
-						<?php echo wbbm_get_option('wbbm_date_of_journey_text', 'wbbm_label_setting_sec', __('Date of Journey :', 'bus-booking-manager')); ?>
+						<?php echo wbbm_get_option('wbbm_date_of_journey_text', 'wbbm_label_setting_sec', esc_html_e('Date of Journey :', 'bus-booking-manager')); ?>
                     </label>
                     <input type="text" class="mage_form_control" id="j_date" readonly name="j_date" value="<?php echo mage_get_isset('j_date'); ?>" placeholder="<?php echo wbbm_convert_datepicker_dateformat(); ?>" autocomplete="off" required>
                 </div>
@@ -762,7 +781,7 @@
                     <div class="mage_form_list mage_return_date <?php echo $return ? '' : 'mage_hidden' ?>">
                         <label for="r_date">
                             <span class="fa fa-calendar"></span>
-							<?php echo wbbm_get_option('wbbm_return_date_text', 'wbbm_label_setting_sec', __('Return Date (Optional):', 'bus-booking-manager')); ?>
+							<?php echo wbbm_get_option('wbbm_return_date_text', 'wbbm_label_setting_sec', esc_html_e('Return Date (Optional):', 'bus-booking-manager')); ?>
                         </label>
                         <input type="text" class="mage_form_control" id="r_date" readonly name="r_date" value="<?php echo mage_get_isset('r_date'); ?>" autocomplete="off" placeholder="<?php echo wbbm_convert_datepicker_dateformat(); ?>">
                     </div>
@@ -772,11 +791,11 @@
 						<?php if (!$single_bus) { ?>
                             <label for="one_way">
                                 <input type="radio" name="bus-r" value='oneway' id="one_way" <?php echo $return ? '' : 'checked' ?> />
-								<?php echo wbbm_get_option('wbbm_one_way_text', 'wbbm_label_setting_sec', __('One Way', 'bus-booking-manager')); ?>
+								<?php echo wbbm_get_option('wbbm_one_way_text', 'wbbm_label_setting_sec', esc_html_e('One Way', 'bus-booking-manager')); ?>
                             </label>
                             <label for="return">
                                 <input type="radio" name="bus-r" value='return' id="return" <?php echo $return ? 'checked' : '' ?>/>
-								<?php echo wbbm_get_option('wbbm_return_text', 'wbbm_label_setting_sec', __('Return', 'bus-booking-manager')); ?>
+								<?php echo wbbm_get_option('wbbm_return_text', 'wbbm_label_setting_sec', esc_html_e('Return', 'bus-booking-manager')); ?>
                             </label>
 						<?php } else {
 							echo '<label>&nbsp;</label>';
@@ -785,7 +804,7 @@
                     <div class="mage_form_search">
                         <button type="submit" class="mage_button">
                             <span class="fa fa-search"></span>
-							<?php echo wbbm_get_option('wbbm_search_buses_text', 'wbbm_label_setting_sec', __('Search', 'bus-booking-manager')); ?>
+							<?php echo wbbm_get_option('wbbm_search_buses_text', 'wbbm_label_setting_sec', esc_html_e('Search', 'bus-booking-manager')); ?>
                         </button>
                     </div>
                 </div>

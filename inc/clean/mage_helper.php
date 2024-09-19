@@ -9,29 +9,30 @@ function mage_qty_box($price,$name, $return) {
     if ($available_seat > 0) {
 
         if($name == 'child_quantity') {
-            $ticket_title = wbbm_get_option('wbbm_child_text', 'wbbm_label_setting_sec', __('Child', 'bus-booking-manager'));
+            $ticket_title = wbbm_get_option('wbbm_child_text', 'wbbm_label_setting_sec', esc_html_e('Child', 'bus-booking-manager'));
             $ticket_type = 'child';
         } elseif($name == 'infant_quantity') {
-            $ticket_title = wbbm_get_option('wbbm_infant_text', 'wbbm_label_setting_sec', __('Infant', 'bus-booking-manager'));
+            $ticket_title = wbbm_get_option('wbbm_infant_text', 'wbbm_label_setting_sec', esc_html_e('Infant', 'bus-booking-manager'));
             $ticket_type = 'infant';
         } else {
-            $ticket_title = wbbm_get_option('wbbm_adult_text', 'wbbm_label_setting_sec', __('Adult', 'bus-booking-manager'));
+            $ticket_title = wbbm_get_option('wbbm_adult_text', 'wbbm_label_setting_sec', esc_html_e('Adult', 'bus-booking-manager'));
             $ticket_type = 'adult';
         }
         ?>
         <div class="mage_form_group">
             <div class="mage_flex mage_qty_dec"><span class="fa fa-minus"></span></div>
             <input type="text"
-                   class="mage_form mage_seat_qty"
-                   data-ticket-title="<?php echo $ticket_title.' '.__('Passenger info', 'bus-booking-manager'); ?>"
-                   data-ticket-type="<?php echo $ticket_type; ?>"
-                   data-price="<?php echo $price; ?>"
-                   name="<?php echo $name; ?>"
-                   value="0"
-                   min="0"
-                   max="<?php echo $available_seat; ?>"
-                   <?php echo ($ticket_type === 'adult' ? 'required' : '') ?>
-            />
+       class="mage_form mage_seat_qty"
+       data-ticket-title="<?php echo esc_attr( $ticket_title . ' ' . esc_html_e('Passenger info', 'bus-booking-manager') ); ?>"
+       data-ticket-type="<?php echo esc_attr( $ticket_type ); ?>"
+       data-price="<?php echo esc_attr( $price ); ?>"
+       name="<?php echo esc_attr( $name ); ?>"
+       value="0"
+       min="0"
+       max="<?php echo esc_attr( $available_seat ); ?>"
+       <?php echo ( $ticket_type === 'adult' ? 'required' : '' ); ?>
+/>
+
             <div class="mage_flex mage_qty_inc"><span class="fa fa-plus"></span></div>
         </div>
         <?php
@@ -43,21 +44,22 @@ function wbbm_entire_switch($price,$name, $return){
     $available_seat = wbbm_intermidiate_available_seat($_GET['bus_start_route'], $_GET['bus_end_route'], wbbm_convert_date_to_php($date));
 
         if($name == 'entire_quantity') {
-            $ticket_title = wbbm_get_option('wbbm_entire_bus_text', 'wbbm_label_setting_sec', __('Entire', 'bus-booking-manager'));
+            $ticket_title = wbbm_get_option('wbbm_entire_bus_text', 'wbbm_label_setting_sec', esc_html_e('Entire', 'bus-booking-manager'));
             $ticket_type = 'entire';
         }   
     ?>
-    <div class="wbbm_entire_switch_wrapper" data-entire-price="<?php echo $price; ?>">
+    <div class="wbbm_entire_switch_wrapper" data-entire-price="<?php echo esc_attr( $price ); ?>">
     <label class="switch">
-        <input  type="checkbox" 
-                id="wbbm_entire_bus" 
-                name="<?php echo $name; ?>"
-                value="0"
-                data-ticket-title="<?php echo $ticket_title.' '.__('Passenger info', 'bus-booking-manager'); ?>"
-                data-ticket-type="<?php echo $ticket_type; ?>"
-                data-price="<?php echo $price; ?>"
-                class="mage_form"
-        />
+    <input type="checkbox" 
+       id="wbbm_entire_bus" 
+       name="<?php echo esc_attr( $name ); ?>"
+       value="0"
+       data-ticket-title="<?php echo esc_attr( $ticket_title . ' ' . esc_html_e( 'Passenger info', 'bus-booking-manager' ) ); ?>"
+       data-ticket-type="<?php echo esc_attr( $ticket_type ); ?>"
+       data-price="<?php echo esc_attr( $price ); ?>"
+       class="mage_form"
+/>
+
         <span class="slider round"></span>
     </label>
     </div>
@@ -66,8 +68,9 @@ function wbbm_entire_switch($price,$name, $return){
 
 //print hidden input field
 function hidden_input_field($name, $value) {
-    echo '<input type="hidden" name="' . $name . '" value="' . $value . '"/>';
+    echo '<input type="hidden" name="' . esc_attr( $name ) . '" value="' . esc_attr( $value ) . '"/>';
 }
+
 
 //return cart qty
 function cart_qty($name) {
@@ -94,9 +97,9 @@ function mage_route_list($drop = false) {
     $search_form_dropdown_text_color = wbbm_get_option('wbbm_search_form_dropdown_t_color', 'wbbm_style_setting_sec');
     $search_form_dropdown_text_color = $search_form_dropdown_text_color ? $search_form_dropdown_text_color : '';
 
-    echo '<div class="mage_input_select_list"'.($drop ? "id=wbtm_dropping_point_list" : "").' '; if($search_form_dropdown_b_color){ echo 'style="background-color:'.$search_form_dropdown_b_color.'"'; } echo '><ul>';
+    echo '<div class="mage_input_select_list" ' . ($drop ? 'id="wbtm_dropping_point_list"' : '') . ' '; if ($search_form_dropdown_b_color) { echo 'style="background-color:' . esc_attr( $search_form_dropdown_b_color ) . '"'; } echo '><ul>';
     foreach ($routes as $route) {
-        echo '<li '; if($search_form_dropdown_text_color){ echo 'style="color:'.$search_form_dropdown_text_color.'"'; } echo ' data-route="' . $route->name . '"><span class="fa fa-map-marker"></span>' . $route->name . '</li>';
+        echo '<li '; if ($search_form_dropdown_text_color) { echo 'style="color:' . esc_attr( $search_form_dropdown_text_color ) . '"'; } echo ' data-route="' . esc_attr( $route->name ) . '"><span class="fa fa-map-marker"></span>' . esc_html( $route->name ) . '</li>';
     }
     echo '</ul></div>';
 }
@@ -117,12 +120,12 @@ function wbtm_load_dropping_point()
     if (sizeof($dropingarray) > 0) {
         foreach ($dropingarray as $dp) {
             $name = $dp['wbbm_bus_routes_name'];
-            echo "<li data-route='$name'><span class='fa fa-map-marker'></span>$name</li>";
+            echo '<li data-route="' . esc_attr( $name ) . '"><span class="fa fa-map-marker"></span>' . sprintf( esc_html__( '%s', 'bus-booking-manager' ), esc_html( $name ) ) . '</li>';
         }
     } else {
         foreach ($allStopArr as $dp) {
             $name = $dp->name;
-            echo "<li data-route='$name'><span class='fa fa-map-marker'></span>$name</li>";
+            echo '<li data-route="' . esc_attr( $name ) . '"><span class="fa fa-map-marker"></span>' . sprintf( esc_html__( '%s', 'bus-booking-manager' ), esc_html( $name ) ) . '</li>';
         }
     }
     die();
@@ -450,31 +453,31 @@ function wbbm_global_css_func(){
 
         if($search_button_bg_color) :
         echo '.wbbm-bus-lists a, button.mage_button, .mage-search-brief-row .mage-bus-detail-action { ';
-        echo !empty($search_button_bg_color) ?  'background-color:'.$search_button_bg_color.';' : '';
+        echo !empty( $search_button_bg_color ) ? 'background-color:' . esc_attr( $search_button_bg_color ) . ';' : '';
         echo ' } ';
         endif;
 
         if($search_button_hover_bg_color) :
         echo '.wbbm-bus-lists a:hover, button.mage_button:hover, .mage-search-brief-row .mage-bus-detail-action:hover { ';
-        echo !empty($search_button_hover_bg_color) ?  'background-color:'.$search_button_hover_bg_color.';' : '';
+        echo !empty( $search_button_hover_bg_color ) ? 'background-color:' . esc_attr( $search_button_hover_bg_color ) . ';' : '';
         echo ' } ';
         endif;
 
         if($wbbm_cart_table_bg_color) :
         echo '.mage-bus-booking-wrapper .mage_bus_info, .mage-bus-booking-wrapper .mage_price_info, .mage_bus_info, .mage_price_info { ';
-        echo !empty($wbbm_cart_table_bg_color) ?  'background-color:'.$wbbm_cart_table_bg_color.';' : '';
+        echo !empty( $wbbm_cart_table_bg_color ) ? 'background-color:' . esc_attr( $wbbm_cart_table_bg_color ) . ';' : '';
         echo ' } ';
         endif;
 
         if($wbbm_cart_table_text_color) :
         echo '.mage-bus-booking-wrapper .mage_bus_info, .mage-bus-booking-wrapper .mage_price_info, .mage_search_list .mage_bus_info h3 a, .mage_bus_info, .mage_price_info { ';
-        echo !empty($wbbm_cart_table_text_color) ?  'color:'.$wbbm_cart_table_text_color.';' : '';
+        echo !empty( $wbbm_cart_table_text_color ) ? 'color:' . esc_attr( $wbbm_cart_table_text_color ) . ';' : '';
         echo ' } ';
         endif;
 
         if($wbbm_sub_total_bg_color) :
         echo '.mage_search_list .mage_book_now_area .mage_sub_total span:nth-child(1) { ';
-        echo !empty($wbbm_sub_total_bg_color) ?  'background-color:'.$wbbm_sub_total_bg_color.';' : '';
+        echo !empty( $wbbm_sub_total_bg_color ) ? 'background-color:' . esc_attr( $wbbm_sub_total_bg_color ) . ';' : '';
         echo ' } ';
         endif;
 
@@ -558,13 +561,13 @@ function wbbm_extra_services_section($bus_id)
 
     ?>
         <div class="wbbm_extra_service_wrap">
-            <h4 class="mar_b bor_tb"><?php echo __('Extra Service', 'bus-booking-manager'); ?></h4>
+            <h4 class="mar_b bor_tb"><?php echo esc_html_e('Extra Service', 'bus-booking-manager'); ?></h4>
             <table class='wbbm_extra_service_table'>
                 <thead>
                     <tr>
-                        <td align="left"><?php echo __('Name:', 'bus-booking-manager'); ?></td>
-                        <td class="mage_text_center"><?php echo __('Quantity:', 'bus-booking-manager'); ?></td>
-                        <td class="mage_text_center"><?php echo __('Price:', 'bus-booking-manager'); ?></td>
+                        <td align="left"><?php echo esc_html_e('Name:', 'bus-booking-manager'); ?></td>
+                        <td class="mage_text_center"><?php echo esc_html_e('Quantity:', 'bus-booking-manager'); ?></td>
+                        <td class="mage_text_center"><?php echo esc_html_e('Price:', 'bus-booking-manager'); ?></td>
                     </tr>
                 </thead>
                 <tbody>
@@ -586,31 +589,33 @@ function wbbm_extra_services_section($bus_id)
                     ?>
 
                         <tr data-total="0">
-                            <td align="Left"><?php echo $field['option_name']; ?>
-                                <div class="xtra-item-left"><?php echo $ext_left; ?>
-                                    <?php _e('Left:', 'bus-booking-manager'); ?>
-                                </div>
-                            </td>
+                        <td align="Left"><?php echo esc_html( $field['option_name'] ); ?>
+                            <div class="xtra-item-left"><?php echo esc_html( $ext_left ); ?>
+                                <?php esc_html_e( 'Left:', 'bus-booking-manager' ); ?>
+                            </div>
+                        </td>
+
                             <td>
                                 <?php
                                 if ($ext_left > 0) {
                                     if ($qty_type == 'dropdown') { ?>
-                                        <select name="extra_service_qty[]" id="eventpxtp_<?php echo $count_extra;
-                                                                                            ?>" class='extra-qty-box mage_form_full' data-price='<?php echo $data_price; ?>'>
-                                            <option value=""><?php _e('Select extra service', 'bus-booking-manager') ?></option>
-                                            <?php for ($i = 1; $i <= $ext_left; $i++) { ?>
-                                                <option value="<?php echo $i; ?>"><?php echo $i; ?> <?php echo $field['option_name']; ?></option>
+                                        <select name="extra_service_qty[]" id="eventpxtp_<?php echo esc_attr( $count_extra ); ?>" class='extra-qty-box mage_form_full' data-price='<?php echo esc_attr( $data_price ); ?>'>
+                                            <option value=""><?php esc_html_e( 'Select extra service', 'bus-booking-manager' ); ?></option>
+                                            <?php for ( $i = 1; $i <= $ext_left; $i++ ) { ?>
+                                                <option value="<?php echo esc_attr( $i ); ?>"><?php echo esc_html( $i ); ?> <?php echo esc_html( $field['option_name'] ); ?></option>
                                             <?php } ?>
                                         </select>
+
                                     <?php } else { ?>
                                         <div class="mage_es_form_qty">
                                             <div class="mage_flex mage_es_qty_minus"><i class="fa fa-minus"></i></div>
-                                            <input size="4" inputmode="numeric" type="number" class='extra-qty-box mage_form_full' step='1' name='extra_service_qty[]' data-price='<?php echo wbbm_get_price_including_tax($bus_id, $data_price); ?>' value='0' min="0" max="<?php echo $ext_left; ?>">
-                                            <div class="mage_flex mage_es_qty_plus"><i class="fa fa-plus"></i></div>
+                                            <input size="4" inputmode="numeric" type="number" class='extra-qty-box mage_form_full' step='1' name='extra_service_qty[]' data-price='<?php echo esc_attr( wbbm_get_price_including_tax( $bus_id, $data_price ) ); ?>' value='0' min="0" max="<?php echo esc_attr( $ext_left ); ?>'>
+                                            <div class=" mage_flex mage_es_qty_plus "><i class="fa fa-plus"></i></div>
                                         </div>
+
                                 <?php }
                                 } else {
-                                    echo __('Not Available', 'bus-booking-manager');
+                                    echo esc_html_e('Not Available', 'bus-booking-manager');
                                 } ?>
                             </td>
                             <td class="mage_text_center">
@@ -623,19 +628,23 @@ function wbbm_extra_services_section($bus_id)
                                 }
 
                                 if (in_array('bus_sales_agent', $user_roles, true)) {
-                                    echo '<input class="extra_service_per_price" type="text" name="extra_service_price[]" value="' . wbbm_get_price_including_tax($bus_id, $field['option_price']) . '" style="width: 80px"/>';
-                                    if ($ext_left > 0) { ?>
-                                        <p style="display: none;" class="price_jq"><?php echo $data_price > 0 ? $data_price : 0; ?></p>
-                                        <input type="hidden" name='extra_service_name[]' value='<?php echo $field['option_name']; ?>'>
-                                    <?php }
-                                } else {
-                                    echo wc_price(wbbm_get_price_including_tax($bus_id, $field['option_price']));
-                                    if ($ext_left > 0) { ?>
-                                        <p style="display: none;" class="price_jq"><?php echo $data_price > 0 ? $data_price : 0; ?></p>
-                                        <input type="hidden" name='extra_service_name[]' value='<?php echo $field['option_name']; ?>'>
-                                        <input type="hidden" name='extra_service_price[]' value='<?php echo $field['option_price']; ?>'>
-                                <?php }
-                                }
+    echo '<input class="extra_service_per_price" type="text" name="extra_service_price[]" value="' . esc_attr( wbbm_get_price_including_tax( $bus_id, $field['option_price'] ) ) . '" style="width: 80px"/>';
+
+    if ($ext_left > 0) { ?>
+        <p style="display: none;" class="price_jq"><?php echo esc_html( $data_price > 0 ? $data_price : 0 ); ?></p>
+        <input type="hidden" name='extra_service_name[]' value='<?php echo esc_attr( $field['option_name'] ); ?>'>
+    <?php }
+
+} else {
+    echo esc_html( wc_price( wbbm_get_price_including_tax( $bus_id, $field['option_price'] ) ) );
+
+    if ($ext_left > 0) { ?>
+        <p style="display: none;" class="price_jq"><?php echo esc_html( $data_price > 0 ? $data_price : 0 ); ?></p>
+        <input type="hidden" name='extra_service_name[]' value='<?php echo esc_attr( $field['option_name'] ); ?>'>
+        <input type="hidden" name='extra_service_price[]' value='<?php echo esc_attr( $field['option_price'] ); ?>'>
+    <?php }
+}
+
 
                                 ?>
                             </td>

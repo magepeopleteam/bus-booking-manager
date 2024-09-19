@@ -65,9 +65,13 @@ class WBBMMetaBox
             ?>
             <p>
                 <label class="customCheckboxLabel">
-                    <input type="checkbox" name="wbbm_features[<?php echo $terms['term_id']; ?>]" value="<?php echo $terms['term_id']; ?>">
-                    <span class="customCheckbox"><span class="mR_xs <?php echo $_POST['wbbm_feature_icon']; ?>"></span><?php echo $_POST['name']; ?></span>
-                </label>
+    <input type="checkbox" name="wbbm_features[<?php echo esc_attr( $terms['term_id'] ); ?>]" value="<?php echo esc_attr( $terms['term_id'] ); ?>">
+    <span class="customCheckbox">
+        <span class="mR_xs <?php echo esc_attr( $_POST['wbbm_feature_icon'] ); ?>"></span>
+        <?php echo esc_html( $_POST['name'] ); ?>
+    </span>
+</label>
+
             </p>
             <?php
         }
@@ -141,55 +145,51 @@ class WBBMMetaBox
     }
 
     // Tab lists
-    public function wbbm_add_meta_box_tab_label($post_id)
-    {
-
-
-    $cpt_label = wbbm_get_option('wbbm_cpt_label', 'wbbm_general_setting_sec', __('Bus', 'bus-booking-manager'));
+    public function wbbm_add_meta_box_tab_label($post_id) {
+    $cpt_label = esc_html( wbbm_get_option('wbbm_cpt_label', 'wbbm_general_setting_sec', __('Bus', 'bus-booking-manager')) );
     ?>
 
-        <li data-target-tabs="#wbtm_ticket_panel" class="active"> 
-            <i class="fas fa-tools"></i> <?php echo  __('Configuration', 'bus-booking-manager'); ?>
+    <li data-target-tabs="#wbtm_ticket_panel" class="active">
+        <i class="fas fa-tools"></i> <?php esc_html_e('Configuration', 'bus-booking-manager'); ?>
+    </li>
+
+    <li data-target-tabs="#wbtm_routing" class="wbtm_routing_tab">
+        <i class="fas fa-route"></i> <?php esc_html_e('Routing', 'bus-booking-manager'); ?>
+    </li>
+
+    <li data-target-tabs="#wbtm_seat_price" class="ra_seat_price">
+        <i class="fas fa-dollar-sign"></i> <?php esc_html_e('Seat Price', 'bus-booking-manager'); ?>
+    </li>
+
+    <li class="ra_pickuppoint_tab" data-target-tabs="#wbtm_pickuppoint">
+        <i class="fas fa-map-marker-alt"></i> <?php esc_html_e('Pickup Point', 'bus-booking-manager'); ?>
+    </li>
+
+    <li data-target-tabs="#wbtm_bus_off_on_date">
+        <i class="far fa-calendar-check"></i> <?php esc_html_e('Onday & Offday', 'bus-booking-manager'); ?>
+    </li>
+
+    <li data-target-tabs="#wbmm_bus_features">
+        <i class="fas fa-clipboard-list"></i> <?php esc_html_e('Features', 'bus-booking-manager'); ?>
+    </li>
+
+    <li data-target-tabs="#wbmm_bus_tax">
+        <i class="fas fa-search-dollar"></i> <?php esc_html_e('Tax', 'bus-booking-manager'); ?>
+    </li>
+
+    <?php if (is_plugin_active('mage-partial-payment-pro/mage_partial_pro.php')) : ?>
+        <li data-target-tabs="#wbtm_bus_partial_payment">
+            <i class="fas fa-search-dollar"></i> <?php esc_html_e('Partial Payment', 'bus-booking-manager'); ?>
         </li>
+    <?php endif; ?>
 
-        <li data-target-tabs="#wbtm_routing" class="wbtm_routing_tab">
-            <i class="fas fa-route"></i> <?php echo __('Routing', 'bus-booking-manager'); ?>
-        </li>
+    <?php
+    // Hook: wbbm_after_meta_box_tab_label
+    do_action('wbbm_after_meta_box_tab_label');
+    ?>
+    <?php
+}
 
-        <li data-target-tabs="#wbtm_seat_price" class="ra_seat_price">
-            <i class="fas fa-dollar-sign"></i> <?php echo __('Seat Price', 'bus-booking-manager'); ?>
-        </li>
-
-        <li class="ra_pickuppoint_tab" data-target-tabs="#wbtm_pickuppoint">
-            <i class="fas fa-map-marker-alt"></i> <?php echo __('Pickup Point', 'bus-booking-manager'); ?>
-        </li>
-
-
-        <li data-target-tabs="#wbtm_bus_off_on_date">
-            <i class="far fa-calendar-check"></i> <?php echo __('Onday & Offday', 'bus-booking-manager'); ?>
-
-        </li>
-        <li data-target-tabs="#wbmm_bus_features">
-            <i class="fas fa-clipboard-list"></i> <?php echo __('Features', 'bus-booking-manager'); ?>
-        </li>
-
-        <li data-target-tabs="#wbmm_bus_tax">
-            <i class="fas fa-search-dollar"></i> <?php _e('Tax', 'bus-booking-manager'); ?>
-        </li>
-
-        <?php if (is_plugin_active('mage-partial-payment-pro/mage_partial_pro.php')) : ?>
-            <li data-target-tabs="#wbtm_bus_partial_payment">
-                <i class="fas fa-search-dollar"></i> <?php echo __('Partial Payment', 'bus-booking-manager'); ?>
-            </li>
-        <?php endif; ?>
-
-
-        <?php
-        /*Hook:  wbbm_after_meta_box_tab_label */
-        do_action('wbbm_after_meta_box_tab_label');
-        ?>
-        <?php
-    }
 
     public function wbbm_add_meta_box_tab_content($post_id)
     {
@@ -207,7 +207,7 @@ class WBBMMetaBox
         <?php do_action('wbbm_after_meta_box_tab_content'); ?>
         <!-- Partial Payment Setting -->
         <div class="mp_tab_item tab-content" data-tab-item="#wbtm_bus_partial_payment">
-            <h3 class="wbbm_mp_tab_item_heading"><img src="<?php echo WBTM_PLUGIN_URL .'images/bus_arrow_left.png';?>"/><?php echo $cpt_label . ' ' . __('Partial Payment', 'bus-booking-manager'); ?></h3>
+        <h3 class="wbbm_mp_tab_item_heading"> <img src="<?php echo esc_url( WBTM_PLUGIN_URL . 'images/bus_arrow_left.png' ); ?>" /> <?php echo esc_html( $cpt_label ) . ' ' . esc_html__( 'Partial Payment', 'bus-booking-manager' ); ?> </h3>
             <div class="wbtm_bus_partial_payment_inner_wrapper">
 
             <?php $this->wbbm_partial_payment_setting(); ?>
