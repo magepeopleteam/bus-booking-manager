@@ -38,14 +38,15 @@ $term_id = get_queried_object()->term_id;
 	</div>
 	<h2><?php the_title(); ?></h2>
 	<ul>
-		<li><strong><?php _e('Type:','bus-booking-manager'); ?></strong> <?php echo $term[0]->name; ?></li>
-		<li><strong><?php _e('Bus No:','bus-booking-manager'); ?></strong> <?php echo get_post_meta(get_the_id(),'wbbm_bus_no',true); ?></li>
-		<li><strong><?php _e('Total Seat:','bus-booking-manager'); ?></strong> <?php echo get_post_meta(get_the_id(),'wbbm_total_seat',true); ?> </li>
-		<li><strong><?php _e('Start From:','bus-booking-manager'); ?></strong> <?php echo $start = $bp_arr[0]['wbbm_bus_bp_stops_name'];; ?> </li>
-		<li><strong><?php _e('End at:','bus-booking-manager'); ?></strong> <?php echo $end = $dp_arr[$total_dp]['wbbm_bus_next_stops_name'];; ?> </li>
-		<li><strong><?php _e('Fare:','bus-booking-manager'); ?></strong> <?php wc_price(wbbm_get_bus_price($start,$end, $price_arr)); ?> </li>
-	</ul>
-	<a href="<?php the_permalink(); ?>" class='btn wbbm-bus-list-btn'><?php _e('Book Now','bus-booking-manager'); ?></a>
+    <li><strong><?php esc_html_e('Type:', 'bus-booking-manager'); ?></strong> <?php echo esc_html($term[0]->name); ?></li>
+    <li><strong><?php esc_html_e('Bus No:', 'bus-booking-manager'); ?></strong> <?php echo esc_html(get_post_meta(get_the_id(), 'wbbm_bus_no', true)); ?></li>
+    <li><strong><?php esc_html_e('Total Seat:', 'bus-booking-manager'); ?></strong> <?php echo esc_html(get_post_meta(get_the_id(), 'wbbm_total_seat', true)); ?></li>
+    <li><strong><?php esc_html_e('Start From:', 'bus-booking-manager'); ?></strong> <?php echo esc_html($bp_arr[0]['wbbm_bus_bp_stops_name']); ?></li>
+    <li><strong><?php esc_html_e('End at:', 'bus-booking-manager'); ?></strong> <?php echo esc_html($dp_arr[$total_dp]['wbbm_bus_next_stops_name']); ?></li>
+    <li><strong><?php esc_html_e('Fare:', 'bus-booking-manager'); ?></strong> <?php echo wc_price(wbbm_get_bus_price($start, $end, $price_arr)); ?></li>
+</ul>
+
+	<a href="<?php the_permalink(); ?>" class='btn wbbm-bus-list-btn'><?php esc_html_e('Book Now','bus-booking-manager'); ?></a>
 </div>
 <?php
 }

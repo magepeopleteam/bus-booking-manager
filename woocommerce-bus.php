@@ -451,7 +451,7 @@
 					public function read(&$product) {
 						$product->set_defaults();
 						if (!$product->get_id() || !($post_object = get_post($product->get_id())) || !in_array($post_object->post_type, array('wbbm_bus', 'product'))) { // change birds with your post type
-							throw new Exception(__('Invalid product.', 'woocommerce'));
+							throw new Exception(esc_html(__('Invalid product.', 'woocommerce')));
 						}
 						$id = $product->get_id();
 						$product->set_props(array(
@@ -516,7 +516,7 @@
 				$selected = isset($_GET[$taxonomy]) ? $_GET[$taxonomy] : '';
 				$info_taxonomy = get_taxonomy($taxonomy);
 				wp_dropdown_categories(array(
-					'show_option_all' => __("Show All {$info_taxonomy->label}"),
+					'show_option_all' => esc_html(__("Show All {$info_taxonomy->label}")),
 					'taxonomy' => $taxonomy,
 					'name' => $taxonomy,
 					'orderby' => 'name',
@@ -571,17 +571,14 @@
 			if (!empty($terms) && !is_wp_error($terms)) {
 				ob_start();
 				?>
-                <select name="<?php echo $name; ?>" class='seat_type select2'>
-					<?php
-						foreach ($terms as $term) {
-							?>
-                            <option value="<?php echo $term->name; ?>" <?php if ($type_name == $term->name) {
-								echo "Selected";
-							} ?>><?php echo $term->name; ?></option>
-							<?php
-						}
-					?>
-                </select>
+               <select name="<?php echo esc_attr($name); ?>" class='seat_type select2'>
+    <?php foreach ($terms as $term) { ?>
+        <option value="<?php echo esc_attr($term->name); ?>" <?php selected($type_name, $term->name); ?>>
+            <?php echo esc_html($term->name); ?>
+        </option>
+    <?php } ?>
+</select>
+
 				<?php
 			}
 			$content = ob_get_clean();
@@ -608,8 +605,8 @@
 				'hide_empty' => false,
 			));
 			if (!empty($terms) && !is_wp_error($terms)) : ob_start(); ?>
-                <select required name="<?php echo $name; ?>" class='seat_type select2'>
-                    <option value=""><?php _e('Please Select', 'bus-booking-manager'); ?></option>
+                <select required name="<?php echo esc_attr($name); ?>" class='seat_type select2'>
+                    <option value=""><?php esc_html_e('Please Select', 'bus-booking-manager'); ?></option>
 					<?php foreach ($terms as $term) :
 						$wbbm_bs_show = get_term_meta($term->term_id, 'wbbm_bs_show', true);
 						if ($wbbm_bs_show) {
@@ -621,7 +618,7 @@
 							$selected = $type_name == $term->name ? 'selected' : '';
 							if (!empty($value))
 								$selected = $term->name == $value ? 'selected' : '';
-							printf('<option %s value="%s">%s</option>', $selected, $term->name, $term->name);
+							printf( '<option %s value="%s">%s</option>', esc_attr($selected), esc_attr($term->name), esc_html($term->name) );
 						}
 					endforeach; ?>
                 </select>
@@ -643,14 +640,14 @@
 			);
 			$terms = get_terms($get_terms_default_attributes);
 			?>
-            <select name="<?php echo $name; ?>" class='seat_type select2 <?php echo $class; ?>'>
-                <option value=""><?php _e('Please Select', 'bus-booking-manager'); ?></option>
+            <select name="<?php echo esc_attr($name); ?>" class="seat_type select2 <?php echo esc_attr($class); ?>">
+                <option value=""><?php esc_html_e('Please Select', 'bus-booking-manager'); ?></option>
 				<?php
 					if (!empty($terms) && !is_wp_error($terms)) {
 						ob_start();
 						foreach ($terms as $term) {
 							?>
-                            <option data-term_id="<?php echo $term->name; ?>" value="<?php echo $term->name; ?>" <?php echo ($type_name == $term->name) ? 'Selected' : '' ?>><?php echo $term->name; ?></option>
+                           <option data-term_id="<?php echo esc_attr($term->name); ?>" value="<?php echo esc_attr($term->name); ?>" <?php echo selected($type_name, $term->name, false); ?>> <?php echo esc_html($term->name); ?> </option>
 							<?php
 						}
 					}
@@ -673,17 +670,9 @@
 			if (!empty($terms) && !is_wp_error($terms)) {
 				ob_start();
 				?>
-                <select name="<?php echo $name; ?>" class='seat_type select2'>
-                    <option value=""><?php _e('Please Select', 'bus-booking-manager'); ?></option>
-					<?php
-						foreach ($terms as $term) {
-							?>
-                            <option value="<?php echo $term->name; ?>" <?php if ($type_name == $term->name) {
-								echo "Selected";
-							} ?>><?php echo $term->name; ?></option>
-							<?php
-						}
-					?>
+                <select name="<?php echo esc_html($name); ?>" class='seat_type select2'>
+                    <option value=""><?php esc_html_e('Please Select', 'bus-booking-manager'); ?></option>
+					<?php foreach ($terms as $term) { ?> <option value="<?php echo esc_attr($term->name); ?>" <?php selected($type_name, $term->name); ?>> <?php echo esc_html($term->name); ?> </option> <?php } ?>
                 </select>
 				<?php
 			}
@@ -768,24 +757,25 @@
             <div class="search-fields">
                 <div class="fields-li">
                     <label>
-                        <i class="fa fa-map-marker" aria-hidden="true"></i> <?php _e('From', 'bus-booking-manager'); ?>
+                        <i class="fa fa-map-marker" aria-hidden="true"></i> <?php esc_html_e('From', 'bus-booking-manager'); ?>
 						<?php echo wbbm_get_bus_route_list('bus_start_route', $start); ?></label>
                 </div>
                 <div class="fields-li">
                     <label>
-                        <i class="fa fa-map-marker" aria-hidden="true"></i> <?php _e('To:', 'bus-booking-manager'); ?>
+                        <i class="fa fa-map-marker" aria-hidden="true"></i> <?php esc_html_e('To:', 'bus-booking-manager'); ?>
 						<?php echo wbbm_get_bus_route_list('bus_end_route', $end); ?>
                     </label>
                 </div>
                 <div class="fields-li">
                     <label for='j_date'>
-                        <i class="fa fa-calendar" aria-hidden="true"></i> <?php _e('Date of Journey:', 'bus-booking-manager'); ?>
-                        <input type="text" id="j_date" name="j_date" value="<?php echo $date; ?>">
+                        <i class="fa fa-calendar" aria-hidden="true"></i> <?php esc_html_e('Date of Journey:', 'bus-booking-manager'); ?>
+						<input type="text" id="j_date" name="j_date" value="<?php echo esc_attr($date); ?>">
+
                     </label>
                 </div>
                 <div class="fields-li return-date-sec">
                     <label for='r_date'>
-                        <i class="fa fa-calendar" aria-hidden="true"></i> <?php _e('Return Date:', 'bus-booking-manager'); ?>
+                        <i class="fa fa-calendar" aria-hidden="true"></i> <?php esc_html_e('Return Date:', 'bus-booking-manager'); ?>
                         <input type="text" id="r_date" name="r_date" value="">
                     </label>
                 </div>
@@ -800,15 +790,15 @@
                     <div class="search-radio-sec">
                         <label for="oneway"><input type="radio" <?php if ($busr == 'oneway') {
 								echo 'checked';
-							} ?> id='oneway' name="bus-r" value='oneway'> <?php _e('One Way', 'bus-booking-manager'); ?>
+							} ?> id='oneway' name="bus-r" value='oneway'> <?php esc_html_e('One Way', 'bus-booking-manager'); ?>
                         </label>
                         <label for="return_date"><input type="radio" <?php if ($busr == 'return') {
 								echo 'checked';
 							} ?> id='return_date' name="bus-r" value='return'>
-							<?php _e('Return', 'bus-booking-manager'); ?>
+							<?php esc_html_e('Return', 'bus-booking-manager'); ?>
                         </label>
                     </div>
-                    <button type="submit"><i class='fa fa-search'></i> <?php _e('Search', 'bus-booking-manager'); ?>
+                    <button type="submit"><i class='fa fa-search'></i> <?php esc_html_e('Search', 'bus-booking-manager'); ?>
                     </button>
                 </div>
             </div>
@@ -1426,7 +1416,7 @@
 					$entire_fare = wbbm_get_bus_price_entire($start, $end, $price_arr);
 					if (($entire_bus_booking == 'on') && ($available_seat == $total_seat) && $entire_fare > 0) : ?>
                         <label for='entire_quantity_<?php echo get_the_id(); ?>'>
-							<?php echo wbbm_get_option('wbbm_entire_bus_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_entire_bus_text', 'wbbm_label_setting_sec') : __('Entire Bus', 'bus-booking-manager'); ?>
+							<?php echo wbbm_get_option('wbbm_entire_bus_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_entire_bus_text', 'wbbm_label_setting_sec') : esc_html(__('Entire Bus', 'bus-booking-manager')); ?>
                             (<?php //echo get_woocommerce_currency_symbol();
 							?><?php echo wc_price($seat_price_entire); ?>)
                             <input type="number" id="entire_quantity_<?php echo get_the_id(); ?>" class="input-text qty text bqty" step="1" min="0" max="1" name="entire_quantity" value="0" title="Qty" size="1" pattern="[0-9]*" inputmode="numeric" required aria-labelledby="" placeholder='0' maxlength="1" oninput="maxLengthCheck(this)"/>
@@ -1725,7 +1715,7 @@
 	add_filter('plugin_action_links', 'wbbm_plugin_action_link', 10, 2);
 	function wbbm_plugin_action_link($links_array, $plugin_file_name) {
 		if (strpos($plugin_file_name, basename(__FILE__))) {
-			array_unshift($links_array, '<a href="' . esc_url(admin_url()) . 'edit.php?post_type=wbbm_bus&page=wbbm_quick_setup">' . __('Settings', 'bus-booking-manager') . '</a>');
+			array_unshift($links_array, '<a href="' . esc_url(admin_url()) . 'edit.php?post_type=wbbm_bus&page=wbbm_quick_setup">' . esc_html(__('Settings', 'bus-booking-manager') . '</a>'));
 		}
 		return $links_array;
 	}
@@ -1735,14 +1725,14 @@
 		if (strpos($plugin_file_name, basename(__FILE__))) {
 			if (!is_plugin_active('bus-booking-manager-pro/wbtm-pro.php')) {
 				$wbbm_links = array(
-					'docs' => '<a href="' . esc_url("https://docs.mage-people.com/multipurpose-ticket-booking-manager/") . '" target="_blank">' . __('Docs', 'bus-booking-manager') . '</a>',
-					'support' => '<a href="' . esc_url("https://mage-people.com/my-account") . '" target="_blank">' . __('Support', 'bus-booking-manager') . '</a>',
-					'get_pro' => '<a href="' . esc_url("https://mage-people.com/product/multipurpose-ticket-booking-manager-bus-train-ferry-boat-shuttle/") . '" target="_blank" class="wbbm_plugin_pro_meta_link">' . __('Upgrade to PRO Version', 'bus-booking-manager') . '</a>'
+					'docs' => '<a href="' . esc_url("https://docs.mage-people.com/multipurpose-ticket-booking-manager/") . '" target="_blank">' . esc_html(__('Docs', 'bus-booking-manager')) . '</a>',
+					'support' => '<a href="' . esc_url("https://mage-people.com/my-account") . '" target="_blank">' . esc_html(__('Support', 'bus-booking-manager')) . '</a>',
+					'get_pro' => '<a href="' . esc_url("https://mage-people.com/product/multipurpose-ticket-booking-manager-bus-train-ferry-boat-shuttle/") . '" target="_blank" class="wbbm_plugin_pro_meta_link">' . esc_html(__('Upgrade to PRO Version', 'bus-booking-manager')) . '</a>'
 				);
 			} else {
 				$wbbm_links = array(
-					'docs' => '<a href="' . esc_url("https://docs.mage-people.com/multipurpose-ticket-booking-manager/") . '" target="_blank">' . __('Docs', 'bus-booking-manager') . '</a>',
-					'support' => '<a href="' . esc_url("https://mage-people.com/my-account") . '" target="_blank">' . __('Support', 'bus-booking-manager') . '</a>',
+					'docs' => '<a href="' . esc_url("https://docs.mage-people.com/multipurpose-ticket-booking-manager/") . '" target="_blank">' . esc_html(__('Docs', 'bus-booking-manager')) . '</a>',
+					'support' => '<a href="' . esc_url("https://mage-people.com/my-account") . '" target="_blank">' . esc_html(__('Support', 'bus-booking-manager')) . '</a>',
 				);
 			}
 			$links_array = array_merge($links_array, $wbbm_links);

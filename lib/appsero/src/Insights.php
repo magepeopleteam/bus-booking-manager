@@ -391,13 +391,13 @@ class Insights {
         $notice .= 'We are using Appsero to collect your data. <a href="' . $policy_url . '">Learn more</a> about how Appsero collects and handle your data.</p>';
 
         echo '<div class="updated"><p>';
-            echo $notice;
+            echo wp_kses_post($notice);
             echo '</p><p class="submit">';
-            echo '&nbsp;<a href="' . esc_url( $optin_url ) . '" class="button-primary button-large">' . $this->client->__trans( 'Allow' ) . '</a>';
-            echo '&nbsp;<a href="' . esc_url( $optout_url ) . '" class="button-secondary button-large">' . $this->client->__trans( 'No thanks' ) . '</a>';
+            echo '&nbsp;<a href="' . esc_url( $optin_url ) . '" class="button-primary button-large">' . esc_html( $this->client->__trans( 'Allow' ) ) . '</a>';
+            echo '&nbsp;<a href="' . esc_url( $optout_url ) . '" class="button-secondary button-large">' . esc_html($this->client->__trans( 'No thanks' ) ). '</a>';
         echo '</p></div>';
 
-        echo "<script type='text/javascript'>jQuery('." . $this->client->slug . "-insights-data-we-collect').on('click', function(e) {
+        echo "<script type='text/javascript'>jQuery('." . esc_attr( $this->client->slug ) . "-insights-data-we-collect').on('click', function(e) {
                 e.preventDefault();
                 jQuery(this).parents('.updated').find('p.description').slideToggle('fast');
             });
@@ -754,7 +754,8 @@ class Insights {
         $reasons = $this->get_uninstall_reasons();
         ?>
 
-        <div class="wd-dr-modal" id="<?php echo $this->client->slug; ?>-wd-dr-modal">
+<div class="wd-dr-modal" id="<?php echo esc_attr( $this->client->slug ); ?>-wd-dr-modal">
+
             <div class="wd-dr-modal-wrap">
                 <div class="wd-dr-modal-header">
                     <h3><?php $this->client->_etrans( 'If you have a moment, please let us know why you are deactivating:' ); ?></h3>
@@ -764,8 +765,12 @@ class Insights {
                     <ul class="reasons">
                         <?php foreach ($reasons as $reason) { ?>
                             <li data-type="<?php echo esc_attr( $reason['type'] ); ?>" data-placeholder="<?php echo esc_attr( $reason['placeholder'] ); ?>">
-                                <label><input type="radio" name="selected-reason" value="<?php echo $reason['id']; ?>"> <?php echo $reason['text']; ?></label>
-                            </li>
+    <label>
+        <input type="radio" name="selected-reason" value="<?php echo esc_attr( $reason['id'] ); ?>"> 
+        <?php echo esc_html( $reason['text'] ); ?>
+    </label>
+</li>
+
                         <?php } ?>
                     </ul>
                     <p class="wd-dr-modal-reasons-bottom">

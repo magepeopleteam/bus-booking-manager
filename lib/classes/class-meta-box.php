@@ -72,14 +72,16 @@ if( ! class_exists( 'AddMetaBox' ) ) {
             ?>
 
             <div class='wrap ppof-settings ppof-metabox'>
-                <div class='navigation <?php echo $get_nav_position; ?>'>
+            <div class='navigation <?php echo esc_attr($get_nav_position); ?>'>
+
 
                     <div class="nav-header">
                         <?php
                         do_action('nav_header_top');
                         ?>
-                        <div class="themeName"><?php echo $this->get_item_name(); ?></div>
-                        <div class="themeVersion"><?php echo sprintf(__('Version: %s', 'wp-theme-settings'), $this->get_item_version()); ?></div>
+                        <div class="themeName"><?php echo esc_html($this->get_item_name()); ?></div>
+<div class="themeVersion"><?php echo esc_html(sprintf(__('Version: %s', 'wp-theme-settings'), $this->get_item_version())); ?></div>
+
                         <?php
                         do_action('nav_header_bottom');
                         ?>
@@ -103,11 +105,11 @@ if( ! class_exists( 'AddMetaBox' ) ) {
                             //var_dump($page_settings);
                             ?>
                             <li class="nav-item-wrap <?php if(($page_settings_count > 1)) echo 'has-child'; ?> <?php if($current_page==$page_id) echo 'active'; ?>">
-                                <a dataid="<?php echo $page_id; ?>" href='#<?php //echo $pagenow.'?'.$section_id; ?><?php echo
-                                $page_id; ?>' class='nav-item'><?php echo $page['page_nav']; ?>
+                            <a dataid="<?php echo esc_attr($page_id); ?>" href='#<?php //echo esc_url($pagenow . '?' . $section_id); ?><?php echo esc_attr($page_id); ?>' class='nav-item'><?php echo esc_html($page['page_nav']); ?>
 
-                                    <?php if(($page_settings_count > 1)) echo '<i class="child-nav-icon fas fa-angle-down"></i>'; ?>
-                                </a>
+<?php if(($page_settings_count > 1)) echo '<i class="child-nav-icon fas fa-angle-down"></i>'; ?>
+</a>
+
                                 <?php
                                 if(($page_settings_count > 1)):
                                     ?>
@@ -120,9 +122,7 @@ if( ! class_exists( 'AddMetaBox' ) ) {
                                             ?>
                                             <li>
 
-                                                <a sectionId="<?php echo $section_id; ?>" dataid="<?php echo $page_id; ?>" href='#<?php echo $section_id; ?>' class='nav-item <?php if($current_page==$page_id) echo 'active'; ?>'><?php echo $nav_sections_title; ?>
-
-
+                                            <a sectionId="<?php echo esc_attr($section_id); ?>" dataid="<?php echo esc_attr($page_id); ?>" href="#<?php echo esc_attr($section_id); ?>" class="nav-item <?php if ($current_page == $page_id) echo 'active'; ?>"><?php echo esc_html($nav_sections_title); ?></a>
                                                 </a>
 
 
@@ -182,7 +182,8 @@ if( ! class_exists( 'AddMetaBox' ) ) {
                 }
                 ?>
 
-                <div class="form-wrapper <?php echo $form_wrapper_position; ?>">
+<div class="form-wrapper <?php echo esc_attr($form_wrapper_position); ?>">
+
 
                     <div class="form-section">
                         <?php
@@ -194,14 +195,13 @@ if( ! class_exists( 'AddMetaBox' ) ) {
 
 
                             ?>
-                            <div class="tab-content <?php if($current_page==1) echo 'active'; ?>  tab-content-<?php
-                            echo $panelsIndex; ?>">
+                           <div class="tab-content <?php if($current_page == 1) echo 'active'; ?> tab-content-<?php echo esc_attr($panelsIndex); ?>">
                                 <?php
                                 foreach ($panel['sections'] as $sectionIndex=>$section):
                                     ?>
                                     <div class="section">
-                                        <h1 id="<?php echo $sectionIndex; ?>" class="section-title"><?php echo $section['title']; ?></h1>
-                                        <p class="description"><?php echo $section['description']; ?></p>
+                                    <h1 id="<?php echo esc_attr($sectionIndex); ?>" class="section-title"><?php echo esc_html($section['title']); ?></h1>
+<p class="description"><?php echo esc_html($section['description']); ?></p>
 
                                         <table class="form-table">
                                             <tbody>
@@ -210,7 +210,7 @@ if( ! class_exists( 'AddMetaBox' ) ) {
                                             foreach ($section['options'] as $option):
                                                 ?>
                                                 <tr>
-                                                    <th scope="row"><?php echo $option['title']; ?></th>
+                                                <th scope="row"><?php echo esc_html($option['title']); ?></th>
                                                     <td>
                                                         <?php
 
@@ -298,138 +298,99 @@ if( ! class_exists( 'AddMetaBox' ) ) {
             endif;
 
 
-            //var_dump($prent_option_value);
+           // var_dump($prent_option_value);
 
             ?>
 
             <?php
 
 
-            if( isset($option['type']) && $option['type'] === 'text' ){
-                echo $FormFieldsGenerator->field_text($option);
-            }
-            elseif( isset($option['type']) && $option['type'] === 'text_multi' ){
-                echo $FormFieldsGenerator->field_text_multi($option);
-            }
-            elseif( isset($option['type']) && $option['type'] === 'textarea' ){
-                echo $FormFieldsGenerator->field_textarea($option);
-            }
-            elseif( isset($option['type']) && $option['type'] === 'checkbox' ){
-                echo $FormFieldsGenerator->field_checkbox($option);
-            }
-            elseif( isset($option['type']) && $option['type'] === 'checkbox_multi' ){
-                echo $FormFieldsGenerator->field_checkbox_multi($option);
-            }
-            elseif( isset($option['type']) && $option['type'] === 'radio' ){
-                echo $FormFieldsGenerator->field_radio($option);
-            }
-            elseif( isset($option['type']) && $option['type'] === 'select' ){
-                echo $FormFieldsGenerator->field_select($option);
-            }
-            elseif( isset($option['type']) && $option['type'] === 'range' ){
-                echo $FormFieldsGenerator->field_range($option);
-            }
-            elseif( isset($option['type']) && $option['type'] === 'range_input' ){
-                echo $FormFieldsGenerator->field_range_input($option);
-            }
-            elseif( isset($option['type']) && $option['type'] === 'switch' ){
-                echo $FormFieldsGenerator->field_switch($option);
-            }
-            elseif( isset($option['type']) && $option['type'] === 'switch_multi' ){
-                echo $FormFieldsGenerator->field_switch_multi($option);
-            }
-            elseif( isset($option['type']) && $option['type'] === 'switch_img' ){
-                echo $FormFieldsGenerator->field_switch_img($option);
-            }
-            elseif( isset($option['type']) && $option['type'] === 'time_format' ){
-                echo $FormFieldsGenerator->field_time_format($option);
-            }
-            elseif( isset($option['type']) && $option['type'] === 'date_format' ){
-                echo $FormFieldsGenerator->field_date_format($option);
-            }
+if ( isset($option['type']) && $option['type'] === 'text' ) {
+    echo esc_html($FormFieldsGenerator->field_text($option));
+} elseif ( isset($option['type']) && $option['type'] === 'text_multi' ) {
+    echo esc_html($FormFieldsGenerator->field_text_multi($option));
+} elseif ( isset($option['type']) && $option['type'] === 'textarea' ) {
+    echo esc_html($FormFieldsGenerator->field_textarea($option));
+} elseif ( isset($option['type']) && $option['type'] === 'checkbox' ) {
+    echo esc_html($FormFieldsGenerator->field_checkbox($option));
+} elseif ( isset($option['type']) && $option['type'] === 'checkbox_multi' ) {
+    echo esc_html($FormFieldsGenerator->field_checkbox_multi($option));
+} elseif ( isset($option['type']) && $option['type'] === 'radio' ) {
+    echo esc_html($FormFieldsGenerator->field_radio($option));
+} elseif ( isset($option['type']) && $option['type'] === 'select' ) {
+    echo esc_html($FormFieldsGenerator->field_select($option));
+} elseif ( isset($option['type']) && $option['type'] === 'range' ) {
+    echo esc_html($FormFieldsGenerator->field_range($option));
+} elseif ( isset($option['type']) && $option['type'] === 'range_input' ) {
+    echo esc_html($FormFieldsGenerator->field_range_input($option));
+} elseif ( isset($option['type']) && $option['type'] === 'switch' ) {
+    echo esc_html($FormFieldsGenerator->field_switch($option));
+} elseif ( isset($option['type']) && $option['type'] === 'switch_multi' ) {
+    echo esc_html($FormFieldsGenerator->field_switch_multi($option));
+} elseif ( isset($option['type']) && $option['type'] === 'switch_img' ) {
+    echo esc_html($FormFieldsGenerator->field_switch_img($option));
+} elseif ( isset($option['type']) && $option['type'] === 'time_format' ) {
+    echo esc_html($FormFieldsGenerator->field_time_format($option));
+} elseif ( isset($option['type']) && $option['type'] === 'date_format' ) {
+    echo esc_html($FormFieldsGenerator->field_date_format($option));
+} elseif ( isset($option['type']) && $option['type'] === 'datepicker' ) {
+    echo esc_html($FormFieldsGenerator->field_datepicker($option));
+} elseif ( isset($option['type']) && $option['type'] === 'color_sets' ) {
+    echo esc_html($FormFieldsGenerator->field_color_sets($option));
+} elseif ( isset($option['type']) && $option['type'] === 'colorpicker' ) {
+    echo esc_html($FormFieldsGenerator->field_colorpicker($option));
+} elseif ( isset($option['type']) && $option['type'] === 'colorpicker_multi' ) {
+    echo esc_html($FormFieldsGenerator->field_colorpicker_multi($option));
+} elseif ( isset($option['type']) && $option['type'] === 'link_color' ) {
+    echo esc_html($FormFieldsGenerator->field_link_color($option));
+} elseif ( isset($option['type']) && $option['type'] === 'icon' ) {
+    echo esc_html($FormFieldsGenerator->field_icon($option));
+} elseif ( isset($option['type']) && $option['type'] === 'icon_multi' ) {
+    echo esc_html($FormFieldsGenerator->field_icon_multi($option));
+} elseif ( isset($option['type']) && $option['type'] === 'dimensions' ) {
+    echo esc_html($FormFieldsGenerator->field_dimensions($option));
+} elseif ( isset($option['type']) && $option['type'] === 'wp_editor' ) {
+    echo esc_html($FormFieldsGenerator->field_wp_editor($option));
+} elseif ( isset($option['type']) && $option['type'] === 'select2' ) {
+    echo esc_html($FormFieldsGenerator->field_select2($option));
+} elseif ( isset($option['type']) && $option['type'] === 'faq' ) {
+    echo esc_html($FormFieldsGenerator->field_faq($option));
+} elseif ( isset($option['type']) && $option['type'] === 'grid' ) {
+    echo esc_html($FormFieldsGenerator->field_grid($option));
+} elseif ( isset($option['type']) && $option['type'] === 'color_palette' ) {
+    echo esc_html($FormFieldsGenerator->field_color_palette($option));
+} elseif ( isset($option['type']) && $option['type'] === 'color_palette_multi' ) {
+    echo esc_html($FormFieldsGenerator->field_color_palette_multi($option));
+} elseif ( isset($option['type']) && $option['type'] === 'media' ) {
+    echo esc_html($FormFieldsGenerator->field_media($option));
+} elseif ( isset($option['type']) && $option['type'] === 'media_multi' ) {
+    echo esc_html($FormFieldsGenerator->field_media_multi($option));
+} elseif ( isset($option['type']) && $option['type'] === 'repeatable' ) {
+    echo esc_html($FormFieldsGenerator->field_repeatable($option));
+} elseif ( isset($option['type']) && $option['type'] === 'user' ) {
+    echo esc_html($FormFieldsGenerator->field_user($option));
+} elseif ( isset($option['type']) && $option['type'] === 'margin' ) {
+    echo esc_html($FormFieldsGenerator->field_margin($option));
+} elseif ( isset($option['type']) && $option['type'] === 'padding' ) {
+    echo esc_html($FormFieldsGenerator->field_padding($option));
+} elseif ( isset($option['type']) && $option['type'] === 'border' ) {
+    echo esc_html($FormFieldsGenerator->field_border($option));
+} elseif ( isset($option['type']) && $option['type'] === 'switcher' ) {
+    echo esc_html($FormFieldsGenerator->field_switcher($option));
+} elseif ( isset($option['type']) && $option['type'] === 'password' ) {
+    echo esc_html($FormFieldsGenerator->field_password($option));
+} elseif ( isset($option['type']) && $option['type'] === 'post_objects' ) {
+    echo esc_html($FormFieldsGenerator->field_post_objects($option));
+} elseif ( isset($option['type']) && $option['type'] === 'google_map' ) {
+    echo esc_html($FormFieldsGenerator->field_google_map($option));
+} elseif ( isset($option['type']) && $option['type'] === $type ) {
+    do_action( "wp_theme_settings_field_$type", $option );
+}
 
-            elseif( isset($option['type']) && $option['type'] === 'datepicker' ){
-                echo $FormFieldsGenerator->field_datepicker($option);
-            }
-            elseif( isset($option['type']) && $option['type'] === 'color_sets' ){
-                echo $FormFieldsGenerator->field_color_sets($option);
-            }
-            elseif( isset($option['type']) && $option['type'] === 'colorpicker' ){
-                echo $FormFieldsGenerator->field_colorpicker($option);
-            }
+if ( !empty( $details ) ) {
+    echo "<p class='description'>" . esc_html($details) . "</p>";
 
-            elseif( isset($option['type']) && $option['type'] === 'colorpicker_multi' ){
-                echo $FormFieldsGenerator->field_colorpicker_multi($option);
-            }
-            elseif( isset($option['type']) && $option['type'] === 'link_color' ){
-                echo $FormFieldsGenerator->field_link_color($option);
-            }
-            elseif( isset($option['type']) && $option['type'] === 'icon' ){
-                echo $FormFieldsGenerator->field_icon($option);
-            }
-            elseif( isset($option['type']) && $option['type'] === 'icon_multi' ){
-                echo $FormFieldsGenerator->field_icon_multi($option);
-            }
-            elseif( isset($option['type']) && $option['type'] === 'dimensions' ){
-                echo $FormFieldsGenerator->field_dimensions($option);
-            }
-            elseif( isset($option['type']) && $option['type'] === 'wp_editor' ){
-                echo $FormFieldsGenerator->field_wp_editor($option);
-            }
-            elseif( isset($option['type']) && $option['type'] === 'select2' ){
-                echo $FormFieldsGenerator->field_select2($option);
-            }
-            elseif( isset($option['type']) && $option['type'] === 'faq' ){
-                echo $FormFieldsGenerator->field_faq($option);
-            }
-            elseif( isset($option['type']) && $option['type'] === 'grid' ){
-                echo $FormFieldsGenerator->field_grid($option);
-            }
-            elseif( isset($option['type']) && $option['type'] === 'color_palette' ){
-                echo $FormFieldsGenerator->field_color_palette($option);
-            }
-            elseif( isset($option['type']) && $option['type'] === 'color_palette_multi' ){
-                echo $FormFieldsGenerator->field_color_palette_multi($option);
-            }
-            elseif( isset($option['type']) && $option['type'] === 'media' ){
-                echo $FormFieldsGenerator->field_media($option);
-            }
-            elseif( isset($option['type']) && $option['type'] === 'media_multi' ){
-                echo $FormFieldsGenerator->field_media_multi($option);
-            }
-            elseif( isset($option['type']) && $option['type'] === 'repeatable' ){
-                echo $FormFieldsGenerator->field_repeatable($option);
-            }
-            elseif( isset($option['type']) && $option['type'] === 'user' ){
-                echo $FormFieldsGenerator->field_user($option);
-            }
-            elseif( isset($option['type']) && $option['type'] === 'margin' ){
-                echo $FormFieldsGenerator->field_margin($option);
-            }
-            elseif( isset($option['type']) && $option['type'] === 'padding' ){
-                echo $FormFieldsGenerator->field_padding($option);
-            }
-            elseif( isset($option['type']) && $option['type'] === 'border' ){
-                echo $FormFieldsGenerator->field_border($option);
-            }
-            elseif( isset($option['type']) && $option['type'] === 'switcher' ){
-                echo $FormFieldsGenerator->field_switcher($option);
-            }
-            elseif( isset($option['type']) && $option['type'] === 'password' ){
-                echo $FormFieldsGenerator->field_password($option);
-            }
-            elseif( isset($option['type']) && $option['type'] === 'post_objects' ){
-                echo $FormFieldsGenerator->field_post_objects($option);
-            }
-            elseif( isset($option['type']) && $option['type'] === 'google_map' ){
-                echo $FormFieldsGenerator->field_google_map($option);
-            }
-
-            elseif( isset($option['type']) && $option['type'] === $type ){
-                do_action( "wp_theme_settings_field_$type", $option );
-            }
-            if( !empty( $details ) ) echo "<p class='description'>$details</p>";
-
+}
 
         }
 

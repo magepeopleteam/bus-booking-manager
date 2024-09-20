@@ -158,7 +158,7 @@
 									</button>
 									<div></div>
 
-									<button type="button" class="themeButton nextTab_next" <?php echo $next_disable; ?>>
+									<button type="button" class="themeButton nextTab_next" <?php echo esc_attr($next_disable); ?>>
 										<span><?php esc_html_e('Next', 'bus-ticket-booking-with-seat-reservation'); ?>&longrightarrow;</span>
 									</button>
 								</div>

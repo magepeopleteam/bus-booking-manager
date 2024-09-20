@@ -28,8 +28,8 @@ class WBBM_Required_Plugins
 	public function wbbm_plugins_admin_menu() {
 			add_submenu_page(
 				$this->wbbm_plugin_page_location(),
-				__( 'Install WBBM Plugins', 'bus-booking-manager' ),
-				__( 'Install WBBM Plugins', 'bus-booking-manager' ),
+				esc_html__( 'Install WBBM Plugins', 'bus-booking-manager' ),
+				esc_html__( 'Install WBBM Plugins', 'bus-booking-manager' ),
 				'manage_options',
 				'wbbm-plugins',
 				array($this,'wbbm_plugin_page')
@@ -52,7 +52,7 @@ class WBBM_Required_Plugins
 			$activate = activate_plugin( $slug );
 			$url = admin_url( $this->wbbm_plugin_page_location().'?page=wbbm-plugins' );
 			echo '<script>
-			var url = "'.$url.'";
+			var url = "'.esc_url($url).'";
 			window.location.replace(url);
 			</script>';
 		}
@@ -83,7 +83,7 @@ class WBBM_Required_Plugins
 				);
 				if(isset($url)){
 					echo '<script>
-						str = "'.$url.'";
+						str = "'.esc_url($url).'";
 						var url = str.replace(/&amp;/g, "&");
 						window.location.replace(url);
 						</script>';
@@ -254,14 +254,14 @@ class WBBM_Required_Plugins
 		$list = array();
 
 		if( $this->wbbm_chk_plugin_folder_exist('woocommerce') == false ) {
-			$list[] = __('WooCommerce','bus-booking-manager');
+			$list[] = esc_html__('WooCommerce','bus-booking-manager');
 		}
 		if( $this->wbbm_chk_plugin_folder_exist('bus-booking-manager')  == false) {
-			$list[] = __('Multipurpose Ticket Booking Manager','bus-booking-manager');			
+			$list[] = esc_html__('Multipurpose Ticket Booking Manager','bus-booking-manager');			
 		}
 		if (is_plugin_active('bus-booking-manager-pro/wbtm-pro.php') && $pdflibrary == 'mpdf') {				
 			if( $this->wbbm_chk_plugin_folder_exist('magepeople-pdf-support-master')  == false) {
-				$list[] = __('MagePeople PDF Support','bus-booking-manager');			
+				$list[] = esc_html__('MagePeople PDF Support','bus-booking-manager');			
 			}
 		}
 		return $list;		
@@ -275,14 +275,14 @@ class WBBM_Required_Plugins
 		$list = array();
 
 		if($this->wbbm_chk_plugin_folder_exist('woocommerce') == true && !is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
-			$list[] = __('WooCommerce','bus-booking-manager');
+			$list[] = esc_html__('WooCommerce','bus-booking-manager');
 		}
 		if($this->wbbm_chk_plugin_folder_exist('bus-booking-manager') == true && !is_plugin_active( 'bus-booking-manager/woocommerce-bus.php' ) ) {
-			$list[] = __('Multipurpose Ticket Booking Manager','bus-booking-manager');			
+			$list[] = esc_html__('Multipurpose Ticket Booking Manager','bus-booking-manager');			
 		}
 		if (is_plugin_active('bus-booking-manager-pro/wbtm-pro.php') && $pdflibrary == 'mpdf') {				
 			if($this->wbbm_chk_plugin_folder_exist('magepeople-pdf-support-master') == true && !is_plugin_active( 'magepeople-pdf-support-master/mage-pdf.php' ) ) {
-				$list[] = __('MagePeople PDF Support','bus-booking-manager');			
+				$list[] = esc_html__('MagePeople PDF Support','bus-booking-manager');			
 			}
 		}
 		return $list;		
@@ -310,10 +310,10 @@ class WBBM_Required_Plugins
 			if($total_r_plugins > 0){
 				$i = 1;
 				if($total_r_plugins == 1){
-					echo __('Multipurpose Ticket Booking Manager  required the following plugin: ','bus-booking-manager');
+					echo esc_html__('Multipurpose Ticket Booking Manager required the following plugin: ', 'bus-booking-manager');
 				}
 				else{
-					echo __('Multipurpose Ticket Booking Manager  required the following plugins: ','bus-booking-manager');
+					echo esc_html__('Multipurpose Ticket Booking Manager  required the following plugins: ','bus-booking-manager');
 				}
 
 				echo '<i>';
@@ -335,10 +335,10 @@ class WBBM_Required_Plugins
 			if($total_i_plugins > 0){
 				$i = 1;
 				if($total_i_plugins == 1){
-					echo __('The following required plugin is currently inactive: ','bus-booking-manager');
+					echo esc_html__('The following required plugin is currently inactive: ','bus-booking-manager');
 				}
 				else{
-					echo __('The following required plugins are currently inactive: ','bus-booking-manager');
+					echo esc_html__('The following required plugins are currently inactive: ','bus-booking-manager');
 				}				
 
 				echo '<i>';
@@ -359,7 +359,7 @@ class WBBM_Required_Plugins
 
 			if($total_r_plugins > 0){
 				echo '<a href="'.esc_url($url).'">';
-				echo __('Begin installing plugins','bus-booking-manager');
+				echo esc_html__('Begin installing plugins','bus-booking-manager');
 				echo '</a>';
 			}
 
@@ -369,7 +369,7 @@ class WBBM_Required_Plugins
 			
 			if($total_i_plugins > 0){
 				echo '<a href="'.esc_url($url).'">';
-				echo __('Activate installed plugin','bus-booking-manager');
+				echo esc_html__('Activate installed plugin','bus-booking-manager');
 				echo '</a>';
 			}
 
