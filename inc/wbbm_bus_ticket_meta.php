@@ -990,15 +990,19 @@ function wbbm_bus_pickpoint_meta_box_cb($post)
                                                 <?php
                                                 if ($bus_pickpoints) {
                                                     foreach ($bus_pickpoints as $bus_pickpoint) {
-                                                        echo '<option value="' . $bus_pickpoint->slug . '" ' . ($bus_pickpoint->slug == $pickpoint['pickpoint'] ? "selected=selected" : '') . '>' . $bus_pickpoint->name . '</option>';
+                                                        echo '<option value="' . esc_attr($bus_pickpoint->slug) . '" ' . 
+    ($bus_pickpoint->slug == $pickpoint['pickpoint'] ? 'selected="selected"' : '') . '>' . 
+    esc_html($bus_pickpoint->name) . '</option>';
+
                                                     }
                                                 }
                                                 ?>
                                             </select>
                                             <input type="text"
-                                                   name="wbbm_selected_pickpoint_time_<?php esc_attr($single); ?>[]"
-                                                   value="<?php echo $pickpoint['time']; ?>"
-												   placeholder="15:00">
+       name="wbbm_selected_pickpoint_time_<?php echo esc_attr($single); ?>[]"
+       value="<?php echo esc_attr($pickpoint['time']); ?>"
+       placeholder="15:00">
+
                                             <button class="wbbm_remove_pickpoint"><i class="fas fa-minus-circle"></i>
                                             </button>
                                         </div>
@@ -1058,7 +1062,7 @@ function wbbm_bus_pickpoint_meta_box_cb($post)
                     '">' +
                     '<div class="pickpoint-adding-wrap"><div class="pickpoint-adding">' +
                     '<select name="wbbm_selected_pickpoint_name_' + get_boarding_point + '[]">' +
-                    '<?php echo $pickpoints; ?>' +
+                    '<?php echo esc_html($pickpoints); ?>' +
                     '</select>' +
                     '<input type="text" name="wbbm_selected_pickpoint_time_' + get_boarding_point +
                     '[]" placeholder="Pickup Time">' +
