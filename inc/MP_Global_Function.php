@@ -163,7 +163,7 @@
                 });
 
                 function WorkingDates(date) {
-                    let availableDates = [<?php echo implode(',', $all_date); ?>];
+					let availableDates = [<?php echo esc_js(implode(',', $all_date)); ?>];
                     let dmy = date.getDate() + "-" + (date.getMonth() + 1) + "-" + date.getFullYear();
                     if (jQuery.inArray(dmy, availableDates) !== -1) {
                         return [true, "", "Available"];

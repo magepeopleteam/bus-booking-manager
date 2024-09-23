@@ -973,8 +973,9 @@ function wbbm_bus_pickpoint_meta_box_cb($post)
                         $get_pickpoints_data = get_post_meta($post->ID, 'wbbm_selected_pickpoint_name_' . $single, true); ?>
                         <div class="wbbm_selected_city_item">
                             <span class="remove_city_for_pickpoint"><i class="fas fa-minus-circle"></i></span>
-                            <h4 class="wbbm_pickpoint_title"><?php echo ucfirst($single); ?></h4>
-                            <input type="hidden" name="wbbm_pickpoint_selected_city[]" value="<?php echo $single; ?>">
+                            <h4 class="wbbm_pickpoint_title"><?php echo esc_html(ucfirst($single)); ?></h4>
+<input type="hidden" name="wbbm_pickpoint_selected_city[]" value="<?php echo esc_attr($single); ?>">
+
                             <div class="pickpoint-adding-wrap">
                                 <?php
 
@@ -985,7 +986,7 @@ function wbbm_bus_pickpoint_meta_box_cb($post)
 
 
                                         <div class="pickpoint-adding">
-                                            <select name="wbbm_selected_pickpoint_name_<?php echo $single; ?>[]">
+                                            <select name="wbbm_selected_pickpoint_name_<?php esc_attr($single); ?>[]">
                                                 <?php
                                                 if ($bus_pickpoints) {
                                                     foreach ($bus_pickpoints as $bus_pickpoint) {
@@ -995,7 +996,7 @@ function wbbm_bus_pickpoint_meta_box_cb($post)
                                                 ?>
                                             </select>
                                             <input type="text"
-                                                   name="wbbm_selected_pickpoint_time_<?php echo $single; ?>[]"
+                                                   name="wbbm_selected_pickpoint_time_<?php esc_attr($single); ?>[]"
                                                    value="<?php echo $pickpoint['time']; ?>"
 												   placeholder="15:00">
                                             <button class="wbbm_remove_pickpoint"><i class="fas fa-minus-circle"></i>
@@ -1426,18 +1427,27 @@ function wbbm_bus_od_meta_box($post)
                 $count = 0;
                 foreach ($wbtm_offday_schedule as $field) {
                     ?>
-                    <tr class="">
-                        <td align="left"><input type="text" id="<?php echo 'db_offday_from_'.$count; ?>" class="repeatable-offday-from-field" name='wbtm_od_offdate_from[]' placeholder="2020-12-31" value="<?php echo $field['from_date'] ?>"/></td>
-                        <td align="left"><input type="text" class="repeatable-offtime-from-field" name='wbtm_od_offtime_from[]' placeholder="09:00 am" value="<?php echo $field['from_time'] ?>"/></td>
-                        <td align="left"><input type="text" id="<?php echo 'db_offday_to_'.$count; ?>" class="repeatable-offday-to-field" name='wbtm_od_offdate_to[]' placeholder="2020-12-31" value="<?php echo $field['to_date'] ?>"/></td>
-                        <td align="left"><input type="text" class="repeatable-offtime-to-field" name='wbtm_od_offtime_to[]' placeholder="09:59 pm" value="<?php echo $field['to_time'] ?>"/></td>
-                        <td align="left">
-                            <a class="button remove-bp-row" href="#">
-                                <i class="fas fa-minus-circle"></i>
-                                <?php esc_html_e('Remove', 'bus-booking-manager'); ?>
-                            </a>
-                        </td>
-                    </tr>
+                <tr class="">
+    <td align="left">
+        <input type="text" id="<?php echo esc_attr('db_offday_from_' . $count); ?>" class="repeatable-offday-from-field" name='wbtm_od_offdate_from[]' placeholder="2020-12-31" value="<?php echo esc_attr($field['from_date']); ?>"/>
+    </td>
+    <td align="left">
+        <input type="text" class="repeatable-offtime-from-field" name='wbtm_od_offtime_from[]' placeholder="09:00 am" value="<?php echo esc_attr($field['from_time']); ?>"/>
+    </td>
+    <td align="left">
+        <input type="text" id="<?php echo esc_attr('db_offday_to_' . $count); ?>" class="repeatable-offday-to-field" name='wbtm_od_offdate_to[]' placeholder="2020-12-31" value="<?php echo esc_attr($field['to_date']); ?>"/>
+    </td>
+    <td align="left">
+        <input type="text" class="repeatable-offtime-to-field" name='wbtm_od_offtime_to[]' placeholder="09:59 pm" value="<?php echo esc_attr($field['to_time']); ?>"/>
+    </td>
+    <td align="left">
+        <a class="button remove-bp-row" href="#">
+            <i class="fas fa-minus-circle"></i>
+            <?php esc_html_e('Remove', 'bus-booking-manager'); ?>
+        </a>
+    </td>
+</tr>
+
 
                     <script>
                         setTimeout(function() {

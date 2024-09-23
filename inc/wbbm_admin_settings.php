@@ -873,8 +873,9 @@ class MAGE_WBBM_Setting_Controls {
     function plugin_page() {
         settings_errors();
         echo '<div class="wbbm_settings_panel_header">';
-        echo wbbm_get_plugin_data('Name');
-        echo '<small>'.wbbm_get_plugin_data('Version').'</small>';
+        echo esc_html(wbbm_get_plugin_data('Name'));
+echo '<small>' . esc_html(wbbm_get_plugin_data('Version')) . '</small>';
+
         echo '</div>';        
         echo '<div class="wbbm_settings_panel">';
         $this->settings_api->show_navigation();

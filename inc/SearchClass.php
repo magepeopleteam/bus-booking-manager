@@ -672,7 +672,7 @@ function mage_search_form_horizontal($single_bus, $target = '') {
     <div class="mage_container">
         <div class="search_form_horizontal" style="background-color: <?php echo esc_attr($search_form_b_color ? $search_form_b_color : '#b30c3b12'); ?>;">
             <?php if ($wbbm_buy_ticket_text) { ?>
-                <h2><?php echo $wbbm_buy_ticket_text; ?></h2>
+                <h2><?php echo esc_html($wbbm_buy_ticket_text); ?></h2>
             <?php } ?>
             <?php $this->search_from_only($single_bus, sanitize_text_field($target)); ?>
         </div>

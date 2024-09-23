@@ -263,7 +263,7 @@
                     foreach ($days as $day_id => $day_name) : ?>
                         <label for="<?php echo esc_attr($day_id); ?>">
                             <input type="checkbox" style="text-align: left;width: auto;" name="weekly_offday[]" value="<?php echo esc_attr($day_values[$i]); ?>" id="<?php echo esc_attr($day_id); ?>" <?php checked(in_array($day_values[$i], $weekly_offday)); ?>>
-                            <?php echo $day_name; ?>
+                            <?php echo esc_html($day_name); ?>
                         </label>
                     <?php
                         $i++;

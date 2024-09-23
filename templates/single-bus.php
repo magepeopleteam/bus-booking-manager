@@ -198,7 +198,7 @@ if (!empty($off_day_sche) && $show_off_day === 'yes') {
                                             $time_html = $pickpoint["time"] ? ' (' . esc_html(get_wbbm_datetime($pickpoint["time"], 'time')) . ')' : '';
                                             $time_value = $pickpoint["time"] ? '-' . esc_html(get_wbbm_datetime($pickpoint["time"], 'time')) : '';
                                             $pick_desc = (get_term_by('name', $pickpoint["pickpoint"], 'wbbm_bus_pickpoint') ? get_term_by('name', $pickpoint["pickpoint"], 'wbbm_bus_pickpoint')->description : '');
-                                            echo '<option value="' . esc_attr($pickpoint["pickpoint"] . $time_value) . '">' . esc_html(ucfirst($pickpoint["pickpoint"])) . $time_html . '</option>';
+                                            echo '<option value="' . esc_attr($pickpoint["pickpoint"] . $time_value) . '">' . esc_html(ucfirst($pickpoint["pickpoint"])) . esc_html($time_html) . '</option>';
                                             echo ($pick_desc ? '<option disabled>&nbsp;&nbsp; ' . esc_html($pick_desc) . '</option>' : '');
                                         } ?>
                                     </select>

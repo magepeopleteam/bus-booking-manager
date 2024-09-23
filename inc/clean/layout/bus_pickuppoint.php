@@ -115,7 +115,7 @@
                                                                 if (!empty($bus_pickpoints)) {
                                                                     foreach ($bus_pickpoints as $bus_pickpoint) {
                                                                         $selected = selected($bus_pickpoint->name, $pickpoint['pickpoint'], false);
-                                                                        echo '<option value="' . esc_attr($bus_pickpoint->name) . '" ' . $selected . '>' . esc_html($bus_pickpoint->name) . '</option>';
+                                                                        echo '<option value="' . esc_attr($bus_pickpoint->name) . '" ' . esc_attr($selected) . '>' . esc_html($bus_pickpoint->name) . '</option>';
                                                                     }
                                                                 }
                                                                 ?>
