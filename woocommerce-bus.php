@@ -818,8 +818,7 @@
                 });
             </script>
 			<?php
-			$content = ob_get_clean();
-			echo $content;
+			ob_get_clean();
 		}
 		function wbbm_get_seat_status($seat, $date, $bus_id, $start) {
 			global $wpdb;
@@ -907,19 +906,6 @@
 			$table_name = $wpdb->prefix . "wbbm_bus_booking_list";
 			$total_mobile_users = $wpdb->get_var("SELECT COUNT(booking_id) FROM $table_name WHERE bus_id=$bus_id AND order_id = $order_id AND bus_start = '$bus_start' AND user_type = '$user_type' AND journey_date='$date' AND (status = 1 OR status = 2 OR status = 3)");
 			return $total_mobile_users;
-		}
-		// add_action('init','wwbbm_ch');
-		function wwbbm_ch() {
-			global $wpdb, $woocommerce;
-			$order = wc_get_order(117);
-			echo '<pre>';
-			// print_r($order);
-			echo $order->status;
-			echo '</pre>';
-			if ($order->has_status('pending')) {
-				echo 'Yes';
-			}
-			die();
 		}
 		// add_action( 'woocommerce_checkout_order_processed', 'wbbm_order_status_before_payment', 10, 3 );
 		function wbbm_order_status_before_payment($order_id, $posted_data, $order) {
@@ -1387,39 +1373,39 @@
 					$adult_fare = wbbm_get_bus_price($start, $end, $price_arr);
 					if ($adult_fare > 0) {
 						?>
-                        <label for='quantity_<?php echo get_the_id(); ?>'>
+                        <label for='quantity_<?php esc_attr(get_the_id()); ?>'>
                             Adult (<?php //echo get_woocommerce_currency_symbol();
 							?><?php echo wc_price($seat_price_adult); ?> )
-                            <input type="number" id="quantity_<?php echo get_the_id(); ?>" class="input-text qty text bqty" step="1" min="0" max="<?php echo $available_seat; ?>" name="adult_quantity" value="0" title="Qty" size="4" pattern="[0-9]*" inputmode="numeric" required aria-labelledby="" placeholder='0'/>
+                            <input type="number" id="quantity_<?php esc_attr(get_the_id()); ?>" class="input-text qty text bqty" step="1" min="0" max="<?php esc_attr($available_seat); ?>" name="adult_quantity" value="0" title="Qty" size="4" pattern="[0-9]*" inputmode="numeric" required aria-labelledby="" placeholder='0'/>
                         </label>
 						<?php
 					}
 					$child_fare = wbbm_get_bus_price_child($start, $end, $price_arr);
 					if ($child_fare > 0) {
 						?>
-                        <label for='child_quantity_<?php echo get_the_id(); ?>'>
+                        <label for='child_quantity_<?php esc_attr(get_the_id()); ?>'>
                             Child (<?php //echo get_woocommerce_currency_symbol();
 							?><?php echo wc_price($seat_price_child); ?>)
-                            <input type="number" id="child_quantity_<?php echo get_the_id(); ?>" class="input-text qty text bqty" step="1" min="0" max="<?php echo $available_seat; ?>" name="child_quantity" value="0" title="Qty" size="4" pattern="[0-9]*" inputmode="numeric" required aria-labelledby="" placeholder='0'/>
+                            <input type="number" id="child_quantity_<?php esc_attr(get_the_id()); ?>" class="input-text qty text bqty" step="1" min="0" max="<?php esc_attr($available_seat); ?>" name="child_quantity" value="0" title="Qty" size="4" pattern="[0-9]*" inputmode="numeric" required aria-labelledby="" placeholder='0'/>
                         </label>
 					<?php }
 					$infant_fare = wbbm_get_bus_price_infant($start, $end, $price_arr);
 					if ($infant_fare > 0) : ?>
-                        <label for='infant_quantity_<?php echo get_the_id(); ?>'>
+                        <label for='infant_quantity_<?php esc_attr(get_the_id()); ?>'>
                             Infant
                             (<?php //echo get_woocommerce_currency_symbol();
 							?><?php echo wc_price($seat_price_infant); ?>)
-                            <input type="number" id="infant_quantity_<?php echo get_the_id(); ?>" class="input-text qty text bqty" step="1" min="0" max="<?php echo $available_seat; ?>" name="infant_quantity" value="0" title="Qty" size="4" pattern="[0-9]*" inputmode="numeric" required aria-labelledby="" placeholder='0'/>
+                            <input type="number" id="infant_quantity_<?php esc_attr(get_the_id()); ?>" class="input-text qty text bqty" step="1" min="0" max="<?php esc_attr($available_seat); ?>" name="infant_quantity" value="0" title="Qty" size="4" pattern="[0-9]*" inputmode="numeric" required aria-labelledby="" placeholder='0'/>
                         </label>
 					<?php endif; ?>
 				<?php
 					$entire_fare = wbbm_get_bus_price_entire($start, $end, $price_arr);
 					if (($entire_bus_booking == 'on') && ($available_seat == $total_seat) && $entire_fare > 0) : ?>
-                        <label for='entire_quantity_<?php echo get_the_id(); ?>'>
+                        <label for='entire_quantity_<?php esc_attr(get_the_id()); ?>'>
 							<?php echo wbbm_get_option('wbbm_entire_bus_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_entire_bus_text', 'wbbm_label_setting_sec') : esc_html(__('Entire Bus', 'bus-booking-manager')); ?>
                             (<?php //echo get_woocommerce_currency_symbol();
 							?><?php echo wc_price($seat_price_entire); ?>)
-                            <input type="number" id="entire_quantity_<?php echo get_the_id(); ?>" class="input-text qty text bqty" step="1" min="0" max="1" name="entire_quantity" value="0" title="Qty" size="1" pattern="[0-9]*" inputmode="numeric" required aria-labelledby="" placeholder='0' maxlength="1" oninput="maxLengthCheck(this)"/>
+                            <input type="number" id="entire_quantity_<?php esc_attr(get_the_id()); ?>" class="input-text qty text bqty" step="1" min="0" max="1" name="entire_quantity" value="0" title="Qty" size="1" pattern="[0-9]*" inputmode="numeric" required aria-labelledby="" placeholder='0' maxlength="1" oninput="maxLengthCheck(this)"/>
                             <p><?php esc_html_e('Please enter 1 for entire bus booking.', 'bus-booking-manager'); ?></p>
                         </label>
                         <script>
@@ -1431,8 +1417,7 @@
 					<?php endif; ?>
             </div>
 			<?php
-			$seat_form = ob_get_clean();
-			echo $seat_form;
+			 ob_get_clean();
 		}
 		function wbbm_check_od_in_range($start_date, $end_date, $j_date) {
 			// Convert to timestamp
