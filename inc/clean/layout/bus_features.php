@@ -1,46 +1,50 @@
 <div class="mp_tab_item" data-tab-item="#wbmm_bus_features" style="display: none;">
 
-<h3 class="wbbm_mp_tab_item_heading"> <?php echo esc_html( $cpt_label ) . ' ' . esc_html__( 'Features Settings', 'bus-booking-manager' ); ?> </h3>
-    <p><?php esc_html_e('Here you can add featurs for '.$cpt_label, 'bus-booking-manager'); ?></p>
+<h3 class="wbbm_mp_tab_item_heading"> 
+    <?php echo esc_html($cpt_label) . ' ' . esc_html__('Features Settings', 'bus-booking-manager'); ?> 
+</h3>
+<p><?php esc_html_e('Here you can add features for ' . esc_html($cpt_label), 'bus-booking-manager'); ?></p>
 
-    <div class="mp_tab_item_inner_wrapper">
-        <div class="col-md-6">
-            <section class="bgLight">
-                    <div>
-                    <label><?php echo esc_html( $cpt_label ) . ' ' . esc_html__( 'Features', 'bus-booking-manager' ); ?></label>
-                        <br>
-                        <span>
-                        <?php echo esc_html__( 'Add Features', 'bus-booking-manager' ); ?>
-                        </span>
-                    </div>
-                </section>
-            <div class="mpStyle">
-                <?php
-                    $wbbm_features_name = array();
-                    if($wbbm_features) {
-                        foreach($wbbm_features as $feature) {
-                            $wbbm_features_name[] = get_term($feature)->name;
-                        }
+<div class="mp_tab_item_inner_wrapper">
+    <div class="col-md-6">
+        <section class="bgLight">
+            <div>
+                <label><?php echo esc_html($cpt_label) . ' ' . esc_html__('Features', 'bus-booking-manager'); ?></label>
+                <br>
+                <span>
+                    <?php echo esc_html__('Add Features', 'bus-booking-manager'); ?>
+                </span>
+            </div>
+        </section>
+        <div class="mpStyle">
+            <?php
+            $wbbm_features_name = array();
+            if (!empty($wbbm_features)) {
+                foreach ($wbbm_features as $feature) {
+                    $term = get_term($feature);
+                    if ($term && !is_wp_error($term)) {
+                        $wbbm_features_name[] = sanitize_text_field($term->name);
                     }
-                ?>
+                }
+            }
+            ?>
 
-                
-                <section>
+            <section>
                 <div data-collapse="#ttbm_display_include_service" class="" style="display: block;">
                     <div class="groupCheckBox">
                         <label class="dNone">
-                        <input type="hidden" name="ttbm_service_included_in_price" value="<?php echo esc_attr( $wbbm_features_name ? implode(',', $wbbm_features_name) : '' ); ?>">
+                            <input type="hidden" name="ttbm_service_included_in_price" value="<?php echo esc_attr(implode(',', $wbbm_features_name)); ?>">
                         </label>
 
                         <div class="features">
-                            <?php  foreach ($feature_terms as $feature_term){ ?>
+                            <?php foreach ($feature_terms as $feature_term) { ?>
                                 <p>
                                     <label class="customCheckboxLabel">
-                                    <input <?php echo (in_array( $feature_term->term_id, $wbbm_features )) ? esc_attr('checked') : ''; ?> type="checkbox" name="wbbm_features[<?php echo esc_attr( $feature_term->term_id ); ?>]" data-checked="<?php echo esc_attr( $feature_term->name ); ?>" value="<?php echo esc_attr( $feature_term->term_id ); ?>">
-                                    <span class="customCheckbox">
-                                        <span class="mR_xs <?php echo esc_attr( get_term_meta( $feature_term->term_id, 'feature_icon', true ) ); ?>"></span>
-                                        <?php echo esc_html( $feature_term->name ); ?>
-                                    </span>
+                                        <input <?php checked(in_array($feature_term->term_id, $wbbm_features)); ?> type="checkbox" name="wbbm_features[<?php echo esc_attr($feature_term->term_id); ?>]" data-checked="<?php echo esc_attr($feature_term->name); ?>" value="<?php echo esc_attr($feature_term->term_id); ?>">
+                                        <span class="customCheckbox">
+                                            <span class="mR_xs <?php echo esc_attr(get_term_meta($feature_term->term_id, 'feature_icon', true)); ?>"></span>
+                                            <?php echo esc_html($feature_term->name); ?>
+                                        </span>
                                     </label>
                                 </p>
                             <?php } ?>
@@ -49,72 +53,56 @@
                     <br>
                     <button type="button" class="_dButton_xs_bgBlue wbtm_route_add_new_bus_btn" data-target-popup="#wbtm_feature_popup">
                         <i class="fas fa-plus"></i>
-                        Add New Feature
+                        <?php echo esc_html__('Add New Feature', 'bus-booking-manager'); ?>
                     </button>
                 </div>
-                </section>
+            </section>
 
+            <div class="mpPopup" data-popup="#wbtm_feature_popup">
+                <div class="popupMainArea">
+                    <div class="popupHeader">
+                        <h4><?php echo esc_html__('Add New Feature', 'bus-booking-manager'); ?></h4>
+                        <span class="fas fa-times popupClose"></span>
+                    </div>
+                    <div class="popupBody bus-feature">
+                        <h6 class="textSuccess success_text" style="display: none;"><?php echo esc_html__('Added Successfully', 'bus-booking-manager'); ?></h6>
+                        <label>
+                            <span class="w_200"><?php echo esc_html__('Name:', 'bus-booking-manager'); ?></span>
+                            <input type="text" class="formControl" id="bus_feature">
+                        </label>
+                        <p class="name_required"><?php echo esc_html__('Name is required', 'bus-booking-manager'); ?></p>
 
-                <div class="mpPopup" data-popup="#wbtm_feature_popup">
-                    <div class="popupMainArea">
-                        <div class="popupHeader">
-                            <h4>
-                                Add New Feature
-                            </h4>
-                            <span class="fas fa-times popupClose"></span>
-                        </div>
-                        <div class="popupBody bus-feature">
-                            <h6 class="textSuccess success_text" style="display: none;">Added Succesfully</h6>
-                            <label>
-                                <span class="w_200">Name:</span>
-                                <input type="text" class="formControl" id="bus_feature">
-                            </label>
-                            <p class="name_required">Name is required</p>
+                        <label class="mT">
+                            <span class="w_200"><?php echo esc_html__('Description:', 'bus-booking-manager'); ?></span>
+                            <textarea id="feature_description" rows="5" cols="50" class="formControl"></textarea>
+                        </label>
 
-                            <label class="mT">
-                                <span class="w_200">Description:</span>
-                                <textarea id="feature_description" rows="5" cols="50" class="formControl"></textarea>
-                            </label>
+                        <label for="wbbm_feature_icon"><?php echo esc_html__('Feature Icon', 'bus-booking-manager'); ?></label>
 
-                            <label for="wbbm_feature_icon">Feature Icon</label>
-
-                            <div id="field-wrapper-wbbm_feature_icon" class="wbtm_feature field-wrapper field-icon-wrapper field-icon-wrapper-wbbm_feature_icon">
-                                <div class="mp_input_add_icon">
-                                    <button type="button" class="mp_input_add_icon_button dButton_xs ">
-                                        <input type="hidden" id="feature_icon" name="wbbm_feature_icon" placeholder="" value="fas fa-forward">
-                                        <span class="fas fa-forward" data-empty-text="Add Icon"></span>
-                                        <span class="fas fa-times remove_input_icon active " title="Remove Icon"></span>
-                                    </button>
-                                </div>
+                        <div id="field-wrapper-wbbm_feature_icon" class="wbtm_feature field-wrapper field-icon-wrapper field-icon-wrapper-wbbm_feature_icon">
+                            <div class="mp_input_add_icon">
+                                <button type="button" class="mp_input_add_icon_button dButton_xs ">
+                                    <input type="hidden" id="feature_icon" name="wbbm_feature_icon" placeholder="" value="<?php echo esc_attr('fas fa-forward'); ?>">
+                                    <span class="fas fa-forward" data-empty-text="<?php echo esc_attr__('Add Icon', 'bus-booking-manager'); ?>"></span>
+                                    <span class="fas fa-times remove_input_icon active " title="<?php echo esc_attr__('Remove Icon', 'bus-booking-manager'); ?>"></span>
+                                </button>
                             </div>
-
-                            <p class="description">Please select a suitable icon for this feature</p>
-
-                            <?php
-
-                            all_font_awesome();
-
-                            ?>
-
-
                         </div>
-                        <div class="popupFooter">
-                            <div class="buttonGroup">
-                                <button class="_themeButton submit-feature" type="button">Save</button>
-                                <button class="_warningButton submit-feature close_popup" type="button">Save &amp; Close</button>
-                            </div>
+
+                        <p class="description"><?php echo esc_html__('Please select a suitable icon for this feature', 'bus-booking-manager'); ?></p>
+
+                        <?php all_font_awesome(); ?>
+
+                    </div>
+                    <div class="popupFooter">
+                        <div class="buttonGroup">
+                            <button class="_themeButton submit-feature" type="button"><?php echo esc_html__('Save', 'bus-booking-manager'); ?></button>
+                            <button class="_warningButton submit-feature close_popup" type="button"><?php echo esc_html__('Save & Close', 'bus-booking-manager'); ?></button>
                         </div>
                     </div>
-
                 </div>
             </div>
-
         </div>
-
-
     </div>
-
-
 </div>
-
-
+</div>
