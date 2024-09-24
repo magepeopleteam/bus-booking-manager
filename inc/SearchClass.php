@@ -790,7 +790,7 @@ function search_from_only($single_bus, $target) {
         </div>
         <?php if (!$single_bus) {
             $return = (mage_get_isset('bus-r') == 'oneway') ? false : true; ?>
-            <div class="mage_form_list mage_return_date <?php echo $return ? '' : 'mage_hidden' ?>">
+            <div class="mage_form_list mage_return_date <?php echo esc_attr($return ? '' : 'mage_hidden'); ?>">
                 <label for="r_date">
                     <span class="fa fa-calendar"></span>
                     <?php echo esc_html(wbbm_get_option('wbbm_return_date_text', 'wbbm_label_setting_sec', __('Return Date (Optional):', 'bus-booking-manager'))); ?>
@@ -802,11 +802,11 @@ function search_from_only($single_bus, $target) {
             <div class="mage_form_radio">
                 <?php if (!$single_bus) { ?>
                     <label for="one_way">
-                        <input type="radio" name="bus-r" value='oneway' id="one_way" <?php echo $return ? '' : 'checked' ?> />
+                        <input type="radio" name="bus-r" value='oneway' id="one_way" <?php echo esc_attr($return ? '' : 'checked' ); ?> />
                         <?php echo esc_html(wbbm_get_option('wbbm_one_way_text', 'wbbm_label_setting_sec', __('One Way', 'bus-booking-manager'))); ?>
                     </label>
                     <label for="return">
-                        <input type="radio" name="bus-r" value='return' id="return" <?php echo $return ? 'checked' : '' ?>/>
+                        <input type="radio" name="bus-r" value='return' id="return" <?php echo esc_attr($return ? 'checked' : '' );?>/>
                         <?php echo esc_html(wbbm_get_option('wbbm_return_text', 'wbbm_label_setting_sec', __('Return', 'bus-booking-manager'))); ?>
                     </label>
                 <?php } else {
