@@ -3,6 +3,7 @@
 		exit;  // if direct access
 	class SearchClass extends CommonClass {
 		public function __construct() {
+			
 		}
 		function mage_search_page_horizontal() {
 			$the_page = sanitize_post($GLOBALS['wp_the_query']->get_queried_object());
@@ -21,6 +22,7 @@
 			}
 		}
 		function mage_search_list() {
+			
 			global $mage_bus_search_theme;
 			$cpt_label = wbbm_get_option('wbbm_cpt_label', 'wbbm_general_setting_sec', 'Bus');
 			$route_title_bg_color = wbbm_get_option('wbbm_search_route_title_b_color', 'wbbm_style_setting_sec');
@@ -81,6 +83,7 @@
                         </div>
                     </div>
 				<?php } ?>
+				
 				<?php $this->mage_search_bus_list(false); ?>
                 <!-- <div class="mage-search-res-wrapper--footer"></div> -->
             </div>
@@ -130,8 +133,10 @@
 			do_action('wbbm_prevent_form_resubmission');
 		}
 		function mage_search_bus_list($return) {
+			
 			do_action('woocommerce_before_single_product');
 			if (isset($_GET['bus_start_route']) && isset($_GET['bus_end_route']) && (isset($_GET['j_date']) || isset($_GET['r_date']))) {
+				
 				$c_time = current_time('timestamp');
 				$start = $return ? 'bus_end_route' : 'bus_start_route';
 				$end = $return ? 'bus_start_route' : 'bus_end_route';
@@ -146,6 +151,52 @@
 				} else {
 					$j_date = $return ? $_GET['r_date'] : $_GET['j_date'];
 					$j_date = mage_wp_date($j_date, 'Y-m-d');
+					
+					// Step 1: Create an array to hold the start times
+$start_times = [];
+
+// Step 2: Populate the start times array
+foreach ($loop->posts as $post) {
+    // Check if $post is indeed a WP_Post object
+    if ($post instanceof WP_Post) {
+        // Retrieve bus stops times
+        $bus_stops_times = get_post_meta($post->ID, 'wbbm_bus_bp_stops', true);
+        
+        // Initialize start_time variable
+        $start_time = '';
+
+        // Find the relevant start time
+        foreach ($bus_stops_times as $stop) {
+            if ($stop['wbbm_bus_bp_stops_name'] == $_GET[$start]) {
+                $start_time = isset($stop['wbbm_bus_bp_start_time']) ? $stop['wbbm_bus_bp_start_time'] : '';
+                break; // Exit loop once the correct stop is found
+            }
+        }
+
+        // Store the start time with the post ID if found
+        if ($start_time) {
+            $start_times[$post->ID] = $start_time;
+        }
+    }
+}
+
+// Step 3: Sort the $loop->posts array based on start time
+usort($loop->posts, function($a, $b) use ($start_times) {
+    $start_time_a = isset($start_times[$a->ID]) ? $start_times[$a->ID] : '';
+    $start_time_b = isset($start_times[$b->ID]) ? $start_times[$b->ID] : '';
+
+    // Handle cases where start time might not be found
+    if ($start_time_a === '' && $start_time_b === '') return 0; // Both times are empty
+    if ($start_time_a === '') return 1; // $a is after $b
+    if ($start_time_b === '') return -1; // $b is after $a
+
+    // Compare start times
+    return strcmp($start_time_a, $start_time_b);
+});
+
+// At this point, $loop->posts is sorted based on the start time
+
+
 					while ($loop->have_posts()) {
 						$loop->the_post();
 						$bus_stops_times = get_post_meta(get_the_ID(), 'wbbm_bus_bp_stops', true);
@@ -160,11 +211,13 @@
 							continue;
 						// Buffer time END
 						$start_time = wbbm_time_24_to_12($start_time); // convert time
+					
 						$is_on_date = false;
 						$bus_on_dates = array();
 						$show_operational_on_day = get_post_meta(get_the_ID(), 'show_operational_on_day', true) ?: 'no';
 						$bus_on_date = get_post_meta(get_the_ID(), 'wbtm_bus_on_date', true);
 						if ($show_operational_on_day === 'yes' && $bus_on_date) {
+							
 							$bus_on_dates =is_array($bus_on_date)?$bus_on_date: explode(', ', $bus_on_date);
 							if (in_array($j_date, $bus_on_dates)) {
 								$has_bus = true;
@@ -192,10 +245,12 @@
 							if ($show_off_day === 'yes') {
 								if ((!$offday_current_bus && !mage_off_day_check($return))) {
 									$has_bus = true;
+									
 									$this->mage_search_item($return);
 								}
 							} else {
 								$has_bus = true;
+								
 								$this->mage_search_item($return);
 							}
 						}
@@ -212,10 +267,12 @@
 		}
 		function mage_search_item($return) {
 			global $mage_bus_search_theme;
+			
 			$id = get_the_id();
 			$search_date = (isset($_GET['j_date']) ? $_GET['j_date'] : '');
 			$current_date = date('Y-m-d');
 			$boarding_time = boarding_dropping_time(false, $return);
+			
 			$dropping_time = boarding_dropping_time(true, $return);
 			if ($current_date === $search_date) {
 				$search_timestamp = strtotime($search_date . ' ' . $boarding_time);
