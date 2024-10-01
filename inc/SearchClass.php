@@ -4,6 +4,7 @@
 
 	class SearchClass extends CommonClass {
 		public function __construct() {
+			
 		}
 
 		function mage_search_page_horizontal() {
@@ -22,76 +23,72 @@
 				</div>
 				<?php
 			}
-}
-
-function mage_search_list() {
-    global $mage_bus_search_theme;
-
-    $cpt_label = wbbm_get_option('wbbm_cpt_label', 'wbbm_general_setting_sec', 'Bus');
-    $route_title_bg_color = wbbm_get_option('wbbm_search_route_title_b_color', 'wbbm_style_setting_sec');
-    $route_title_color = wbbm_get_option('wbbm_search_route_title_color', 'wbbm_style_setting_sec') ?: '#fff';
-    $search_list_header_b_color = wbbm_get_option('wbbm_search_list_header_b_color', 'wbbm_style_setting_sec');
-    $general_setting = get_option('wbbm_general_setting_sec') ? maybe_unserialize(get_option('wbbm_general_setting_sec')) : array();
-
-    // Ensure options are set correctly
-    $wbbm_type_column_switch = ['wbbm_type_column_switch' => 'on'];
-    if (!array_key_exists('wbbm_type_column_switch', $general_setting)) {
-        $general_setting = array_merge($general_setting, $wbbm_type_column_switch);
-        update_option('wbbm_general_setting_sec', $general_setting);
-    }
-
-    $wbbm_seat_column_switch = ['wbbm_seat_column_switch' => 'on'];
-    if (!array_key_exists('wbbm_seat_column_switch', $general_setting)) {
-        $general_setting = array_merge($general_setting, $wbbm_seat_column_switch);
-        update_option('wbbm_general_setting_sec', $general_setting);
-    }
-
-    $general_setting = get_option('wbbm_general_setting_sec') ? maybe_unserialize(get_option('wbbm_general_setting_sec')) : array();
-    ?>
-    <div class="mage_route_title" style="background-color: <?php echo esc_attr($route_title_bg_color); ?>; color: <?php echo esc_attr($route_title_color); ?>">
-        <div>
-            <strong><?php esc_html_e(wbbm_get_option('wbbm_route_text', 'wbbm_label_setting_sec', __('Route', 'bus-booking-manager')), 'bus-booking-manager'); echo ':'; ?></strong>
-            <?php echo esc_html(mage_get_isset('bus_start_route')); ?>
-            <span class="fa fa-long-arrow-right"></span>
-            <?php echo esc_html(mage_get_isset('bus_end_route')); ?>
-            <strong><?php echo ' | '; echo esc_html(wbbm_get_option('wbbm_date_text', 'wbbm_label_setting_sec', __('Date', 'bus-booking-manager'))); echo ':'; ?></strong>
-            <?php echo esc_html(mage_wp_date(mage_get_isset('j_date'))); ?>
-        </div>
-    </div>
-    <div class="mage-search-res-wrapper">
-        <?php do_action('woocommerce_before_single_product'); ?>
-        <?php if ($mage_bus_search_theme == 'minimal') { ?>
-            <div class="mage-search-res-header" style="background-color: <?php echo esc_attr($search_list_header_b_color ?: '#EA2330'); ?>;">
-                <div class="mage-search-res-header--img">
-                    <span><?php echo esc_html(wbbm_get_option('wbbm_bus_image_text', 'wbbm_label_setting_sec', __('Bus Image', 'bus-booking-manager'))); ?></span>
-                </div>
-                <div class="mage-search-res-header--left">
-                    <span><?php echo esc_html(wbbm_get_option('wbbm_bus_name_text', 'wbbm_label_setting_sec', __('Bus Name', 'bus-booking-manager'))); ?></span>
-                    <span><?php echo esc_html(wbbm_get_option('wbbm_schedule_text', 'wbbm_label_setting_sec', __('Schedule', 'bus-booking-manager'))); ?></span>
-                </div>
-                <div class="mage-search-res-header--right">
-                    <?php if ((isset($general_setting['wbbm_type_column_switch']) && $general_setting['wbbm_type_column_switch'] == 'on') || !isset($general_setting['wbbm_type_column_switch'])) { ?>
-                        <span><?php echo esc_html(wbbm_get_option('wbbm_type_text', 'wbbm_label_setting_sec', __('Type', 'bus-booking-manager'))); ?></span>
-                    <?php } ?>
-                    <span><?php echo esc_html(wbbm_get_option('wbbm_fare_text', 'wbbm_label_setting_sec', __('Fare', 'bus-booking-manager'))); ?></span>
-                    <?php if ((isset($general_setting['wbbm_seat_column_switch']) && $general_setting['wbbm_seat_column_switch'] == 'on') || !isset($general_setting['wbbm_seat_column_switch'])) { ?>
-                        <span><?php echo esc_html(wbbm_get_option('wbbm_seats_available_text', 'wbbm_label_setting_sec', __('Seat Available', 'bus-booking-manager'))); ?></span>
-                    <?php } ?>
-                    <span><?php echo esc_html(wbbm_get_option('wbbm_view_text', 'wbbm_label_setting_sec', __('View', 'bus-booking-manager'))); ?></span>
+		}
+		function mage_search_list() {
+			
+			global $mage_bus_search_theme;
+			$cpt_label = wbbm_get_option('wbbm_cpt_label', 'wbbm_general_setting_sec', 'Bus');
+			$route_title_bg_color = wbbm_get_option('wbbm_search_route_title_b_color', 'wbbm_style_setting_sec');
+			$route_title_bg_color = $route_title_bg_color ? $route_title_bg_color : '#727272';
+			$route_title_color = wbbm_get_option('wbbm_search_route_title_color', 'wbbm_style_setting_sec');
+			$route_title_color = $route_title_color ? $route_title_color : '#fff';
+			$search_list_header_b_color = wbbm_get_option('wbbm_search_list_header_b_color', 'wbbm_style_setting_sec');
+			$general_setting = get_option('wbbm_general_setting_sec') ? maybe_unserialize(get_option('wbbm_general_setting_sec')) : array();
+			$wbbm_type_column_switch = array(
+				'wbbm_type_column_switch' => 'on'
+			);
+			if (!array_key_exists('wbbm_type_column_switch', $general_setting)) {
+				$marged_arr = array_merge($general_setting, $wbbm_type_column_switch);
+				update_option('wbbm_general_setting_sec', $marged_arr);
+			}
+			$wbbm_seat_column_switch = array(
+				'wbbm_seat_column_switch' => 'on'
+			);
+			if (!array_key_exists('wbbm_seat_column_switch', $general_setting)) {
+				$marged_arr2 = array_merge($general_setting, $wbbm_seat_column_switch);
+				update_option('wbbm_general_setting_sec', $marged_arr2);
+			}
+			$general_setting = get_option('wbbm_general_setting_sec') ? maybe_unserialize(get_option('wbbm_general_setting_sec')) : array();
+			?>
+            <div class="mage_route_title" style="background-color:<?php echo $route_title_bg_color; ?>;color:<?php echo $route_title_color; ?>">
+                <div>
+                    <strong><?php echo wbbm_get_option('wbbm_route_text', 'wbbm_label_setting_sec', __('Route', 'bus-booking-manager'));
+							echo ':'; ?></strong>
+					<?php echo mage_get_isset('bus_start_route'); ?>
+                    <span class="fa fa-long-arrow-right"></span>
+					<?php echo mage_get_isset('bus_end_route'); ?>
+                    <strong><?php echo ' | ';
+							echo wbbm_get_option('wbbm_date_text', 'wbbm_label_setting_sec', __('Date', 'bus-booking-manager'));
+							echo ':'; ?></strong>
+					<?php echo mage_wp_date(mage_get_isset('j_date')); ?>
                 </div>
             </div>
-        <?php } ?>
-        <?php $this->mage_search_bus_list(false); ?>
-    </div>
-    <?php if (isset($_GET['r_date']) && $_GET['r_date'] !== '' && $_GET['r_date'] !== 'yy-mm-dd') { ?>
-        <div class="mage_route_title return_title" style="background-color: <?php echo esc_attr($route_title_bg_color); ?>;">
-            <div>
-                <strong><?php echo esc_html(wbbm_get_option('wbbm_route_text', 'wbbm_label_setting_sec', __('Route', 'bus-booking-manager'))); echo ':'; ?></strong>
-                <?php echo esc_html(mage_get_isset('bus_end_route')); ?>
-                <span class="fa fa-long-arrow-right"></span>
-                <?php echo esc_html(mage_get_isset('bus_start_route')); ?>
-                <strong><?php echo ' | '; echo esc_html(wbbm_get_option('wbbm_date_text', 'wbbm_label_setting_sec', __('Date', 'bus-booking-manager'))); echo ':'; ?></strong>
-                <?php echo esc_html(mage_wp_date(mage_get_isset('r_date'))); ?>
+            <div class="mage-search-res-wrapper">
+				<?php do_action('woocommerce_before_single_product'); ?>
+				<?php if ($mage_bus_search_theme == 'minimal') { ?>
+                    <div class="mage-search-res-header" style="background-color:<?php echo($search_list_header_b_color != '' ? $search_list_header_b_color : '#EA2330'); ?>">
+                        <div class="mage-search-res-header--img">
+                            <span><?php echo wbbm_get_option('wbbm_bus_image_text', 'wbbm_label_setting_sec', __('Bus Image', 'bus-booking-manager')); ?></span>
+                        </div>
+                        <div class="mage-search-res-header--left">
+                            <span><?php echo wbbm_get_option('wbbm_bus_name_text', 'wbbm_label_setting_sec', __('Bus Name', 'bus-booking-manager')); ?></span>
+                            <span><?php echo wbbm_get_option('wbbm_schedule_text', 'wbbm_label_setting_sec', __('Schedule', 'bus-booking-manager')); ?></span>
+                        </div>
+                        <div class="mage-search-res-header--right">
+							<?php if ((isset($general_setting['wbbm_type_column_switch']) && $general_setting['wbbm_type_column_switch'] == 'on') || !isset($general_setting['wbbm_type_column_switch'])) { ?>
+                                <span><?php echo wbbm_get_option('wbbm_type_text', 'wbbm_label_setting_sec', __('Type', 'bus-booking-manager')); ?></span>
+							<?php } ?>
+                            <span><?php echo wbbm_get_option('wbbm_fare_text', 'wbbm_label_setting_sec', __('Fare', 'bus-booking-manager')); ?></span>
+							<?php if ((isset($general_setting['wbbm_seat_column_switch']) && $general_setting['wbbm_seat_column_switch'] == 'on') || !isset($general_setting['wbbm_seat_column_switch'])) { ?>
+                                <span><?php echo wbbm_get_option('wbbm_seats_available_text', 'wbbm_label_setting_sec', __('Seat Available', 'bus-booking-manager')); ?></span>
+							<?php } ?>
+                            <span><?php echo wbbm_get_option('wbbm_view_text', 'wbbm_label_setting_sec', __('View', 'bus-booking-manager')); ?></span>
+                        </div>
+                    </div>
+				<?php } ?>
+				
+				<?php $this->mage_search_bus_list(false); ?>
+                <!-- <div class="mage-search-res-wrapper--footer"></div> -->
             </div>
         </div>
         <div class="mage-search-res-wrapper">
@@ -217,117 +214,226 @@ function mage_search_bus_list($return) {
                 <div class='wbbm_error' style='text-align:center;padding: 10px;color: red;'>
                     <span><?php echo esc_html__('Sorry, No', 'bus-booking-manager') . ' ' . esc_html(wbbm_get_option('wbbm_cpt_label', 'wbbm_general_setting_sec', 'Bus')) . ' ' . esc_html__('Found', 'bus-booking-manager'); ?></span>
                 </div>
-                <?php
+
+			<?php }
+			do_action('wbbm_prevent_form_resubmission');
+		}
+		function mage_search_bus_list($return) {
+			
+			do_action('woocommerce_before_single_product');
+			if (isset($_GET['bus_start_route']) && isset($_GET['bus_end_route']) && (isset($_GET['j_date']) || isset($_GET['r_date']))) {
+				
+				$c_time = current_time('timestamp');
+				$start = $return ? 'bus_end_route' : 'bus_start_route';
+				$end = $return ? 'bus_start_route' : 'bus_end_route';
+				$loop = new WP_Query(mage_bus_list_query($start, $end));
+				$has_bus = false;
+				if ($loop->post_count == 0) {
+					?>
+                    <div class='wbbm_error' style='text-align:center;padding: 10px;color: red;'>
+                        <span><?php echo __('Sorry, No', 'bus-booking-manager') . ' ' . wbbm_get_option('wbbm_cpt_label', 'wbbm_general_setting_sec', 'Bus') . ' ' . __('Found', 'bus-booking-manager'); ?></span>
+                    </div>
+					<?php
+				} else {
+					$j_date = $return ? $_GET['r_date'] : $_GET['j_date'];
+					$j_date = mage_wp_date($j_date, 'Y-m-d');
+					
+					// Step 1: Create an array to hold the start times
+$start_times = [];
+
+// Step 2: Populate the start times array
+foreach ($loop->posts as $post) {
+    // Check if $post is indeed a WP_Post object
+    if ($post instanceof WP_Post) {
+        // Retrieve bus stops times
+        $bus_stops_times = get_post_meta($post->ID, 'wbbm_bus_bp_stops', true);
+        
+        // Initialize start_time variable
+        $start_time = '';
+
+        // Find the relevant start time
+        foreach ($bus_stops_times as $stop) {
+            if ($stop['wbbm_bus_bp_stops_name'] == $_GET[$start]) {
+                $start_time = isset($stop['wbbm_bus_bp_start_time']) ? $stop['wbbm_bus_bp_start_time'] : '';
+                break; // Exit loop once the correct stop is found
             }
         }
-        wp_reset_postdata(); // Reset post data after custom query
+
+        // Store the start time with the post ID if found
+        if ($start_time) {
+            $start_times[$post->ID] = $start_time;
+        }
     }
 }
 
-function mage_search_item($return) {
-    global $mage_bus_search_theme;
-    $id = get_the_ID();
-    $search_date = isset($_GET['j_date']) ? sanitize_text_field($_GET['j_date']) : '';
-    $current_date = date('Y-m-d');
-    $boarding_time = boarding_dropping_time(false, $return);
-    $dropping_time = boarding_dropping_time(true, $return);
+// Step 3: Sort the $loop->posts array based on start time
+usort($loop->posts, function($a, $b) use ($start_times) {
+    $start_time_a = isset($start_times[$a->ID]) ? $start_times[$a->ID] : '';
+    $start_time_b = isset($start_times[$b->ID]) ? $start_times[$b->ID] : '';
 
-    if ($current_date === $search_date) {
-        $search_timestamp = strtotime($search_date . ' ' . $boarding_time);
-        if (current_time('timestamp') >= $search_timestamp) {
-            return;
-        }
-    }
+    // Handle cases where start time might not be found
+    if ($start_time_a === '' && $start_time_b === '') return 0; // Both times are empty
+    if ($start_time_a === '') return 1; // $a is after $b
+    if ($start_time_b === '') return -1; // $b is after $a
 
-    $boarding_var = $return ? 'bus_end_route' : 'bus_start_route';
-    $dropping_var = $return ? 'bus_start_route' : 'bus_end_route';
-    $date_var = $return ? 'r_date' : 'j_date';
-    $in_cart = mage_find_product_in_cart();
-    $type_id = get_post_meta($id, 'wbbm_bus_category', true);
-    $type_name = '';
+    // Compare start times
+    return strcmp($start_time_a, $start_time_b);
+});
 
-    if ($type_id != '') {
-        $type_array = get_term_by('term_id', $type_id, 'wbbm_bus_cat');
-        $type_name = $type_array ? $type_array->name : '';
-    }
+// At this point, $loop->posts is sorted based on the start time
 
-    $available_seat = wbbm_intermidiate_available_seat(
-        sanitize_text_field($_GET[$boarding_var]),
-        sanitize_text_field($_GET[$dropping_var]),
-        wbbm_convert_date_to_php(mage_get_isset($date_var))
-    );
-    $cart_qty = wbbm_get_cart_item($id, mage_get_isset($date_var));
-    $available_seat -= $cart_qty;
-    $boarding = mage_get_isset($boarding_var);
-    $dropping = mage_get_isset($dropping_var);
 
-    $seat_price_adult = mage_seat_price($id, $boarding, $dropping, 'adult');
-    $seat_price_child = mage_seat_price($id, $boarding, $dropping, 'child');
-    $seat_price_infant = mage_seat_price($id, $boarding, $dropping, 'infant');
-    $seat_price_entire = mage_seat_price($id, $boarding, $dropping, 'entire');
-    $boarding_point = isset($_GET[$boarding_var]) ? sanitize_text_field($_GET[$boarding_var]) : '';
-    $boarding_point_slug = strtolower(preg_replace('/[^A-Za-z0-9-]/', '_', $boarding_point));
-    $coach_no = get_post_meta($id, 'wbbm_bus_no', true);
-    $is_enable_pickpoint = get_post_meta($id, 'show_pickup_point', true);
-    $pickpoints = get_post_meta($id, 'wbbm_selected_pickpoint_name_' . $boarding_point_slug, true);
-    $pickpoints = is_string($pickpoints) ? maybe_unserialize($pickpoints) : $pickpoints;
-    $is_sell_off = get_post_meta($id, 'wbbm_sell_off', true);
-    $wbbm_features = get_post_meta($id, 'wbbm_features', true);
-    $seat_available = get_post_meta($id, 'wbbm_seat_available', true);
-    $total_seat = get_post_meta($id, 'wbbm_total_seat', true);
-    $is_price_zero_allow = get_post_meta($id, 'wbbm_price_zero_allow', true);
-    $general_setting = get_option('wbbm_general_setting_sec') ? maybe_unserialize(get_option('wbbm_general_setting_sec')) : array();
-    $search_form_result_b_color = wbbm_get_option('wbbm_search_form_result_b_color', 'wbbm_style_setting_sec');
-    $search_list_header_text_color = wbbm_get_option('wbbm_search_list_header_text_color', 'wbbm_style_setting_sec');
-    $entire_bus_booking = wbbm_get_option('wbbm_entire_bus_booking_switch', 'wbbm_general_setting_sec');
-
-    if ($seat_price_adult > 0 || $is_price_zero_allow == 'on') {
-        if ($mage_bus_search_theme == 'minimal') : // Minimal theme design
-            ?>
-            <div style="background-color: <?php echo esc_attr($search_form_result_b_color ?: '#b30c3b12'); ?>" class="mage_search_list theme_minimal <?php echo esc_attr($in_cart ? 'booked' : ''); ?>" data-seat-available="<?php echo esc_attr($available_seat); ?>">
-                <div class="mage-search-brief-row" style="color: <?php echo esc_attr($search_list_header_text_color ?: '#000'); ?>;">
-                    <div class="mage-search-res-header--img">
-                        <?php
-                        if (has_post_thumbnail()) {
-                            the_post_thumbnail('full');
-                        } else {
-                            echo '<img src="' . esc_url(PLUGIN_ROOT . '/images/bus-placeholder.png') . '" loading="lazy" />';
-                        }
-                        ?>
-                    </div>
-                    <div class="mage-search-res-header--left">
-                        <div class="mage-bus-title">
-                            <a class="bus-title" href="<?php echo esc_url(get_the_permalink($id)); ?>"><?php echo esc_html(get_the_title($id)); ?></a>
-                            <span><?php echo esc_html($coach_no); ?></span>
-                            <?php if ($wbbm_features) { ?>
-                                <p class="wbbm-feature-icon">
-                                    <?php foreach ($wbbm_features as $feature_id) { ?>
-                                        <span class="customCheckbox"><span title="<?php echo esc_attr(get_term($feature_id)->name); ?>" class="mR_xs <?php echo esc_attr(get_term_meta($feature_id, 'feature_icon', true)); ?>"></span></span>
-                                    <?php } ?>
-                                </p>
-                            <?php } ?>
+					while ($loop->have_posts()) {
+						$loop->the_post();
+						$bus_stops_times = get_post_meta(get_the_ID(), 'wbbm_bus_bp_stops', true);
+						$start_time = '';
+						foreach ($bus_stops_times as $stop) {
+							if ($stop['wbbm_bus_bp_stops_name'] == $_GET[$start]) {
+								$start_time = isset($stop['wbbm_bus_bp_start_time']) ? $stop['wbbm_bus_bp_start_time'] : '';
+							}
+						}
+						// Buffer time
+						if (!wbbm_buffer_time_calculation($start_time, $j_date))
+							continue;
+						// Buffer time END
+						$start_time = wbbm_time_24_to_12($start_time); // convert time
+					
+						$is_on_date = false;
+						$bus_on_dates = array();
+						$show_operational_on_day = get_post_meta(get_the_ID(), 'show_operational_on_day', true) ?: 'no';
+						$bus_on_date = get_post_meta(get_the_ID(), 'wbtm_bus_on_date', true);
+						if ($show_operational_on_day === 'yes' && $bus_on_date) {
+							
+							$bus_on_dates =is_array($bus_on_date)?$bus_on_date: explode(', ', $bus_on_date);
+							if (in_array($j_date, $bus_on_dates)) {
+								$has_bus = true;
+								$this->mage_search_item($return);
+							}
+						} else {
+							// Offday schedule check
+							$bus_offday_schedules = get_post_meta(get_the_ID(), 'wbtm_offday_schedule', true);
+							$offday_current_bus = false;
+							if (!empty($bus_offday_schedules)) {
+								$s_datetime = new DateTime($j_date . ' ' . $start_time);
+								foreach ($bus_offday_schedules as $item) {
+									$c_iterate_date_from = wbbm_convert_date_to_php($item['from_date']);
+									$c_iterate_datetime_from = new DateTime($c_iterate_date_from . ' ' . $item['from_time']);
+									$c_iterate_date_to = wbbm_convert_date_to_php($item['to_date']);
+									$c_iterate_datetime_to = new DateTime($c_iterate_date_to . ' ' . $item['to_time']);
+									if ($s_datetime >= $c_iterate_datetime_from && $s_datetime <= $c_iterate_datetime_to) {
+										$offday_current_bus = true;
+										break;
+									}
+								}
+							}
+							// Check Offday and date
+							$show_off_day = get_post_meta(get_the_ID(), 'show_off_day', true) ?: 'no';
+							if ($show_off_day === 'yes') {
+								if ((!$offday_current_bus && !mage_off_day_check($return))) {
+									$has_bus = true;
+									
+									$this->mage_search_item($return);
+								}
+							} else {
+								$has_bus = true;
+								
+								$this->mage_search_item($return);
+							}
+						}
+					}
+					if (!$has_bus) { // Bus available
+						?>
+                        <div class='wbbm_error' style='text-align:center;padding: 10px;color: red;'>
+                            <span><?php echo __('Sorry, No', 'bus-booking-manager') . ' ' . wbbm_get_option('wbbm_cpt_label', 'wbbm_general_setting_sec', 'Bus') . ' ' . __('Found', 'bus-booking-manager'); ?></span>
                         </div>
-                        <div>
-                            <?php
-                            echo '<p class="mage-bus-stopage"><span class="dashicons dashicons-location"></span> ' .
-                                esc_html(wbbm_get_option('wbbm_from_text', 'wbbm_label_setting_sec', __('From: ', 'bus-booking-manager'))) . ' ' .
-                                esc_html($boarding) . ' ( ' .
-                                esc_html(get_wbbm_datetime($boarding_time, 'time')) . ' )</p>';
-                            ?>
+						<?php
+					}
+				}
+			}
+		}
+		function mage_search_item($return) {
+			global $mage_bus_search_theme;
+			
+			$id = get_the_id();
+			$search_date = (isset($_GET['j_date']) ? $_GET['j_date'] : '');
+			$current_date = date('Y-m-d');
+			$boarding_time = boarding_dropping_time(false, $return);
+			
+			$dropping_time = boarding_dropping_time(true, $return);
+			if ($current_date === $search_date) {
+				$search_timestamp = strtotime($search_date . ' ' . $boarding_time);
+				if (current_time('timestamp') >= $search_timestamp) {
+					return;
+				}
+			}
+			$boarding_var = $return ? 'bus_end_route' : 'bus_start_route';
+			$dropping_var = $return ? 'bus_start_route' : 'bus_end_route';
+			$date_var = $return ? 'r_date' : 'j_date';
+			$in_cart = mage_find_product_in_cart();
+			$type_id = get_post_meta($id, 'wbbm_bus_category', true);
+			if ($type_id != '') {
+				$type_array = get_term_by('term_id', $type_id, 'wbbm_bus_cat');
+				$type_name = $type_array->name;
+			} else {
+				$type_name = '';
+			}
+			$available_seat = wbbm_intermidiate_available_seat($_GET[$boarding_var], $_GET[$dropping_var], wbbm_convert_date_to_php(mage_get_isset($date_var)));
+			$cart_qty = wbbm_get_cart_item($id, mage_get_isset($date_var));
+			$available_seat = $available_seat - $cart_qty;
+			$boarding = mage_get_isset($boarding_var);
+			$dropping = mage_get_isset($dropping_var);
+			$seat_price_adult = mage_seat_price($id, $boarding, $dropping, 'adult');
+			$seat_price_child = mage_seat_price($id, $boarding, $dropping, 'child');
+			$seat_price_infant = mage_seat_price($id, $boarding, $dropping, 'infant');
+			$seat_price_entire = mage_seat_price($id, $boarding, $dropping, 'entire');
+			$boarding_point = isset($_GET[$boarding_var]) ? strip_tags($_GET[$boarding_var]) : '';
+			$boarding_point_slug = strtolower($boarding_point);
+			$boarding_point_slug = preg_replace('/[^A-Za-z0-9-]/', '_', $boarding_point_slug);
+			$coach_no = get_post_meta($id, 'wbbm_bus_no', true);
+			$is_enable_pickpoint = get_post_meta($id, 'show_pickup_point', true);
+			$pickpoints = get_post_meta($id, 'wbbm_selected_pickpoint_name_' . $boarding_point_slug, true);
+			$pickpoints = is_string($pickpoints) ? maybe_unserialize($pickpoints) : $pickpoints;
+			$is_sell_off = get_post_meta($id, 'wbbm_sell_off', true);
+			$wbbm_features = get_post_meta($id, 'wbbm_features', true);
+			$seat_available = get_post_meta($id, 'wbbm_seat_available', true);
+			$total_seat = get_post_meta($id, 'wbbm_total_seat', true);
+			$is_price_zero_allow = get_post_meta($id, 'wbbm_price_zero_allow', true);
+			$general_setting = get_option('wbbm_general_setting_sec') ? maybe_unserialize(get_option('wbbm_general_setting_sec')) : array();
+			$search_form_result_b_color = wbbm_get_option('wbbm_search_form_result_b_color', 'wbbm_style_setting_sec');
+			$search_list_header_text_color = wbbm_get_option('wbbm_search_list_header_text_color', 'wbbm_style_setting_sec');
+			$entire_bus_booking = wbbm_get_option('wbbm_entire_bus_booking_switch', 'wbbm_general_setting_sec');
+			if ($seat_price_adult > 0 || $is_price_zero_allow == 'on') {
+				if ($mage_bus_search_theme == 'minimal') : // Minimal theme design
+					?>
+                    <div style="background-color:<?php echo($search_form_result_b_color != '' ? $search_form_result_b_color : '#b30c3b12'); ?>" class="mage_search_list theme_minimal <?php echo $in_cart ? 'booked' : ''; ?>" data-seat-available="<?php echo $available_seat; ?>">
+                        <div class="mage-search-brief-row" style="color:<?php echo($search_list_header_text_color != '' ? $search_list_header_text_color : '#000'); ?>">
+                            <div class="mage-search-res-header--img">
+								<?php
+									if (has_post_thumbnail()) {
+										the_post_thumbnail('full');
+									} else {
+										echo '<img src="' . PLUGIN_ROOT . '/images/bus-placeholder.png' . '" loading="lazy" />';
+									}
+								?>
+                            </div>
+                            <div class="mage-search-res-header--left">
+                                <div class="mage-bus-title">
+                                    <a class="bus-title" href="<?php echo get_the_permalink($id) ?>"><?php echo the_title(); ?></a>
+                                    <span><?php echo $coach_no; ?></span>
+									<?php if ($wbbm_features) { ?>
+                                        <p class="wbbm-feature-icon">
+											<?php foreach ($wbbm_features as $feature_id) { ?>
+                                                <span class="customCheckbox"><span title="<?php echo get_term($feature_id)->name ?>" class="mR_xs <?php echo get_term_meta($feature_id, 'feature_icon', true) ?>"></span></span>
+											<?php } ?>
+                                        </p>
+									<?php } ?>
+                                </div>
+                                <div>
+									<?php echo '<p class="mage-bus-stopage"><span class="dashicons dashicons-location"></span> ' . wbbm_get_option('wbbm_from_text', 'wbbm_label_setting_sec', __('From: ', 'bus-booking-manager')) . ' ' . $boarding . ' ( ' . get_wbbm_datetime($boarding_time, 'time') . ' )</p>'; ?>
+									<?php echo '<p class="mage-bus-stopage"><span class="dashicons dashicons-location"></span> ' . wbbm_get_option('wbbm_to_text', 'wbbm_label_setting_sec', __('To: ', 'bus-booking-manager')) . ' ' . $dropping . ' ( ' . get_wbbm_datetime($dropping_time, 'time') . ' )</p>'; ?>
+                                </div>
 
-                            <?php
-                            echo '<p class="mage-bus-stopage"><span class="dashicons dashicons-location"></span> ' .
-                                esc_html(wbbm_get_option('wbbm_to_text', 'wbbm_label_setting_sec', __('To: ', 'bus-booking-manager'))) . ' ' .
-                                esc_html($dropping) . ' ( ' .
-                                esc_html(get_wbbm_datetime($dropping_time, 'time')) . ' )</p>';
-                            ?>
-                        </div>
-                    </div>
-                    <div class="mage-search-res-header--right">
-                        <?php if ((isset($general_setting['wbbm_type_column_switch']) && $general_setting['wbbm_type_column_switch'] == 'on') || !isset($general_setting['wbbm_type_column_switch'])) { ?>
-                            <div>
-                                <strong class="mage-sm-show"><?php echo esc_html(wbbm_get_option('wbbm_type_text', 'wbbm_label_setting_sec', __('Type', 'bus-booking-manager'))); ?></strong>
-                                <span><?php echo esc_html($type_name); ?></span>
+
                             </div>
                         <?php } ?>
                         <div>
