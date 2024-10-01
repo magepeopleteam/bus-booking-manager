@@ -109,17 +109,18 @@
         }
         
         if (!function_exists('mep_license_expire_date')) {
-        function mep_license_expire_date($date) {
-            if (empty($date) || $date == 'lifetime') {
-                echo esc_html($date);
-            } else {
-                if (strtotime(current_time('Y-m-d H:i')) < strtotime(date('Y-m-d H:i', strtotime($date)))) {
-                    echo get_mep_datetime($date, 'date-time-text');
-                } else {
-                    esc_html_e('Expired', 'mage-eventpress');
-                }
-            }
+            function mep_license_expire_date($date) {
+    if (empty($date) || $date == 'lifetime') {
+        echo esc_html($date);
+    } else {
+        if (strtotime(current_time('Y-m-d H:i')) < strtotime(date('Y-m-d H:i', strtotime($date)))) {
+            echo esc_html(get_mep_datetime($date, 'date-time-text')); // Escape the output
+        } else {
+            esc_html_e('Expired', 'mage-eventpress');
         }
+    }
+}
+
         }
         
     add_filter( 'wbbm_settings_sec_reg', 'wbbm_register_license_tab_name', 90 );

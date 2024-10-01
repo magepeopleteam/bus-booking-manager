@@ -155,59 +155,41 @@ class MAGE_Setting_API {
      *
      * @param array   $args settings field args
      */
-    function callback_text( $args ) {
-
-        $value = esc_attr( $this->get_option( $args['id'], $args['section'], $args['std'] ) );
-        $custom_class = $args['class'];
-        $size = isset( $args['size'] ) && !is_null( $args['size'] ) ? $args['size'] : 'regular';
-        $placeholder = isset( $args['placeholder'] ) && !is_null( $args['placeholder'] ) ? $args['placeholder'] : '';
-        $html = sprintf( '<input type="text" class="%1$s-text %6$s" id="%2$s[%3$s]" name="%2$s[%3$s]" value="%4$s" placeholder="%5$s"/>', $size, $args['section'], $args['id'], $value, $placeholder,$custom_class);
-        // $html .= sprintf( '<span class="description"> %s</span>', $args['desc'] );
-        echo $html;
+    function callback_text( $args ): void {
+        $value = esc_attr( text: $this->get_option( $args['id'], $args['section'], $args['std'] ) );
+        $custom_class = esc_attr( text: $args['class'] );
+        $size = isset( $args['size'] ) && ! is_null( value: $args['size'] ) ? esc_attr( $args['size'] ) : 'regular';
+        $placeholder = isset( $args['placeholder'] ) && ! is_null( value: $args['placeholder'] ) ? esc_attr( text: $args['placeholder'] ) : '';
+        ?>
+        <input type="text" class="<?php echo esc_attr( text: $size ); ?>-text <?php echo esc_attr( text: $custom_class ); ?>" id="<?php echo esc_attr( text: $args['section'] . '[' . $args['id'] . ']' ); ?>" name="<?php echo esc_attr( text: $args['section'] . '[' . $args['id'] . ']' ); ?>" value="<?php echo esc_attr( text: $value ); ?>" placeholder="<?php echo esc_attr( text: $placeholder ); ?>" />
+        <?php
     }
 
     public function callback_checkbox_multi( $option ){
 
         $id				= isset( $option['id'] ) ? $option['id'] : "";
-
         $field_name 	= isset( $option['field_name'] ) ? $option['field_name'] : $id;
-
-
         $default 		= isset( $option['default'] ) ? $option['default'] : array();
         $args			= isset( $option['args'] ) ? $option['args'] : array();
         $args			= is_array( $args ) ? $args : $this->args_from_string( $args );
-
         $value			= isset( $option['value'] ) ? $option['value'] : array();
         $value          = !empty($value) ?  $value : $default;
-
         $value =  $this->get_option( $option['id'], $option['section'], $option['std'] ) ;
-
         $field_id       = $id;
         $field_name     = !empty( $field_name ) ? '['.$field_name.']' : '['.$id.']';
-
-
-
-
-
-
         ?>
-
         <div class="hhh">
             <?php
             foreach( $args as $key => $argName ):
                 $checked = is_array( $value ) && in_array( $key, $value ) ? "checked" : "";
                 ?>
-                <label for='<?php echo $field_id.'-'.$key; ?>'>
-                    <input class="<?php echo $field_id; ?>" name='<?php echo $option['section'].$field_name.'[]'; ?>' type='checkbox' id='<?php echo $field_id.'-'.$key; ?>' value='<?php echo $key; ?>' <?php echo $checked; ?>><?php echo $argName; ?>
-                </label><br>
+                <label for="<?php echo esc_attr( $field_id . '-' . $key ); ?>"> <input class="<?php echo esc_attr( $field_id ); ?>" name="<?php echo esc_attr( $option['section'] . $field_name . '[]' ); ?>" type="checkbox" id="<?php echo esc_attr( $field_id . '-' . $key ); ?>" value="<?php echo esc_attr( $key ); ?>" <?php echo esc_attr( $checked ); ?>> <?php echo esc_html( $argName ); ?> </label><br>
             <?php
             endforeach;
             ?>
             <div class="error-mgs"></div>
         </div>
-
         <?php
-
     }
 
 
@@ -227,23 +209,26 @@ class MAGE_Setting_API {
         return array();
     }
 
-
-
     /**
      * Displays a checkbox for a settings field
      *
      * @param array   $args settings field args
      */
     function callback_checkbox( $args ) {
+    // Retrieve and escape the option value
+    $value = esc_attr( $this->get_option( $args['id'], $args['section'], $args['std'] ) );
+    $section = isset( $args['section'] ) ? esc_attr( $args['section'] ) : '';
+    $id      = isset( $args['id'] ) ? esc_attr( $args['id'] ) : '';
+    $desc    = isset( $args['desc'] ) ? esc_html( $args['desc'] ) : '';
+    $custom_class = isset( $args['class'] ) ? esc_attr( $args['class'] ) : '';
+    $checked = checked( $value, 'on', false );
+    $html = sprintf( '<input type="hidden" name="%1$s[%2$s]" value="off" />', $section, $id );
+    $html .= sprintf( '<input type="checkbox" class="checkbox %3$s" id="wpuf-%1$s[%2$s]" name="%1$s[%2$s]" value="on"%4$s />', $section, $id, $custom_class, $checked );
+    $html .= sprintf( '<label for="wpuf-%1$s[%2$s]"> %3$s</label><br>', $section, $id, $desc );
+    $allowed_html = array( 'input' => array( 'type'  => array(), 'name'  => array(), 'id'    => array(), 'value' => array(), 'class' => array(), 'checked' => array(), ), 'label' => array( 'for' => array(), ), 'br' => array(), );
+    echo wp_kses( $html, $allowed_html );
+}
 
-        $value = esc_attr( $this->get_option( $args['id'], $args['section'], $args['std'] ) );
-
-        $html = sprintf( '<input type="hidden" name="%1$s[%2$s]" value="off" />', $args['section'], $args['id'] );
-        $html .= sprintf( '<input type="checkbox" class="checkbox" id="wpuf-%1$s[%2$s]" name="%1$s[%2$s]" value="on"%4$s />', $args['section'], $args['id'], $value, checked( $value, 'on', false ) );
-        $html .= sprintf( '<label for="wpuf-%1$s[%2$s]"> %3$s</label>', $args['section'], $args['id'], $args['desc'] );
-
-        echo $html;
-    }
 
     /**
      * Displays a multicheckbox a settings field
@@ -251,19 +236,34 @@ class MAGE_Setting_API {
      * @param array   $args settings field args
      */
     function callback_multicheck( $args ) {
-
-        $value = $this->get_option( $args['id'], $args['section'], $args['std'] );
-
-        $html = '';
-        foreach ( $args['options'] as $key => $label ) {
-            $checked = isset( $value[$key] ) ? $value[$key] : '0';
-            $html .= sprintf( '<input type="checkbox" class="checkbox" id="wpuf-%1$s[%2$s][%3$s]" name="%1$s[%2$s][%3$s]" value="%3$s"%4$s />', $args['section'], $args['id'], $key, checked( $checked, $key, false ) );
-            $html .= sprintf( '<label for="wpuf-%1$s[%2$s][%4$s]"> %3$s</label><br>', $args['section'], $args['id'], $label, $key );
-        }
-        // $html .= sprintf( '<span class="description"> %s</label>', $args['desc'] );
-
-        echo $html;
+    $value = $this->get_option( $args['id'], $args['section'], $args['std'] );
+    $allowed_html = array( 'input' => array( 'type'    => array(), 'class'   => array(), 'id'      => array(), 'name'    => array(), 'value'   => array(), 'checked' => array(), ), 'label' => array( 'for' => array(), ), 'br' => array(), );
+    $html = '';
+    foreach ( $args['options'] as $key => $label ) {
+        $checked = isset( $value[ $key ] ) ? $value[ $key ] : '0';
+        $input_id = sprintf( 'wpuf-%s[%s][%s]', $args['section'], $args['id'], $key );
+        $input_name = sprintf( '%s[%s][%s]', $args['section'], $args['id'], $key );
+        $html .= sprintf(
+            '<input type="checkbox" class="checkbox" id="%1$s" name="%2$s" value="%3$s" %4$s />',
+            esc_attr( $input_id ),      // Escaped ID
+            esc_attr( $input_name ),    // Escaped name
+            esc_attr( $key ),           // Escaped value
+            checked( $checked, $key, false ) // 'checked' attribute handled by WordPress
+        );
+        $html .= sprintf(
+            '<label for="%1$s"> %2$s</label><br>',
+            esc_attr( $input_id ),      // Escaped 'for' attribute
+            esc_html( $label )          // Escaped label text
+        );
     }
+    if ( ! empty( $args['desc'] ) ) {
+        $html .= sprintf(
+            '<span class="description">%s</span>',
+            esc_html( $args['desc'] )
+        );
+    }
+    echo wp_kses( $html, $allowed_html );
+}
 
     /**
      * Displays a multicheckbox a settings field
@@ -271,18 +271,40 @@ class MAGE_Setting_API {
      * @param array   $args settings field args
      */
     function callback_radio( $args ) {
-
-        $value = $this->get_option( $args['id'], $args['section'], $args['std'] );
-
-        $html = '';
-        foreach ( $args['options'] as $key => $label ) {
-            $html .= sprintf( '<input type="radio" class="radio" id="wpuf-%1$s[%2$s][%3$s]" name="%1$s[%2$s]" value="%3$s"%4$s />', $args['section'], $args['id'], $key, checked( $value, $key, false ) );
-            $html .= sprintf( '<label for="wpuf-%1$s[%2$s][%4$s]"> %3$s</label><br>', $args['section'], $args['id'], $label, $key );
-        }
-        // $html .= sprintf( '<span class="description"> %s</label>', $args['desc'] );
-
-        echo $html;
+    // Retrieve the option value without escaping yet
+    $value = $this->get_option( $args['id'], $args['section'], $args['std'] );
+    $allowed_html = array( 'input' => array( 'type'    => array(), 'class'   => array(), 'id'      => array(), 'name'    => array(), 'value'   => array(), 'checked' => array(), ), 'label' => array( 'for' => array(), ), 'br' => array(), );
+    $html = '';
+    foreach ( $args['options'] as $key => $label ) {
+        // Escape dynamic variables
+        $section = isset( $args['section'] ) ? esc_attr( $args['section'] ) : '';
+        $id      = isset( $args['id'] ) ? esc_attr( $args['id'] ) : '';
+        $key_escaped   = esc_attr( $key );
+        $label_escaped = esc_html( $label );
+        $input_id = sprintf( 'wpuf-%s[%s][%s]', $section, $id, $key_escaped );
+        $input_name = sprintf( '%s[%s]', $section, $id );
+        $html .= sprintf(
+            '<input type="radio" class="radio" id="%1$s" name="%2$s" value="%3$s" %4$s />',
+            $input_id,                        // Escaped ID
+            $input_name,                      // Escaped Name
+            $key_escaped,                     // Escaped Value
+            checked( $value, $key, false )    // 'checked' attribute handled by WordPress
+        );
+        $html .= sprintf(
+            '<label for="%1$s"> %2$s</label><br>',
+            $input_id,                        // Escaped 'for' attribute
+            $label_escaped                    // Escaped Label Text
+        );
     }
+    if ( ! empty( $args['desc'] ) ) {
+        $html .= sprintf(
+            '<span class="description">%s</span>',
+            esc_html( $args['desc'] )
+        );
+    }
+    echo wp_kses( $html, $allowed_html );
+}
+
 
     /**
      * Displays a selectbox for a settings field
@@ -291,18 +313,40 @@ class MAGE_Setting_API {
      */
     function callback_select( $args ) {
 
-        $value = esc_attr( $this->get_option( $args['id'], $args['section'], $args['std'] ) );
-        $size = isset( $args['size'] ) && !is_null( $args['size'] ) ? $args['size'] : 'regular';
+// Sanitize the value being retrieved
+$value = sanitize_text_field( $this->get_option( $args['id'], $args['section'], $args['std'] ) );
 
-        $html = sprintf( '<select class="%1$s" name="%2$s[%3$s]" id="%2$s[%3$s]">', $size, $args['section'], $args['id'] );
-        foreach ( $args['options'] as $key => $label ) {
-            $html .= sprintf( '<option value="%s"%s>%s</option>', $key, selected( $value, $key, false ), $label );
-        }
-        $html .= sprintf( '</select>' );
-        // $html .= sprintf( '<span class="description"> %s</span>', $args['desc'] );
+// Escape the size attribute
+$size = isset( $args['size'] ) && !is_null( $args['size'] ) ? esc_attr( $args['size'] ) : 'regular';
 
-        echo $html;
-    }
+// Start the select input with escaped attributes
+printf(
+    '<select class="%s" name="%s[%s]" id="%s[%s]">',
+    esc_attr( $size ),
+    esc_attr( $args['section'] ),
+    esc_attr( $args['id'] ),
+    esc_attr( $args['section'] ),
+    esc_attr( $args['id'] )
+);
+
+// Loop through options, escape both key and label, and ensure 'selected' is safe
+foreach ( $args['options'] as $key => $label ) {
+    printf(
+        '<option value="%s" %s>%s</option>',
+        esc_attr( $key ),
+        selected( $value, $key, false ),
+        esc_html( $label )
+    );
+}
+
+echo '</select>'; // Close the select tag
+
+// Optionally, output the description with escaping
+// if ( isset( $args['desc'] ) && !empty( $args['desc'] ) ) {
+//     printf( '<span class="description">%s</span>', esc_html( $args['desc'] ) );
+// }
+}
+
 
     /**
      * Displays a textarea for a settings field
@@ -311,14 +355,29 @@ class MAGE_Setting_API {
      */
     function callback_textarea( $args ) {
 
-        $value = esc_textarea( $this->get_option( $args['id'], $args['section'], $args['std'] ) );
-        $size = isset( $args['size'] ) && !is_null( $args['size'] ) ? $args['size'] : 'regular';
+// Sanitize and escape the value
+$value = esc_textarea( $this->get_option( $args['id'], $args['section'], $args['std'] ) );
 
-        $html = sprintf( '<textarea rows="5" cols="55" class="%1$s-text" id="%2$s[%3$s]" name="%2$s[%3$s]">%4$s</textarea>', $size, $args['section'], $args['id'], $value );
-        // $html .= sprintf( '<br><span class="description"> %s</span>', $args['desc'] );
+// Escape the size attribute
+$size = isset( $args['size'] ) && !is_null( $args['size'] ) ? esc_attr( $args['size'] ) : 'regular';
 
-        echo $html;
-    }
+// Output the textarea element with properly escaped attributes and content
+printf(
+    '<textarea rows="5" cols="55" class="%s-text" id="%s[%s]" name="%s[%s]">%s</textarea>',
+    esc_attr( $size ),
+    esc_attr( $args['section'] ),
+    esc_attr( $args['id'] ),
+    esc_attr( $args['section'] ),
+    esc_attr( $args['id'] ),
+    esc_textarea( $value ) // Ensures that textarea content is safe
+);
+
+// Optionally, output the description with escaping
+// if ( isset( $args['desc'] ) && !empty( $args['desc'] ) ) {
+//     printf( '<br><span class="description">%s</span>', esc_html( $args['desc'] ) );
+// }
+}
+
 
     /**
      * Displays a textarea for a settings field
@@ -326,8 +385,10 @@ class MAGE_Setting_API {
      * @param array   $args settings field args
      */
     function callback_html( $args ) {
-        echo $args['desc'];
-    }
+    // Sanitize and escape the description as plain text
+    echo esc_html( $args['desc'] );
+}
+
 
     /**
      * Displays a rich text textarea for a settings field
@@ -336,17 +397,26 @@ class MAGE_Setting_API {
      */
     function callback_wysiwyg( $args ) {
 
-        $value = $this->get_option( $args['id'], $args['section'], $args['std'] );
-        $size = isset( $args['size'] ) && !is_null( $args['size'] ) ? $args['size'] : '500px';
+// Sanitize and escape the value
+$value = sanitize_text_field( $this->get_option( $args['id'], $args['section'], $args['std'] ) );
 
-        echo '<div style="width: ' . $size . ';">';
+// Sanitize and escape the size
+$size = isset( $args['size'] ) && !is_null( $args['size'] ) ? esc_attr( $args['size'] ) : '500px';
 
-        wp_editor( $value, $args['section'] . '-' . $args['id'] . '', array( 'teeny' => true, 'textarea_name' => $args['section'] . '[' . $args['id'] . ']', 'textarea_rows' => 10 ) );
+// Output the editor with sanitized width
+echo '<div style="width: ' . esc_attr( $size ) . ';">';
 
-        echo '</div>';
+// Output the WYSIWYG editor
+wp_editor( $value, esc_attr( $args['section'] . '-' . $args['id'] ), array( 'teeny' => true, 'textarea_name' => esc_attr( $args['section'] . '[' . $args['id'] . ']' ), 'textarea_rows' => 10 ) );
 
-        // echo sprintf( '<br><span class="description"> %s</span>', $args['desc'] );
-    }
+echo '</div>';
+
+// Optionally, escape and output the description
+// if ( isset( $args['desc'] ) && !empty( $args['desc'] ) ) {
+//     printf( '<br><span class="description">%s</span>', esc_html( $args['desc'] ) );
+// }
+}
+
 
     /**
      * Displays a file upload field for a settings field
@@ -355,89 +425,123 @@ class MAGE_Setting_API {
      */
     function callback_file( $args ) {
 
-        $value = esc_attr( $this->get_option( $args['id'], $args['section'], $args['std'] ) );
-        $size = isset( $args['size'] ) && !is_null( $args['size'] ) ? $args['size'] : 'regular';
-        $id = $args['section']  . '[' . $args['id'] . ']';
-        $js_id = $args['section']  . '\\\\[' . $args['id'] . '\\\\]';
-        $html = sprintf( '<input type="text" class="%1$s-text" id="%2$s[%3$s]" name="%2$s[%3$s]" value="%4$s"/>', $size, $args['section'], $args['id'], $value );
-        $html .= '<input type="button" class="button wpsf-browse" id="'. $id .'_button" value="Browse" />
-        <script type="text/javascript">
-        jQuery(document).ready(function($){
-            $("#'. $js_id .'_button").click(function() {
-                tb_show("", "media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true");
-                window.original_send_to_editor = window.send_to_editor;
-                window.send_to_editor = function(html) {
-                    var url = $(html).attr(\'href\');
-                    if ( !url ) {
-                        url = $(html).attr(\'src\');
-                    };
-                    $("#'. $js_id .'").val(url);
-                    tb_remove();
-                    window.send_to_editor = window.original_send_to_editor;
-                };
-                return false;
-            });
+// Sanitize and escape the value
+$value = esc_attr( $this->get_option( $args['id'], $args['section'], $args['std'] ) );
+
+// Sanitize and escape the size
+$size = isset( $args['size'] ) && !is_null( $args['size'] ) ? esc_attr( $args['size'] ) : 'regular';
+
+// Sanitize and escape the ID attributes
+$id = esc_attr( $args['section'] )  . '[' . esc_attr( $args['id'] ) . ']';
+$js_id = esc_js( $args['section']  . '\\\\[' . $args['id'] . '\\\\]' );
+
+// Output the input field
+printf(
+    '<input type="text" class="%1$s-text" id="%2$s[%3$s]" name="%2$s[%3$s]" value="%4$s"/>',
+    esc_attr( $size ),
+    esc_attr( $args['section'] ),
+    esc_attr( $args['id'] ),
+    esc_attr( $value )
+);
+
+// Output the "Browse" button
+printf(
+    '<input type="button" class="button wpsf-browse" id="%1$s_button" value="%2$s" />',
+    esc_attr( $id ),
+    esc_html__( 'Browse', 'bus-booking-manager' ) // Safely handle the button label
+);
+
+// Output the script for media uploader
+printf(
+    '<script type="text/javascript">
+    jQuery(document).ready(function($){
+        $("#%1$s_button").click(function() {
+            tb_show("", "media-upload.php?post_id=0&amp;type=image&amp;TB_iframe=true");
+            window.original_send_to_editor = window.send_to_editor;
+            window.send_to_editor = function(html) {
+                var url = $(html).attr(\'href\');
+                if (!url) {
+                    url = $(html).attr(\'src\');
+                }
+                $("#%1$s").val(url);
+                tb_remove();
+                window.send_to_editor = window.original_send_to_editor;
+            };
+            return false;
         });
-        </script>';
-        // $html .= sprintf( '<span class="description"> %s</span>', $args['desc'] );
+    });
+    </script>',
+    esc_js( $js_id )  // Escaping the JS ID for use in the script
+);
 
-        echo $html;
-    }
-	function callback_media( $args ){
+// Optionally, output the description if it exists
+// if ( isset( $args['desc'] ) && !empty( $args['desc'] ) ) {
+//     printf( '<span class="description">%s</span>', esc_html( $args['desc'] ) );
+// }
+}
 
-		$id			= isset( $args['id'] ) ? $args['id'] : "";
-		$value = esc_attr( $this->get_option( $args['id'], $args['section'], $args['std'] ) );
-		$media_url	= wp_get_attachment_url( $value );
-		$media_type	= get_post_mime_type( $value );
-		$media_title= get_the_title( $value );
-		wp_enqueue_media();
-		
-		echo "<div class='media_preview'>";
-		
-		if( "audio/mpeg" == $media_type ){			
-			esc_html_e('Audio/Video format not supported.','bus-booking-manager');
-		}
-		else {
-			echo "<img id='media_preview_$id' src='$media_url'/>";
-		}
+function callback_media( $args ) {
 
-		echo "</div>";
-        echo sprintf( '<input type="hidden" id="media_input_%1$s" name="%2$s[%1$s]" value="%3$s"/>', $id, $args['section'], $value);
-		echo "<div class='wbbm_green_btn' id='media_upload_$id' style='margin-right:5px'>".__('Upload','bus-booking-manager')."</div>";
-		echo "<div class='wbbm_red_btn' id='media_remove_$id'>".__('Remove','bus-booking-manager')."</div>";
-		
-		echo "<script>jQuery(document).ready(function($){
-		$('#media_upload_$id').click(function() {
-			var send_attachment_bkp = wp.media.editor.send.attachment;
-			wp.media.editor.send.attachment = function(props, attachment) {
-				$('#media_preview_$id').attr('src', attachment.url);
-				$('#media_input_$id').val(attachment.id);
-				wp.media.editor.send.attachment = send_attachment_bkp;
-			}
-			wp.media.editor.open($(this));
-			return false;
-		});
-        $('#media_remove_$id').click(function() {
-            $('#media_preview_$id').attr('src','');
-            $('#media_input_$id').val('');
-        });	
-		});	</script>";
-	}
+$id         = isset( $args['id'] ) ? esc_attr( $args['id'] ) : "";  // Escape the ID
+$value      = esc_attr( $this->get_option( $args['id'], $args['section'], $args['std'] ) );  // Escape the value
+$media_url  = esc_url( wp_get_attachment_url( $value ) );  // Escape the media URL
+$media_type = esc_attr( get_post_mime_type( $value ) );  // Escape the media type
+$media_title= esc_html( get_the_title( $value ) );  // Escape the media title
+wp_enqueue_media();
+
+echo "<div class='media_preview'>";  
+if ( "audio/mpeg" === $media_type ) {
+    esc_html_e( 'Audio/Video format not supported.', 'bus-booking-manager' );  
+} else {
+    printf( '<img id="media_preview_%s" src="%s" alt="%s" />', esc_attr( $id ), esc_url( $media_url ), esc_attr( $media_title ) );
+}
+echo "</div>";
+printf( '<input type="hidden" id="media_input_%1$s" name="%2$s[%1$s]" value="%3$s" />', esc_attr( $id ), esc_attr( $args['section'] ), esc_attr( $value ) );
+printf( '<div class="wbbm_green_btn" id="media_upload_%s" style="margin-right:5px">%s</div>', esc_attr( $id ), esc_html__( 'Upload', 'bus-booking-manager' ) );
+printf( '<div class="wbbm_red_btn" id="media_remove_%s">%s</div>', esc_attr( $id ), esc_html__( 'Remove', 'bus-booking-manager' ) );
+printf(
+    '<script>jQuery(document).ready(function($){
+        $("#media_upload_%1$s").click(function() {
+            var send_attachment_bkp = wp.media.editor.send.attachment;
+            wp.media.editor.send.attachment = function(props, attachment) {
+                $("#media_preview_%1$s").attr("src", attachment.url);
+                $("#media_input_%1$s").val(attachment.id);
+                wp.media.editor.send.attachment = send_attachment_bkp;
+            };
+            wp.media.editor.open($(this));
+            return false;
+        });
+        $("#media_remove_%1$s").click(function() {
+            $("#media_preview_%1$s").attr("src","");
+            $("#media_input_%1$s").val("");
+        });
+    });</script>',
+    esc_js( $id ) 
+);
+}
+
     /**
      * Displays a password field for a settings field
      *
      * @param array   $args settings field args
      */
     function callback_password( $args ) {
-
         $value = esc_attr( $this->get_option( $args['id'], $args['section'], $args['std'] ) );
-        $size = isset( $args['size'] ) && !is_null( $args['size'] ) ? $args['size'] : 'regular';
+        $size = isset( $args['size'] ) && !is_null( $args['size'] ) ? esc_attr( $args['size'] ) : 'regular';
+        printf(
+            '<input type="password" class="%1$s-text" id="%2$s[%3$s]" name="%2$s[%3$s]" value="%4$s"/>',
+            esc_attr( $size ),
+            esc_attr( $args['section'] ),
+            esc_attr( $args['id'] ),
+            esc_attr( $value )
+        );
 
-        $html = sprintf( '<input type="password" class="%1$s-text" id="%2$s[%3$s]" name="%2$s[%3$s]" value="%4$s"/>', $size, $args['section'], $args['id'], $value );
-        // $html .= sprintf( '<span class="description"> %s</span>', $args['desc'] );
-
-        echo $html;
+        // Optionally, escape and output the description if present
+        // if ( isset( $args['desc'] ) && !empty( $args['desc'] ) ) {
+        //     printf( '<span class="description">%s</span>', esc_html( $args['desc'] ) );
+        // }
     }
+
 
     /**
      * Displays a color picker field for a settings field
@@ -445,15 +549,22 @@ class MAGE_Setting_API {
      * @param array   $args settings field args
      */
     function callback_color( $args ) {
-
         $value = esc_attr( $this->get_option( $args['id'], $args['section'], $args['std'] ) );
-        $size = isset( $args['size'] ) && !is_null( $args['size'] ) ? $args['size'] : 'regular';
-
-        $html = sprintf( '<input type="text" class="%1$s-text wp-color-picker-field" id="%2$s[%3$s]" name="%2$s[%3$s]" value="%4$s" data-default-color="%5$s" />', $size, $args['section'], $args['id'], $value, $args['std'] );
-        // $html .= sprintf( '<span class="description" style="display:block;"> %s</span>', $args['desc'] );
-
-        echo $html;
+        $size = isset( $args['size'] ) && !is_null( $args['size'] ) ? esc_attr( $args['size'] ) : 'regular';
+        $default_color = isset( $args['std'] ) ? esc_attr( $args['std'] ) : '';
+        printf(
+            '<input type="text" class="%1$s-text wp-color-picker-field" id="%2$s[%3$s]" name="%2$s[%3$s]" value="%4$s" data-default-color="%5$s" />',
+            esc_attr( $size ),
+            esc_attr( $args['section'] ),
+            esc_attr( $args['id'] ),
+            esc_attr( $value ),
+            esc_attr( $default_color )
+        );
+        // if ( isset( $args['desc'] ) && !empty( $args['desc'] ) ) {
+        //     printf( '<span class="description" style="display:block;">%s</span>', esc_html( $args['desc'] ) );
+        // }
     }
+
 
     /**
      * Sanitize callback for Settings API
@@ -525,16 +636,18 @@ class MAGE_Setting_API {
      * Shows all the settings section labels as tab
      */
     function show_navigation() {
-        $html = '<h2 class="nav-tab-wrapper">';
-
-        foreach ( $this->settings_sections as $tab ) {
-            $html .= sprintf( '<a href="#%1$s" class="nav-tab" id="%1$s-tab">%2$s</a>', $tab['id'], $tab['title'] );
-        }
-
-        $html .= '</h2>';
-
-        echo $html;
+  
+    echo '<h2 class="nav-tab-wrapper">';
+    foreach ( $this->settings_sections as $tab ) {
+        printf(
+            '<a href="#%1$s" class="nav-tab" id="%1$s-tab">%2$s</a>',
+            esc_attr( $tab['id'] ),  
+            esc_html( $tab['title'] ) 
+        );
     }
+    echo '</h2>';
+}
+
 
     /**
      * Show the section settings forms
@@ -542,29 +655,30 @@ class MAGE_Setting_API {
      * This function displays every sections in a different form
      */
     function show_forms() {
-        ?>
-        <div class="metabox-holder">
-            <div class="postbox">
-                <?php foreach ( $this->settings_sections as $form ) { ?>
-                    <div id="<?php echo $form['id']; ?>" class="group">
-                        <form method="post" action="options.php">
+    ?>
+    <div class="metabox-holder">
+        <div class="postbox">
+            <?php foreach ( $this->settings_sections as $form ) { ?>
+                <div id="<?php echo esc_attr( $form['id'] ); ?>" class="group">
+                    <form method="post" action="options.php">
 
-                            <?php do_action( 'wsa_form_top_' . $form['id'], $form ); ?>
-                            <?php settings_fields( $form['id'] ); ?>
-                            <?php do_settings_sections( $form['id'] ); ?>
-                            <?php do_action( 'wsa_form_bottom_' . $form['id'], $form ); ?>
+                        <?php do_action( 'wsa_form_top_' . esc_attr( $form['id'] ), $form ); ?>
+                        <?php settings_fields( esc_attr( $form['id'] ) ); ?>
+                        <?php do_settings_sections( esc_attr( $form['id'] ) ); ?>
+                        <?php do_action( 'wsa_form_bottom_' . esc_attr( $form['id'] ), $form ); ?>
 
-                            <div style="padding-left: 10px">
-                                <?php submit_button(); ?>
-                            </div>
-                        </form>
-                    </div>
-                <?php } ?>
-            </div>
+                        <div style="padding-left: 10px">
+                            <?php submit_button(); ?>
+                        </div>
+                    </form>
+                </div>
+            <?php } ?>
         </div>
-        <?php
-        $this->script();
-    }
+    </div>
+    <?php
+    $this->script();
+}
+
 
     /**
      * Tabbable JavaScript codes & Initiate Color Picker

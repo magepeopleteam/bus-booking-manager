@@ -113,13 +113,14 @@ add_action('admin_head','wbbm_ajax_url',5);
 function wbbm_ajax_url() {
     ?>
     <script type="text/javascript">
-        var wbtm_ajaxurl = "<?php echo admin_url('admin-ajax.php'); ?>";
+        var wbtm_ajaxurl = "<?php echo esc_url(admin_url('admin-ajax.php')); ?>";
         var mp_date_format = "";
-        const wbbm_currency_symbol = "<?php echo html_entity_decode(get_woocommerce_currency_symbol()); ?>";
-        const wbbm_currency_position = "<?php echo get_option('woocommerce_currency_pos'); ?>";
-        const wbbm_currency_decimal = "<?php echo wc_get_price_decimal_separator(); ?>";
-        const wbbm_currency_thousands_separator = "<?php echo wc_get_price_thousand_separator(); ?>";
-        const wbbm_num_of_decimal = "<?php echo get_option('woocommerce_price_num_decimals', 2); ?>";
+        const wbbm_currency_symbol = "<?php echo esc_html(html_entity_decode(get_woocommerce_currency_symbol())); ?>";
+const wbbm_currency_position = "<?php echo esc_attr(get_option('woocommerce_currency_pos')); ?>";
+const wbbm_currency_decimal = "<?php echo esc_attr(wc_get_price_decimal_separator()); ?>";
+const wbbm_currency_thousands_separator = "<?php echo esc_attr(wc_get_price_thousand_separator()); ?>";
+const wbbm_num_of_decimal = "<?php echo esc_attr(get_option('woocommerce_price_num_decimals', 2)); ?>";
+
 
         // currency format according to WooCommerce setting
         function wbbm_woo_price_format(price) {
