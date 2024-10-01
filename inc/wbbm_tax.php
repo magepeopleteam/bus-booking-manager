@@ -145,9 +145,9 @@ function add_wbbm_bus_feature(){
 
                 				<div class="mp_input_add_icon">
                     <button type="button" class="mp_input_add_icon_button dButton_xs ">
-                        <input type="hidden" name="wbbm_feature_icon" placeholder="" value="<?php echo $cat_title ?>">
-                        <span class="<?php echo $cat_title ?>" data-empty-text="Add Icon">
-			                    			                </span>
+                    <input type="hidden" name="wbbm_feature_icon" value="<?php echo esc_attr($cat_title); ?>">
+<span class="<?php echo esc_attr($cat_title); ?>" data-empty-text="Add Icon"></span>
+
                         <span class="fas fa-times remove_input_icon active " title="Remove Icon"></span>
                     </button>
                 </div>

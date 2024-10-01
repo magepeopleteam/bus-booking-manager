@@ -1,28 +1,28 @@
 <div class="mp_tab_item" data-tab-item="#wbtm_pickuppoint">
-    <h3 class="wbbm_mp_tab_item_heading"><?php echo  __('Pickup Point Settings', 'bus-booking-manager'); ?></h3>
-    <p><?php echo  __('Here you can set pickup point', 'bus-booking-manager'); ?></p>
+    <h3 class="wbbm_mp_tab_item_heading"><?php echo  esc_html_e('Pickup Point Settings', 'bus-booking-manager'); ?></h3>
+    <p><?php echo  esc_html_e('Here you can set pickup point', 'bus-booking-manager'); ?></p>
 
     <div class="wbbm_pickuppoint_inner_wrapper">
         <section class="bgLight">
             <div>
-                <label for=""><?php _e('Pickup Point Settings', 'bus-booking-manager'); ?></label>
+                <label for=""><?php esc_html_e('Pickup Point Settings', 'bus-booking-manager'); ?></label>
                 <br>
-                <span><?php _e('Here you can configure pickup point here.', 'bus-booking-manager'); ?></span>
+                <span><?php esc_html_e('Here you can configure pickup point here.', 'bus-booking-manager'); ?></span>
             </div>
         </section>
         <section>
             <div>
-                <label for=""><?php _e('On/Off Pickup Point', 'bus-booking-manager'); ?></label>
+                <label for=""><?php esc_html_e('On/Off Pickup Point', 'bus-booking-manager'); ?></label>
                 <br>
-                <span><?php _e('Turn On/Off pickup point. By default on.', 'bus-booking-manager'); ?></span>
+                <span><?php esc_html_e('Turn On/Off pickup point. By default on.', 'bus-booking-manager'); ?></span>
             </div>
             <label class="switch">
-                <input id="pickup-point-control" name="show_pickup_point" <?php echo ($show_pickup_point == "yes" ? " checked" : ""); ?> value="yes" type="checkbox">
+                <input id="pickup-point-control" name="show_pickup_point" <?php echo esc_attr(($show_pickup_point == "yes" ? " checked" : "")); ?> value="yes" type="checkbox">
                 <span class="slider round" data-collapse-target="#ttbm_display_related"></span>
             </label>
         </section>
 
-        <div style="display: <?php echo ($show_pickup_point == "yes" ? "block" : "none"); ?>" id="pickup-point">
+        <div style="display: <?php echo esc_attr(($show_pickup_point == "yes" ? "block" : "none")); ?>" id="pickup-point">
             <section>
                 <div>
                     <label><?php esc_html_e( "Create A New Point", 'bus-booking-manager' ); ?></label>
@@ -77,21 +77,21 @@
                 
                 <section>
                     <div>
-                        <label><?php _e('Pickup Point', 'bus-booking-manager'); ?></label>
+                        <label><?php esc_html_e('Pickup Point', 'bus-booking-manager'); ?></label>
                         <br>
-                        <span><?php _e('Select a location as a pickup point.', 'bus-booking-manager'); ?></span>
+                        <span><?php esc_html_e('Select a location as a pickup point.', 'bus-booking-manager'); ?></span>
                     </div>
-                    <div class="wbbm_field_group <?php echo $boarding_points_class ?>">
+                    <div class="wbbm_field_group <?php echo esc_attr($boarding_points_class) ?>">
                         <?php
                         $selected_city_pickpoints = get_post_meta($post->ID, 'wbbm_pickpoint_selected_city', true);
                         ?>
-                        <input type="hidden" name="select_city_pickpoints" id="select_city_pickpoints" value="<?php echo $selected_city_pickpoints ?>">
+                        <input type="hidden" name="select_city_pickpoints" id="select_city_pickpoints" value="<?php echo esc_attr($selected_city_pickpoints) ?>">
                         
-                        <span class="wbbm_bus_route_icon wbbm_bus_route_icon1"><img src="<?php echo WBTM_PLUGIN_URL .'images/bus_route_map.png';?>"/></span>
+                        <span class="wbbm_bus_route_icon wbbm_bus_route_icon1"><img src="<?php echo esc_url(WBTM_PLUGIN_URL .'images/bus_route_map.png');?>"/></span>
                         <select name="wbbm_pick_boarding" id="wbbm_pick_boarding" class="ra_pick_boarding">
                         </select>
                         <button class="wbbm_add_pickpoint_this_city" id="wbbm_add_pickpoint_this_city">
-                            <i class="fas fa-plus"></i> <?php _e('Set pickup point', 'bus-booking-manager'); ?>
+                            <i class="fas fa-plus"></i> <?php esc_html_e('Set pickup point', 'bus-booking-manager'); ?>
                         </button>
                     </div>
                 </section>
@@ -104,12 +104,10 @@
                                 $get_pickpoints_data = get_post_meta($post->ID, 'wbbm_selected_pickpoint_name_' . strtolower($single), true);
 
                                 ?>
-
-
                                 <div class="wbbm_selected_city_item">
                                     <span class="remove_city_for_pickpoint"><i class="fas fa-trash-alt"></i></span>
-                                    <h4 class="wbbm_pickpoint_title"><?php echo $city_name; ?></h4>
-                                    <input type="hidden" name="wbbm_pickpoint_selected_city[]" value="<?php echo $single; ?>">
+                                    <h4 class="wbbm_pickpoint_title"><?php echo esc_html_e($city_name); ?></h4>
+                                    <input type="hidden" name="wbbm_pickpoint_selected_city[]" value="<?php echo esc_attr($single); ?>">
                                     <div class="pickpoint-adding-wrap-main">
                                         <div class="pickpoint-adding-wrap">
                                             <?php
@@ -122,20 +120,20 @@
 
                                                     <div class="pickpoint-adding">
                                                         <div class="pickpoint-adding-col">
-                                                            <span class="wbbm_bus_route_icon wbbm_bus_route_icon1"><img src="<?php echo WBTM_PLUGIN_URL .'images/bus_route_map.png';?>"/></span>
-                                                            <select class="pickup_add_option" name="wbbm_selected_pickpoint_name_<?php echo $single; ?>[]">
+                                                        <span class="wbbm_bus_route_icon wbbm_bus_route_icon1"> <img src="<?php echo esc_url(WBTM_PLUGIN_URL . 'images/bus_route_map.png'); ?>"/> </span>
+                                                            <select class="pickup_add_option" name="wbbm_selected_pickpoint_name_<?php echo esc_attr($single); ?>[]">
                                                                 <?php
                                                                 if ($bus_pickpoints) {
                                                                     foreach ($bus_pickpoints as $bus_pickpoint) {
-                                                                        echo '<option value="' . $bus_pickpoint->name . '" ' . ($bus_pickpoint->name == $pickpoint['pickpoint'] ? "selected=selected" : '') . '>' . $bus_pickpoint->name . '</option>';
+                                                                        echo '<option value="' . esc_html_e($bus_pickpoint->name) . '" ' . esc_attr(($bus_pickpoint->name == $pickpoint['pickpoint'] ? "selected=selected" : '')) . '>' . esc_attr($bus_pickpoint->name) . '</option>';
                                                                     }
                                                                 }
                                                                 ?>
                                                             </select>
                                                         </div>
                                                         <div class="pickpoint-adding-col">
-                                                            <span class="wbbm_bus_route_icon wbbm_bus_route_icon2"><img src="<?php echo WBTM_PLUGIN_URL .'images/bus_route_clock.png';?>"/></span>
-                                                            <input type="text" data-clocklet name="wbbm_selected_pickpoint_time_<?php echo $single; ?>[]" value="<?php echo $pickpoint['time']; ?>" placeholder="15:00">
+                                                            <span class="wbbm_bus_route_icon wbbm_bus_route_icon2"><img src="<?php echo esc_url(WBTM_PLUGIN_URL .'images/bus_route_clock.png');?>"/></span>
+                                                            <input type="text" data-clocklet name="wbbm_selected_pickpoint_time_<?php echo esc_attr($single); ?>[]" value="<?php echo esc_attr($pickpoint['time']); ?>" placeholder="15:00">
                                                         </div>
                                                         <button class="wbbm_remove_pickpoint"><i class="fas fa-minus-circle"></i> Remove
                                                         </button>
@@ -147,7 +145,7 @@
                                         </div>
 
                                         <button class="wbbm_add_more_pickpoint"><i class="fas fa-plus"></i>
-                                            <?php _e('Add more', 'bus-booking-manager'); ?>
+                                            <?php esc_html_e('Add more', 'bus-booking-manager'); ?>
                                         </button>
                                     </div>
                                 </div>
@@ -155,7 +153,7 @@
                             }
 
                         } else {
-                            echo '<p class="blank-pickpoint" style="color: #FF9800;font-weight: 700;text-align:left">' . __('No pickup point added yet!', 'bus-booking-manager') . '</p>';
+                            echo '<p class="blank-pickpoint" style="color: #FF9800;font-weight: 700;text-align:left">' . esc_html_e('No pickup point added yet!', 'bus-booking-manager') . '</p>';
                         }
                         ?>
                     </div>
@@ -206,18 +204,18 @@
                             '">' +
                             '<div class="pickpoint-adding-wrap-main"><div class="pickpoint-adding-wrap"><div class="pickpoint-adding">' +
                             '<div class="pickpoint-adding-col">' +
-                            '<span class="wbbm_bus_route_icon wbbm_bus_route_icon1"><img src="<?php echo WBTM_PLUGIN_URL .'images/bus_route_map.png';?>"/></span>' +
+                            '<span class="wbbm_bus_route_icon wbbm_bus_route_icon1"><img src="<?php echo esc_url(WBTM_PLUGIN_URL .'images/bus_route_map.png');?>"/></span>' +
                             '<select class="pickup_add_option" name="wbbm_selected_pickpoint_name_' + get_boarding_point + '[]">' + pickuppoints_first +
                             '</select>' +
                             '</div>'+
                             '<div class="pickpoint-adding-col">' +
-                            '<span class="wbbm_bus_route_icon wbbm_bus_route_icon2"><img src="<?php echo WBTM_PLUGIN_URL .'images/bus_route_clock.png';?>"/></span>' +
+                            '<span class="wbbm_bus_route_icon wbbm_bus_route_icon2"><img src="<?php echo esc_url(WBTM_PLUGIN_URL .'images/bus_route_clock.png');?>"/></span>' +
                             '<input type="text" data-clocklet name="wbbm_selected_pickpoint_time_' + get_boarding_point +
                             '[]" placeholder="15:00">' +
                             '</div>'+
                             '<button class="wbbm_remove_pickpoint"><i class="fas fa-minus-circle"></i> Remove</button>' +
                             '</div></div>' +
-                            '<button class="wbbm_add_more_pickpoint"><i class="fas fa-plus"></i> <?php _e("Add more", "bus-booking-manager"); ?></button>' +
+                            '<button class="wbbm_add_more_pickpoint"><i class="fas fa-plus"></i> <?php esc_html_e("Add more", "bus-booking-manager"); ?></button>' +
                             '</div></div>';
 
 
