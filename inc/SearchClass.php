@@ -838,4 +838,3 @@ function wbbm_prevent_form_resubmission_fun() {
 }
 
 	}
-
