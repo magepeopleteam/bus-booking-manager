@@ -80,6 +80,9 @@ function wbbm_add_custom_fields_text_to_order_items($item, $cart_item_key, $valu
         $wbbm_journey_date = isset($values['wbbm_journey_date']) ? sanitize_text_field($values['wbbm_journey_date']) : '';
         $wbbm_journey_time = isset($values['wbbm_journey_time']) ? sanitize_text_field($values['wbbm_journey_time']) : '';
         $wbbm_bus_start_time = isset($values['wbbm_bus_time']) ? sanitize_text_field($values['wbbm_bus_time']) : '';
+        error_log('bus time check 1'.$wbbm_journey_time);
+        error_log('bus time check 2'.$wbbm_bus_start_time);
+        $wbbm_bus_start_time = $wbbm_journey_time;
         $wbbm_bus_id = isset($values['wbbm_bus_id']) ? intval($values['wbbm_bus_id']) : 0; // Sanitize ID
         $total_adult = isset($values['wbbm_total_adult_qt']) ? intval($values['wbbm_total_adult_qt']) : 0;
         $total_adult_fare = isset($values['wbbm_per_adult_price']) ? floatval($values['wbbm_per_adult_price']) : 0;

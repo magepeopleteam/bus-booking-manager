@@ -156,12 +156,12 @@ class MAGE_Setting_API {
      * @param array   $args settings field args
      */
     function callback_text( $args ): void {
-        $value = esc_attr( text: $this->get_option( $args['id'], $args['section'], $args['std'] ) );
-        $custom_class = esc_attr( text: $args['class'] );
-        $size = isset( $args['size'] ) && ! is_null( value: $args['size'] ) ? esc_attr( $args['size'] ) : 'regular';
-        $placeholder = isset( $args['placeholder'] ) && ! is_null( value: $args['placeholder'] ) ? esc_attr( text: $args['placeholder'] ) : '';
+        $value = esc_attr( $this->get_option( $args['id'], $args['section'], $args['std'] ) );
+        $custom_class = esc_attr( $args['class'] );
+        $size = isset( $args['size'] ) && ! is_null( $args['size'] ) ? esc_attr( $args['size'] ) : 'regular';
+        $placeholder = isset( $args['placeholder'] ) && ! is_null( $args['placeholder'] ) ? esc_attr( $args['placeholder'] ) : '';
         ?>
-        <input type="text" class="<?php echo esc_attr( text: $size ); ?>-text <?php echo esc_attr( text: $custom_class ); ?>" id="<?php echo esc_attr( text: $args['section'] . '[' . $args['id'] . ']' ); ?>" name="<?php echo esc_attr( text: $args['section'] . '[' . $args['id'] . ']' ); ?>" value="<?php echo esc_attr( text: $value ); ?>" placeholder="<?php echo esc_attr( text: $placeholder ); ?>" />
+        <input type="text" class="<?php echo esc_attr( $size ); ?>-text <?php echo esc_attr( $custom_class ); ?>" id="<?php echo esc_attr( $args['section'] . '[' . $args['id'] . ']' ); ?>" name="<?php echo esc_attr( $args['section'] . '[' . $args['id'] . ']' ); ?>" value="<?php echo esc_attr( $value ); ?>" placeholder="<?php echo esc_attr( $placeholder ); ?>" />
         <?php
     }
 
