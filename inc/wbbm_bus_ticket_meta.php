@@ -986,7 +986,7 @@ function wbbm_bus_pickpoint_meta_box_cb($post)
 
 
                                         <div class="pickpoint-adding">
-                                            <select name="wbbm_selected_pickpoint_name_<?php esc_attr($single); ?>[]">
+                                            <select name="wbbm_selected_pickpoint_name_<?php echo esc_attr($single); ?>[]">
                                                 <?php
                                                 if ($bus_pickpoints) {
                                                     foreach ($bus_pickpoints as $bus_pickpoint) {
