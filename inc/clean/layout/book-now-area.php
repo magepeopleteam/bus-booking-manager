@@ -1,4 +1,9 @@
-<?php 
+<?php
+
+if (!defined('ABSPATH')) {
+    die;
+}
+
 function mage_book_now_area($available_seat = null){
     $currency_pos = sanitize_text_field(get_option('woocommerce_currency_pos'));
     $is_sell_off = sanitize_text_field(get_post_meta(get_the_ID(), 'wbbm_sell_off', true));

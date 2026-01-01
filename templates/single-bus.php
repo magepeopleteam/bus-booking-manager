@@ -1,4 +1,9 @@
 <?php
+
+if (!defined('ABSPATH')) {
+    die;
+}
+
 get_header();
 the_post();
 $SearchClass = new SearchClass;

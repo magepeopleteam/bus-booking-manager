@@ -6,6 +6,11 @@
  * @version 1.0
  *
  */
+
+if (!defined('ABSPATH')) {
+    die;
+}
+
 if ( !class_exists( 'MAGE_Setting_API' ) ):
 class MAGE_Setting_API {
 

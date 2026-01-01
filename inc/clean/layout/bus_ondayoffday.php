@@ -1,3 +1,9 @@
+<?php
+if (!defined('ABSPATH')) {
+    die;
+}
+?>
+
 <!-- start offday-onday tab content -->
 <div class="mp_tab_item" data-tab-item="#wbtm_bus_off_on_date">
     <h3 class="wbbm_mp_tab_item_heading">

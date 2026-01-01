@@ -1,5 +1,10 @@
 <?php
+
 namespace Appsero;
+
+if (!defined('ABSPATH')) {
+    die;
+}
 
 /**
  * Appsero Insights

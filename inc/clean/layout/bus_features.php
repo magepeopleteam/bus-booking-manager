@@ -1,3 +1,11 @@
+<?php
+
+if (!defined('ABSPATH')) {
+    die;
+}
+
+?>
+
 <div class="mp_tab_item" data-tab-item="#wbmm_bus_features" style="display: none;">
 
 <h3 class="wbbm_mp_tab_item_heading"> 

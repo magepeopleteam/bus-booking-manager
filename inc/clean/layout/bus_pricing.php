@@ -1,3 +1,9 @@
+<?php
+if (!defined('ABSPATH')) {
+    die;
+}
+?>
+
 <div class="mp_tab_item" data-tab-item="#wbtm_seat_price">
     <h3 class="wbbm_mp_tab_item_heading">
         <?php echo esc_html_e($cpt_label).' '. esc_html_e('Seat Price Settings', 'bus-booking-manager'); ?>

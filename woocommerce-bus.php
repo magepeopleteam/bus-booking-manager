@@ -1,11 +1,13 @@
 <?php
 	/**
-	 * Plugin Name: Multipurpose Ticket Booking Manager (Bus/Train/Ferry/Boat/Shuttle)
+	 * Plugin Name: Multipurpose Ticket Booking Manager (Bus/Train/Ferry/Boat/Shuttle) | WpTicketly
 	 * Plugin URI: http://mage-people.com
 	 * Description: A Complete Ticket Booking System for WordPress & WooCommerce
 	 * Version: 4.2.3
 	 * Author: MagePeople Team
 	 * Author URI: http://www.mage-people.com/
+	 * License: GPL v2 or later
+	 * License URI: https://www.gnu.org/licenses/gpl-2.0.html
 	 * Text Domain: bus-booking-manager
 	 * Domain Path: /languages/
 	 */
@@ -16,7 +18,7 @@
 		if (!class_exists('Appsero\Client')) {
 			require_once __DIR__ . '/lib/appsero/src/Client.php';
 		}
-		$client = new Appsero\Client('60610129-a874-4728-9b5c-feb8e44cc280', 'Multipurpose Ticket Booking Manager (Bus/Train/Ferry/Boat/Shuttle)', __FILE__);
+		$client = new Appsero\Client('60610129-a874-4728-9b5c-feb8e44cc280', 'Multipurpose Ticket Booking Manager (Bus/Train/Ferry/Boat/Shuttle) | WpTicketly', __FILE__);
 		// Active insights
 		$client->insights()->init();
 	}

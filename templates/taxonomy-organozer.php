@@ -1,4 +1,9 @@
-<?php 
+<?php
+
+if (!defined('ABSPATH')) {
+    die;
+}
+
 get_header();
 the_post();
 $term_id = get_queried_object()->term_id;
