@@ -1,4 +1,9 @@
 <?php
+
+if (!defined('ABSPATH')) {
+    die;
+}
+
 add_action('admin_init', 'wbbm_create_old_bus_product', 10);
 
 function wbbm_create_old_bus_product()

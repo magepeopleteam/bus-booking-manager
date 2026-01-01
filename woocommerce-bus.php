@@ -6,21 +6,23 @@
 	 * Version: 4.2.3
 	 * Author: MagePeople Team
 	 * Author URI: http://www.mage-people.com/
+	 * License: GPL v2 or later
+	 * License URI: https://www.gnu.org/licenses/gpl-2.0.html
 	 * Text Domain: bus-booking-manager
 	 * Domain Path: /languages/
 	 */
 	if (!defined('ABSPATH')) {
 		die;
 	} // Cannot access pages directly.
-	function appsero_init_tracker_bus_booking_manager() {
-		if (!class_exists('Appsero\Client')) {
-			require_once __DIR__ . '/lib/appsero/src/Client.php';
-		}
-		$client = new Appsero\Client('60610129-a874-4728-9b5c-feb8e44cc280', 'Multipurpose Ticket Booking Manager (Bus/Train/Ferry/Boat/Shuttle)', __FILE__);
-		// Active insights
-		$client->insights()->init();
-	}
-	appsero_init_tracker_bus_booking_manager();
+	// function appsero_init_tracker_bus_booking_manager() {
+	// 	if (!class_exists('Appsero\Client')) {
+	// 		require_once __DIR__ . '/lib/appsero/src/Client.php';
+	// 	}
+	// 	$client = new Appsero\Client('60610129-a874-4728-9b5c-feb8e44cc280', 'Multipurpose Ticket Booking Manager (Bus/Train/Ferry/Boat/Shuttle)', __FILE__);
+	// 	// Active insights
+	// 	$client->insights()->init();
+	// }
+	// appsero_init_tracker_bus_booking_manager();
 // function to create passenger list table
 	function wbbm_booking_list_table_create() {
 		global $wpdb;

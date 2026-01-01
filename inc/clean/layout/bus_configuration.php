@@ -1,3 +1,9 @@
+<?php
+if (!defined('ABSPATH')) {
+    die;
+}
+?>
+
 <div class="mp_tab_item" data-tab-item="#wbtm_ticket_panel" style="display:block;">
     <h3 class="wbbm_mp_tab_item_heading">
     <?php echo esc_html( $cpt_label ) . ' ' . esc_html__( 'Configuration', 'bus-booking-manager' ); ?>

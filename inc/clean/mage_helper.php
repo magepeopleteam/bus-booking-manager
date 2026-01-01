@@ -1,4 +1,9 @@
 <?php
+
+if (!defined('ABSPATH')) {
+    die;
+}
+
 function mage_get_isset($parameter) {
     return isset($_GET[$parameter]) ? sanitize_text_field(wp_unslash($_GET[$parameter])) : '';
 }

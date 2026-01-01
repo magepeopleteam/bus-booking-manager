@@ -1,3 +1,9 @@
+<?php
+if (!defined('ABSPATH')) {
+    die;
+}
+?>
+
 <div class="mp_tab_item" data-tab-item="#wbtm_pickuppoint">
     <h3 class="wbbm_mp_tab_item_heading"><?php echo  esc_html_e('Pickup Point Settings', 'bus-booking-manager'); ?></h3>
     <p><?php echo  esc_html_e('Here you can set pickup point', 'bus-booking-manager'); ?></p>

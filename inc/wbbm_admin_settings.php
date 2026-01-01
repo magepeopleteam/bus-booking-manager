@@ -1,4 +1,9 @@
 <?php
+
+if (!defined('ABSPATH')) {
+    die;
+}
+
 if ( !class_exists('MAGE_WBBM_Setting_Controls' ) ):
 class MAGE_WBBM_Setting_Controls {
 
