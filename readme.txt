@@ -1,4 +1,4 @@
-=== Multipurpose Ticket Booking Manager (Bus/Train/Ferry/Boat/Shuttle) | WpTicketly ===
+=== Multipurpose Ticket Booking Manager (Bus/Train/Ferry/Boat/Shuttle) ===
 Contributors: magepeopleteam, aamahin
 Tags: Bus Booking Manager, bus ticket booking for wordpress
 Requires at least: 4.5

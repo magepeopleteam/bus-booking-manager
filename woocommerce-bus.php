@@ -1,6 +1,6 @@
 <?php
 	/**
-	 * Plugin Name: Multipurpose Ticket Booking Manager (Bus/Train/Ferry/Boat/Shuttle) | WpTicketly
+	 * Plugin Name: Multipurpose Ticket Booking Manager (Bus/Train/Ferry/Boat/Shuttle)
 	 * Plugin URI: http://mage-people.com
 	 * Description: A Complete Ticket Booking System for WordPress & WooCommerce
 	 * Version: 4.2.3
@@ -14,15 +14,15 @@
 	if (!defined('ABSPATH')) {
 		die;
 	} // Cannot access pages directly.
-	function appsero_init_tracker_bus_booking_manager() {
-		if (!class_exists('Appsero\Client')) {
-			require_once __DIR__ . '/lib/appsero/src/Client.php';
-		}
-		$client = new Appsero\Client('60610129-a874-4728-9b5c-feb8e44cc280', 'Multipurpose Ticket Booking Manager (Bus/Train/Ferry/Boat/Shuttle) | WpTicketly', __FILE__);
-		// Active insights
-		$client->insights()->init();
-	}
-	appsero_init_tracker_bus_booking_manager();
+	// function appsero_init_tracker_bus_booking_manager() {
+	// 	if (!class_exists('Appsero\Client')) {
+	// 		require_once __DIR__ . '/lib/appsero/src/Client.php';
+	// 	}
+	// 	$client = new Appsero\Client('60610129-a874-4728-9b5c-feb8e44cc280', 'Multipurpose Ticket Booking Manager (Bus/Train/Ferry/Boat/Shuttle)', __FILE__);
+	// 	// Active insights
+	// 	$client->insights()->init();
+	// }
+	// appsero_init_tracker_bus_booking_manager();
 // function to create passenger list table
 	function wbbm_booking_list_table_create() {
 		global $wpdb;
