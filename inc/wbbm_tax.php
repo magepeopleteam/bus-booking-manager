@@ -6,9 +6,9 @@ function wbbm_bus_cpt_tax(){
 $cpt_label = wbbm_get_option( 'wbbm_cpt_label', 'wbbm_general_setting_sec', 'Bus');
 $cpt_slug = wbbm_get_option( 'wbbm_cpt_slug', 'wbbm_general_setting_sec', 'bus');
 	$labels = array(
-		'name'                       => _x( $cpt_label.' Types','bus-booking-manager' ),
-		'singular_name'              => _x( $cpt_label.' Types','bus-booking-manager' ),
-		'menu_name'                  => _x( $cpt_label.' Types','bus-booking-manager' ),
+		'name'                       => sprintf(_x( '%s Types','bus-booking-manager' ), esc_html($cpt_label)),
+		'singular_name'              => sprintf(_x( '%s Types','bus-booking-manager' ), esc_html($cpt_label)),
+		'menu_name'                  => sprintf(_x( '%s Types','bus-booking-manager' ), esc_html($cpt_label)),
 	);
 
 	$args = array(
@@ -27,8 +27,8 @@ register_taxonomy('wbbm_bus_cat', 'wbbm_bus', $args);
 
 
 	$bus_stops_labels = array(
-		'singular_name'              => _x( $cpt_label.' Stops','bus-booking-manager' ),
-		'name'                       => _x( $cpt_label.' Stops','bus-booking-manager' ),
+		'singular_name'              => sprintf(_x( '%s Stops','bus-booking-manager' ), esc_html($cpt_label)),
+		'name'                       => sprintf(_x( '%s Stops','bus-booking-manager' ), esc_html($cpt_label)),
 	);
 
 	$bus_stops_args = array(
@@ -46,8 +46,8 @@ register_taxonomy('wbbm_bus_stops', 'wbbm_bus', $bus_stops_args);
 
 // Register Pickup Point Taxonomy
 $bus_pickup_point_label = array(
-	'singular_name'              => _x( $cpt_label.' Pickup Points','bus-booking-manager' ),
-	'name'                       => _x( $cpt_label.' Pickup Points','bus-booking-manager' ),
+	'singular_name'              => sprintf(_x( '%s Pickup Points','bus-booking-manager' ), esc_html($cpt_label)),
+	'name'                       => sprintf(_x( '%s Pickup Points','bus-booking-manager' ), esc_html($cpt_label)),
 );
 
 $bus_pickpoint_args = array(
@@ -67,8 +67,8 @@ register_taxonomy( 'wbbm_bus_pickpoint', 'wbbm_bus', $bus_pickpoint_args );
 
     // Register Pickup Point Taxonomy
     $bus_feature_label = array(
-        'singular_name'              => _x( $cpt_label.' Feature','bus-booking-manager' ),
-        'name'                       => _x( $cpt_label.' Feature','bus-booking-manager' ),
+        'singular_name'              => sprintf(_x( '%s Feature','bus-booking-manager' ), esc_html($cpt_label)),
+        'name'                       => sprintf(_x( '%s Feature','bus-booking-manager' ), esc_html($cpt_label)),
     );
 
     $bus_feature_args = array(

@@ -217,11 +217,11 @@
     public static function check_licensee_date($date) {
         if ($date) {
             if ($date == 'lifetime') {
-                return esc_html__('Lifetime', 'bus-ticket-booking-with-seat-reservation');
+                return esc_html__('Lifetime', 'bus-booking-manager');
             } elseif (strtotime(current_time('Y-m-d H:i')) < strtotime(date('Y-m-d H:i', strtotime($date)))) {
                 return MP_Global_Function::date_format($date, 'full');
             } else {
-                return esc_html__('Expired', 'bus-ticket-booking-with-seat-reservation');
+                return esc_html__('Expired', 'bus-booking-manager');
             }
         }
         return $date;
@@ -430,13 +430,13 @@
 
     public static function week_day(): array {
         return [
-            'monday'    => esc_html__('Monday', 'bus-ticket-booking-with-seat-reservation'),
-            'tuesday'   => esc_html__('Tuesday', 'bus-ticket-booking-with-seat-reservation'),
-            'wednesday' => esc_html__('Wednesday', 'bus-ticket-booking-with-seat-reservation'),
-            'thursday'  => esc_html__('Thursday', 'bus-ticket-booking-with-seat-reservation'),
-            'friday'    => esc_html__('Friday', 'bus-ticket-booking-with-seat-reservation'),
-            'saturday'  => esc_html__('Saturday', 'bus-ticket-booking-with-seat-reservation'),
-            'sunday'    => esc_html__('Sunday', 'bus-ticket-booking-with-seat-reservation'),
+            'monday'    => esc_html__('Monday', 'bus-booking-manager'),
+            'tuesday'   => esc_html__('Tuesday', 'bus-booking-manager'),
+            'wednesday' => esc_html__('Wednesday', 'bus-booking-manager'),
+            'thursday'  => esc_html__('Thursday', 'bus-booking-manager'),
+            'friday'    => esc_html__('Friday', 'bus-booking-manager'),
+            'saturday'  => esc_html__('Saturday', 'bus-booking-manager'),
+            'sunday'    => esc_html__('Sunday', 'bus-booking-manager'),
         ];
     }
 
@@ -504,39 +504,48 @@
 
     public static function license_error_text($response, $license_data, $plugin_name) {
         if (is_wp_error($response) || 200 !== wp_remote_retrieve_response_code($response)) {
-            $message = (is_wp_error($response) && !empty($response->get_error_message())) ? $response->get_error_message() : esc_html__('An error occurred, please try again.', 'bus-ticket-booking-with-seat-reservation');
+            $message = (is_wp_error($response) && !empty($response->get_error_message())) ? $response->get_error_message() : esc_html__('An error occurred, please try again.', 'bus-booking-manager');
         } else {
             if (false === $license_data->success) {
                 switch ($license_data->error) {
                     case 'expired':
-                        $message = esc_html__('Your license key expired on ') . ' ' . date_i18n(get_option('date_format'), strtotime($license_data->expires, current_time('timestamp')));
+                        $message = sprintf(
+                            esc_html__( 'Your license key expired on %s', 'bus-booking-manager' ),
+                            esc_html(
+                                date_i18n(
+                                    get_option( 'date_format' ),
+                                    strtotime( $license_data->expires )
+                                )
+                            )
+                        );
+
                         break;
                     case 'revoked':
-                        $message = esc_html__('Your license key has been disabled.', 'bus-ticket-booking-with-seat-reservation');
+                        $message = esc_html__('Your license key has been disabled.', 'bus-booking-manager');
                         break;
                     case 'missing':
-                        $message = esc_html__('Missing license.', 'bus-ticket-booking-with-seat-reservation');
+                        $message = esc_html__('Missing license.', 'bus-booking-manager');
                         break;
                     case 'invalid':
-                        $message = esc_html__('Invalid license.', 'bus-ticket-booking-with-seat-reservation');
+                        $message = esc_html__('Invalid license.', 'bus-booking-manager');
                         break;
                     case 'site_inactive':
-                        $message = esc_html__('Your license is not active for this URL.', 'bus-ticket-booking-with-seat-reservation');
+                        $message = esc_html__('Your license is not active for this URL.', 'bus-booking-manager');
                         break;
                     case 'item_name_mismatch':
-                        $message = esc_html__('This appears to be an invalid license key for.', 'bus-ticket-booking-with-seat-reservation') . ' ' . esc_html($plugin_name);
+                        $message = esc_html__('This appears to be an invalid license key for.', 'bus-booking-manager') . ' ' . esc_html($plugin_name);
                         break;
                     case 'no_activations_left':
-                        $message = esc_html__('Your license key has reached its activation limit.', 'bus-ticket-booking-with-seat-reservation');
+                        $message = esc_html__('Your license key has reached its activation limit.', 'bus-booking-manager');
                         break;
                     default:
-                        $message = esc_html__('An error occurred, please try again.', 'bus-ticket-booking-with-seat-reservation');
+                        $message = esc_html__('An error occurred, please try again.', 'bus-booking-manager');
                         break;
                 }
             } else {
                 $payment_id = sanitize_text_field($license_data->payment_id); // Sanitize payment ID
                 $expire     = sanitize_text_field($license_data->expires); // Sanitize expiration date
-                $message    = esc_html__('Success, License Key is valid for the plugin', 'bus-ticket-booking-with-seat-reservation') . ' ' . esc_html($plugin_name) . ' ' . esc_html__('Your Order id is', 'bus-ticket-booking-with-seat-reservation') . ' ' . esc_html($payment_id) . ' ' . esc_html($plugin_name) . ' ' . esc_html__('Validity of this license is', 'bus-ticket-booking-with-seat-reservation') . ' ' . MP_Global_Function::check_licensee_date($expire);
+                $message    = esc_html__('Success, License Key is valid for the plugin', 'bus-booking-manager') . ' ' . esc_html($plugin_name) . ' ' . esc_html__('Your Order id is', 'bus-booking-manager') . ' ' . esc_html($payment_id) . ' ' . esc_html($plugin_name) . ' ' . esc_html__('Validity of this license is', 'bus-booking-manager') . ' ' . MP_Global_Function::check_licensee_date($expire);
             }
         }
         return $message;

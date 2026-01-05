@@ -9,7 +9,7 @@ if (!defined('ABSPATH')) {
     <h3 class="wbbm_mp_tab_item_heading">
         <?php echo esc_html($cpt_label) . ' ' . esc_html__('On & Off Day Settings', 'bus-booking-manager'); ?>
     </h3>
-    <p><?php esc_html_e('Here you can configure ' . esc_html($cpt_label) . ' On & Off Day.', 'bus-booking-manager'); ?></p>
+    <p><?php printf(esc_html__('Here you can configure %s On & Off Day.', 'bus-booking-manager'), esc_html($cpt_label)); ?></p>
 
     <div class="wbtm_bus_off_on_date_inner_wrapper">
         <section class="bgLight">
@@ -23,7 +23,7 @@ if (!defined('ABSPATH')) {
             <div>
                 <label><?php esc_html_e('Enable Operation days', 'bus-booking-manager'); ?></label>
                 <br>
-                <span><?php esc_html_e('If you want to operate ' . esc_html($cpt_label) . ' on a certain date, please enable it and configure operational day.', 'bus-booking-manager'); ?></span>
+                <span><?php printf(esc_html__('If you want to operate %s on a certain date, please enable it and configure operational day.', 'bus-booking-manager'), esc_html($cpt_label)); ?></span>
             </div>
             <label class="switch">
                 <input id="operational-on-day-control" name="show_operational_on_day" <?php checked($show_operational_on_day, "yes"); ?> value="yes" type="checkbox">
@@ -98,7 +98,7 @@ if (!defined('ABSPATH')) {
             <div>
                 <label><?php esc_html_e('Off Day Settings', 'bus-booking-manager'); ?></label>
                 <br>
-                <span><?php esc_html_e('If you need to keep ' . esc_html($cpt_label) . ' off for a certain date please enable it and configure off day.', 'bus-booking-manager'); ?></span>
+                <span><?php printf(esc_html__('If you need to keep %s off for a certain date please enable it and configure off day.', 'bus-booking-manager'), esc_html($cpt_label)); ?></span>
             </div>
         </section>
         <section>
@@ -251,7 +251,7 @@ if (!defined('ABSPATH')) {
                 <div>
                     <label><?php echo esc_html($cpt_label) . ' ' . esc_html__('Off days', 'bus-booking-manager'); ?></label>
                     <br>
-                    <span><?php esc_html_e('Check ' . esc_html($cpt_label) . ' off days.', 'bus-booking-manager'); ?></span>
+                    <span><?php printf(esc_html__('Check %s off days.', 'bus-booking-manager'), esc_html($cpt_label)); ?></span>
                 </div>
                 <div class='offday-sec'>
                     <?php

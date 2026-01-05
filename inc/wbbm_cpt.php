@@ -16,8 +16,8 @@ function wbbm_bus_cpt() {
 
     // Labels for the custom post type
     $labels = array(
-        'name'                  => _x($cpt_label, 'post type general name', 'bus-booking-manager'),
-        'singular_name'         => _x($cpt_label, 'post type singular name', 'bus-booking-manager'),
+        'name'                  => sprintf(_x('%s post type general name', 'bus-booking-manager'), esc_html($cpt_label)),
+        'singular_name'         => sprintf(_x('%s post type singular name', 'bus-booking-manager'), esc_html($cpt_label)),
         'menu_name'             => esc_html($cpt_label),
         'name_admin_bar'        => esc_html($cpt_label),
     );

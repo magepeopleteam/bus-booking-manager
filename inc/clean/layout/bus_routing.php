@@ -9,21 +9,21 @@ if (!defined('ABSPATH')) {
 <div class="mp_tab_item" data-tab-item="#wbtm_routing">
 
     <h3 class="wbbm_mp_tab_item_heading">
-    <?php echo esc_html_e($cpt_label).' '. esc_html_e('Routing Configuration', 'bus-booking-manager'); ?>
+    <?php echo esc_html($cpt_label).' '. esc_html_e('Routing Configuration', 'bus-booking-manager'); ?>
     </h3>
-    <p><?php esc_html_e('Here you can configure '.$cpt_label.' Routing. Specially Boarding and Dropping Stops.', 'bus-booking-manager'); ?></p>
+    <p><?php printf(esc_html__('Here you can configure %s Routing. Specially Boarding and Dropping Stops.', 'bus-booking-manager'), esc_html($cpt_label)); ?></p>
     <section class="bgLight">
         <div>
             <label for="">
             <?php esc_html_e('New Stops settings', 'bus-booking-manager'); ?>
         </label><br>
-        <span><?php esc_html_e('Here you can create new stops for '.$cpt_label, 'bus-booking-manager'); ?></span>
+        <span><?php printf(esc_html__('Here you can create new stops for %s', 'bus-booking-manager'), esc_html($cpt_label)); ?></span>
         </div>
     </section>
     <section>
         <div>
             <label for="">
-                <?php esc_html_e('Crete new '.$cpt_label.' Stops', 'bus-booking-manager'); ?>
+                <?php printf(esc_html__('Crete new %s Stops', 'bus-booking-manager'), esc_html($cpt_label)); ?>
             </label>
             <br>
             <span class="ra-stopage-desc">
@@ -34,7 +34,7 @@ if (!defined('ABSPATH')) {
             <div class="mpStyle">
                 <button type="button" class="_dButton_xs_bgBlue wbtm_route_add_new_bus_btn" data-target-popup="#wbtm_route_popup">
                     <i class="fas fa-plus"></i>
-                    <?php esc_html_e( 'Add New '.$cpt_label.' Stops', 'bus-booking-manager' ); ?>
+                    <?php printf(esc_html__( 'Add New %s Stops', 'bus-booking-manager' ), esc_html($cpt_label)); ?>
             </button>
             </div>
         </div>
@@ -47,7 +47,7 @@ if (!defined('ABSPATH')) {
                     <div class="popupMainArea">
                         <div class="popupHeader">
                             <h4>
-                                <?php esc_html_e( 'Add New '.$cpt_label.' Stops', 'bus-booking-manager' ); ?>
+                                <?php printf(esc_html__( 'Add New %s Stops', 'bus-booking-manager' ), esc_html($cpt_label)); ?>
                             </h4>
                             <span class="fas fa-times popupClose"></span>
                         </div>
@@ -86,7 +86,7 @@ if (!defined('ABSPATH')) {
                     <div>
                         <label><?php esc_html_e('Boarding Point Settings', 'bus-booking-manager'); ?></label>
                         <br>
-                        <span><?php esc_html_e('Configure '.$cpt_label.' Boarding Point', 'bus-booking-manager'); ?></span>
+                        <span><?php printf(esc_html__('Configure %s Boarding Point', 'bus-booking-manager'), esc_html($cpt_label)); ?></span>
                     </div>
                 </section>
                 <section>
@@ -165,7 +165,7 @@ if (!defined('ABSPATH')) {
                     <div>
                         <label><?php esc_html_e('Dropping Point Settings', 'bus-booking-manager'); ?></label>
                         <br>
-                        <span><?php esc_html_e( 'Configure '.$cpt_label.' dropping point.', 'bus-booking-manager' ); ?></span>
+                        <span><?php printf(esc_html__( 'Configure %s dropping point.', 'bus-booking-manager' ), esc_html($cpt_label)); ?></span>
                     </div>
                 </section>
                 <section>

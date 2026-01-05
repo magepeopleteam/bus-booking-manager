@@ -25,7 +25,10 @@ function mage_book_now_area($available_seat = null){
     <div class="mage_flex mage_book_now_area">
         <div class="mage_thumb mage-notification-area">
             <p class="mage-notification mage-seat-available"> 
-                <?php printf( esc_html__( 'Only %s Seat Available', 'bus-booking-manager' ), esc_html( intval($available_seat) ) ); ?> 
+                <?php 
+                    /* translators: show available seats number */
+                    printf( esc_html__( 'Only %s Seat Available', 'bus-booking-manager' ), esc_html( intval($available_seat) ) ); 
+                ?> 
             </p>
         </div>
         <div class="mage_flex_equal">

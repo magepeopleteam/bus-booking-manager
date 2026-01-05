@@ -199,67 +199,67 @@
 
                             if($wbbm_user_name) {
                                 if ($wbbm_user_name[$iu] != '') :
-                                    $user[$iu]['wbbm_user_name'] = stripslashes(strip_tags($wbbm_user_name[$iu]));
+                                    $user[$iu]['wbbm_user_name'] = stripslashes(wp_strip_all_tags($wbbm_user_name[$iu]));
                                 endif;
                             }
 
                             if($wbbm_user_email) {
                                 if ($wbbm_user_email[$iu] != '') :
-                                    $user[$iu]['wbbm_user_email'] = stripslashes(strip_tags($wbbm_user_email[$iu]));
+                                    $user[$iu]['wbbm_user_email'] = stripslashes(wp_strip_all_tags($wbbm_user_email[$iu]));
                                 endif;
                             }
 
                             if($wbbm_user_phone) {
                                 if ($wbbm_user_phone[$iu] != '') :
-                                    $user[$iu]['wbbm_user_phone'] = stripslashes(strip_tags($wbbm_user_phone[$iu]));
+                                    $user[$iu]['wbbm_user_phone'] = stripslashes(wp_strip_all_tags($wbbm_user_phone[$iu]));
                                 endif;
                             }
 
                             if($wbbm_user_address) {
                                 if ($wbbm_user_address[$iu] != '') :
-                                    $user[$iu]['wbbm_user_address'] = stripslashes(strip_tags($wbbm_user_address[$iu]));
+                                    $user[$iu]['wbbm_user_address'] = stripslashes(wp_strip_all_tags($wbbm_user_address[$iu]));
                                 endif;
                             }
 
                             if($wbbm_user_gender) {
                                 if ($wbbm_user_gender[$iu] != '') :
-                                    $user[$iu]['wbbm_user_gender'] = stripslashes(strip_tags($wbbm_user_gender[$iu]));
+                                    $user[$iu]['wbbm_user_gender'] = stripslashes(wp_strip_all_tags($wbbm_user_gender[$iu]));
                                 endif;
                             }
 
                             if($wbbm_user_type) {
                                 if ($wbbm_user_type[$iu] != '') :
-                                    $user[$iu]['wbbm_user_type'] = stripslashes(strip_tags($wbbm_user_type[$iu]));
+                                    $user[$iu]['wbbm_user_type'] = stripslashes(wp_strip_all_tags($wbbm_user_type[$iu]));
                                 endif;
                             }
 
                             if($wbbm_user_dob) {
                                 if ($wbbm_user_dob[$iu] != '') :
-                                    $user[$iu]['wbbm_user_dob'] = stripslashes(strip_tags($wbbm_user_dob[$iu]));
+                                    $user[$iu]['wbbm_user_dob'] = stripslashes(wp_strip_all_tags($wbbm_user_dob[$iu]));
                                 endif;
                             }
 
                             if($wbbm_user_nationality) {
                                 if ($wbbm_user_nationality[$iu] != '') :
-                                    $user[$iu]['wbbm_user_nationality'] = stripslashes(strip_tags($wbbm_user_nationality[$iu]));
+                                    $user[$iu]['wbbm_user_nationality'] = stripslashes(wp_strip_all_tags($wbbm_user_nationality[$iu]));
                                 endif;
                             }
 
                             if($wbbm_user_flight_arrival_no) {
                                 if ($wbbm_user_flight_arrival_no[$iu] != '') :
-                                    $user[$iu]['wbbm_user_flight_arrival_no'] = stripslashes(strip_tags($wbbm_user_flight_arrival_no[$iu]));
+                                    $user[$iu]['wbbm_user_flight_arrival_no'] = stripslashes(wp_strip_all_tags($wbbm_user_flight_arrival_no[$iu]));
                                 endif;
                             }
 
                             if($wbbm_user_flight_departure_no) {
                                 if ($wbbm_user_flight_departure_no[$iu] != '') :
-                                    $user[$iu]['wbbm_user_flight_departure_no'] = stripslashes(strip_tags($wbbm_user_flight_departure_no[$iu]));
+                                    $user[$iu]['wbbm_user_flight_departure_no'] = stripslashes(wp_strip_all_tags($wbbm_user_flight_departure_no[$iu]));
                                 endif;
                             }
 
                             if ($bag_qty) {
                                 if ($bag_qty[$iu] != '') :
-                                    $user[$iu]['extra_bag_quantity'] = stripslashes(strip_tags($bag_qty[$iu]));
+                                    $user[$iu]['extra_bag_quantity'] = stripslashes(wp_strip_all_tags($bag_qty[$iu]));
                                     $user[$iu]['wbtm_extra_bag_price'] = (float)$extra_per_bag_price;
 
                                     $extra_bag_price += (int) $bag_qty[$iu] * (float)$extra_per_bag_price;
@@ -435,27 +435,60 @@
 
                                         <li>
                                             <strong>
-                                                <?php echo wbbm_get_option('wbbm_select_journey_date_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_select_journey_date_text', 'wbbm_label_setting_sec') . ': ' : esc_html_e('Journey Date', 'bus-booking-manager') . ': '; ?>
+                                                <?php
+                                                    $journey_date_label = wbbm_get_option(
+                                                        'wbbm_select_journey_date_text',
+                                                        'wbbm_label_setting_sec'
+                                                    );
+
+                                                    echo esc_html(
+                                                        $journey_date_label
+                                                            ? $journey_date_label
+                                                            : __('Journey Date', 'bus-booking-manager')
+                                                    ) . ': '; 
+                                                ?>
                                             </strong>
-                                            <?php echo ' ' . get_wbbm_datetime($cart_item['wbbm_journey_date'], 'date'); ?>
+                                            <?php echo ' ' . esc_html(get_wbbm_datetime($cart_item['wbbm_journey_date'], 'date')); ?>
                                         </li>
                                         <li>
                                             <strong>
                                                 <?php echo wbbm_get_option('wbbm_starting_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_starting_text', 'wbbm_label_setting_sec') . ': ' : esc_html_e('Journey Time', 'bus-booking-manager') . ': '; ?>
                                             </strong>
-                                            <?php echo get_wbbm_datetime($cart_item['wbbm_journey_time'], 'time'); ?>
+                                            <?php echo esc_html(get_wbbm_datetime($cart_item['wbbm_journey_time'], 'time')); ?>
                                         </li>
                                         <li>
                                             <strong>
-                                                <?php echo wbbm_get_option('wbbm_boarding_points_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_boarding_points_text', 'wbbm_label_setting_sec') . ': ' : esc_html_e('Boarding Point', 'bus-booking-manager') . ': '; ?>
+                                                <?php
+                                                    $boarding_point_label = wbbm_get_option(
+                                                        'wbbm_boarding_points_text',
+                                                        'wbbm_label_setting_sec'
+                                                    );
+
+                                                    echo esc_html(
+                                                        $boarding_point_label
+                                                            ? $boarding_point_label
+                                                            : __('Boarding Point', 'bus-booking-manager')
+                                                    ) . ': '; 
+                                                ?>
                                             </strong>
-                                            <?php echo  esc_html_e($cart_item['wbbm_start_stops']); ?>
+                                            <?php echo esc_html($cart_item['wbbm_start_stops']); ?>
                                         </li>
                                         <li>
                                             <strong>
-                                                <?php echo wbbm_get_option('wbbm_dropping_points_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_dropping_points_text', 'wbbm_label_setting_sec') . ': ' : esc_html_e('Dropping Point', 'bus-booking-manager') . ': '; ?>
+                                                <?php
+                                                    $dropping_point_label = wbbm_get_option(
+                                                        'wbbm_dropping_points_text',
+                                                        'wbbm_label_setting_sec'
+                                                    );
+
+                                                    echo esc_html(
+                                                        $dropping_point_label
+                                                            ? $dropping_point_label
+                                                            : __( 'Dropping Point', 'bus-booking-manager' )
+                                                    ) . ': '; 
+                                                ?>
                                             </strong>
-                                            <?php echo  esc_html_e($cart_item['wbbm_end_stops']); ?>
+                                            <?php echo esc_html($cart_item['wbbm_end_stops']); ?>
                                         </li>
 
                                         <?php if ($pickpoint && $pickpoint != 'n_a'): ?>
@@ -463,7 +496,7 @@
                                                 <strong>
                                                     <?php echo __('Pickup Area', 'bus-booking-manager') . ': '; ?>
                                                 </strong>
-                                                <?php echo esc_html_e(ucfirst($pickpoint)); ?> </li>
+                                                <?php echo esc_html(ucfirst($pickpoint)); ?> </li>
                                         <?php endif; ?>
 
                                     </ul>                                    
@@ -479,27 +512,68 @@
                                 <?php if ($total_adult){ ?>
                                     <li>
                                         <strong>
-                                            <?php echo wbbm_get_option('wbbm_adult_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_adult_text', 'wbbm_label_setting_sec') : esc_html_e('Adult', 'bus-booking-manager'); echo ' ('.wc_price($total_adult_fare).'*'.$total_adult.')'.' = '; ?>
+                                            <?php
+                                                $adult_label = wbbm_get_option(
+                                                    'wbbm_adult_text',
+                                                    'wbbm_label_setting_sec'
+                                                );
+
+                                                echo esc_html(
+                                                    $adult_label
+                                                        ? $adult_label
+                                                        : __( 'Adult', 'bus-booking-manager' )
+                                                );
+
+                                                echo ' (' . wp_kses_post( wc_price( $total_adult_fare ) ) . ' × ' . esc_html( $total_adult ) . ') = ';
+                                            ?>
                                         </strong>
-                                        <?php echo  wc_price($total_adult*$total_adult_fare); ?>
+                                        <?php echo wp_kses_post(
+                                            wc_price( $total_adult * $total_adult_fare )
+                                        ); ?>
                                     </li>
                                 <?php } ?>
 
                                 <?php if ($total_child){ ?>
                                     <li>
                                         <strong>
-                                            <?php echo wbbm_get_option('wbbm_child_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_child_text', 'wbbm_label_setting_sec') : esc_html_e('Child', 'bus-booking-manager'); echo ' ('.wc_price($total_child_fare).'*'.$total_child.')'.' = ';  ?>
+                                            <?php
+                                                $child_label = wbbm_get_option(
+                                                    'wbbm_child_text',
+                                                    'wbbm_label_setting_sec'
+                                                );
+
+                                                echo esc_html(
+                                                    $child_label
+                                                        ? $child_label
+                                                        : __( 'Child', 'bus-booking-manager' )
+                                                );
+
+                                                echo ' (' . wp_kses_post( wc_price( $total_child_fare ) ) . ' × ' . esc_html( $total_child ) . ') = ';
+                                            ?>
                                         </strong>
-                                        <?php echo  wc_price($total_child*$total_child_fare); ?>
+                                        <?php echo wp_kses_post(wc_price($total_child*$total_child_fare)); ?>
                                     </li>
                                 <?php } ?>
 
                                 <?php if ($total_infant){ ?>
                                     <li>
                                         <strong>
-                                            <?php echo wbbm_get_option('wbbm_infant_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_infant_text', 'wbbm_label_setting_sec') : esc_html_e('Infant', 'bus-booking-manager');  echo ' ('.wc_price($total_infant_fare).'*'.$total_infant.')'.' = '; ?>
+                                            <?php
+                                                $infant_label = wbbm_get_option(
+                                                    'wbbm_infant_text',
+                                                    'wbbm_label_setting_sec'
+                                                );
+
+                                                echo esc_html(
+                                                    $infant_label
+                                                        ? $infant_label
+                                                        : __( 'Infant', 'bus-booking-manager' )
+                                                );
+
+                                                echo ' (' . wp_kses_post( wc_price( $total_infant_fare ) ) . ' × ' . esc_html( $total_infant ) . ') = ';
+                                            ?>
                                         </strong>
-                                        <?php echo  wc_price($total_infant*$total_infant_fare); ?>
+                                        <?php echo wp_kses_post(wc_price($total_infant*$total_infant_fare)); ?>
                                     </li>
                                 <?php } ?>
 
@@ -508,7 +582,18 @@
                             <?php if($total_extra_service_qty): ?>
                                 <li>
                                     <strong>
-                                        <?php echo wbbm_get_option('wbbm_extra_services_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_extra_services_text', 'wbbm_label_setting_sec') . ': ' : esc_html_e('Extra Services', 'bus-booking-manager') . ': '; ?>
+                                        <?php
+                                            $extra_services_label = wbbm_get_option(
+                                                'wbbm_extra_services_text',
+                                                'wbbm_label_setting_sec'
+                                            );
+
+                                            echo esc_html(
+                                                $extra_services_label
+                                                    ? $extra_services_label
+                                                    : __( 'Extra Services', 'bus-booking-manager' )
+                                            ) . ': ';
+                                        ?>
                                     </strong>
                                     <ol>
                                         <?php
@@ -520,7 +605,20 @@
                                             else:
                                                 if($value['wbbm_es_input_qty'] > 0):
                                                     ?>
-                                                    <li><strong><?php echo esc_html_e($value['wbbm_es_name']); ?>: </strong>(<?php echo wc_price($value['wbbm_es_price']); ?> x <?php echo $value['wbbm_es_input_qty']; ?>) = <?php echo wc_price((int)$value['wbbm_es_price'] * (int)$value['wbbm_es_input_qty']); ?></li>
+                                                    <li>
+                                                        <strong><?php echo esc_html( $value['wbbm_es_name'] ); ?>:</strong>
+                                                        (<?php echo wp_kses_post( wc_price( $value['wbbm_es_price'] ) ); ?> ×
+                                                        <?php echo esc_html( (int) $value['wbbm_es_input_qty'] ); ?>)
+                                                        =
+                                                        <?php
+                                                        echo wp_kses_post(
+                                                            wc_price(
+                                                                (float) $value['wbbm_es_price'] * (int) $value['wbbm_es_input_qty']
+                                                            )
+                                                        );
+                                                        ?>
+                                                    </li>
+
                                                 <?php
                                                 endif;
                                             endif;
@@ -543,27 +641,60 @@
                                         <?php if ($total_adult > 0 && ($_passenger['wbbm_user_type'] == 'adult')): ?>
                                             <li>
                                                 <strong>
-                                                    <?php echo wbbm_get_option('wbbm_adult_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_adult_text', 'wbbm_label_setting_sec') : esc_html_e('Adult', 'bus-booking-manager'); ?>
+                                                    <?php
+                                                        $adult_label = wbbm_get_option(
+                                                            'wbbm_adult_text',
+                                                            'wbbm_label_setting_sec'
+                                                        );
+
+                                                        echo esc_html(
+                                                            $adult_label
+                                                                ? $adult_label
+                                                                : __( 'Adult', 'bus-booking-manager' )
+                                                        );
+                                                    ?>
                                                 </strong>
-                                                <?php echo  wc_price($total_adult_fare); ?>
+                                                <?php echo wp_kses_post(wc_price($total_adult_fare)); ?>
                                             </li>
                                         <?php endif; ?>
 
                                         <?php if ($total_child > 0 && ($_passenger['wbbm_user_type'] == 'child')): ?>
                                             <li>
                                                 <strong>
-                                                    <?php echo wbbm_get_option('wbbm_child_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_child_text', 'wbbm_label_setting_sec') : esc_html_e('Child', 'bus-booking-manager'); ?>
+                                                    <?php
+                                                        $child_label = wbbm_get_option(
+                                                            'wbbm_child_text',
+                                                            'wbbm_label_setting_sec'
+                                                        );
+
+                                                        echo esc_html(
+                                                            $child_label
+                                                                ? $child_label
+                                                                : __( 'Child', 'bus-booking-manager' )
+                                                        );
+                                                    ?>
                                                 </strong>
-                                                <?php echo wc_price($total_child_fare); ?>
+                                                <?php echo wp_kses_post(wc_price($total_child_fare)); ?>
                                             </li>
                                         <?php endif; ?>
 
                                         <?php if ($total_infant > 0 && ($_passenger['wbbm_user_type'] == 'infant')): ?>
                                             <li>
                                                 <strong>
-                                                    <?php echo wbbm_get_option('wbbm_infant_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_infant_text', 'wbbm_label_setting_sec') : esc_html_e('Infant', 'bus-booking-manager'); ?>
+                                                    <?php
+                                                        $infant_label = wbbm_get_option(
+                                                            'wbbm_infant_text',
+                                                            'wbbm_label_setting_sec'
+                                                        );
+
+                                                        echo esc_html(
+                                                            $infant_label
+                                                                ? $infant_label
+                                                                : __( 'Infant', 'bus-booking-manager' )
+                                                        );
+                                                    ?>
                                                 </strong>
-                                                <?php echo wc_price($total_infant_fare); ?>
+                                                <?php echo wp_kses_post(wc_price($total_infant_fare)); ?>
                                             </li>
                                         <?php endif; ?>
 
@@ -571,8 +702,26 @@
                                             <li>
                                                 <strong>
                                                     <?php
-                                                    echo wbbm_get_option('wbbm_entire_bus_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_entire_bus_text', 'wbbm_label_setting_sec') : esc_html_e('Entire Bus', 'bus-booking-manager');
-                                                    echo " (" . wc_price($total_entire_fare) . " x ".$total_entire.") = " . wc_price($total_entire_fare * $total_entire); ?>
+                                                        $entire_bus_label = wbbm_get_option(
+                                                            'wbbm_entire_bus_text',
+                                                            'wbbm_label_setting_sec'
+                                                        );
+
+                                                        // Label output
+                                                        echo esc_html(
+                                                            $entire_bus_label
+                                                                ? $entire_bus_label
+                                                                : __( 'Entire Bus', 'bus-booking-manager' )
+                                                        );
+
+                                                        // Fare calculation output
+                                                        echo ' (' 
+                                                            . wp_kses_post( wc_price( $total_entire_fare ) ) 
+                                                            . ' × ' 
+                                                            . esc_html( $total_entire ) 
+                                                            . ') = ' 
+                                                            . wp_kses_post( wc_price( $total_entire_fare * $total_entire ) );
+                                                    ?>
                                                 </strong>
                                             </li>
                                         <?php endif; ?>
@@ -581,41 +730,91 @@
                                         <?php if(!empty($_passenger['extra_bag_quantity']) && $_passenger['extra_bag_quantity'] > 0): ?>
                                             <li>
                                                 <strong>
-                                                    <?php echo wbbm_get_option('wbbm_extra_bag_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_extra_bag_text', 'wbbm_label_setting_sec') . ': ' : esc_html_e('Extra Bag Qty', 'bus-booking-manager') . ': '; ?>
+                                                    <?php
+                                                        $extra_bag_label = wbbm_get_option(
+                                                            'wbbm_extra_bag_text',
+                                                            'wbbm_label_setting_sec'
+                                                        );
+
+                                                        echo esc_html(
+                                                            $extra_bag_label
+                                                                ? $extra_bag_label
+                                                                : __( 'Extra Bag Qty', 'bus-booking-manager' )
+                                                        ) . ': ';
+                                                    ?>
                                                 </strong>
-                                                <?php echo $_passenger['extra_bag_quantity']; ?>
+                                                <?php echo esc_html($_passenger['extra_bag_quantity']); ?>
                                             </li>
                                         <?php endif; ?>
 
                                         <?php if(!empty($_passenger['wbtm_extra_bag_price']) && $_passenger['extra_bag_quantity'] > 0): ?>
                                             <li>
                                                 <strong>
-                                                    <?php echo wbbm_get_option('wbbm_extra_bag_price_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_extra_bag_price_text', 'wbbm_label_setting_sec') . ': ' : esc_html_e('Extra Bag Price', 'bus-booking-manager') . ': '; ?>
+                                                    <?php
+                                                        $extra_bag_price_label = wbbm_get_option(
+                                                            'wbbm_extra_bag_price_text',
+                                                            'wbbm_label_setting_sec'
+                                                        );
+
+                                                        echo esc_html(
+                                                            $extra_bag_price_label
+                                                                ? $extra_bag_price_label
+                                                                : __( 'Extra Bag Price', 'bus-booking-manager' )
+                                                        ) . ': ';
+                                                    ?>
                                                 </strong>
-                                                <?php echo " (" . wc_price($extra_per_bag_price) . " x ".$_passenger['extra_bag_quantity'].") = " . wc_price((int)$_passenger['wbtm_extra_bag_price'] * (int)$_passenger['extra_bag_quantity']); ?>
+                                                <?php
+                                                    echo ' (' 
+                                                        . wp_kses_post( wc_price( $extra_per_bag_price ) ) 
+                                                        . ' × ' 
+                                                        . esc_html( (int) $_passenger['extra_bag_quantity'] ) 
+                                                        . ') = ' 
+                                                        . wp_kses_post( wc_price( (int) $_passenger['wbtm_extra_bag_price'] * (int) $_passenger['extra_bag_quantity'] ) );
+                                                ?>
                                             </li>
                                         <?php endif; ?>
 
                                         <?php if(!empty($_passenger['wbbm_user_name'])): ?>
                                             <li>
                                                 <strong>
-                                                    <?php echo wbbm_get_option('wbbm_name_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_name_text', 'wbbm_label_setting_sec') . ': ' : esc_html_e('Name', 'bus-booking-manager') . ': '; ?>
+                                                    <?php
+                                                        $name_label = wbbm_get_option( 'wbbm_name_text', 'wbbm_label_setting_sec' );
+
+                                                        echo $name_label 
+                                                            ? esc_html( $name_label ) . ': ' 
+                                                            : esc_html__( 'Name', 'bus-booking-manager' ) . ': ';
+                                                        ?>
+                                                    ?>
                                                 </strong>
-                                                <?php echo esc_html_e($_passenger['wbbm_user_name']); ?></li>
+                                                <?php echo esc_html($_passenger['wbbm_user_name']); ?></li>
                                         <?php endif; ?>
 
                                         <?php if(!empty($_passenger['wbbm_user_email'])): ?>
                                             <li>
                                                 <strong>
-                                                    <?php echo wbbm_get_option('wbbm_email_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_email_text', 'wbbm_label_setting_sec') . ': ' : esc_html_e('Email', 'bus-booking-manager') . ': '; ?>
+                                                    <?php
+                                                        $email_label = wbbm_get_option( 'wbbm_email_text', 'wbbm_label_setting_sec' );
+
+                                                        echo $email_label 
+                                                            ? esc_html( $email_label ) . ': ' 
+                                                            : esc_html__( 'Email', 'bus-booking-manager' ) . ': ';
+                                                        ?>
+                                                    ?>
                                                 </strong>
-                                                <?php echo esc_html_e($_passenger['wbbm_user_email']); ?></li>
+                                                <?php echo esc_html($_passenger['wbbm_user_email']); ?></li>
                                         <?php endif; ?>
 
                                         <?php if(!empty($_passenger['wbbm_user_phone'])): ?>
                                             <li>
                                                 <strong>
-                                                    <?php echo wbbm_get_option('wbbm_phone_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_phone_text', 'wbbm_label_setting_sec') . ': ' : esc_html_e('Phone', 'bus-booking-manager') . ': '; ?>
+                                                    <?php
+
+                                                        $phone_text = wbbm_get_option('wbbm_phone_text', 'wbbm_label_setting_sec');
+
+                                                        echo $phone_text
+                                                            ? esc_html($phone_text) . ': '
+                                                            : esc_html__('Phone', 'bus-booking-manager') . ': ';
+                                                         ?>
                                                 </strong>
                                                 <?php echo esc_attr($_passenger['wbbm_user_phone']); ?>
                                             </li>
@@ -624,54 +823,94 @@
                                         <?php if(!empty($_passenger['wbbm_user_address'])): ?>
                                             <li>
                                                 <strong>
-                                                    <?php echo wbbm_get_option('wbbm_address_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_address_text', 'wbbm_label_setting_sec') . ': ' : esc_html_e('Address', 'bus-booking-manager') . ': '; ?>
+                                                    <?php
+                                                        $address_text = wbbm_get_option('wbbm_address_text', 'wbbm_label_setting_sec');
+
+                                                        echo $address_text
+                                                            ? esc_html($address_text) . ': '
+                                                            : esc_html__('Address', 'bus-booking-manager') . ': ';
+                                                         ?>
                                                 </strong>
-                                                <?php echo esc_html_e($_passenger['wbbm_user_address']); ?>
+                                                <?php echo esc_html($_passenger['wbbm_user_address']); ?>
                                             </li>
                                         <?php endif; ?>
 
                                         <?php if(!empty($_passenger['wbbm_user_gender'])): ?>
                                             <li>
                                                 <strong>
-                                                    <?php echo wbbm_get_option('wbbm_gender_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_gender_text', 'wbbm_label_setting_sec') . ': ' : esc_html_e('Gender', 'bus-booking-manager') . ': '; ?>
+                                                    <?php
+                                                        $gender_label = wbbm_get_option( 'wbbm_gender_text', 'wbbm_label_setting_sec' );
+
+                                                        echo $gender_label
+                                                            ? esc_html( $gender_label ) . ': '
+                                                            : esc_html__( 'Gender', 'bus-booking-manager' ) . ': ';
+                                                    ?>
                                                 </strong>
-                                                <?php echo esc_html_e($_passenger['wbbm_user_gender']); ?>
+                                                <?php echo esc_html($_passenger['wbbm_user_gender']); ?>
                                             </li>
                                         <?php endif; ?>
 
                                         <?php if(!empty($_passenger['wbbm_user_dob'])): ?>
                                             <li>
                                                 <strong>
-                                                    <?php echo wbbm_get_option('wbbm_dofbirth_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_dofbirth_text', 'wbbm_label_setting_sec') . ': ' : esc_html_e('Date of Birth', 'bus-booking-manager') . ': '; ?>
+                                                    <?php
+                                                        $dob_label = wbbm_get_option( 'wbbm_dofbirth_text', 'wbbm_label_setting_sec' );
+
+                                                        echo $dob_label
+                                                            ? esc_html( $dob_label ) . ': '
+                                                            : esc_html__( 'Date of Birth', 'bus-booking-manager' ) . ': ';
+                                                    ?>
+
                                                 </strong>
-                                                <?php echo esc_html_e($_passenger['wbbm_user_dob']); ?>
+                                                <?php echo esc_html($_passenger['wbbm_user_dob']); ?>
                                             </li>
                                         <?php endif; ?>
 
                                         <?php if(!empty($_passenger['wbbm_user_nationality'])): ?>
                                             <li>
                                                 <strong>
-                                                    <?php echo wbbm_get_option('wbbm_nationality_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_nationality_text', 'wbbm_label_setting_sec') . ': ' : esc_html_e('Nationality', 'bus-booking-manager') . ': '; ?>
+                                                    <?php
+                                                        $nationality_label = wbbm_get_option( 'wbbm_nationality_text', 'wbbm_label_setting_sec' );
+
+                                                        echo $nationality_label
+                                                            ? esc_html( $nationality_label ) . ': '
+                                                            : esc_html__( 'Nationality', 'bus-booking-manager' ) . ': ';
+                                                    ?>
+
                                                 </strong>
-                                                <?php echo esc_html_e($_passenger['wbbm_user_nationality']); ?>
+                                                <?php echo esc_html($_passenger['wbbm_user_nationality']); ?>
                                             </li>
                                         <?php endif; ?>
 
                                         <?php if(!empty($_passenger['wbbm_user_flight_arrival_no'])): ?>
                                             <li>
                                                 <strong>
-                                                    <?php echo wbbm_get_option('wbbm_fa_no_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_fa_no_text', 'wbbm_label_setting_sec') . ': ' : esc_html_e('Flight Arrival No', 'bus-booking-manager') . ': '; ?>
+                                                    <?php
+                                                        $fa_no_label = wbbm_get_option( 'wbbm_fa_no_text', 'wbbm_label_setting_sec' );
+
+                                                        echo $fa_no_label
+                                                            ? esc_html( $fa_no_label ) . ': '
+                                                            : esc_html__( 'Flight Arrival No', 'bus-booking-manager' ) . ': ';
+                                                    ?>
+
                                                 </strong>
-                                                <?php echo esc_html_e($_passenger['wbbm_user_flight_arrival_no']); ?>
+                                                <?php echo $_passenger['wbbm_user_flight_arrival_no']; ?>
                                             </li>
                                         <?php endif; ?>
 
                                         <?php if(!empty($_passenger['wbbm_user_flight_departure_no'])): ?>
                                             <li>
                                                 <strong>
-                                                    <?php echo wbbm_get_option('wbbm_fd_no_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_fd_no_text', 'wbbm_label_setting_sec') . ': ' : esc_html_e('Flight Departure No', 'bus-booking-manager') . ': '; ?>
+                                                    <?php
+                                                        $fd_no_label = wbbm_get_option( 'wbbm_fd_no_text', 'wbbm_label_setting_sec' );
+
+                                                        echo $fd_no_label
+                                                            ? esc_html( $fd_no_label ) . ': '
+                                                            : esc_html__( 'Flight Departure No', 'bus-booking-manager' ) . ': ';
+                                                    ?>
+
                                                 </strong>
-                                                <?php echo esc_html_e($_passenger['wbbm_user_flight_departure_no']); ?>
+                                                <?php echo esc_html($_passenger['wbbm_user_flight_departure_no']); ?>
 
                                             </li>
                                         <?php endif; ?>
@@ -681,9 +920,9 @@
                                             foreach ($passenger_info_additional[$i] as $builder):
                                                 ?>
                                                <li>
-    <strong><?php echo esc_html_e($builder['name']) . ': '; ?></strong>
-    <?php echo esc_html_e($builder['value']); ?>
-</li>
+                                                    <strong><?php echo esc_html($builder['name']) . ': '; ?></strong>
+                                                    <?php echo esc_html($builder['value']); ?>
+                                                </li>
 
                                             <?php
                                             endforeach;
@@ -707,19 +946,37 @@
                                 <?php if($total_extra_service_qty): ?>
                                     <li>
                                         <strong>
-                                            <?php echo wbbm_get_option('wbbm_extra_services_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_extra_services_text', 'wbbm_label_setting_sec') . ': ' : esc_html_e('Extra Services', 'bus-booking-manager') . ': '; ?>
+                                            <?php
+                                                $extra_services_label = wbbm_get_option( 'wbbm_extra_services_text', 'wbbm_label_setting_sec' );
+
+                                                echo $extra_services_label
+                                                    ? esc_html( $extra_services_label ) . ': '
+                                                    : esc_html__( 'Extra Services', 'bus-booking-manager' ) . ': ';
+                                            ?>
+
                                         </strong>
                                         <ol>
                                             <?php
                                             foreach ($wbbm_extra_services as $value) {
                                                 if($value['wbbm_es_input_qty'] > $value['wbbm_es_available_qty']):
                                                     ?>
-                                                    <li><strong><?php echo esc_html_e($value['wbbm_es_name']); ?>: </strong><?php esc_html_e('Input service quantity has exceeded the limit!','bus-booking-manager'); ?></li>
+                                                    <li>
+                                                        <strong><?php echo esc_html( $value['wbbm_es_name'] ); ?>: </strong>
+                                                        <?php echo esc_html__( 'Input service quantity has exceeded the limit!', 'bus-booking-manager' ); ?>
+                                                    </li>
                                                 <?php
                                                 else:
                                                     if($value['wbbm_es_input_qty'] > 0):
                                                         ?>
-                                                        <li><strong><?php echo esc_html_e($value['wbbm_es_name']); ?>: </strong>(<?php echo wc_price($value['wbbm_es_price']); ?> x <?php echo esc_html_e($value['wbbm_es_input_qty']); ?>                                                        ) = <?php echo wc_price((int)$value['wbbm_es_price'] * (int)$value['wbbm_es_input_qty']); ?></li>
+                                                        <li>
+                                                            <strong><?php echo esc_html( $value['wbbm_es_name'] ); ?>: </strong>
+                                                            (
+                                                                <?php echo wc_price( (float) $value['wbbm_es_price'] ); ?> 
+                                                                x 
+                                                                <?php echo esc_html( (int) $value['wbbm_es_input_qty'] ); ?>
+                                                            ) = 
+                                                            <?php echo wc_price( (float) $value['wbbm_es_price'] * (int) $value['wbbm_es_input_qty'] ); ?>
+                                                        </li>
                                                     <?php
                                                     endif;
                                                 endif;

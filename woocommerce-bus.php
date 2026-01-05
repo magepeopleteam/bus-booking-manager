@@ -453,7 +453,7 @@
 					public function read(&$product) {
 						$product->set_defaults();
 						if (!$product->get_id() || !($post_object = get_post($product->get_id())) || !in_array($post_object->post_type, array('wbbm_bus', 'product'))) { // change birds with your post type
-							throw new Exception(esc_html(__('Invalid product.', 'woocommerce')));
+							throw new Exception(esc_html(__('Invalid product.', 'bus-booking-manager')));
 						}
 						$id = $product->get_id();
 						$product->set_props(array(
@@ -518,7 +518,7 @@
 				$selected = isset($_GET[$taxonomy]) ? $_GET[$taxonomy] : '';
 				$info_taxonomy = get_taxonomy($taxonomy);
 				wp_dropdown_categories(array(
-					'show_option_all' => esc_html(__("Show All {$info_taxonomy->label}")),
+					'show_option_all' => esc_html(sprintf(__("Show All %s", 'bus-booking-manager'), $info_taxonomy->label)),
 					'taxonomy' => $taxonomy,
 					'name' => $taxonomy,
 					'orderby' => 'name',

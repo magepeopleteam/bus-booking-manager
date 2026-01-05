@@ -112,7 +112,7 @@ if (!defined('ABSPATH')) {
                                 ?>
                                 <div class="wbbm_selected_city_item">
                                     <span class="remove_city_for_pickpoint"><i class="fas fa-trash-alt"></i></span>
-                                    <h4 class="wbbm_pickpoint_title"><?php echo esc_html_e($city_name); ?></h4>
+                                    <h4 class="wbbm_pickpoint_title"><?php echo esc_html($city_name); ?></h4>
                                     <input type="hidden" name="wbbm_pickpoint_selected_city[]" value="<?php echo esc_attr($single); ?>">
                                     <div class="pickpoint-adding-wrap-main">
                                         <div class="pickpoint-adding-wrap">
@@ -131,7 +131,7 @@ if (!defined('ABSPATH')) {
                                                                 <?php
                                                                 if ($bus_pickpoints) {
                                                                     foreach ($bus_pickpoints as $bus_pickpoint) {
-                                                                        echo '<option value="' . esc_html_e($bus_pickpoint->name) . '" ' . esc_attr(($bus_pickpoint->name == $pickpoint['pickpoint'] ? "selected=selected" : '')) . '>' . esc_attr($bus_pickpoint->name) . '</option>';
+                                                                        echo '<option value="' . esc_html($bus_pickpoint->name) . '" ' . esc_attr(($bus_pickpoint->name == $pickpoint['pickpoint'] ? "selected=selected" : '')) . '>' . esc_attr($bus_pickpoint->name) . '</option>';
                                                                     }
                                                                 }
                                                                 ?>
