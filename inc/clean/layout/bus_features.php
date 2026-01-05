@@ -11,7 +11,9 @@ if (!defined('ABSPATH')) {
 <h3 class="wbbm_mp_tab_item_heading"> 
     <?php echo esc_html($cpt_label) . ' ' . esc_html__('Features Settings', 'bus-booking-manager'); ?> 
 </h3>
-<p><?php esc_html_e('Here you can add features for ' . esc_html($cpt_label), 'bus-booking-manager'); ?></p>
+<p><?php
+/* translators: %s post type general name */
+printf(esc_html__('Here you can add features for %s', 'bus-booking-manager'), esc_html($cpt_label)); ?></p>
 
 <div class="mp_tab_item_inner_wrapper">
     <div class="col-md-6">

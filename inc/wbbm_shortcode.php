@@ -74,7 +74,7 @@ function wbbm_bus_list($atts, $content=null) {
                 <li><strong>
                 <?php echo esc_html(wbbm_get_option('wbbmesc_html_end_to_text', 'wbbm_label_setting_sec', __('End at','bus-booking-manager'))); ?>:</strong> <?php echo esc_html($end); ?></li>
                 <li><strong>
-                <?php echo esc_html(wbbm_get_option('wbbm_fare_text', 'wbbm_label_setting_sec', __('Fare','bus-booking-manager'))); ?>:</strong> <?php echo wc_price(mage_seat_price(get_the_id(), $start, $end, 'adult')); ?></li>
+                <?php echo esc_html(wbbm_get_option('wbbm_fare_text', 'wbbm_label_setting_sec', __('Fare','bus-booking-manager'))); ?>:</strong> <?php echo wp_kses_post(wc_price(mage_seat_price(get_the_id(), $start, $end, 'adult'))); ?></li>
             </ul>
             <a href="<?php echo esc_url(get_permalink()); ?>" class="btn wbbm-btn">
                 <?php echo esc_html(wbbm_get_option('wbbm_book_now_text', 'wbbm_label_setting_sec', __('Book Now','bus-booking-manager'))); ?>

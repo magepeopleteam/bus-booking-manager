@@ -50,7 +50,18 @@ function mage_search_list() {
     ?>
     <div class="mage_route_title" style="background-color: <?php echo esc_attr($route_title_bg_color); ?>; color: <?php echo esc_attr($route_title_color); ?>">
         <div>
-            <strong><?php esc_html_e(wbbm_get_option('wbbm_route_text', 'wbbm_label_setting_sec', __('Route', 'bus-booking-manager')), 'bus-booking-manager'); echo ':'; ?></strong>
+            <strong>
+                <?php
+                    $route_label = wbbm_get_option(
+                        'wbbm_route_text',
+                        'wbbm_label_setting_sec',
+                        __( 'Route', 'bus-booking-manager' )
+                    );
+
+                    echo esc_html( $route_label ) . ':';
+                ?>
+
+            </strong>
             <?php echo esc_html(mage_get_isset('bus_start_route')); ?>
             <span class="fa fa-long-arrow-right"></span>
             <?php echo esc_html(mage_get_isset('bus_end_route')); ?>
@@ -120,7 +131,7 @@ function mage_search_list() {
         </div>
         <div class="mage_mini_cart mage_hidden">
             <p><?php echo esc_html(wbbm_get_option('wbbm_total_text', 'wbbm_label_setting_sec', __('Total', 'bus-booking-manager'))); ?></p>
-            <p class="mage_total"><strong><span><?php echo wc_price(0); ?></span></strong></p>
+            <p class="mage_total"><strong><span><?php echo wp_kses_post(wc_price(0)); ?></span></strong></p>
         </div>
     <?php }
     do_action('wbbm_prevent_form_resubmission');
@@ -332,7 +343,7 @@ function mage_search_item($return) {
                         <?php } ?>
                         <div>
                             <strong class="mage-sm-show"><?php echo esc_html(wbbm_get_option('wbbm_fare_text', 'wbbm_label_setting_sec', __('Fare', 'bus-booking-manager'))); ?></strong>
-                            <?php echo wc_price($seat_price_adult); ?> / <?php echo esc_html(wbbm_get_option('wbbm_seat_text', 'wbbm_label_setting_sec', __('Seat', 'bus-booking-manager'))); ?>
+                            <?php echo wp_kses_post(wc_price($seat_price_adult)); ?> / <?php echo esc_html(wbbm_get_option('wbbm_seat_text', 'wbbm_label_setting_sec', __('Seat', 'bus-booking-manager'))); ?>
                         </div>
                         <?php if (isset($general_setting['wbbm_seat_column_switch']) && $general_setting['wbbm_seat_column_switch'] == 'on') { ?>
                             <?php if ($seat_available && $seat_available == 'on') : ?>
@@ -399,7 +410,7 @@ function mage_search_item($return) {
                                     </p>
                                     <p>
                                         <strong><?php echo esc_html(wbbm_get_option('wbbm_fare_text', 'wbbm_label_setting_sec', __('Fare', 'bus-booking-manager'))); ?></strong>:
-                                        <?php echo wc_price($seat_price_adult) . ' / ' . esc_html(wbbm_get_option('wbbm_seat_text', 'wbbm_label_setting_sec', __('Seat', 'bus-booking-manager'))); ?>
+                                        <?php echo wp_kses_post(wc_price($seat_price_adult)) . ' / ' . esc_html(wbbm_get_option('wbbm_seat_text', 'wbbm_label_setting_sec', __('Seat', 'bus-booking-manager'))); ?>
                                     </p>
                                     <?php if ($in_cart) { ?>
                                         <p class="already_cart"><?php echo esc_html(wbbm_get_option('wbbm_item_in_cart_text', 'wbbm_label_setting_sec', __('Item has been added to cart', 'bus-booking-manager'))); ?></p>
@@ -413,7 +424,7 @@ function mage_search_item($return) {
                                         <div>
                                             <p>
                                                 <strong><?php echo esc_html(wbbm_get_option('wbbm_adult_text', 'wbbm_label_setting_sec', __('Adult :', 'bus-booking-manager'))); ?></strong>
-                                                <?php echo wc_price($seat_price_adult); ?>/
+                                                <?php echo wp_kses_post(wc_price($seat_price_adult)); ?>/
                                                 <small><?php echo esc_html(wbbm_get_option('wbbm_ticket_text', 'wbbm_label_setting_sec', __('Ticket', 'bus-booking-manager'))); ?></small>
                                             </p>
                                         </div>
@@ -426,7 +437,7 @@ function mage_search_item($return) {
                                         <div class="mage_center_space">
                                             <p>
                                                 <strong><?php echo esc_html(wbbm_get_option('wbbm_child_text', 'wbbm_label_setting_sec', __('Child :', 'bus-booking-manager'))); ?></strong>
-                                                <?php echo wc_price($seat_price_child); ?>/
+                                                <?php echo wp_kses_post(wc_price($seat_price_child)); ?>/
                                                 <small><?php echo esc_html(wbbm_get_option('wbbm_ticket_text', 'wbbm_label_setting_sec', __('Ticket', 'bus-booking-manager'))); ?></small>
                                             </p>
                                             <?php mage_qty_box($seat_price_child, 'child_quantity', false); ?>
@@ -437,7 +448,7 @@ function mage_search_item($return) {
                                         <div class="mage_center_space">
                                             <p>
                                                 <strong><?php echo esc_html(wbbm_get_option('wbbm_infant_text', 'wbbm_label_setting_sec', __('Infant :', 'bus-booking-manager'))); ?></strong>
-                                                <?php echo wc_price($seat_price_infant); ?>/
+                                                <?php echo wp_kses_post(wc_price($seat_price_infant)); ?>/
                                                 <small><?php echo esc_html(wbbm_get_option('wbbm_ticket_text', 'wbbm_label_setting_sec', __('Ticket', 'bus-booking-manager'))); ?></small>
                                             </p>
                                             <?php mage_qty_box($seat_price_infant, 'infant_quantity', false); ?>
@@ -448,9 +459,9 @@ function mage_search_item($return) {
                                         <div class="mage_center_space">
                                             <p>
                                                 <strong><?php echo esc_html(wbbm_get_option('wbbm_entire_bus_text', 'wbbm_label_setting_sec')) ? esc_html(wbbm_get_option('wbbm_entire_bus_text', 'wbbm_label_setting_sec')) : esc_html__('Entire Bus', 'bus-booking-manager') . ':'; ?></strong>
-                                                <?php echo wc_price($seat_price_entire); ?>
+                                                <?php echo wp_kses_post(wc_price($seat_price_entire)); ?>
                                             </p>
-                                            <?php echo wbbm_entire_switch($seat_price_entire, 'entire_quantity', false); ?>
+                                            <?php echo wp_kses_post(wbbm_entire_switch($seat_price_entire, 'entire_quantity', false)); ?>
                                         </div>
                                     <?php endif; ?>
 
@@ -550,7 +561,7 @@ function mage_search_item($return) {
                                     <div>
                                         <p>
                                             <strong><?php echo esc_html(wbbm_get_option('wbbm_adult_text', 'wbbm_label_setting_sec', __('Adult', 'bus-booking-manager'))); echo ':'; ?></strong>
-                                            <?php echo wc_price($seat_price_adult); ?>/
+                                            <?php echo wp_kses_post(wc_price($seat_price_adult)); ?>/
                                             <small><?php echo esc_html(wbbm_get_option('wbbm_ticket_text', 'wbbm_label_setting_sec', __('Ticket', 'bus-booking-manager'))); ?></small>
                                         </p>
                                     </div>
@@ -562,7 +573,7 @@ function mage_search_item($return) {
                                     <div class="mage_center_space">
                                         <p>
                                             <strong><?php echo esc_html(wbbm_get_option('wbbm_child_text', 'wbbm_label_setting_sec', __('Child', 'bus-booking-manager'))); echo ':'; ?></strong>
-                                            <?php echo wc_price($seat_price_child); ?>/
+                                            <?php echo wp_kses_post(wc_price($seat_price_child)); ?>/
                                             <small><?php echo esc_html(wbbm_get_option('wbbm_ticket_text', 'wbbm_label_setting_sec', __('Ticket', 'bus-booking-manager'))); ?></small>
                                         </p>
                                         <?php mage_qty_box($seat_price_child, 'child_quantity', false); ?>
@@ -573,7 +584,7 @@ function mage_search_item($return) {
                                     <div class="mage_center_space">
                                         <p>
                                             <strong><?php echo esc_html(wbbm_get_option('wbbm_infant_text', 'wbbm_label_setting_sec', __('Infant', 'bus-booking-manager'))); echo ':'; ?></strong>
-                                            <?php echo wc_price($seat_price_infant); ?>/
+                                            <?php echo wp_kses_post(wc_price($seat_price_infant)); ?>/
                                             <small><?php echo esc_html(wbbm_get_option('wbbm_ticket_text', 'wbbm_label_setting_sec', __('Ticket', 'bus-booking-manager'))); ?></small>
                                         </p>
                                         <?php mage_qty_box($seat_price_infant, 'infant_quantity', false); ?>
@@ -584,9 +595,9 @@ function mage_search_item($return) {
                                     <div class="mage_center_space">
                                         <p>
                                             <strong><?php echo esc_html(wbbm_get_option('wbbm_entire_bus_text', 'wbbm_label_setting_sec')) ? esc_html(wbbm_get_option('wbbm_entire_bus_text', 'wbbm_label_setting_sec')) : esc_html__('Entire Bus', 'bus-booking-manager') . ':'; ?></strong>
-                                            <?php echo wc_price($seat_price_entire); ?>
+                                            <?php echo wp_kses_post(wc_price($seat_price_entire)); ?>
                                         </p>
-                                        <?php echo wbbm_entire_switch($seat_price_entire, 'entire_quantity', false); ?>
+                                        <?php echo wp_kses_post(wbbm_entire_switch($seat_price_entire, 'entire_quantity', false)); ?>
                                     </div>
                                 <?php endif; ?>
 

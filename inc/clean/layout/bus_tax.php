@@ -57,10 +57,16 @@
                 <div class="wbbm_alert_info">
                     <?php 
                         printf(
-                            esc_html__('To enable automated tax calculation, first ensure that "enable taxes and tax calculations" is checked on WooCommerce > Settings > General. %1$sView Documentation%2$s', 'bus-booking-manager'),
-                            '<a href="' . esc_url('https://woocommerce.com/document/woocommerce-shipping-and-tax/woocommerce-tax/') . '">',
+                            wp_kses_post(
+                                /* translators: %1$s: opening link tag, %2$s: closing link tag */
+                                __( 
+                                    'To enable automated tax calculation, first ensure that "enable taxes and tax calculations" is checked on WooCommerce > Settings > General. %1$sView Documentation%2$s',
+                                    'bus-booking-manager'
+                                )
+                            ),
+                            '<a href="' . esc_url( 'https://woocommerce.com/document/woocommerce-shipping-and-tax/woocommerce-tax/' ) . '" target="_blank" rel="noopener noreferrer">',
                             '</a>'
-                        ); 
+                        );
                     ?>
                 </div>
             </section>

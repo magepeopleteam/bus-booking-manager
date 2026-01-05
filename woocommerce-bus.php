@@ -453,7 +453,7 @@
 					public function read(&$product) {
 						$product->set_defaults();
 						if (!$product->get_id() || !($post_object = get_post($product->get_id())) || !in_array($post_object->post_type, array('wbbm_bus', 'product'))) { // change birds with your post type
-							throw new Exception(esc_html(__('Invalid product.', 'woocommerce')));
+							throw new Exception(esc_html(__('Invalid product.', 'bus-booking-manager')));
 						}
 						$id = $product->get_id();
 						$product->set_props(array(
@@ -518,7 +518,8 @@
 				$selected = isset($_GET[$taxonomy]) ? $_GET[$taxonomy] : '';
 				$info_taxonomy = get_taxonomy($taxonomy);
 				wp_dropdown_categories(array(
-					'show_option_all' => esc_html(__("Show All {$info_taxonomy->label}")),
+					/* translators: %s: taxonomy label */
+					'show_option_all' => esc_html(sprintf(__("Show All %s", 'bus-booking-manager'), $info_taxonomy->label)),
 					'taxonomy' => $taxonomy,
 					'name' => $taxonomy,
 					'orderby' => 'name',
@@ -552,7 +553,7 @@
 			$result = $wpdb->get_results("SELECT * FROM $table_name WHERE order_item_id=$id");
 			foreach ($result as $page) {
 				if (strpos($page->meta_key, '_') !== 0) {
-					echo wbbm_get_string_part($page->meta_key, $part) . '<br/>';
+					echo esc_html(wbbm_get_string_part($page->meta_key, $part)) . '<br/>';
 				}
 			}
 		}
@@ -760,12 +761,12 @@
                 <div class="fields-li">
                     <label>
                         <i class="fa fa-map-marker" aria-hidden="true"></i> <?php esc_html_e('From', 'bus-booking-manager'); ?>
-						<?php echo wbbm_get_bus_route_list('bus_start_route', $start); ?></label>
+						<?php echo wp_kses_post(wbbm_get_bus_route_list('bus_start_route', $start)); ?></label>
                 </div>
                 <div class="fields-li">
                     <label>
                         <i class="fa fa-map-marker" aria-hidden="true"></i> <?php esc_html_e('To:', 'bus-booking-manager'); ?>
-						<?php echo wbbm_get_bus_route_list('bus_end_route', $end); ?>
+						<?php echo wp_kses_post(wbbm_get_bus_route_list('bus_end_route', $end)); ?>
                     </label>
                 </div>
                 <div class="fields-li">
@@ -1653,14 +1654,16 @@
 		$wbbm_quick_setup_done = get_option('wbbm_quick_setup_done');
 		if ($plugin == plugin_basename(__FILE__) && $wbbm_quick_setup_done != 'yes') {
 			//require_once(dirname(__FILE__) . "/inc/wbbm_dummy_import.php");
-			exit(wp_redirect(admin_url('edit.php?post_type=wbbm_bus&page=wbbm_init_quick_setup')));
+			wp_redirect(esc_url(admin_url('edit.php?post_type=wbbm_bus&page=wbbm_init_quick_setup')));
+			exit;
 		}
 	}
 	function activation_redirect_setup($plugin) {
 		$wbbm_quick_setup_done = get_option('wbbm_quick_setup_done');
 		if ($plugin == plugin_basename(__FILE__) && $wbbm_quick_setup_done != 'yes') {
 			//require_once(dirname(__FILE__) . "/inc/wbbm_dummy_import.php");
-			exit(wp_redirect(admin_url('admin.php?post_type=wbtm_bus&page=wbbm_init_quick_setup')));
+			wp_redirect(esc_url(admin_url('admin.php?post_type=wbtm_bus&page=wbbm_init_quick_setup')));
+			exit;
 		}
 	}
 // Customize Woocommerce order itemmeta
@@ -1702,7 +1705,12 @@
 	add_filter('plugin_action_links', 'wbbm_plugin_action_link', 10, 2);
 	function wbbm_plugin_action_link($links_array, $plugin_file_name) {
 		if (strpos($plugin_file_name, basename(__FILE__))) {
-			array_unshift($links_array, '<a href="' . esc_url(admin_url()) . 'edit.php?post_type=wbbm_bus&page=wbbm_quick_setup">' . esc_html(__('Settings', 'bus-booking-manager') . '</a>'));
+			array_unshift(
+				$links_array,
+				'<a href="' . esc_url( admin_url( 'edit.php?post_type=wbbm_bus&page=wbbm_quick_setup' ) ) . '">' .
+					esc_html__( 'Settings', 'bus-booking-manager' ) .
+				'</a>'
+			);
 		}
 		return $links_array;
 	}

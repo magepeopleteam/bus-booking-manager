@@ -58,7 +58,7 @@ function wbbm_after_checkout_validation() {
 
                 if ($available_seat < $cart_qty) {
                     WC()->cart->empty_cart();
-                    wc_add_notice(__("Sorry, your selected ticket is already booked by another user", 'woocommerce'), 'error');
+                    wc_add_notice(__("Sorry, your selected ticket is already booked by another user", 'bus-booking-manager'), 'error');
                 }
             }
         }

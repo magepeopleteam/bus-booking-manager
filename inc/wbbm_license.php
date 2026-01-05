@@ -73,35 +73,35 @@
             switch ($license_data->error) {
                 case 'expired':
                     $message = sprintf(
-                        __('Your license key expired on %s.'),
+                        __('Your license key expired on %s.', 'bus-booking-manager'),
                         date_i18n(get_option('date_format'), strtotime($license_data->expires, current_time('timestamp')))
                     );
                     break;
         
                 case 'revoked':
-                    $message = __('Your license key has been disabled.');
+                    $message = __('Your license key has been disabled.', 'bus-booking-manager');
                     break;
         
                 case 'missing':
-                    $message = __('Invalid license.');
+                    $message = __('Invalid license.', 'bus-booking-manager');
                     break;
         
                 case 'invalid':
                 case 'site_inactive':
-                    $message = __('Your license is not active for this URL.');
+                    $message = __('Your license is not active for this URL.', 'bus-booking-manager');
                     break;
         
                 case 'item_name_mismatch':
         
-                    $message = sprintf(__('This appears to be an invalid license key for %s.'), $item_name);
+                    $message = sprintf(__('This appears to be an invalid license key for %s.', 'bus-booking-manager'), $item_name);
                     break;
         
                 case 'no_activations_left':
-                    $message = __('Your license key has reached its activation limit.');
+                    $message = __('Your license key has reached its activation limit.', 'bus-booking-manager');
                     break;
                 default:
         
-                    $message = __('An error occurred, please try again.');
+                    $message = __('An error occurred, please try again.', 'bus-booking-manager');
                     break;
             }
             return $message;
@@ -116,7 +116,7 @@
         if (strtotime(current_time('Y-m-d H:i')) < strtotime(date('Y-m-d H:i', strtotime($date)))) {
             echo esc_html(get_mep_datetime($date, 'date-time-text')); // Escape the output
         } else {
-            esc_html_e('Expired', 'mage-eventpress');
+            esc_html_e('Expired', 'bus-booking-manager');
         }
     }
 }
@@ -129,7 +129,7 @@
         $sections = array(
             array(
                 'id'    => 'wbbm_basic_license_settings',
-                'title' => __( 'License', 'tour-booking-manager' )
+                'title' => __( 'License', 'bus-booking-manager' )
             )
         );
         return array_merge( $default_sec, $sections );

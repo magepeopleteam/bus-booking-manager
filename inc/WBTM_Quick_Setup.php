@@ -25,11 +25,11 @@ if (!class_exists('WBTM_Quick_Setup')) {
         public function quick_setup_menu() {
             $status = MP_Global_Function::check_woocommerce();
             if ($status == 1) {
-                add_submenu_page('edit.php?post_type=wbbm_bus', esc_html__('Quick Setup', 'bus-ticket-booking-with-seat-reservation'), '<span style="color:#10dd10">' . esc_html__('Quick Setup', 'bus-ticket-booking-with-seat-reservation') . '</span>', 'manage_options', 'wbbm_init_quick_setup', array($this, 'quick_setup'));
-                add_submenu_page('wbbm_bus', esc_html__('Quick Setup', 'bus-ticket-booking-with-seat-reservation'), '<span style="color:#10dd10">' . esc_html__('Quick Setup', 'bus-ticket-booking-with-seat-reservation') . '</span>', 'manage_options', 'wbtm_quick_setup', array($this, 'quick_setup'));
+                add_submenu_page('edit.php?post_type=wbbm_bus', esc_html__('Quick Setup', 'bus-booking-manager'), '<span style="color:#10dd10">' . esc_html__('Quick Setup', 'bus-booking-manager') . '</span>', 'manage_options', 'wbbm_init_quick_setup', array($this, 'quick_setup'));
+                add_submenu_page('wbbm_bus', esc_html__('Quick Setup', 'bus-booking-manager'), '<span style="color:#10dd10">' . esc_html__('Quick Setup', 'bus-booking-manager') . '</span>', 'manage_options', 'wbtm_quick_setup', array($this, 'quick_setup'));
             } else {
-                add_menu_page(esc_html__('Bus', 'bus-ticket-booking-with-seat-reservation'), esc_html__('Bus', 'bus-ticket-booking-with-seat-reservation'), 'manage_options', 'wbbm_bus', array($this, 'quick_setup'), 'dashicons-slides', 6);
-                add_submenu_page('wbbm_bus', esc_html__('Quick Setup', 'bus-ticket-booking-with-seat-reservation'), '<span style="color:#10dd17">' . esc_html__('Quick Setup', 'bus-ticket-booking-with-seat-reservation') . '</span>', 'manage_options', 'wbbm_init_quick_setup', array($this, 'quick_setup'));
+                add_menu_page(esc_html__('Bus', 'bus-booking-manager'), esc_html__('Bus', 'bus-booking-manager'), 'manage_options', 'wbbm_bus', array($this, 'quick_setup'), 'dashicons-slides', 6);
+                add_submenu_page('wbbm_bus', esc_html__('Quick Setup', 'bus-booking-manager'), '<span style="color:#10dd17">' . esc_html__('Quick Setup', 'bus-booking-manager') . '</span>', 'manage_options', 'wbbm_init_quick_setup', array($this, 'quick_setup'));
             }
         }
 
@@ -120,15 +120,15 @@ if (!class_exists('WBTM_Quick_Setup')) {
                             <div class="tabListsNext _max_700_mAuto">
                                 <div data-tabs-target-next="#mpwpb_qs_welcome" class="tabItemNext">
                                     <h4 class="circleIcon">1</h4>
-                                    <h5 class="circleTitle"><?php esc_html_e('Welcome', 'bus-ticket-booking-with-seat-reservation'); ?></h5>
+                                    <h5 class="circleTitle"><?php esc_html_e('Welcome', 'bus-booking-manager'); ?></h5>
                                 </div>
                                 <div data-tabs-target-next="#mpwpb_qs_general" class="tabItemNext">
                                     <h4 class="circleIcon">2</h4>
-                                    <h5 class="circleTitle"><?php esc_html_e('General', 'bus-ticket-booking-with-seat-reservation'); ?></h5>
+                                    <h5 class="circleTitle"><?php esc_html_e('General', 'bus-booking-manager'); ?></h5>
                                 </div>
                                 <div data-tabs-target-next="#mpwpb_qs_done" class="tabItemNext">
                                     <h4 class="circleIcon">3</h4>
-                                    <h5 class="circleTitle"><?php esc_html_e('Done', 'bus-ticket-booking-with-seat-reservation'); ?></h5>
+                                    <h5 class="circleTitle"><?php esc_html_e('Done', 'bus-booking-manager'); ?></h5>
                                 </div>
                             </div>
                             <div class="tabsContentNext _infoLayout_mT">
@@ -140,12 +140,12 @@ if (!class_exists('WBTM_Quick_Setup')) {
                             </div>
                             <div class="justifyBetween">
                                 <button type="button" class="mpBtn nextTab_prev">
-                                    <span>&longleftarrow;<?php esc_html_e('Previous', 'bus-ticket-booking-with-seat-reservation'); ?></span>
+                                    <span>&longleftarrow;<?php esc_html_e('Previous', 'bus-booking-manager'); ?></span>
                                 </button>
                                 <div></div>
 
                                 <button type="button" class="themeButton nextTab_next" <?php echo esc_attr($next_disable); ?>>
-                                    <span><?php esc_html_e('Next', 'bus-ticket-booking-with-seat-reservation'); ?>&longrightarrow;</span>
+                                    <span><?php esc_html_e('Next', 'bus-booking-manager'); ?>&longrightarrow;</span>
                                 </button>
                             </div>
                         </div>
@@ -159,24 +159,24 @@ if (!class_exists('WBTM_Quick_Setup')) {
             $status = MP_Global_Function::check_woocommerce();
             ?>
             <div data-tabs-next="#mpwpb_qs_welcome">
-                <h2><?php esc_html_e('Bus Booking Manager For Woocommerce Plugin', 'bus-ticket-booking-with-seat-reservation'); ?></h2>
-                <p class="mTB_xs"><?php esc_html_e('Bus Booking Manager Plugin for WooCommerce for your site, Please go step by step and choose some options to get started.', 'bus-ticket-booking-with-seat-reservation'); ?></p>
+                <h2><?php esc_html_e('Bus Booking Manager For Woocommerce Plugin', 'bus-booking-manager'); ?></h2>
+                <p class="mTB_xs"><?php esc_html_e('Bus Booking Manager Plugin for WooCommerce for your site, Please go step by step and choose some options to get started.', 'bus-booking-manager'); ?></p>
                 <div class="_dLayout_mT_alignCenter justifyBetween">
                     <h5>
                         <?php if ($status == 1) {
-                            esc_html_e('Woocommerce already installed and activated', 'bus-ticket-booking-with-seat-reservation');
+                            esc_html_e('Woocommerce already installed and activated', 'bus-booking-manager');
                         } elseif ($status == 0) {
-                            esc_html_e('Woocommerce needs to install and activate', 'bus-ticket-booking-with-seat-reservation');
+                            esc_html_e('Woocommerce needs to install and activate', 'bus-booking-manager');
                         } else {
-                            esc_html_e('Woocommerce already installed, please activate it', 'bus-ticket-booking-with-seat-reservation');
+                            esc_html_e('Woocommerce already installed, please activate it', 'bus-booking-manager');
                         } ?>
                     </h5>
                     <?php if ($status == 1) { ?>
                         <h5><span class="fas fa-check-circle textSuccess"></span></h5>
                     <?php } elseif ($status == 0) { ?>
-                        <button class="warningButton" type="submit" name="install_and_active_woo_btn"><?php esc_html_e('Install & Activate Now', 'bus-ticket-booking-with-seat-reservation'); ?></button>
+                        <button class="warningButton" type="submit" name="install_and_active_woo_btn"><?php esc_html_e('Install & Activate Now', 'bus-booking-manager'); ?></button>
                     <?php } else { ?>
-                        <button class="themeButton" type="submit" name="active_woo_btn"><?php esc_html_e('Activate Now', 'bus-ticket-booking-with-seat-reservation'); ?></button>
+                        <button class="themeButton" type="submit" name="active_woo_btn"><?php esc_html_e('Activate Now', 'bus-booking-manager'); ?></button>
                     <?php } ?>
                 </div>
             </div>
@@ -191,25 +191,25 @@ if (!class_exists('WBTM_Quick_Setup')) {
             ?>
             <div data-tabs-next="#mpwpb_qs_general">
                 <div class="section">
-                    <h2><?php esc_html_e('General settings', 'bus-ticket-booking-with-seat-reservation'); ?></h2>
-                    <p class="mTB_xs"><?php esc_html_e('Choose some general options.', 'bus-ticket-booking-with-seat-reservation'); ?></p>
+                    <h2><?php esc_html_e('General settings', 'bus-booking-manager'); ?></h2>
+                    <p class="mTB_xs"><?php esc_html_e('Choose some general options.', 'bus-booking-manager'); ?></p>
                     <div class="_dLayout_mT">
                         <label class="fullWidth">
-                            <span class="min_300"><?php esc_html_e('Bus Booking Manager Label:', 'bus-ticket-booking-with-seat-reservation'); ?></span>
+                            <span class="min_300"><?php esc_html_e('Bus Booking Manager Label:', 'bus-booking-manager'); ?></span>
                             <input type="text" class="formControl" name="mpwpb_label" value='<?php echo esc_attr($label); ?>'/>
                         </label>
                         <i class="info_text">
                             <span class="fas fa-info-circle"></span>
-                            <?php esc_html_e('It will change the Bus Booking Manager post type label on the entire plugin.', 'bus-ticket-booking-with-seat-reservation'); ?>
+                            <?php esc_html_e('It will change the Bus Booking Manager post type label on the entire plugin.', 'bus-booking-manager'); ?>
                         </i>
                         <div class="divider"></div>
                         <label class="fullWidth">
-                            <span class="min_300"><?php esc_html_e('Bus Booking Manager Slug:', 'bus-ticket-booking-with-seat-reservation'); ?></span>
+                            <span class="min_300"><?php esc_html_e('Bus Booking Manager Slug:', 'bus-booking-manager'); ?></span>
                             <input type="text" class="formControl" name="mpwpb_slug" value='<?php echo esc_attr($slug); ?>'/>
                         </label>
                         <i class="info_text">
                             <span class="fas fa-info-circle"></span>
-                            <?php esc_html_e('It will change the Bus Booking Manager slug on the entire plugin. Remember after changing this slug you need to flush permalinks. Just go to Settings->Permalinks hit the Save Settings button', 'bus-ticket-booking-with-seat-reservation'); ?>
+                            <?php esc_html_e('It will change the Bus Booking Manager slug on the entire plugin. Remember after changing this slug you need to flush permalinks. Just go to Settings->Permalinks hit the Save Settings button', 'bus-booking-manager'); ?>
                         </i>
                     </div>
                 </div>
@@ -220,10 +220,10 @@ if (!class_exists('WBTM_Quick_Setup')) {
         public function setup_content_done() {
             ?>
             <div data-tabs-next="#mpwpb_qs_done">
-                <h2><?php esc_html_e('Finalize Setup', 'bus-ticket-booking-with-seat-reservation'); ?></h2>
-                <p class="mTB_xs"><?php esc_html_e('You are about to finish & save the Bus Booking Manager For WooCommerce Plugin setup process', 'bus-ticket-booking-with-seat-reservation'); ?></p>
+                <h2><?php esc_html_e('Finalize Setup', 'bus-booking-manager'); ?></h2>
+                <p class="mTB_xs"><?php esc_html_e('You are about to finish & save the Bus Booking Manager For WooCommerce Plugin setup process', 'bus-booking-manager'); ?></p>
                 <div class="mT allCenter">
-                    <button type="submit" name="finish_quick_setup" class="themeButton"><?php esc_html_e('Finish & Save', 'bus-ticket-booking-with-seat-reservation'); ?></button>
+                    <button type="submit" name="finish_quick_setup" class="themeButton"><?php esc_html_e('Finish & Save', 'bus-booking-manager'); ?></button>
                 </div>
             </div>
             <?php

@@ -570,7 +570,7 @@ function wbbm_extra_services_section($bus_id) {
                                     <?php } else { ?>
                                         <div class="mage_es_form_qty">
                                             <div class="mage_flex mage_es_qty_minus"><i class="fa fa-minus"></i></div>
-                                            <input size="4" inputmode="numeric" type="number" class='extra-qty-box mage_form_full' step='1' name='extra_service_qty[]' data-price='<?php echo wbbm_get_price_including_tax($bus_id, $data_price); ?>' value='0' min="0" max="<?php echo $ext_left; ?>">
+                                            <input size="4" inputmode="numeric" type="number" class='extra-qty-box mage_form_full' step='1' name='extra_service_qty[]' data-price='<?php echo wp_kses_post(wbbm_get_price_including_tax($bus_id, $data_price)); ?>' value='0' min="0" max="<?php echo esc_html($ext_left); ?>">
                                             <div class="mage_flex mage_es_qty_plus"><i class="fa fa-plus"></i></div>
                                         </div>
                                     <?php }
@@ -584,14 +584,14 @@ function wbbm_extra_services_section($bus_id) {
                                 $user_roles = $user ? wp_get_current_user()->roles : array();
 
                                 if (in_array('bus_sales_agent', $user_roles, true)) {
-                                    echo '<input class="extra_service_per_price" type="text" name="extra_service_price[]" value="' . wbbm_get_price_including_tax($bus_id, $field['option_price']) . '" style="width: 80px"/>';
+                                    echo '<input class="extra_service_per_price" type="text" name="extra_service_price[]" value="' . wp_kses_post(wbbm_get_price_including_tax($bus_id, $field['option_price'])) . '" style="width: 80px"/>';
 
                                     if ($ext_left > 0) { ?>
                                         <p style="display: none;" class="price_jq"><?php echo esc_html($data_price > 0 ? $data_price : 0); ?></p>
                                         <input type="hidden" name='extra_service_name[]' value='<?php echo esc_attr($field['option_name']); ?>'>
                                     <?php }
                                 } else {
-                                    echo wc_price(wbbm_get_price_including_tax($bus_id, $field['option_price']));
+                                    echo wp_kses_post(wc_price(wbbm_get_price_including_tax($bus_id, $field['option_price'])));
 
                                     if ($ext_left > 0) { ?>
                                         <p style="display: none;" class="price_jq"><?php echo esc_html($data_price > 0 ? $data_price : 0); ?></p>

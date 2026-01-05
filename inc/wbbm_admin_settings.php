@@ -149,7 +149,7 @@ class MAGE_WBBM_Setting_Controls {
                 ),
                 array(
                     'name'		=> 'wbbm_seat_booked_on_order_status',
-                    'label'		=> esc_html__('Seat booked on status'),
+                    'label'		=> esc_html__('Seat booked on status', 'bus-booking-manager'),
                     'desc'		=> esc_html__('Seat will be booked in which state of seat order. <br> eg. If you want to showing seat as booked when seat status is "On hold" then check "On hold".','bus-booking-manager'),
                     'type'		=> 'multicheck',
                     'options'	=> array(
@@ -191,16 +191,16 @@ class MAGE_WBBM_Setting_Controls {
                     'id' => 'bus_global_offdays',
                     'class' => '',
                     'label' => esc_html__( 'Global Off-Days ', 'bus-booking-manager' ),
-                    'desc' => esc_html__( '', 'bus-booking-manager' ),
+                    'desc' => '',
                     'type' => 'checkbox_multi',
                     'args' => array(
-                        '7' => esc_html__('Sunday', 'bus-ticket-booking-with-seat-reservation'),
-                        '1' => esc_html__('Monday', 'bus-ticket-booking-with-seat-reservation'),
-                        '2' => esc_html__('Tuesday', 'bus-ticket-booking-with-seat-reservation'),
-                        '3' => esc_html__('Wednesday', 'bus-ticket-booking-with-seat-reservation'),
-                        '4' => esc_html__('Thursday', 'bus-ticket-booking-with-seat-reservation'),
-                        '5' => esc_html__('Friday', 'bus-ticket-booking-with-seat-reservation'),
-                        '6' => esc_html__('Saturday', 'bus-ticket-booking-with-seat-reservation'),
+                        '7' => esc_html__('Sunday', 'bus-booking-manager'),
+                        '1' => esc_html__('Monday', 'bus-booking-manager'),
+                        '2' => esc_html__('Tuesday', 'bus-booking-manager'),
+                        '3' => esc_html__('Wednesday', 'bus-booking-manager'),
+                        '4' => esc_html__('Thursday', 'bus-booking-manager'),
+                        '5' => esc_html__('Friday', 'bus-booking-manager'),
+                        '6' => esc_html__('Saturday', 'bus-booking-manager'),
                     ),
 
                 )
