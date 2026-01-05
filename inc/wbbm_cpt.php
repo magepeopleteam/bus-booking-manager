@@ -16,8 +16,13 @@ function wbbm_bus_cpt() {
 
     // Labels for the custom post type
     $labels = array(
-        'name'                  => sprintf(_x('%s post type general name', 'bus-booking-manager'), esc_html($cpt_label)),
-        'singular_name'         => sprintf(_x('%s post type singular name', 'bus-booking-manager'), esc_html($cpt_label)),
+        'name'                  => sprintf(
+                                        /* translators: %s: custom post type label */
+                                        _x('%s post type general name', 'Post type general name for translators', 'bus-booking-manager'), esc_html($cpt_label)
+                                    ),
+        'singular_name'         => sprintf(
+                                    /* translators: %s: custom post type label */
+                                    _x('%s post type singular name','Post type general name for translators', 'bus-booking-manager'), esc_html($cpt_label)),
         'menu_name'             => esc_html($cpt_label),
         'name_admin_bar'        => esc_html($cpt_label),
     );

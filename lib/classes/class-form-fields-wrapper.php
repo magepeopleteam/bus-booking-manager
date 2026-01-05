@@ -187,11 +187,11 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
 
             ob_start();
             ?>
-            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?>
+            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_html($depends); ?>]" <?php } ?>
                     id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field';
                     ?> field-wrapper field-post-objects-wrapper
-            field-post-objects-wrapper-<?php echo $field_id; ?>">
-                <div class="field-list" id="<?php echo $field_id; ?>">
+            field-post-objects-wrapper-<?php echo esc_html($field_id); ?>">
+                <div class="field-list" id="<?php echo esc_html($field_id); ?>">
                     <?php
                     if(!empty($args)):
                         foreach ($args as $argsKey=>$arg):
@@ -332,10 +332,10 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
 
             ob_start();
             ?>
-            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?>
+            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_html($depends); ?>]" <?php } ?>
                     id="field-wrapper-<?php echo esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-switcher-wrapper
             field-switcher-wrapper-<?php echo esc_attr($id); ?>">
-                <label class="switcher <?php echo $checked; ?>">
+                <label class="switcher <?php echo esc_attr($checked); ?>">
                     <input type="checkbox" id="<?php echo esc_attr($id); ?>" value="<?php echo esc_attr($value); ?>"
                            name="<?php echo esc_attr($field_name); ?>" <?php echo esc_attr($checked); ?>>
                     <span class="layer"></span>
@@ -487,7 +487,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
             if(!empty($args)):
                 ?>
 
-                <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?>
+                <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?>
                         id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-google-map-wrapper
                 field-google-map-wrapper-<?php esc_attr($id); ?>">
                     <div class="item-list">
@@ -495,10 +495,10 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                         foreach ($args as $index=>$name):
                             ?>
                             <div class="item">
-                                <span class="field-title"><?php echo $name; ?></span>
-                                <span class="input-wrapper"><input type='text' name='<?php echo $field_name;?>[<?php
-                                    echo $index; ?>]' value='<?php
-                                    echo $values[$index]; ?>' /></span>
+                                <span class="field-title"><?php echo esc_html($name); ?></span>
+                                <span class="input-wrapper"><input type='text' name='<?php echo esc_attr($field_name);?>[<?php
+                                    echo esc_html($index); ?>]' value='<?php
+                                    echo esc_html($values[$index]); ?>' /></span>
                             </div>
                         <?php
                         endforeach;
@@ -513,23 +513,23 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                 <?php
                 if($preview):
                     ?>
-                    <div id="map-<?php echo $field_id; ?>"></div>
+                    <div id="map-<?php echo esc_attr($field_id); ?>"></div>
                     <script>
                         function initMap() {
-                            var myLatLng = {lat: <?php echo $lat; ?>, lng: <?php echo $lng; ?>};
-                            var map = new google.maps.Map(document.getElementById('map-<?php echo $field_id; ?>'), {
-                                zoom: <?php echo $zoom; ?>,
+                            var myLatLng = {lat: <?php echo esc_html($lat); ?>, lng: <?php echo esc_html($lng); ?>};
+                            var map = new google.maps.Map(document.getElementById('map-<?php echo esc_html($field_id); ?>'), {
+                                zoom: <?php echo esc_html($zoom); ?>,
                                 center: myLatLng
                             });
                             var marker = new google.maps.Marker({
                                 position: myLatLng,
                                 map: map,
-                                title: '<?php echo $title; ?>'
+                                title: '<?php echo esc_html($title); ?>'
                             });
                         }
                     </script>
                     <script async defer
-                            src="https://maps.googleapis.com/maps/api/js?key=<?php echo $apikey; ?>&callback=initMap">
+                            src="https://maps.googleapis.com/maps/api/js?key=<?php echo esc_html($apikey); ?>&callback=initMap">
                     </script>
                     <?php
                 endif;
@@ -645,15 +645,15 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
 
             ob_start();
             ?>
-            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?>
+            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?>
                     id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-border-wrapper
             field-border-wrapper-<?php esc_attr($id); ?>">
                 <div class="item-list">
                         <div class="item">
                             <span class="field-title">Width</span>
-                            <span class="input-wrapper"><input type='number' name='<?php echo $field_name;?>[width]' value='<?php
-                                echo $width; ?>' /></span>
-                            <select name="<?php echo $field_name;?>[unit]">
+                            <span class="input-wrapper"><input type='number' name='<?php echo esc_attr($field_name);?>[width]' value='<?php
+                                echo esc_attr($width); ?>' /></span>
+                            <select name="<?php echo esc_attr($field_name);?>[unit]">
                                 <option <?php if($unit == 'px') echo 'selected'; ?> value="px">px</option>
                                 <option <?php if($unit == '%') echo 'selected'; ?> value="%">%</option>
                                 <option <?php if($unit == 'em') echo 'selected'; ?> value="em">em</option>
@@ -667,7 +667,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                         </div>
                         <div class="item">
                             <span class="field-title">Style</span>
-                            <select name="<?php echo $field_name;?>[style]">
+                            <select name="<?php echo esc_attr($field_name);?>[style]">
                                 <option <?php if($style == 'dotted') echo 'selected'; ?> value="dotted">dotted</option>
                                 <option <?php if($style == 'dashed') echo 'selected'; ?> value="dashed">dashed</option>
                                 <option <?php if($style == 'solid') echo 'selected'; ?> value="solid">solid</option>
@@ -681,8 +681,8 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                         </div>
                     <div class="item">
                         <span class="field-title">Color</span>
-                        <span class="input-wrapper"><input class="colorpicker" type='text' name='<?php echo $field_name;
-                        ?>[color]' value='<?php echo $color; ?>' /></span>
+                        <span class="input-wrapper"><input class="colorpicker" type='text' name='<?php echo esc_attr($field_name);
+                        ?>[color]' value='<?php echo esc_attr($color); ?>' /></span>
                     </div>
                 </div>
             </div>
@@ -805,7 +805,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
             ob_start();
             if(!empty($args)):
                 ?>
-                <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-margin-wrapper
+                <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-margin-wrapper
                 field-margin-wrapper-<?php esc_attr($id); ?>">
                     <div class="item-list">
                         <?php
@@ -814,11 +814,11 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                             $unit = $values[$index]['unit'];
                             ?>
                             <div class="item">
-                                <span class="field-title"><?php echo $name; ?></span>
-                                <span class="input-wrapper"><input type='number' name='<?php echo $field_name;?>[<?php
-                                    echo $index; ?>][val]' value='<?php
-                                    echo $values[$index]['val']; ?>' /></span>
-                                <select name="<?php echo $field_name;?>[<?php echo $index; ?>][unit]">
+                                <span class="field-title"><?php echo esc_html($name); ?></span>
+                                <span class="input-wrapper"><input type='number' name='<?php echo esc_attr($field_name);?>[<?php
+                                    echo esc_attr($index); ?>][val]' value='<?php
+                                    echo esc_attr($values[$index]['val']); ?>' /></span>
+                                <select name="<?php echo esc_attr($field_name);?>[<?php echo esc_attr($index); ?>][unit]">
                                     <option <?php if($unit == 'px') echo 'selected'; ?> value="px">px</option>
                                     <option <?php if($unit == '%') echo 'selected'; ?> value="%">%</option>
                                     <option <?php if($unit == 'em') echo 'selected'; ?> value="em">em</option>
@@ -950,7 +950,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
             ob_start();
             if(!empty($args)):
                 ?>
-                <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-padding-wrapper
+                <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-padding-wrapper
                 field-padding-wrapper-<?php esc_attr($id); ?>">
                     <label><input type="checkbox" class="change-together">Apply for all</label>
                     <div class="item-list">
@@ -960,11 +960,11 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                             $unit = $values[$index]['unit'];
                             ?>
                             <div class="item">
-                                <span class="field-title"><?php echo $name; ?></span>
-                                <span class="input-wrapper"><input type='number' name='<?php echo $field_name;?>[<?php
-                                    echo $index; ?>][val]' value='<?php
-                                    echo $values[$index]['val']; ?>' /></span>
-                                <select name="<?php echo $field_name;?>[<?php echo $index; ?>][unit]">
+                                <span class="field-title"><?php echo esc_attr($name); ?></span>
+                                <span class="input-wrapper"><input type='number' name='<?php echo esc_attr($field_name);?>[<?php
+                                    echo esc_attr($index); ?>][val]' value='<?php
+                                    echo esc_attr($values[$index]['val']); ?>' /></span>
+                                <select name="<?php echo esc_attr($field_name);?>[<?php echo esc_attr($index); ?>][unit]">
                                     <option <?php if($unit == 'px') echo 'selected'; ?> value="px">px</option>
                                     <option <?php if($unit == '%') echo 'selected'; ?> value="%">%</option>
                                     <option <?php if($unit == 'em') echo 'selected'; ?> value="em">em</option>
@@ -1136,7 +1136,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
             ob_start();
             if(!empty($args)):
                 ?>
-                <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-margin-wrapper
+                <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-margin-wrapper
                 field-margin-wrapper-<?php esc_attr($id); ?>">
                     <label><input type="checkbox" class="change-together">Apply for all</label>
                     <div class="item-list">
@@ -1146,12 +1146,12 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                             $unit = $values[$index]['unit'];
                             ?>
                             <div class="item">
-                                <span class="field-title"><?php echo $name; ?></span>
-                                <span class="input-wrapper"><input class="<?php echo $index; ?>" type='number'
-                                                                   name='<?php echo $field_name; ?>[<?php
-                                    echo $index; ?>][val]' value='<?php
-                                    echo $values[$index]['val']; ?>' /></span>
-                                <select name="<?php echo $field_name;?>[<?php echo $index; ?>][unit]">
+                                <span class="field-title"><?php echo esc_attr($name); ?></span>
+                                <span class="input-wrapper"><input class="<?php echo esc_attr($index); ?>" type='number'
+                                                                   name='<?php echo esc_attr($field_name); ?>[<?php
+                                    echo esc_attr($index); ?>][val]' value='<?php
+                                    echo esc_attr($values[$index]['val']); ?>' /></span>
+                                <select name="<?php echo esc_attr($field_name);?>[<?php echo esc_attr($index); ?>][unit]">
                                     <option <?php if($unit == 'px') echo 'selected'; ?> value="px">px</option>
                                     <option <?php if($unit == '%') echo 'selected'; ?> value="%">%</option>
                                     <option <?php if($unit == 'em') echo 'selected'; ?> value="em">em</option>
@@ -1322,17 +1322,17 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
 
             ob_start();
             ?>
-            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-google-recaptcha-wrapper
+            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-google-recaptcha-wrapper
             field-google-recaptcha-wrapper-<?php esc_attr($id);
             ?>">
                 <?php if($version == 'v2'):?>
-                    <div class="g-recaptcha" data-sitekey="<?php echo $site_key; ?>"></div>
+                    <div class="g-recaptcha" data-sitekey="<?php echo esc_attr($site_key); ?>"></div>
                     <script src='https://www.google.com/recaptcha/api.js'></script>
             <?php elseif($version == 'v3'):?>
-                    <script src='https://www.google.com/recaptcha/api.js?render=<?php echo $site_key; ?>'></script>
+                    <script src='https://www.google.com/recaptcha/api.js?render=<?php echo esc_attr($site_key); ?>'></script>
                     <script>
                         grecaptcha.ready(function() {
-                            grecaptcha.execute('<?php echo $site_key; ?>', {action: '<?php echo $action_name; ?>'})
+                            grecaptcha.execute('<?php echo $site_key; ?>', {action: '<?php echo esc_attr($action_name); ?>'})
                                 .then(function(token) {
 // Verify the token on the server.
                                 });

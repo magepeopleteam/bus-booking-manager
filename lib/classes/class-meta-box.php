@@ -99,7 +99,7 @@ if( ! class_exists( 'AddMetaBox' ) ) {
                                             $nav_sections_title = !empty($nav_sections['nav_title']) ? esc_html($nav_sections['nav_title']) : esc_html($nav_sections['title']);
                                             ?>
                                             <li>
-                                                <a sectionId="<?php echo esc_attr($section_id); ?>" dataid="<?php echo esc_attr($page_id); ?>" href='#<?php echo esc_attr($section_id); ?>' class='nav-item <?php if ($current_page == $page_id) echo 'active'; ?>'><?php echo $nav_sections_title; ?></a>
+                                                <a sectionId="<?php echo esc_attr($section_id); ?>" dataid="<?php echo esc_attr($page_id); ?>" href='#<?php echo esc_attr($section_id); ?>' class='nav-item <?php if ($current_page == $page_id) echo 'active'; ?>'><?php echo esc_html($nav_sections_title); ?></a>
                                             </li>
                                             <?php
                                         }
@@ -216,19 +216,19 @@ if( ! class_exists( 'AddMetaBox' ) ) {
 
             switch ($type) {
                 case 'text':
-                    echo $FormFieldsGenerator->field_text($option);
+                    echo wp_kses_post($FormFieldsGenerator->field_text($option));
                     break;
                 case 'textarea':
-                    echo $FormFieldsGenerator->field_textarea($option);
+                    echo wp_kses_post($FormFieldsGenerator->field_textarea($option));
                     break;
                 case 'checkbox':
-                    echo $FormFieldsGenerator->field_checkbox($option);
+                    echo wp_kses_post($FormFieldsGenerator->field_checkbox($option));
                     break;
                 case 'select':
-                    echo $FormFieldsGenerator->field_select($option);
+                    echo wp_kses_post($FormFieldsGenerator->field_select($option));
                     break;
                 case 'radio':
-                    echo $FormFieldsGenerator->field_radio($option);
+                    echo wp_kses_post($FormFieldsGenerator->field_radio($option));
                     break;
                 // Add other cases as needed
             }

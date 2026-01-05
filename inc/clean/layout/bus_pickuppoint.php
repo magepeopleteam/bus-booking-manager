@@ -167,7 +167,7 @@ if (!defined('ABSPATH')) {
             </div>
 
             <div class="pickuppoints_first" style="display: none">
-                <?php echo $pickpoints; ?>
+                <?php echo wp_kses_post($pickpoints); ?>
             </div>
 
 

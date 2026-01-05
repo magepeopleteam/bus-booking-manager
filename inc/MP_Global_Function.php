@@ -510,6 +510,7 @@
                 switch ($license_data->error) {
                     case 'expired':
                         $message = sprintf(
+                            /* translators: %s date */
                             esc_html__( 'Your license key expired on %s', 'bus-booking-manager' ),
                             esc_html(
                                 date_i18n(

@@ -8,16 +8,22 @@ if (!defined('ABSPATH')) {
     <h3 class="wbbm_mp_tab_item_heading">
     <?php echo esc_html( $cpt_label ) . ' ' . esc_html__( 'Configuration', 'bus-booking-manager' ); ?>
     </h3>
-    <p><?php printf(esc_html__('Main Configuration. This is most important settings for %s', 'bus-booking-manager'), esc_html($cpt_label)); ?></p>
+    <p><?php 
+    /* translators: %s: post type general name */
+    printf(esc_html__('Main Configuration. This is most important settings for %s', 'bus-booking-manager'), esc_html($cpt_label)); ?></p>
     <div class="configuration_wrapper">
         <section class="bgLight">
             <div class="">
                 <label for="wbbm_bus_category" class="ra-item-label">
-                    <?php  printf(esc_html__('%s Settings', 'bus-booking-manager'), esc_html($cpt_label)); ?>
+                    <?php  
+                    /* translators: %s: post type general name */
+                    printf(esc_html__('%s Settings', 'bus-booking-manager'), esc_html($cpt_label)); ?>
                 </label>
                 <br>
                 <span>
-                    <?php  printf(esc_html__('Here you can set %s type, coach number, total seat etc.', 'bus-booking-manager'), esc_html($cpt_label)); ?>
+                    <?php  
+                    /* translators: %s: post type general name */
+                    printf(esc_html__('Here you can set %s type, coach number, total seat etc.', 'bus-booking-manager'), esc_html($cpt_label)); ?>
                 </span>
             </div>
         </section>
@@ -29,7 +35,9 @@ if (!defined('ABSPATH')) {
                 </label>
                 <br>
                 <span>
-                    <?php  printf(esc_html__('Select %s type, AC or None AC.', 'bus-booking-manager'), esc_html($cpt_label)); ?>
+                    <?php  
+                    /* translators: %s: post type general name */
+                    printf(esc_html__('Select %s type, AC or None AC.', 'bus-booking-manager'), esc_html($cpt_label)); ?>
                 </span>
             </div>
             <span>
@@ -56,7 +64,9 @@ if (!defined('ABSPATH')) {
                 </label>
                 <br>
                 <span>
-                    <?php  printf(esc_html__('Select unique number for %s', 'bus-booking-manager'), esc_html($cpt_label)); ?>
+                    <?php  
+                    /* translators: %s: post type general name */
+                    printf(esc_html__('Select unique number for %s', 'bus-booking-manager'), esc_html($cpt_label)); ?>
                 </span>
             </div>
             <input id='wbbm_ev_98' type="text" name='wbbm_bus_no' value='<?php if (array_key_exists('wbbm_bus_no', $values)) { echo esc_attr( $values['wbbm_bus_no'][0] ); } ?>' />
@@ -69,7 +79,9 @@ if (!defined('ABSPATH')) {
                 </label>
                 <br>
                 <span>
-                    <?php  printf(esc_html__('Select total seat number for %s', 'bus-booking-manager'), esc_html($cpt_label)); ?>
+                    <?php  
+                    /* translators: %s: post type general name */
+                    printf(esc_html__('Select total seat number for %s', 'bus-booking-manager'), esc_html($cpt_label)); ?>
                 </span>
             </div>
             <input id='wbbm_ev_99' type="text" name='wbbm_total_seat' value='<?php if (array_key_exists('wbbm_total_seat', $values)) { echo esc_attr( $values['wbbm_total_seat'][0] ); } ?>' />

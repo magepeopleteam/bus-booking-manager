@@ -86,94 +86,94 @@ if( ! class_exists( 'TaxonomyEdit' ) ) {
             if ( isset( $option['type'] ) ) {
                 switch ( $option['type'] ) {
                     case 'text':
-                        echo $FormFieldsGenerator->field_text( $option );
+                        echo wp_kses_post($FormFieldsGenerator->field_text( $option ));
                         break;
                     case 'text_multi':
-                        echo $FormFieldsGenerator->field_text_multi( $option );
+                        echo wp_kses_post($FormFieldsGenerator->field_text_multi( $option ));
                         break;
                     case 'textarea':
-                        echo $FormFieldsGenerator->field_textarea( $option );
+                        echo wp_kses_post($FormFieldsGenerator->field_textarea( $option ));
                         break;
                     case 'checkbox':
-                        echo $FormFieldsGenerator->field_checkbox( $option );
+                        echo wp_kses_post($FormFieldsGenerator->field_checkbox( $option ));
                         break;
                     case 'radio':
-                        echo $FormFieldsGenerator->field_radio( $option );
+                        echo wp_kses_post($FormFieldsGenerator->field_radio( $option ));
                         break;
                     case 'select':
-                        echo $FormFieldsGenerator->field_select( $option );
+                        echo wp_kses_post($FormFieldsGenerator->field_select( $option ));
                         break;
                     case 'range':
-                        echo $FormFieldsGenerator->field_range( $option );
+                        echo wp_kses_post($FormFieldsGenerator->field_range( $option ));
                         break;
                     case 'range_input':
-                        echo $FormFieldsGenerator->field_range_input( $option );
+                        echo wp_kses_post($FormFieldsGenerator->field_range_input( $option ));
                         break;
                     case 'switch':
-                        echo $FormFieldsGenerator->field_switch( $option );
+                        echo wp_kses_post($FormFieldsGenerator->field_switch( $option ));
                         break;
                     case 'switch_multi':
-                        echo $FormFieldsGenerator->field_switch_multi( $option );
+                        echo wp_kses_post($FormFieldsGenerator->field_switch_multi( $option ));
                         break;
                     case 'switch_img':
-                        echo $FormFieldsGenerator->field_switch_img( $option );
+                        echo wp_kses_post($FormFieldsGenerator->field_switch_img( $option ));
                         break;
                     case 'time_format':
-                        echo $FormFieldsGenerator->field_time_format( $option );
+                        echo wp_kses_post($FormFieldsGenerator->field_time_format( $option ));
                         break;
                     case 'date_format':
-                        echo $FormFieldsGenerator->field_date_format( $option );
+                        echo wp_kses_post($FormFieldsGenerator->field_date_format( $option ));
                         break;
                     case 'datepicker':
-                        echo $FormFieldsGenerator->field_datepicker( $option );
+                        echo wp_kses_post($FormFieldsGenerator->field_datepicker( $option ));
                         break;
                     case 'colorpicker':
-                        echo $FormFieldsGenerator->field_colorpicker( $option );
+                        echo wp_kses_post($FormFieldsGenerator->field_colorpicker( $option ));
                         break;
                     case 'colorpicker_multi':
-                        echo $FormFieldsGenerator->field_colorpicker_multi( $option );
+                        echo wp_kses_post($FormFieldsGenerator->field_colorpicker_multi( $option ));
                         break;
                     case 'link_color':
-                        echo $FormFieldsGenerator->field_link_color( $option );
+                        echo wp_kses_post($FormFieldsGenerator->field_link_color( $option ));
                         break;
                     case 'icon':
-                        echo $FormFieldsGenerator->field_icon( $option );
+                        echo wp_kses_post($FormFieldsGenerator->field_icon( $option ));
                         break;
                     case 'icon_multi':
-                        echo $FormFieldsGenerator->field_icon_multi( $option );
+                        echo wp_kses_post($FormFieldsGenerator->field_icon_multi( $option ));
                         break;
                     case 'dimensions':
-                        echo $FormFieldsGenerator->field_dimensions( $option );
+                        echo wp_kses_post($FormFieldsGenerator->field_dimensions( $option ));
                         break;
                     case 'wp_editor':
-                        echo $FormFieldsGenerator->field_wp_editor( $option );
+                        echo wp_kses_post($FormFieldsGenerator->field_wp_editor( $option ));
                         break;
                     case 'select2':
-                        echo $FormFieldsGenerator->field_select2( $option );
+                        echo wp_kses_post($FormFieldsGenerator->field_select2( $option ));
                         break;
                     case 'faq':
-                        echo $FormFieldsGenerator->field_faq( $option );
+                        echo wp_kses_post($FormFieldsGenerator->field_faq( $option ));
                         break;
                     case 'grid':
-                        echo $FormFieldsGenerator->field_grid( $option );
+                        echo wp_kses_post($FormFieldsGenerator->field_grid( $option ));
                         break;
                     case 'color_palette':
-                        echo $FormFieldsGenerator->field_color_palette( $option );
+                        echo wp_kses_post($FormFieldsGenerator->field_color_palette( $option ));
                         break;
                     case 'color_palette_multi':
-                        echo $FormFieldsGenerator->field_color_palette_multi( $option );
+                        echo wp_kses_post($FormFieldsGenerator->field_color_palette_multi( $option ));
                         break;
                     case 'media':
-                        echo $FormFieldsGenerator->field_media( $option );
+                        echo wp_kses_post($FormFieldsGenerator->field_media( $option ));
                         break;
                     case 'media_multi':
-                        echo $FormFieldsGenerator->field_media_multi( $option );
+                        echo wp_kses_post($FormFieldsGenerator->field_media_multi( $option ));
                         break;
                     case 'repeatable':
-                        echo $FormFieldsGenerator->field_repeatable( $option );
+                        echo wp_kses_post($FormFieldsGenerator->field_repeatable( $option ));
                         break;
                     case 'user':
-                        echo $FormFieldsGenerator->field_user( $option );
+                        echo wp_kses_post($FormFieldsGenerator->field_user( $option ));
                         break;
                     default:
                         do_action( "wp_theme_settings_field_{$option['type']}", $option );

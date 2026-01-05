@@ -518,6 +518,7 @@
 				$selected = isset($_GET[$taxonomy]) ? $_GET[$taxonomy] : '';
 				$info_taxonomy = get_taxonomy($taxonomy);
 				wp_dropdown_categories(array(
+					/* translators: %s: taxonomy label */
 					'show_option_all' => esc_html(sprintf(__("Show All %s", 'bus-booking-manager'), $info_taxonomy->label)),
 					'taxonomy' => $taxonomy,
 					'name' => $taxonomy,
@@ -552,7 +553,7 @@
 			$result = $wpdb->get_results("SELECT * FROM $table_name WHERE order_item_id=$id");
 			foreach ($result as $page) {
 				if (strpos($page->meta_key, '_') !== 0) {
-					echo wbbm_get_string_part($page->meta_key, $part) . '<br/>';
+					echo esc_html(wbbm_get_string_part($page->meta_key, $part)) . '<br/>';
 				}
 			}
 		}
@@ -760,12 +761,12 @@
                 <div class="fields-li">
                     <label>
                         <i class="fa fa-map-marker" aria-hidden="true"></i> <?php esc_html_e('From', 'bus-booking-manager'); ?>
-						<?php echo wbbm_get_bus_route_list('bus_start_route', $start); ?></label>
+						<?php echo wp_kses_post(wbbm_get_bus_route_list('bus_start_route', $start)); ?></label>
                 </div>
                 <div class="fields-li">
                     <label>
                         <i class="fa fa-map-marker" aria-hidden="true"></i> <?php esc_html_e('To:', 'bus-booking-manager'); ?>
-						<?php echo wbbm_get_bus_route_list('bus_end_route', $end); ?>
+						<?php echo wp_kses_post(wbbm_get_bus_route_list('bus_end_route', $end)); ?>
                     </label>
                 </div>
                 <div class="fields-li">
@@ -1377,7 +1378,7 @@
 						?>
                         <label for='quantity_<?php esc_attr(get_the_id()); ?>'>
                             Adult (<?php //echo get_woocommerce_currency_symbol();
-							?><?php echo wc_price($seat_price_adult); ?> )
+							?><?php echo wp_kses_post(wc_price($seat_price_adult)); ?> )
                             <input type="number" id="quantity_<?php esc_attr(get_the_id()); ?>" class="input-text qty text bqty" step="1" min="0" max="<?php esc_attr($available_seat); ?>" name="adult_quantity" value="0" title="Qty" size="4" pattern="[0-9]*" inputmode="numeric" required aria-labelledby="" placeholder='0'/>
                         </label>
 						<?php
@@ -1387,7 +1388,7 @@
 						?>
                         <label for='child_quantity_<?php esc_attr(get_the_id()); ?>'>
                             Child (<?php //echo get_woocommerce_currency_symbol();
-							?><?php echo wc_price($seat_price_child); ?>)
+							?><?php echo wp_kses_post(wc_price($seat_price_child)); ?>)
                             <input type="number" id="child_quantity_<?php esc_attr(get_the_id()); ?>" class="input-text qty text bqty" step="1" min="0" max="<?php esc_attr($available_seat); ?>" name="child_quantity" value="0" title="Qty" size="4" pattern="[0-9]*" inputmode="numeric" required aria-labelledby="" placeholder='0'/>
                         </label>
 					<?php }
@@ -1396,7 +1397,7 @@
                         <label for='infant_quantity_<?php esc_attr(get_the_id()); ?>'>
                             Infant
                             (<?php //echo get_woocommerce_currency_symbol();
-							?><?php echo wc_price($seat_price_infant); ?>)
+							?><?php echo wp_kses_post(wc_price($seat_price_infant)); ?>)
                             <input type="number" id="infant_quantity_<?php esc_attr(get_the_id()); ?>" class="input-text qty text bqty" step="1" min="0" max="<?php esc_attr($available_seat); ?>" name="infant_quantity" value="0" title="Qty" size="4" pattern="[0-9]*" inputmode="numeric" required aria-labelledby="" placeholder='0'/>
                         </label>
 					<?php endif; ?>
@@ -1404,9 +1405,13 @@
 					$entire_fare = wbbm_get_bus_price_entire($start, $end, $price_arr);
 					if (($entire_bus_booking == 'on') && ($available_seat == $total_seat) && $entire_fare > 0) : ?>
                         <label for='entire_quantity_<?php esc_attr(get_the_id()); ?>'>
-							<?php echo wbbm_get_option('wbbm_entire_bus_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_entire_bus_text', 'wbbm_label_setting_sec') : esc_html(__('Entire Bus', 'bus-booking-manager')); ?>
+							<?php
+							$entire_bus_label = wbbm_get_option( 'wbbm_entire_bus_text', 'wbbm_label_setting_sec' );
+							echo esc_html( $entire_bus_label ? $entire_bus_label : __( 'Entire Bus', 'bus-booking-manager' ) );
+							?>
+
                             (<?php //echo get_woocommerce_currency_symbol();
-							?><?php echo wc_price($seat_price_entire); ?>)
+							?><?php echo wp_kses_post(wc_price($seat_price_entire)); ?>)
                             <input type="number" id="entire_quantity_<?php esc_attr(get_the_id()); ?>" class="input-text qty text bqty" step="1" min="0" max="1" name="entire_quantity" value="0" title="Qty" size="1" pattern="[0-9]*" inputmode="numeric" required aria-labelledby="" placeholder='0' maxlength="1" oninput="maxLengthCheck(this)"/>
                             <p><?php esc_html_e('Please enter 1 for entire bus booking.', 'bus-booking-manager'); ?></p>
                         </label>
@@ -1653,14 +1658,16 @@
 		$wbbm_quick_setup_done = get_option('wbbm_quick_setup_done');
 		if ($plugin == plugin_basename(__FILE__) && $wbbm_quick_setup_done != 'yes') {
 			//require_once(dirname(__FILE__) . "/inc/wbbm_dummy_import.php");
-			exit(wp_redirect(admin_url('edit.php?post_type=wbbm_bus&page=wbbm_init_quick_setup')));
+			wp_redirect(esc_url(admin_url('edit.php?post_type=wbbm_bus&page=wbbm_init_quick_setup')));
+			exit;
 		}
 	}
 	function activation_redirect_setup($plugin) {
 		$wbbm_quick_setup_done = get_option('wbbm_quick_setup_done');
 		if ($plugin == plugin_basename(__FILE__) && $wbbm_quick_setup_done != 'yes') {
 			//require_once(dirname(__FILE__) . "/inc/wbbm_dummy_import.php");
-			exit(wp_redirect(admin_url('admin.php?post_type=wbtm_bus&page=wbbm_init_quick_setup')));
+			wp_redirect(esc_url(admin_url('admin.php?post_type=wbtm_bus&page=wbbm_init_quick_setup')));
+			exit;
 		}
 	}
 // Customize Woocommerce order itemmeta

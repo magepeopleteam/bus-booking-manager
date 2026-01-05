@@ -180,7 +180,7 @@ if (!empty($off_day_sche) && $show_off_day === 'yes') {
                                         <strong><?php echo esc_html(wbbm_get_option('wbbm_entire_bus_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_entire_bus_text', 'wbbm_label_setting_sec') : __('Entire Bus', 'bus-booking-manager')) . ':'; ?></strong>
                                         <?php echo esc_html(wc_price($seat_price_entire)); ?>
                                     </p>
-                                    <?php echo wbbm_entire_switch($seat_price_entire, 'entire_quantity', false); ?>
+                                    <?php echo wp_kses_post(wbbm_entire_switch($seat_price_entire, 'entire_quantity', false)); ?>
                                 </div>
                             <?php endif; ?>
                         <?php } ?>

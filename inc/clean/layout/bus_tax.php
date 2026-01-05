@@ -58,6 +58,7 @@
                     <?php 
                         printf(
                             wp_kses_post(
+                                /* translators: %1$s: opening link tag, %2$s: closing link tag */
                                 __( 
                                     'To enable automated tax calculation, first ensure that "enable taxes and tax calculations" is checked on WooCommerce > Settings > General. %1$sView Documentation%2$s',
                                     'bus-booking-manager'
