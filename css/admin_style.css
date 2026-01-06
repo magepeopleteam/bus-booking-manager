@@ -311,7 +311,10 @@ span.wbbm-ticket-confirm {
 
 .wbbm-price-col>input {
     width: 100%;
-    max-width: 197px;
+    max-width: 100%;
+    min-width: 80px;
+    padding: 5px;
+    box-sizing: border-box;
 }
 
 .button.remove-price-row {
@@ -1311,6 +1314,11 @@ a.button.remove-bp-row i {
 
 .wbbm_seat_price_inner_wrap table tr td {
     padding: 8px;
+    vertical-align: top;
+}
+
+.wbbm_seat_price_inner_wrap table tr td.wbbm-price-col {
+    min-width: 100px;
 }
 
 .wbbm_seat_price_inner_wrap table tr {
