@@ -243,7 +243,7 @@ if (!empty($off_day_sche) && $show_off_day === 'yes') {
                         </div>
                         <div class="mage_customer_info_area">
                             <?php
-                            $date = isset($_GET[$date_var]) ? mage_wp_date($_GET[$date_var], 'Y-m-d') : date('Y-m-d');
+                            $date = isset($_GET[$date_var]) ? mage_wp_date($_GET[$date_var], 'Y-m-d') : gmdate('Y-m-d');
                             $start = isset($_GET[$boarding_var]) ? sanitize_text_field($_GET[$boarding_var]) : '';
                             $end = isset($_GET[$dropping_var]) ? sanitize_text_field($_GET[$dropping_var]) : '';
                             hidden_input_field('bus_id', $id);
@@ -282,7 +282,7 @@ if (!empty($off_day_sche) && $show_off_day === 'yes') {
                                     if (in_array($j_date_c, $bus_on_dates)) {
                                         mage_book_now_area($available_seat);
                                     } else {
-                                        echo '<span class="mage_error" style="display: block;text-align: center;padding: 5px;margin: 10px 0 0 0;">' . esc_html(date($date_format, strtotime(mage_get_isset($date_var)))) . ' Operational Off day!' . '</span>';
+                                        echo '<span class="mage_error" style="display: block;text-align: center;padding: 5px;margin: 10px 0 0 0;">' . esc_html(gmdate($date_format, strtotime(mage_get_isset($date_var)))) . ' Operational Off day!' . '</span>';
                                     }
                                 } else {
                                     $offday_current_bus = false;

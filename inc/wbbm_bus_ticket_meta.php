@@ -103,7 +103,7 @@ add_action('save_post', 'wbbm_price_zero_allow_meta_save');
 function wbbm_price_zero_allow_meta_save($post_id)
 {
     if (isset($_POST['wbbm_price_zero_allow'])) {
-        $wbbm_price_zero_allow = strip_tags($_POST['wbbm_price_zero_allow']);
+        $wbbm_price_zero_allow = wp_strip_all_tags($_POST['wbbm_price_zero_allow']);
     } else {
         $wbbm_price_zero_allow = 'off';
     }
@@ -193,7 +193,7 @@ add_action('save_post', 'wbbm_sell_off_meta_save');
 function wbbm_sell_off_meta_save($post_id)
 {
     if (isset($_POST['wbbm_sell_off'])) {
-        $wbbm_sell_off = strip_tags($_POST['wbbm_sell_off']);
+        $wbbm_sell_off = wp_strip_all_tags($_POST['wbbm_sell_off']);
     } else {
         $wbbm_sell_off = 'off';
     }
@@ -292,7 +292,7 @@ function wbbm_seat_available_meta_save($post_id)
         return;
 
     if (isset($_POST['wbbm_seat_available'])) {
-        $wbbm_seat_available = strip_tags($_POST['wbbm_seat_available']);
+        $wbbm_seat_available = wp_strip_all_tags($_POST['wbbm_seat_available']);
     } else {
         $wbbm_seat_available = 'off';
     }
@@ -836,26 +836,26 @@ function wbbm_bus_pricing_save($post_id)
     for ($i = 0; $i < $count; $i++) {
 
         if ($bp_pice_stops[$i] != '') :
-            $new[$i]['wbbm_bus_bp_price_stop'] = stripslashes(strip_tags($bp_pice_stops[$i]));
+            $new[$i]['wbbm_bus_bp_price_stop'] = stripslashes(wp_strip_all_tags($bp_pice_stops[$i]));
         endif;
 
         if ($dp_pice_stops[$i] != '') :
-            $new[$i]['wbbm_bus_dp_price_stop'] = stripslashes(strip_tags($dp_pice_stops[$i]));
+            $new[$i]['wbbm_bus_dp_price_stop'] = stripslashes(wp_strip_all_tags($dp_pice_stops[$i]));
         endif;
 
         if ($the_price[$i] != '') :
-            $new[$i]['wbbm_bus_price'] = stripslashes(strip_tags($the_price[$i]));
-            $new[$i]['wbbm_bus_price_roundtrip'] = stripslashes(strip_tags($the_price_roundtrip[$i]));
+            $new[$i]['wbbm_bus_price'] = stripslashes(wp_strip_all_tags($the_price[$i]));
+            $new[$i]['wbbm_bus_price_roundtrip'] = stripslashes(wp_strip_all_tags($the_price_roundtrip[$i]));
         endif;
 
         if ($the_price_child[$i] != '') :
-            $new[$i]['wbbm_bus_price_child'] = stripslashes(strip_tags($the_price_child[$i]));
-            $new[$i]['wbbm_bus_price_child_roundtrip'] = stripslashes(strip_tags($the_price_child_roundtrip[$i]));
+            $new[$i]['wbbm_bus_price_child'] = stripslashes(wp_strip_all_tags($the_price_child[$i]));
+            $new[$i]['wbbm_bus_price_child_roundtrip'] = stripslashes(wp_strip_all_tags($the_price_child_roundtrip[$i]));
         endif;
 
         if ($the_price_infant[$i] != '') :
-            $new[$i]['wbbm_bus_price_infant'] = stripslashes(strip_tags($the_price_infant[$i]));
-            $new[$i]['wbbm_bus_price_infant_roundtrip'] = stripslashes(strip_tags($the_price_infant_roundtrip[$i]));
+            $new[$i]['wbbm_bus_price_infant'] = stripslashes(wp_strip_all_tags($the_price_infant[$i]));
+            $new[$i]['wbbm_bus_price_infant_roundtrip'] = stripslashes(wp_strip_all_tags($the_price_infant_roundtrip[$i]));
         endif;
 
     }
@@ -1323,11 +1323,11 @@ function wbbm_bus_boarding_points_save($post_id)
     for ($i = 0; $i < $count; $i++) {
 
         if ($bp_stops[$i] != '') :
-            $new[$i]['wbbm_bus_bp_stops_name'] = stripslashes(strip_tags($bp_stops[$i]));
+            $new[$i]['wbbm_bus_bp_stops_name'] = stripslashes(wp_strip_all_tags($bp_stops[$i]));
         endif;
 
         if ($start_t[$i] != '') :
-            $new[$i]['wbbm_bus_bp_start_time'] = stripslashes(strip_tags($start_t[$i]));
+            $new[$i]['wbbm_bus_bp_start_time'] = stripslashes(wp_strip_all_tags($start_t[$i]));
         endif;
     }
 
@@ -1370,11 +1370,11 @@ function wbbm_bus_droping_stops_save($post_id)
     for ($i = 0; $i < $count; $i++) {
 
         if ($stops[$i] != '') :
-            $new[$i]['wbbm_bus_next_stops_name'] = stripslashes(strip_tags($stops[$i]));
+            $new[$i]['wbbm_bus_next_stops_name'] = stripslashes(wp_strip_all_tags($stops[$i]));
         endif;
 
         if ($end_t[$i] != '') :
-            $new[$i]['wbbm_bus_next_end_time'] = stripslashes(strip_tags($end_t[$i]));
+            $new[$i]['wbbm_bus_next_end_time'] = stripslashes(wp_strip_all_tags($end_t[$i]));
         endif;
 
         $opt_name = $post_id . str_replace(' ', '', $names[$i]);
@@ -1481,8 +1481,8 @@ function wbbm_bus_meta_save($post_id)
         if ($post->post_type != 'wbbm_bus') {
             return;
         }
-        $wbbm_bus_no = strip_tags($_POST['wbbm_bus_no']);
-        $wbbm_total_seat = strip_tags($_POST['wbbm_total_seat']);
+        $wbbm_bus_no = wp_strip_all_tags($_POST['wbbm_bus_no']);
+        $wbbm_total_seat = wp_strip_all_tags($_POST['wbbm_total_seat']);
         $update_seat_stock_status = update_post_meta($pid, '_manage_stock', 'no');
         $update_price = update_post_meta($pid, '_price', 0);
         $update_seat5 = update_post_meta($pid, 'wbbm_bus_no', $wbbm_bus_no);
@@ -1757,19 +1757,19 @@ function wbbm_bus_od_info_save($post_id)
         update_post_meta($pid, 'wbtm_offday_schedule', $offday_schedule_array);
         // Offday schedule END
 
-        $wbtm_od_start = strip_tags($_POST['wbtm_od_start']);
-        $wbtm_od_end = strip_tags($_POST['wbtm_od_end']);
+        $wbtm_od_start = wp_strip_all_tags($_POST['wbtm_od_start']);
+        $wbtm_od_end = wp_strip_all_tags($_POST['wbtm_od_end']);
 
         $wbtm_bus_on_date = $_POST['wbtm_bus_on_date'];
 
-        $od_sun = strip_tags($_POST['od_sun']);
-        $od_mon = strip_tags($_POST['od_mon']);
-        $od_tue = strip_tags($_POST['od_tue']);
-        $od_wed = strip_tags($_POST['od_wed']);
-        $od_thu = strip_tags($_POST['od_thu']);
-        $od_fri = strip_tags($_POST['od_fri']);
-        $od_sat = strip_tags($_POST['od_sat']);
-        $show_boarding_points = strip_tags($_POST['show_boarding_points']);
+        $od_sun = wp_strip_all_tags($_POST['od_sun']);
+        $od_mon = wp_strip_all_tags($_POST['od_mon']);
+        $od_tue = wp_strip_all_tags($_POST['od_tue']);
+        $od_wed = wp_strip_all_tags($_POST['od_wed']);
+        $od_thu = wp_strip_all_tags($_POST['od_thu']);
+        $od_fri = wp_strip_all_tags($_POST['od_fri']);
+        $od_sat = wp_strip_all_tags($_POST['od_sat']);
+        $show_boarding_points = wp_strip_all_tags($_POST['show_boarding_points']);
         $update_virtual = update_post_meta($pid, '_virtual', 'yes');
         $update_wbtm_od_start = update_post_meta($pid, 'wbtm_od_start', $wbtm_od_start);
         $update_wbtm_od_end = update_post_meta($pid, 'wbtm_od_end', $wbtm_od_end);

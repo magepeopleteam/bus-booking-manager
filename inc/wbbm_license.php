@@ -73,6 +73,7 @@
             switch ($license_data->error) {
                 case 'expired':
                     $message = sprintf(
+                        /* translators: draft exppired date */
                         __('Your license key expired on %s.', 'bus-booking-manager'),
                         date_i18n(get_option('date_format'), strtotime($license_data->expires, current_time('timestamp')))
                     );
@@ -92,7 +93,7 @@
                     break;
         
                 case 'item_name_mismatch':
-        
+                    /* translators: name */
                     $message = sprintf(__('This appears to be an invalid license key for %s.', 'bus-booking-manager'), $item_name);
                     break;
         
@@ -113,7 +114,7 @@
     if (empty($date) || $date == 'lifetime') {
         echo esc_html($date);
     } else {
-        if (strtotime(current_time('Y-m-d H:i')) < strtotime(date('Y-m-d H:i', strtotime($date)))) {
+        if (strtotime(current_time('Y-m-d H:i')) < strtotime(gmdate('Y-m-d H:i', strtotime($date)))) {
             echo esc_html(get_mep_datetime($date, 'date-time-text')); // Escape the output
         } else {
             esc_html_e('Expired', 'bus-booking-manager');

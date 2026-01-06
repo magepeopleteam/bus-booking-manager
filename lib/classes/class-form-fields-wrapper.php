@@ -4225,8 +4225,8 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
             <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-range-input-wrapper
             field-range-input-wrapper-<?php esc_attr($id); ?>">
                 <input type="number" class="range-val" name='<?php echo esc_attr($field_name); ?>' value="<?php echo esc_attr($value); ?>">
-                <input type='range' class='range-hndle' id="<?php echo esc_attr($field_id); ?>" min='<?php echo $args['min']; ?>' max='<?php echo
-                $args['max']; ?>' step='<?php echo $args['step']; ?>' value='<?php echo esc_attr($value); ?>' />
+                <input type='range' class='range-hndle' id="<?php echo esc_attr($field_id); ?>" min='<?php echo esc_attr($args['min']); ?>' max='<?php echo
+                esc_attr($args['max']); ?>' step='<?php echo esc_attr($args['step']); ?>' value='<?php echo esc_attr($value); ?>' />
                 <script>jQuery(document).ready(function($) {
                         jQuery(document).on('change', '.field-range-input-wrapper-<?php esc_attr($id); ?> .range-hndle', function() {
                             val = $(this).val();
@@ -4488,7 +4488,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
             ?>
             <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-switch-multi-wrapper
             field-switch-multi-wrapper-<?php echo
-            $id; ?>">
+            esc_attr($id); ?>">
                 <?php
                 foreach( $args as $key => $argName ):
                     $checked = is_array( $value ) && in_array( $key, $value ) ? "checked" : "";
@@ -4630,7 +4630,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                     $src = isset( $arg['src'] ) ? $arg['src'] : "";
 
                     $checked = ( $key == $value ) ? "checked" : "";
-                    ?><label class="<?php echo esc_attr($checked); ?>" for='<?php esc_attr($id); ?>-<?php echo esc_attr($key); ?>'><input name='<?php echo esc_attr($field_name); ?>' type='radio' id='<?php esc_attr($id); ?>-<?php echo esc_attr($key); ?>' value='<?php echo esc_attr($key); ?>' <?php echo esc_attr($checked); ?>><span class="sw-button"><img src="<?php echo $src; ?>"> </span></label><?php
+                    ?><label class="<?php echo esc_attr($checked); ?>" for='<?php esc_attr($id); ?>-<?php echo esc_attr($key); ?>'><input name='<?php echo esc_attr($field_name); ?>' type='radio' id='<?php esc_attr($id); ?>-<?php echo esc_attr($key); ?>' value='<?php echo esc_attr($key); ?>' <?php echo esc_attr($checked); ?>><span class="sw-button"><img src="<?php echo esc_attr($src); ?>"> </span></label><?php
 
                 endforeach;
                 ?>
@@ -4769,17 +4769,17 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                         foreach ($args as $item):
                             $checked = ($item == $value) ? 'checked':false;
                             ?>
-                            <div class="format" datavalue="<?php echo $item; ?>">
-                                <label><input type="radio" <?php echo esc_attr($checked); ?> name="preset_<?php esc_attr($id); ?>" value="<?php echo $item; ?>">
-                                    <span class="name"><?php echo date($item); ?></span></label>
-                                <span class="format"><code><?php echo $item; ?></code></span>
+                            <div class="format" datavalue="<?php echo esc_attr($item); ?>">
+                                <label><input type="radio" <?php echo esc_attr($checked); ?> name="preset_<?php esc_attr($id); ?>" value="<?php echo esc_attr($item); ?>">
+                                    <span class="name"><?php echo esc_html(gmdate($item)); ?></span></label>
+                                <span class="format"><code><?php echo esc_attr($item); ?></code></span>
                             </div>
                         <?php
                         endforeach;
                         ?>
                         <div class="format-value">
                             <span class="format"><input value="<?php echo esc_attr($value); ?>" name="<?php echo esc_attr($field_name); ?>"></span>
-                            <div class="">Preview: <?php echo date($value); ?></div>
+                            <div class="">Preview: <?php echo esc_html(gmdate($value)); ?></div>
                         </div>
                     <?php
                     endif;
@@ -4917,16 +4917,16 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                         foreach ($args as $item):
                             $checked = ($item == $value) ? 'checked':false;
                             ?>
-                            <div class="format" datavalue="<?php echo $item; ?>">
-                                <label><input type="radio" <?php echo esc_attr($checked); ?> name="preset_<?php esc_attr($id); ?>" value="<?php echo $item; ?>"><span class="name"><?php echo date($item); ?></span></label>
-                                <span class="format"><code><?php echo $item; ?></code></span>
+                            <div class="format" datavalue="<?php echo esc_attr($item); ?>">
+                                <label><input type="radio" <?php echo esc_attr($checked); ?> name="preset_<?php esc_attr($id); ?>" value="<?php echo esc_attr($item); ?>"><span class="name"><?php echo esc_html(gmdate($item)); ?></span></label>
+                                <span class="format"><code><?php echo esc_attr($item); ?></code></span>
                             </div>
                             <?php
                         endforeach;
                         ?>
                         <div class="format-value">
                             <span class="format"><input value="<?php echo esc_attr($value); ?>" name="<?php echo esc_attr($field_name); ?>"></span>
-                            <div class="">Preview: <?php echo date($value); ?></div>
+                            <div class="">Preview: <?php echo esc_attr(gmdate($value)); ?></div>
                         </div>
                     <?php
                     endif;
@@ -5058,7 +5058,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
             </div>
             <script>
                 jQuery(document).ready(function($) {
-                    $('#<?php echo esc_attr($field_id); ?>').datepicker({dateFormat : '<?php echo $date_format; ?>'})});
+                    $('#<?php echo esc_attr($field_id); ?>').datepicker({dateFormat : '<?php echo esc_html($date_format); ?>'})});
             </script>
             <script>
                 <?php if(!empty($depends)) {?>
@@ -5445,7 +5445,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                 foreach ($args as $argindex=>$value):
                     ?>
                     <div>
-                        <div class="item"><span class="title">a:<?php echo $argindex; ?> Color</span><div class="colorpicker"><input type='text' class='<?php esc_attr($id); ?>' name='<?php echo esc_attr($field_name); ?>[<?php echo $argindex; ?>]'   value='<?php echo $values[$argindex]; ?>' /></div></div>
+                        <div class="item"><span class="title">a:<?php echo esc_attr($argindex); ?> Color</span><div class="colorpicker"><input type='text' class='<?php esc_attr($id); ?>' name='<?php echo esc_attr($field_name); ?>[<?php echo esc_attr($argindex); ?>]'   value='<?php echo esc_attr($values[$argindex]); ?>' /></div></div>
                     </div>
                     <?php
                 endforeach;
@@ -5453,7 +5453,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                 foreach ($args as $argindex=>$value):
                     ?>
                     <div>
-                        <div class="item"><span class="title">a:<?php echo $argindex; ?> Color</span><div class="colorpicker"><input type='text' class='<?php esc_attr($id); ?>' name='<?php echo esc_attr($field_name); ?>[<?php echo $argindex; ?>]'   value='<?php echo esc_attr($value); ?>' /></div></div>
+                        <div class="item"><span class="title">a:<?php echo esc_attr($argindex); ?> Color</span><div class="colorpicker"><input type='text' class='<?php esc_attr($id); ?>' name='<?php echo esc_attr($field_name); ?>[<?php echo esc_attr($argindex); ?>]'   value='<?php echo esc_attr($value); ?>' /></div></div>
                     </div>
                 <?php
                 endforeach;
@@ -5585,7 +5585,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                         foreach ($values as $user_id):
                             $get_avatar_url = get_avatar_url($user_id,array('size'=>'60'));
 
-                            ?><div class="item" title="click to remove"><img src="<?php echo $get_avatar_url; ?>" /><input type="hidden" name="<?php echo esc_attr($field_name); ?>[]" value="<?php echo $user_id; ?>"></div><?php
+                            ?><div class="item" title="click to remove"><img src="<?php echo esc_url($get_avatar_url); ?>" /><input type="hidden" name="<?php echo esc_attr($field_name); ?>[]" value="<?php echo esc_attr($user_id); ?>"></div><?php
                         endforeach;
                     endif; ?>
                 </div>
@@ -5599,10 +5599,10 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                                 $user_data = get_user_by('ID',$user_id);
                                 $get_avatar_url = get_avatar_url($user_id,array('size'=>'60'));
                                 ?>
-                                <li title="<?php echo $user_data->display_name; ?>(#<?php echo $user_id; ?>)"
+                                <li title="<?php echo esc_attr($user_data->display_name); ?>(#<?php echo esc_attr($user_id); ?>)"
                                     userSrc="<?php echo
-                                $get_avatar_url; ?>"
-                                    iconData="<?php echo $user_id; ?>"><img src="<?php echo $get_avatar_url; ?>" />
+                                esc_url($get_avatar_url); ?>"
+                                    iconData="<?php echo esc_attr($user_id); ?>"><img src="<?php echo esc_url($get_avatar_url); ?>" />
                                 </li>
                             <?php
                             endforeach;
@@ -5775,7 +5775,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                         if(!empty($icons)):
                             foreach ($icons as $iconindex=>$iconTitle):
                                 ?>
-                                <li title="<?php echo $iconTitle; ?>" iconData="<?php echo $iconindex; ?>"><i class="<?php echo $iconindex; ?>"></i></li>
+                                <li title="<?php echo esc_attr($iconTitle); ?>" iconData="<?php echo esc_attr($iconindex); ?>"><i class="<?php echo esc_attr($iconindex); ?>"></i></li>
                                 <?php
                             endforeach;
                         endif;
@@ -5941,7 +5941,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                         <?php
                         if(!empty($icons)):
                             foreach ($icons as $iconindex=>$iconTitle):
-                                ?><li title="<?php echo $iconTitle; ?>" iconData="<?php echo $iconindex; ?>"><i class="<?php echo $iconindex; ?>"></i></li><?php
+                                ?><li title="<?php echo esc_attr($iconTitle); ?>" iconData="<?php echo esc_attr($iconindex); ?>"><i class="<?php echo esc_attr($iconindex); ?>"></i></li><?php
                             endforeach;
                         endif;
                         ?>
@@ -6360,7 +6360,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                             if( $multiple ) $selected = in_array( $key, $value ) ? "selected" : "";
                             else $selected = $value == $key ? "selected" : "";
                             ?>
-                            <option <?php echo $selected; ?> value='<?php echo esc_attr($key); ?>'><?php echo $name; ?></option>
+                            <option <?php echo esc_attr($selected); ?> value='<?php echo esc_attr($key); ?>'><?php echo esc_attr($name); ?></option>
                         <?php
                         endforeach;
                         ?>
@@ -6500,8 +6500,8 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                         $content = $value['content'];
                         ?>
                         <div class="faq-item">
-                            <div class="faq-header"><?php echo $title; ?></div>
-                            <div class="faq-content"><?php echo $content; ?></div>
+                            <div class="faq-header"><?php echo esc_attr($title); ?></div>
+                            <div class="faq-content"><?php echo esc_attr($content); ?></div>
                         </div>
                     <?php
                     endforeach;
@@ -6624,8 +6624,8 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                     $thumb = isset($grid_item['thumb']) ? $grid_item['thumb'] : '';
                     ?>
                     <div class="item">
-                        <div class="thumb"><a href="<?php echo $link; ?>"><img src="<?php echo $thumb; ?>"></img></a></div>
-                        <div class="name"><a href="<?php echo $link; ?>"><?php echo $title; ?></a></div>
+                        <div class="thumb"><a href="<?php echo esc_attr($link); ?>"><img src="<?php echo esc_attr($thumb); ?>"></img></a></div>
+                        <div class="name"><a href="<?php echo esc_attr($link); ?>"><?php echo esc_attr($title); ?></a></div>
                     </div>
                     <?php
                 }
@@ -6637,12 +6637,12 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                     foreach ($widths as $screen_size=>$width):
                     $height = !empty($heights[$screen_size]) ? $heights[$screen_size] : 'auto';
                     ?>
-                    @media screen and (min-width: <?php echo $screen_size; ?>) {
+                    @media screen and (min-width: <?php echo esc_attr($screen_size); ?>) {
                         .field-grid-wrapper-<?php esc_attr($id); ?> .item{
-                            width: <?php echo $width; ?>;
+                            width: <?php echo esc_attr($width); ?>;
                         }
                         .field-grid-wrapper-<?php esc_attr($id); ?> .item .thumb{
-                            height: <?php echo $height; ?>;
+                            height: <?php echo esc_attr($height); ?>;
                         }
                     }
                     <?php
@@ -6778,8 +6778,8 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                     $checked = ( $key == $value ) ? "checked" : "";
                     ?><label  class="<?php echo esc_attr($checked); ?>" for='<?php esc_attr($id); ?>-<?php echo esc_attr($key); ?>'><input
                             name='<?php echo esc_attr($field_name); ?>' type='radio' id='<?php esc_attr($id); ?>-<?php echo esc_attr($key); ?>'
-                            value='<?php echo esc_attr($key); ?>' <?php echo esc_attr($checked); ?>><span title="<?php echo $color; ?>" style="background-color: <?php
-                    echo $color; ?>" class="sw-button"></span></label><?php
+                            value='<?php echo esc_attr($key); ?>' <?php echo esc_attr($checked); ?>><span title="<?php echo esc_attr($color); ?>" style="background-color: <?php
+                    echo esc_attr($color); ?>" class="sw-button"></span></label><?php
                 endforeach;
                 ?>
             </div>
@@ -6787,10 +6787,10 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                 .field-color-palette-wrapper-<?php esc_attr($id); ?> .sw-button{
                     transition: ease all 1s;
                 <?php if(!empty($width)):  ?>
-                    width: <?php echo $width; ?>;
+                    width: <?php echo esc_attr($width); ?>;
                 <?php endif; ?>
                 <?php if(!empty($height)):  ?>
-                    height: <?php echo $height; ?>;
+                    height: <?php echo esc_attr($height); ?>;
                 <?php endif; ?>
                 }
                 .field-color-palette-wrapper-<?php esc_attr($id); ?> label:hover .sw-button{
@@ -6934,8 +6934,8 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                     $checked = is_array( $value ) && in_array( $key, $value ) ? "checked" : "";
                     ?><label  class="<?php echo esc_attr($checked); ?>" for='<?php esc_attr($id); ?>-<?php echo esc_attr($key); ?>'><input
                             name='<?php echo esc_attr($field_name); ?>[]' type='checkbox' id='<?php esc_attr($id); ?>-<?php echo esc_attr($key); ?>'
-                            value='<?php echo esc_attr($key); ?>' <?php echo esc_attr($checked); ?>><span title="<?php echo $color; ?>" style="background-color: <?php
-                    echo $color; ?>" class="sw-button"></span></label><?php
+                            value='<?php echo esc_attr($key); ?>' <?php echo esc_attr($checked); ?>><span title="<?php echo esc_attr($color); ?>" style="background-color: <?php
+                    echo esc_attr($color); ?>" class="sw-button"></span></label><?php
                 endforeach;
                 ?>
             </div>
@@ -6943,10 +6943,10 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                 .field-color-palette-multi-wrapper-<?php esc_attr($id); ?> .sw-button{
                     transition: ease all 1s;
                 <?php if(!empty($width)):  ?>
-                    width: <?php echo $width; ?>;
+                    width: <?php echo esc_attr($width); ?>;
                 <?php endif; ?>
                 <?php if(!empty($height)):  ?>
-                    height: <?php echo $height; ?>;
+                    height: <?php echo esc_attr($height); ?>;
                 <?php endif; ?>
                 }
                 .field-color-palette-multi-wrapper-<?php esc_attr($id); ?> label:hover .sw-button{
@@ -7092,12 +7092,12 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                     if( "audio/mpeg" == $media_type ){
                         ?>
                         <div id='media_preview_$id' class='dashicons dashicons-format-audio' style='font-size: 70px;display: inline;'></div>
-                        <div><?php echo $media_title; ?></div>
+                        <div><?php echo esc_attr($media_title); ?></div>
                         <?php
                     }
                     else {
                         ?>
-                        <img id='media_preview_<?php esc_attr($id); ?>' src='<?php echo $media_url; ?>' style='width:100%'/>
+                        <img id='media_preview_<?php esc_attr($id); ?>' src='<?php echo esc_attr($media_url); ?>' style='width:100%'/>
                         <?php
                     }
                     ?>
@@ -7241,7 +7241,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
             field-media-multi-wrapper-<?php esc_attr($id); ?>">
                 <div class='button' id='media_upload_<?php esc_attr($id); ?>'>Upload</div><div class='button clear'
                                                                                           id='media_clear_<?php echo
-                                                                                          $id;
+                                                                                          esc_attr($id);
                                                                                           ?>'>Clear</div>
                 <div class="media-list media-list-<?php esc_attr($id); ?>">
                     <?php
@@ -7253,8 +7253,8 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                             ?>
                             <div class="item">
                                 <span class="remove" onclick="jQuery(this).parent().remove()">X</span>
-                                <img id='media_preview_<?php esc_attr($id); ?>' src='<?php echo $media_url; ?>' style='width:100%'/>
-                                <div class="item-title"><?php echo $media_title; ?></div>
+                                <img id='media_preview_<?php esc_attr($id); ?>' src='<?php echo esc_attr($media_url); ?>' style='width:100%'/>
+                                <div class="item-title"><?php echo esc_attr($media_title); ?></div>
                                 <input type='hidden' name='<?php echo esc_attr($field_name); ?>[]' value='<?php echo esc_attr($value); ?>' />
                             </div>
                         <?php
@@ -7396,7 +7396,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                     id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-custom-html-wrapper
             field-custom-html-wrapper-<?php esc_attr($id); ?>">
                 <?php
-                echo $html;
+                echo wp_kses_post($html);
                 ?>
             </div>
             <script>
@@ -7593,7 +7593,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                             html+='</div>';
                         });
                         html+='</div>';
-                        jQuery('.<?php echo 'field-repeatable-wrapper-'.$id; ?> .field-list').append(html);
+                        jQuery('.<?php echo 'field-repeatable-wrapper-'.esc_attr($id); ?> .field-list').append(html);
                     })
                     jQuery( ".field-repeatable-wrapper-<?php esc_attr($id); ?> .field-list" ).sortable({ handle: '.sort' });
                 });
@@ -7616,7 +7616,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                                     <?php if($sortable):?>
                                         <span class="button sort"><i class="fas fa-arrows-alt"></i></span>
                                     <?php endif; ?>
-                                    <span class="title-text"><?php echo $title_field_val; ?></span>
+                                    <span class="title-text"><?php echo esc_attr($title_field_val); ?></span>
                                     <?php if($collapsible):?>
                                 </div>
                             <?php endif; ?>
@@ -7626,76 +7626,76 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                                     $name = $field['name'];
                                     $title_field_class = ($title_field == $field_index) ? 'title-field':'';
                                     ?>
-                                    <div class="item <?php echo $title_field_class; ?>">
+                                    <div class="item <?php echo esc_attr($title_field_class); ?>">
                                         <?php if($collapsible):?>
                                         <div class="content">
                                             <?php endif; ?>
-                                            <div><?php echo $name; ?></div>
+                                            <div><?php echo esc_html($name); ?></div>
                                             <?php if($type == 'text'):
                                                 $default = isset($field['default']) ? $field['default'] : '';
                                                 $value = !empty($val[$item_id]) ? $val[$item_id] : $default;
                                                 ?>
-                                                <input type="text" class="regular-text" name="<?php echo esc_attr($field_name); ?>[<?php echo $index; ?>][<?php echo $item_id; ?>]" placeholder="" value="<?php echo esc_html($value); ?>">
+                                                <input type="text" class="regular-text" name="<?php echo esc_attr($field_name); ?>[<?php echo esc_attr($index); ?>][<?php echo esc_attr($item_id); ?>]" placeholder="" value="<?php echo esc_html($value); ?>">
                                             <?php elseif($type == 'number'):
                                                 $default = isset($field['default']) ? $field['default'] : '';
                                                 $value = !empty($val[$item_id]) ? $val[$item_id] : $default;
                                                 ?>
-                                                <input type="number" class="regular-text" name="<?php echo esc_attr($field_name); ?>[<?php echo $index; ?>][<?php echo $item_id; ?>]" placeholder="" value="<?php echo esc_html($value); ?>">
+                                                <input type="number" class="regular-text" name="<?php echo esc_attr($field_name); ?>[<?php echo esc_attr($index); ?>][<?php echo esc_attr($item_id); ?>]" placeholder="" value="<?php echo esc_html($value); ?>">
                                             <?php elseif($type == 'url'):
                                                 $default = isset($field['default']) ? $field['default'] : '';
                                                 $value = !empty($val[$item_id]) ? $val[$item_id] : $default;
                                                 ?>
-                                                <input type="url" class="regular-text" name="<?php echo esc_attr($field_name); ?>[<?php echo $index; ?>][<?php echo $item_id; ?>]" placeholder="" value="<?php echo esc_html($value); ?>">
+                                                <input type="url" class="regular-text" name="<?php echo esc_attr($field_name); ?>[<?php echo esc_attr($index); ?>][<?php echo esc_attr($item_id); ?>]" placeholder="" value="<?php echo esc_html($value); ?>">
                                             <?php elseif($type == 'tel'):
                                                 $default = isset($field['default']) ? $field['default'] : '';
                                                 $value = !empty($val[$item_id]) ? $val[$item_id] : $default;
                                                 ?>
-                                                <input type="tel" class="regular-text" name="<?php echo esc_attr($field_name); ?>[<?php echo $index; ?>][<?php echo $item_id; ?>]" placeholder="" value="<?php echo esc_html($value); ?>">
+                                                <input type="tel" class="regular-text" name="<?php echo esc_attr($field_name); ?>[<?php echo esc_attr($index); ?>][<?php echo esc_attr($item_id); ?>]" placeholder="" value="<?php echo esc_html($value); ?>">
                                             <?php elseif($type == 'time'):
                                                 $default = isset($field['default']) ? $field['default'] : '';
                                                 $value = !empty($val[$item_id]) ? $val[$item_id] : $default;
                                                 ?>
-                                                <input type="time" class="regular-text" name="<?php echo esc_attr($field_name); ?>[<?php echo $index; ?>][<?php echo $item_id; ?>]" placeholder="" value="<?php echo esc_html($value); ?>">
+                                                <input type="time" class="regular-text" name="<?php echo esc_attr($field_name); ?>[<?php echo esc_attr($index); ?>][<?php echo esc_attr($item_id); ?>]" placeholder="" value="<?php echo esc_html($value); ?>">
                                             <?php elseif($type == 'search'):
                                                 $default = isset($field['default']) ? $field['default'] : '';
                                                 $value = !empty($val[$item_id]) ? $val[$item_id] : $default;
                                                 ?>
-                                                <input type="search" class="regular-text" name="<?php echo esc_attr($field_name); ?>[<?php echo $index; ?>][<?php echo $item_id; ?>]" placeholder="" value="<?php echo esc_html($value); ?>">
+                                                <input type="search" class="regular-text" name="<?php echo esc_attr($field_name); ?>[<?php echo esc_attr($index); ?>][<?php echo esc_attr($item_id); ?>]" placeholder="" value="<?php echo esc_html($value); ?>">
                                             <?php elseif($type == 'month'):
                                                 $default = isset($field['default']) ? $field['default'] : '';
                                                 $value = !empty($val[$item_id]) ? $val[$item_id] : $default;
                                                 ?>
-                                                <input type="month" class="regular-text" name="<?php echo esc_attr($field_name); ?>[<?php echo $index; ?>][<?php echo $item_id; ?>]" placeholder="" value="<?php echo esc_html($value); ?>">
+                                                <input type="month" class="regular-text" name="<?php echo esc_attr($field_name); ?>[<?php echo esc_attr($index); ?>][<?php echo esc_attr($item_id); ?>]" placeholder="" value="<?php echo esc_html($value); ?>">
                                             <?php elseif($type == 'color'):
                                                 $default = isset($field['default']) ? $field['default'] : '';
                                                 $value = !empty($val[$item_id]) ? $val[$item_id] : $default;
                                                 ?>
-                                                <input type="color" class="regular-text" name="<?php echo esc_attr($field_name); ?>[<?php echo $index; ?>][<?php echo $item_id; ?>]" placeholder="" value="<?php echo esc_html($value); ?>">
+                                                <input type="color" class="regular-text" name="<?php echo esc_attr($field_name); ?>[<?php echo esc_attr($index); ?>][<?php echo esc_attr($item_id); ?>]" placeholder="" value="<?php echo esc_html($value); ?>">
                                             <?php elseif($type == 'date'):
                                                 $default = isset($field['default']) ? $field['default'] : '';
                                                 $value = !empty($val[$item_id]) ? $val[$item_id] : $default;
                                                 ?>
-                                                <input type="date" class="regular-text" name="<?php echo esc_attr($field_name); ?>[<?php echo $index; ?>][<?php echo $item_id; ?>]" placeholder="" value="<?php echo esc_html($value); ?>">
+                                                <input type="date" class="regular-text" name="<?php echo esc_attr($field_name); ?>[<?php echo esc_attr($index); ?>][<?php echo esc_attr($item_id); ?>]" placeholder="" value="<?php echo esc_html($value); ?>">
                                             <?php elseif($type == 'email'):
                                                 $default = isset($field['default']) ? $field['default'] : '';
                                                 $value = !empty($val[$item_id]) ? $val[$item_id] : $default;
                                                 ?>
-                                                <input type="email" class="regular-text" name="<?php echo esc_attr($field_name); ?>[<?php echo $index; ?>][<?php echo $item_id; ?>]" placeholder="" value="<?php echo esc_html($value); ?>">
+                                                <input type="email" class="regular-text" name="<?php echo esc_attr($field_name); ?>[<?php echo esc_attr($index); ?>][<?php echo esc_attr($item_id); ?>]" placeholder="" value="<?php echo esc_html($value); ?>">
                                             <?php elseif($type == 'textarea'):
                                                 $default = isset($field['default']) ? $field['default'] : '';
                                                 $value = !empty($val[$item_id]) ? $val[$item_id] : $default;
                                                 ?>
-                                                <textarea name="<?php echo esc_attr($field_name); ?>[<?php echo $index; ?>][<?php echo $item_id; ?>]"><?php echo esc_html($value); ?></textarea>
+                                                <textarea name="<?php echo esc_attr($field_name); ?>[<?php echo esc_attr($index); ?>][<?php echo esc_attr($item_id); ?>]"><?php echo esc_html($value); ?></textarea>
                                             <?php elseif($type == 'select'):
                                                 $args = isset($field['args']) ? $field['args'] : array();
                                                 $default = isset($field['default']) ? $field['default'] : '';
                                                 $value = !empty($val[$item_id]) ? $val[$item_id] : $default;
                                                 ?>
-                                                <select class="" name="<?php echo esc_attr($field_name); ?>[<?php echo $index; ?>][<?php echo $item_id; ?>]">
+                                                <select class="" name="<?php echo esc_attr($field_name); ?>[<?php echo esc_attr($index); ?>][<?php echo esc_attr($item_id); ?>]">
                                                     <?php foreach ($args as $argIndex => $argName):
                                                         $selected = ($argIndex == $value) ? 'selected' : '';
                                                         ?>
-                                                        <option <?php echo $selected; ?>  value="<?php echo $argIndex; ?>"><?php echo esc_attr($argName); ?></option>
+                                                        <option <?php echo esc_attr($selected); ?>  value="<?php echo esc_attr($argIndex); ?>"><?php echo esc_attr($argName); ?></option>
                                                     <?php endforeach; ?>
                                                 </select>
                                             <?php elseif($type == 'radio'):
@@ -7707,7 +7707,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                                                 $checked = ($argIndex == $value) ? 'checked' : '';
                                                 ?>
                                                 <label class="" >
-                                                    <input  type="radio" name="<?php echo esc_attr($field_name); ?>[<?php echo $index; ?>][<?php echo $item_id; ?>]" <?php echo esc_attr($checked); ?>  value="<?php echo $argIndex; ?>"><?php echo esc_attr($argName); ?></input>
+                                                    <input  type="radio" name="<?php echo esc_attr($field_name); ?>[<?php echo esc_attr($index); ?>][<?php echo esc_attr($item_id); ?>]" <?php echo esc_attr($checked); ?>  value="<?php echo esc_attr($argIndex); ?>"><?php echo esc_attr($argName); ?></input>
                                                 </label>
                                             <?php endforeach; ?>
                                             <?php elseif($type == 'checkbox'):
@@ -7719,7 +7719,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                                                 $checked = in_array($argIndex, $value ) ? 'checked' : '';
                                                 ?>
                                                 <label class="" >
-                                                    <input  type="checkbox" name="<?php echo esc_attr($field_name); ?>[<?php echo $index; ?>][<?php echo $item_id; ?>][]" <?php echo esc_attr($checked); ?>  value="<?php echo $argIndex; ?>"><?php echo esc_attr($argName); ?></input>
+                                                    <input  type="checkbox" name="<?php echo esc_attr($field_name); ?>[<?php echo esc_attr($index); ?>][<?php echo esc_attr($item_id); ?>][]" <?php echo esc_attr($checked); ?>  value="<?php echo esc_attr($argIndex); ?>"><?php echo esc_attr($argName); ?></input>
                                                 </label>
                                             <?php endforeach; ?>
                                             <?php
@@ -7784,7 +7784,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
             if( isset( $matches[1][0] ) ) $taxonomy = $matches[1][0];
             else throw new Pick_error('Invalid taxonomy declaration !');
 
-            if( ! taxonomy_exists( $taxonomy ) ) throw new Pick_error("Taxonomy <strong>$taxonomy</strong> doesn't exists !");
+            if( ! taxonomy_exists( $taxonomy ) ) throw new Pick_error(wp_kses_post("Taxonomy <strong>$taxonomy</strong> doesn't exists !"));
 
             $terms = get_terms( $taxonomy, array(
                 'hide_empty' => false,

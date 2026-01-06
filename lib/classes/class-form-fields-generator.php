@@ -196,11 +196,11 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
 
             ob_start();
             ?>
-            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?>
+            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?>
                     id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field';
                     ?> field-wrapper field-post-objects-wrapper
-            field-post-objects-wrapper-<?php echo $field_id; ?>">
-                <div class="field-list <?php if($sortable){ echo 'sortable'; }?>" id="<?php echo $field_id; ?>">
+            field-post-objects-wrapper-<?php echo esc_attr($field_id); ?>">
+                <div class="field-list <?php if($sortable){ echo 'sortable'; }?>" id="<?php echo esc_attr($field_id); ?>">
                     <?php
                     if(!empty($args)):
                         foreach ($args as $argsKey=>$arg):
@@ -333,10 +333,10 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
 
             ob_start();
             ?>
-            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?>
+            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?>
                     id="field-wrapper-<?php echo esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-switcher-wrapper
             field-switcher-wrapper-<?php echo esc_attr($id); ?>">
-                <label class="switcher <?php echo $checked; ?>">
+                <label class="switcher <?php echo esc_attr($checked); ?>">
                     <input type="checkbox" id="<?php echo esc_attr($id); ?>" value="<?php echo esc_attr($value); ?>"
                            name="<?php echo esc_attr($field_name); ?>" <?php echo esc_attr($checked); ?>>
                     <span class="layer"></span>
@@ -475,7 +475,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
             if(!empty($args)):
                 ?>
 
-                <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?>
+                <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?>
                         id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-google-map-wrapper
                 field-google-map-wrapper-<?php esc_attr($id); ?>">
                     <div class="item-list">
@@ -483,10 +483,10 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                         foreach ($args as $index=>$name):
                             ?>
                             <div class="item">
-                                <span class="field-title"><?php echo $name; ?></span>
-                                <span class="input-wrapper"><input type='text' name='<?php echo $field_name;?>[<?php
-                                    echo $index; ?>]' value='<?php
-                                    echo $values[$index]; ?>' /></span>
+                                <span class="field-title"><?php echo esc_html($name); ?></span>
+                                <span class="input-wrapper"><input type='text' name='<?php echo esc_attr($field_name); ?>[<?php
+                                    echo esc_attr($index); ?>]' value='<?php
+                                    echo esc_attr($values[$index]); ?>' /></span>
                             </div>
                         <?php
                         endforeach;
@@ -498,23 +498,23 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                 <?php
                 if($preview):
                     ?>
-                    <div id="map-<?php echo $field_id; ?>"></div>
+                    <div id="map-<?php echo esc_attr($field_id); ?>"></div>
                     <script>
                         function initMap() {
-                            var myLatLng = {lat: <?php echo $lat; ?>, lng: <?php echo $lng; ?>};
-                            var map = new google.maps.Map(document.getElementById('map-<?php echo $field_id; ?>'), {
-                                zoom: <?php echo $zoom; ?>,
+                            var myLatLng = {lat: <?php echo esc_attr($lat); ?>, lng: <?php echo esc_attr($lng); ?>};
+                            var map = new google.maps.Map(document.getElementById('map-<?php echo esc_attr($field_id); ?>'), {
+                                zoom: <?php echo esc_attr($zoom); ?>,
                                 center: myLatLng
                             });
                             var marker = new google.maps.Marker({
                                 position: myLatLng,
                                 map: map,
-                                title: '<?php echo $title; ?>'
+                                title: '<?php echo esc_attr($title); ?>'
                             });
                         }
                     </script>
                     <script async defer
-                            src="https://maps.googleapis.com/maps/api/js?key=<?php echo $apikey; ?>&callback=initMap">
+                            src="https://maps.googleapis.com/maps/api/js?key=<?php echo esc_attr($apikey); ?>&callback=initMap">
                     </script>
                     <?php
                 endif;
@@ -630,15 +630,15 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
 
             ob_start();
             ?>
-            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?>
+            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?>
                     id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-border-wrapper
             field-border-wrapper-<?php esc_attr($id); ?>">
                 <div class="item-list">
                         <div class="item">
                             <span class="field-title">Width</span>
-                            <span class="input-wrapper"><input type='number' name='<?php echo $field_name;?>[width]' value='<?php
-                                echo $width; ?>' /></span>
-                            <select name="<?php echo $field_name;?>[unit]">
+                            <span class="input-wrapper"><input type='number' name='<?php echo esc_attr($field_name); ?>[width]' value='<?php
+                                echo esc_attr($width); ?>' /></span>
+                            <select name="<?php echo esc_attr($field_name); ?>[unit]">
                                 <option <?php if($unit == 'px') echo 'selected'; ?> value="px">px</option>
                                 <option <?php if($unit == '%') echo 'selected'; ?> value="%">%</option>
                                 <option <?php if($unit == 'em') echo 'selected'; ?> value="em">em</option>
@@ -652,7 +652,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                         </div>
                         <div class="item">
                             <span class="field-title">Style</span>
-                            <select name="<?php echo $field_name;?>[style]">
+                            <select name="<?php echo esc_attr($field_name); ?>[style]">
                                 <option <?php if($style == 'dotted') echo 'selected'; ?> value="dotted">dotted</option>
                                 <option <?php if($style == 'dashed') echo 'selected'; ?> value="dashed">dashed</option>
                                 <option <?php if($style == 'solid') echo 'selected'; ?> value="solid">solid</option>
@@ -666,8 +666,8 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                         </div>
                     <div class="item">
                         <span class="field-title">Color</span>
-                        <span class="input-wrapper"><input class="colorpicker" type='text' name='<?php echo $field_name;
-                        ?>[color]' value='<?php echo $color; ?>' /></span>
+                        <span class="input-wrapper"><input class="colorpicker" type='text' name='<?php echo esc_attr($field_name);
+                        ?>[color]' value='<?php echo esc_attr($color); ?>' /></span>
                     </div>
                 </div>
                 <div class="error-mgs"></div>
@@ -783,7 +783,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
             ob_start();
             if(!empty($args)):
                 ?>
-                <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-margin-wrapper
+                <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-margin-wrapper
                 field-margin-wrapper-<?php esc_attr($id); ?>">
                     <div class="item-list">
                         <?php
@@ -792,11 +792,11 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                             $unit = $values[$index]['unit'];
                             ?>
                             <div class="item">
-                                <span class="field-title"><?php echo $name; ?></span>
-                                <span class="input-wrapper"><input type='number' name='<?php echo $field_name;?>[<?php
-                                    echo $index; ?>][val]' value='<?php
-                                    echo $values[$index]['val']; ?>' /></span>
-                                <select name="<?php echo $field_name;?>[<?php echo $index; ?>][unit]">
+                                <span class="field-title"><?php echo esc_html($name); ?></span>
+                                <span class="input-wrapper"><input type='number' name='<?php echo esc_attr($field_name); ?>[<?php
+                                    echo esc_attr($index); ?>][val]' value='<?php
+                                    echo esc_attr($values[$index]['val']); ?>' /></span>
+                                <select name="<?php echo esc_attr($field_name); ?>[<?php echo esc_attr($index); ?>][unit]">
                                     <option <?php if($unit == 'px') echo 'selected'; ?> value="px">px</option>
                                     <option <?php if($unit == '%') echo 'selected'; ?> value="%">%</option>
                                     <option <?php if($unit == 'em') echo 'selected'; ?> value="em">em</option>
@@ -925,7 +925,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
             ob_start();
             if(!empty($args)):
                 ?>
-                <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-padding-wrapper
+                <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-padding-wrapper
                 field-padding-wrapper-<?php esc_attr($id); ?>">
                     <label><input type="checkbox" class="change-together">Apply for all</label>
                     <div class="item-list">
@@ -935,11 +935,11 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                             $unit = $values[$index]['unit'];
                             ?>
                             <div class="item">
-                                <span class="field-title"><?php echo $name; ?></span>
-                                <span class="input-wrapper"><input type='number' name='<?php echo $field_name;?>[<?php
-                                    echo $index; ?>][val]' value='<?php
-                                    echo $values[$index]['val']; ?>' /></span>
-                                <select name="<?php echo $field_name;?>[<?php echo $index; ?>][unit]">
+                                <span class="field-title"><?php echo esc_html($name); ?></span>
+                                <span class="input-wrapper"><input type='number' name='<?php echo esc_attr($field_name); ?>[<?php
+                                    echo esc_attr($index); ?>][val]' value='<?php
+                                    echo esc_attr($values[$index]['val']); ?>' /></span>
+                                <select name="<?php echo esc_attr($field_name); ?>[<?php echo esc_attr($index); ?>][unit]">
                                     <option <?php if($unit == 'px') echo 'selected'; ?> value="px">px</option>
                                     <option <?php if($unit == '%') echo 'selected'; ?> value="%">%</option>
                                     <option <?php if($unit == 'em') echo 'selected'; ?> value="em">em</option>
@@ -1108,7 +1108,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
             ob_start();
             if(!empty($args)):
                 ?>
-                <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-margin-wrapper field-margin-wrapper-<?php esc_attr($id); ?>">
+                <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-margin-wrapper field-margin-wrapper-<?php esc_attr($id); ?>">
                     <label><input type="checkbox" class="change-together">Apply for all</label>
                     <div class="item-list">
                         <?php
@@ -1117,12 +1117,12 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                             $unit = $values[$index]['unit'];
                             ?>
                             <div class="item">
-                                <span class="field-title"><?php echo $name; ?></span>
-                                <span class="input-wrapper"><input class="<?php echo $index; ?>" type='number'
-                                                                   name='<?php echo $field_name; ?>[<?php
-                                    echo $index; ?>][val]' value='<?php
-                                    echo $values[$index]['val']; ?>' /></span>
-                                <select name="<?php echo $field_name;?>[<?php echo $index; ?>][unit]">
+                                <span class="field-title"><?php echo esc_html($name); ?></span>
+                                <span class="input-wrapper"><input class="<?php echo esc_attr($index); ?>" type='number'
+                                                                   name='<?php echo esc_attr($field_name); ?>[<?php
+                                    echo esc_attr($index); ?>][val]' value='<?php
+                                    echo esc_attr($values[$index]['val']); ?>' /></span>
+                                <select name="<?php echo esc_attr($field_name); ?>[<?php echo esc_attr($index); ?>][unit]">
                                     <option <?php if($unit == 'px') echo 'selected'; ?> value="px">px</option>
                                     <option <?php if($unit == '%') echo 'selected'; ?> value="%">%</option>
                                     <option <?php if($unit == 'em') echo 'selected'; ?> value="em">em</option>
@@ -1290,17 +1290,17 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
 
             ob_start();
             ?>
-            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-google-recaptcha-wrapper
+            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-google-recaptcha-wrapper
             field-google-recaptcha-wrapper-<?php esc_attr($id);
             ?>">
                 <?php if($version == 'v2'):?>
-                    <div class="g-recaptcha" data-sitekey="<?php echo $site_key; ?>"></div>
+                    <div class="g-recaptcha" data-sitekey="<?php echo esc_attr($site_key); ?>"></div>
                     <script src='https://www.google.com/recaptcha/api.js'></script>
             <?php elseif($version == 'v3'):?>
-                    <script src='https://www.google.com/recaptcha/api.js?render=<?php echo $site_key; ?>'></script>
+                    <script src='https://www.google.com/recaptcha/api.js?render=<?php echo esc_attr($site_key); ?>'></script>
                     <script>
                         grecaptcha.ready(function() {
-                            grecaptcha.execute('<?php echo $site_key; ?>', {action: '<?php echo $action_name; ?>'})
+                            grecaptcha.execute('<?php echo esc_attr($site_key); ?>', {action: '<?php echo esc_attr($action_name); ?>'})
                                 .then(function(token) {
 // Verify the token on the server.
                                 });
@@ -1423,19 +1423,19 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
 
             ob_start();
             ?>
-            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-img-select-wrapper
+            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-img-select-wrapper
             field-img-select-wrapper-<?php esc_attr($id); ?>">
                 <div class="img-list">
                     <?php
                     foreach( $args as $key => $arg ):
                         $checked = ( $arg == $value ) ? "checked" : "";
-                        ?><label class="<?php echo $checked; ?>" for='<?php esc_attr($id); ?>-<?php echo $key; ?>'><input type='radio' id='<?php esc_attr($id); ?>-<?php echo $key; ?>' value='<?php echo $key; ?>' <?php echo $checked; ?>><span class="sw-button"><img data-id="<?php esc_attr($id); ?>" src="<?php echo $arg; ?>"> </span></label><?php
+                        ?><label class="<?php echo esc_attr($checked); ?>" for='<?php esc_attr($id); ?>-<?php echo esc_attr($key); ?>'><input type='radio' id='<?php esc_attr($id); ?>-<?php echo esc_attr($key); ?>' value='<?php echo esc_attr($key); ?>' <?php echo esc_attr($checked); ?>><span class="sw-button"><img data-id="<?php esc_attr($id); ?>" src="<?php echo esc_attr($arg); ?>"> </span></label><?php
 
                     endforeach;
                     ?>
                 </div>
                 <div class="img-val">
-                    <input type="text" name="<?php echo $field_name; ?>" value="<?php echo $value; ?>">
+                    <input type="text" name="<?php echo esc_attr($field_name); ?>" value="<?php echo esc_attr($value); ?>">
                 </div>
                 <div class="error-mgs"></div>
             </div>
@@ -1552,9 +1552,9 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
 
             ob_start();
             ?>
-            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-submit-wrapper
+            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-submit-wrapper
             field-submit-wrapper-<?php esc_attr($id); ?>">
-                <input type='submit' name='<?php echo $field_name; ?>' id='<?php echo $field_id; ?>' placeholder='<?php echo $placeholder; ?>' value='<?php echo $value; ?>' />
+                <input type='submit' name='<?php echo esc_attr($field_name); ?>' id='<?php echo esc_attr($field_id); ?>' placeholder='<?php echo esc_attr($placeholder); ?>' value='<?php echo esc_attr($value); ?>' />
                 <div class="error-mgs"></div>
             </div>
 
@@ -1662,7 +1662,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
 
             ob_start();
             ?>
-            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-nonce-wrapper
+            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-nonce-wrapper
             field-nonce-wrapper-<?php esc_attr($id); ?>">
                 <?php wp_nonce_field( $action_name, $field_name ); ?>
                 <div class="error-mgs"></div>
@@ -1777,9 +1777,9 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
 
             ob_start();
             ?>
-            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-color-wrapper
+            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-color-wrapper
             field-color-wrapper-<?php esc_attr($id); ?>">
-                <input type='color' name='<?php echo $field_name; ?>' id='<?php echo $field_id; ?>' placeholder='<?php echo $placeholder; ?>' value='<?php echo $value; ?>' />
+                <input type='color' name='<?php echo esc_attr($field_name); ?>' id='<?php echo esc_attr($field_id); ?>' placeholder='<?php echo esc_attr($placeholder); ?>' value='<?php echo esc_attr($value); ?>' />
                 <div class="error-mgs"></div>
             </div>
 
@@ -1893,9 +1893,9 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
 
             ob_start();
             ?>
-            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-email-wrapper
+            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-email-wrapper
             field-email-wrapper-<?php esc_attr($id); ?>">
-                <input type='email' name='<?php echo $field_name; ?>' id='<?php echo $field_id; ?>' placeholder='<?php echo $placeholder; ?>' value='<?php echo $value; ?>' />
+                <input type='email' name='<?php echo esc_attr($field_name); ?>' id='<?php echo esc_attr($field_id); ?>' placeholder='<?php echo esc_attr($placeholder); ?>' value='<?php echo esc_attr($value); ?>' />
                 <div class="error-mgs"></div>
             </div>
 
@@ -2006,9 +2006,9 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
 
             ob_start();
             ?>
-            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-password-wrapper
+            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-password-wrapper
             field-password-wrapper-<?php esc_attr($id); ?>">
-                <input type='password' name='<?php echo $field_name; ?>' id='<?php echo $field_id; ?>' placeholder='<?php echo $placeholder; ?>' value='<?php echo $value; ?>' />
+                <input type='password' name='<?php echo esc_attr($field_name); ?>' id='<?php echo esc_attr($field_id); ?>' placeholder='<?php echo esc_attr($placeholder); ?>' value='<?php echo esc_attr($value); ?>' />
                 <?php if($password_meter): ?>
                 <div class="scorePassword"></div>
                 <div class="scoreText"></div>
@@ -2124,9 +2124,9 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
 
             ob_start();
             ?>
-            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-search-wrapper
+            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-search-wrapper
             field-search-wrapper-<?php esc_attr($id); ?>">
-                <input type='search' name='<?php echo $field_name; ?>' id='<?php echo $field_id; ?>' placeholder='<?php echo $placeholder; ?>' value='<?php echo $value; ?>' />
+                <input type='search' name='<?php echo esc_attr($field_name); ?>' id='<?php echo esc_attr($field_id); ?>' placeholder='<?php echo esc_attr($placeholder); ?>' value='<?php echo esc_attr($value); ?>' />
                 <div class="error-mgs"></div>
             </div>
 
@@ -2237,9 +2237,9 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
 
             ob_start();
             ?>
-            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-month-wrapper
+            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-month-wrapper
             field-month-wrapper-<?php esc_attr($id); ?>">
-                <input type='time' name='<?php echo $field_name; ?>' id='<?php echo $field_id; ?>' placeholder='<?php echo $placeholder; ?>' value='<?php echo $value; ?>' />
+                <input type='time' name='<?php echo esc_attr($field_name); ?>' id='<?php echo esc_attr($field_id); ?>' placeholder='<?php echo esc_attr($placeholder); ?>' value='<?php echo esc_attr($value); ?>' />
                 <div class="error-mgs"></div>
             </div>
 
@@ -2350,9 +2350,9 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
 
             ob_start();
             ?>
-            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-date-wrapper
+            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-date-wrapper
             field-date-wrapper-<?php esc_attr($id); ?>">
-                <input type='date' name='<?php echo $field_name; ?>' id='<?php echo $field_id; ?>' placeholder='<?php echo $placeholder; ?>' value='<?php echo $value; ?>' />
+                <input type='date' name='<?php echo esc_attr($field_name); ?>' id='<?php echo esc_attr($field_id); ?>' placeholder='<?php echo esc_attr($placeholder); ?>' value='<?php echo esc_attr($value); ?>' />
                 <div class="error-mgs"></div>
             </div>
 
@@ -2462,8 +2462,8 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
 
             ob_start();
             ?>
-            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?> class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-url-wrapper field-url-wrapper-<?php esc_attr($id); ?>">
-                <input type='url' name='<?php echo $field_name; ?>' id='<?php echo $field_id; ?>' placeholder='<?php echo $placeholder; ?>' value='<?php echo $value; ?>' />
+            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?> class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-url-wrapper field-url-wrapper-<?php esc_attr($id); ?>">
+                <input type='url' name='<?php echo esc_attr($field_name); ?>' id='<?php echo esc_attr($field_id); ?>' placeholder='<?php echo esc_attr($placeholder); ?>' value='<?php echo esc_attr($value); ?>' />
                 <div class="error-mgs"></div>
             </div>
 
@@ -2575,9 +2575,9 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
 
             ob_start();
             ?>
-            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-time-wrapper
+            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-time-wrapper
             field-time-wrapper-<?php esc_attr($id); ?>">
-                <input type='time' name='<?php echo $field_name; ?>' id='<?php echo $field_id; ?>' placeholder='<?php echo $placeholder; ?>' value='<?php echo $value; ?>' />
+                <input type='time' name='<?php echo esc_attr($field_name); ?>' id='<?php echo esc_attr($field_id); ?>' placeholder='<?php echo esc_attr($placeholder); ?>' value='<?php echo esc_attr($value); ?>' />
                 <div class="error-mgs"></div>
             </div>
 
@@ -2688,9 +2688,9 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
 
             ob_start();
             ?>
-            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-tel-wrapper field-tel-wrapper-<?php
+            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-tel-wrapper field-tel-wrapper-<?php
             esc_attr($id); ?>">
-                <input type='tel' name='<?php echo $field_name; ?>' id='<?php echo $field_id; ?>' placeholder='<?php echo $placeholder; ?>' value='<?php echo $value; ?>' />
+                <input type='tel' name='<?php echo esc_attr($field_name); ?>' id='<?php echo esc_attr($field_id); ?>' placeholder='<?php echo esc_attr($placeholder); ?>' value='<?php echo esc_attr($value); ?>' />
                 <div class="error-mgs"></div>
             </div>
 
@@ -2807,7 +2807,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
             ?>
 
 
-            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?>
+            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?>
                     id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-text-wrapper
          field-text-wrapper-<?php esc_attr($id); ?>">
                 <input type='text' name='<?php echo esc_attr($field_name); ?>' id='<?php echo esc_attr($field_id); ?>'
@@ -2930,10 +2930,10 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
             ?>
 
 
-            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-hidden-wrapper
+            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-hidden-wrapper
             field-hidden-wrapper-<?php esc_attr($id); ?>">
-                <input type='hidden' name='<?php echo $field_name; ?>' id='<?php echo $field_id; ?>' placeholder='<?php
-                echo $placeholder; ?>' value='<?php echo $value; ?>' />
+                <input type='hidden' name='<?php echo esc_attr($field_name); ?>' id='<?php echo esc_attr($field_id); ?>' placeholder='<?php
+                echo esc_attr($placeholder); ?>' value='<?php echo esc_attr($value); ?>' />
                 <div class="error-mgs"></div>
             </div>
 
@@ -3051,10 +3051,10 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
 
             ob_start();
             ?>
-            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-text-multi-wrapper
-            field-text-multi-wrapper-<?php echo $field_id; ?>">
-                <span class="ppof-button add-item"><?php echo __('Add','bus-booking-manager'); ?></span>
-                <div class="field-list <?php if($sortable){ echo 'sortable'; }?>" id="<?php echo $field_id; ?>">
+            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-text-multi-wrapper
+            field-text-multi-wrapper-<?php echo esc_attr($field_id); ?>">
+                <span class="ppof-button add-item"><?php echo esc_html__('Add','bus-booking-manager'); ?></span>
+                <div class="field-list <?php if($sortable){ echo 'sortable'; }?>" id="<?php echo esc_attr($field_id); ?>">
                     <?php
                     if(!empty($values)):
                         foreach ($values as $value):
@@ -3069,7 +3069,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                                 <span class="ppof-button sort"><i class="fas fa-arrows-alt"></i></span>
                                 <?php endif; ?>
 
-                                <span class="ppof-button remove" onclick="jQuery(this).parent().remove()"><?php echo ($remove_text); ?></span>
+                                <span class="ppof-button remove" onclick="jQuery(this).parent().remove()"><?php echo esc_attr($remove_text); ?></span>
                             </div>
                         <?php
                         endforeach;
@@ -3083,7 +3083,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                                    <?php if($sortable):?>
                                         <span class="button sort"><i class="fas fa-arrows-alt"></i></span>
                                     <?php endif; ?>
-                                   <span class="button remove" onclick="jQuery(this).parent().remove()"><?php echo ($remove_text); ?></span>
+                                   <span class="button remove" onclick="jQuery(this).parent().remove()"><?php echo esc_attr($remove_text); ?></span>
                         </div>
                     <?php
                     endif;
@@ -3098,7 +3098,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                             <?php
                             if(!empty($limit)):
                             ?>
-                            var limit = <?php  echo $limit; ?>;
+                            var limit = <?php  echo esc_attr($limit); ?>;
                             var node_count = $( ".field-text-multi-wrapper-<?php esc_attr($id); ?> .field-list .item" ).size();
                             if(limit > node_count){
                                 $( this ).parent().clone().appendTo('.field-text-multi-wrapper-<?php esc_attr($id); ?> .field-list' );
@@ -3124,7 +3124,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                         html_<?php esc_attr($id); ?> += '<input type="text" name="<?php echo esc_attr($field_name); ?>[]" placeholder="<?php
                             echo esc_attr($placeholder); ?>" />';
                         html_<?php esc_attr($id); ?> += '<span class="button remove" onclick="jQuery(this).parent().remove()' +
-                            '"><?php echo ($remove_text); ?></span>';
+                            '"><?php echo esc_attr($remove_text); ?></span>';
                         html_<?php esc_attr($id); ?> += '<span class="button clone"><i class="far fa-clone"></i></span>';
                         <?php if($sortable):?>
                         html_<?php esc_attr($id); ?> += ' <span class="button sort" ><i class="fas fa-arrows-alt"></i></span>';
@@ -3135,7 +3135,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                         <?php
                         if(!empty($limit)):
                             ?>
-                            var limit = <?php  echo $limit; ?>;
+                            var limit = <?php  echo esc_attr($limit); ?>;
                             var node_count = $( ".field-text-multi-wrapper-<?php esc_attr($id); ?> .field-list .item" ).size();
                             if(limit > node_count){
                                 jQuery('.field-text-multi-wrapper-<?php esc_attr($id); ?> .field-list').append(html_<?php esc_attr($id); ?>);
@@ -3269,11 +3269,11 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
 
             ob_start();
             ?>
-            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?>
-                    id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-textarea-wrapper field-textarea-wrapper-<?php echo $field_id; ?>">
+            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?>
+                    id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-textarea-wrapper field-textarea-wrapper-<?php echo esc_attr($field_id); ?>">
                 <textarea name='<?php echo esc_attr($field_name); ?>' id='<?php echo esc_attr($field_id); ?>'
                           cols='40' rows='5'
-                          placeholder='<?php echo $placeholder; ?>'><?php echo esc_attr($value); ?></textarea>
+                          placeholder='<?php echo esc_attr($placeholder); ?>'><?php echo esc_attr($value); ?></textarea>
                 <div class="error-mgs"></div>
             </div>
 
@@ -3389,16 +3389,16 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
 
             ob_start();
             ?>
-            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>"  class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper  field-code-wrapper
-            field-code-wrapper-<?php echo $field_id; ?>">
-                <textarea name='<?php echo $field_name; ?>' id='<?php echo $field_id; ?>' cols='40' rows='5' placeholder='<?php echo $placeholder; ?>'><?php echo $value; ?></textarea>
+            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>"  class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper  field-code-wrapper
+            field-code-wrapper-<?php echo esc_attr($field_id); ?>">
+                <textarea name='<?php echo esc_attr($field_name); ?>' id='<?php echo esc_attr($field_id); ?>' cols='40' rows='5' placeholder='<?php echo esc_attr($placeholder); ?>'><?php echo esc_attr($value); ?></textarea>
                 <div class="error-mgs"></div>
             </div>
             <script>
-                var editor = CodeMirror.fromTextArea(document.getElementById("<?php echo $field_id; ?>"), {
+                var editor = CodeMirror.fromTextArea(document.getElementById("<?php echo esc_attr($field_id); ?>"), {
                     <?php
                     foreach ($args as $argkey=>$arg):
-                        echo $argkey.':'.$arg.',';
+                        echo esc_html($argkey.':'.$arg.',');
                     endforeach;
                     ?>
                 });
@@ -3511,7 +3511,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
 
             ob_start();
             ?>
-            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?>
+            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?>
                     id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-checkbox-wrapper
             field-checkbox-wrapper-<?php esc_attr($id); ?>">
                 <?php
@@ -3520,8 +3520,8 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                     $checked = (  $key == $value ) ? "checked" : "";
                     ?>
                     
-                    <label  class="switch" for='<?php echo $field_id; ?>'>
-                        <input class="<?php echo $field_id; ?>" name='<?php echo $field_name; ?>' type='checkbox' id='<?php echo $field_id; ?>' value='<?php echo $key; ?>' <?php echo $checked; ?>>
+                    <label  class="switch" for='<?php echo esc_attr($field_id); ?>'>
+                        <input class="<?php echo esc_attr($field_id); ?>" name='<?php echo esc_attr($field_name); ?>' type='checkbox' id='<?php echo esc_attr($field_id); ?>' value='<?php echo esc_attr($key); ?>' <?php echo esc_attr($checked); ?>>
                         <span class="slider round"></span>
                     </label>
                 <?php
@@ -3639,15 +3639,15 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
 
             ob_start();
             ?>
-            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-checkbox-wrapper
+            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-checkbox-wrapper
             field-checkbox-wrapper-<?php esc_attr($id); ?>">
                 <?php
                 foreach( $args as $key => $argName ):
                     $checked = is_array( $value ) && in_array( $key, $value ) ? "checked" : "";
                     ?>
-                    <label for='<?php echo $field_id.'-'.$key; ?>'><input class="<?php echo $field_id; ?>" name='<?php
-                        echo $field_name; ?>' type='checkbox' id='<?php echo $field_id.'-'.$key; ?>' value='<?php
-                        echo $key; ?>' <?php echo $checked; ?>><?php echo $argName; ?></label><br>
+                    <label for='<?php echo esc_attr($field_id).'-'.esc_attr($key); ?>'><input class="<?php echo esc_attr($field_id); ?>" name='<?php
+                        echo esc_attr($field_name); ?>' type='checkbox' id='<?php echo esc_attr($field_id).'-'.esc_attr($key); ?>' value='<?php
+                        echo esc_attr($key); ?>' <?php echo esc_attr($checked); ?>><?php echo esc_attr($argName); ?></label><br>
                     <?php
                 endforeach;
                 ?>
@@ -3762,13 +3762,13 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
 
             ob_start();
             ?>
-            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-radio-wrapper
+            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-radio-wrapper
             field-radio-wrapper-<?php esc_attr($id); ?>">
                 <?php
                 foreach( $args as $key => $argName ):
                     $checked = ( $key == $value ) ? "checked" : "";
                     ?>
-                    <label for='<?php echo $field_id.'-'.$key; ?>'><input name='<?php echo $field_name; ?>' type='radio' id='<?php echo $field_id.'-'.$key; ?>' value='<?php echo $key; ?>' <?php echo $checked; ?>><?php echo $argName; ?></label><br>
+                    <label for='<?php echo esc_attr($field_id).'-'.esc_attr($key); ?>'><input name='<?php echo esc_attr($field_name); ?>' type='radio' id='<?php echo esc_attr($field_id).'-'.esc_attr($key); ?>' value='<?php echo esc_attr($key); ?>' <?php echo esc_attr($checked); ?>><?php echo esc_attr($argName); ?></label><br>
                 <?php
                 endforeach;
                 ?>
@@ -3800,16 +3800,16 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
 
             ob_start();
             ?>
-            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-select-wrapper
+            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-select-wrapper
             field-select-wrapper-<?php esc_attr($id); ?>">
                 <?php
                 if($multiple):
                     ?>
-                    <select name='<?php echo $field_name; ?>[]' id='<?php echo $field_id; ?>' multiple>
+                    <select name='<?php echo esc_attr($field_name); ?>[]' id='<?php echo esc_attr($field_id); ?>' multiple>
                     <?php
                 else:
                     ?>
-                        <select name='<?php echo $field_name; ?>' id='<?php echo $field_id; ?>'>
+                        <select name='<?php echo esc_attr($field_name); ?>' id='<?php echo esc_attr($field_id); ?>'>
                     <?php
                 endif;
 
@@ -3817,7 +3817,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                     if( $multiple ) $selected = is_array( $value ) && in_array( $key, $value ) ? "selected" : "";
                     else $selected = ($value == $key) ? "selected" : "";
                     ?>
-                    <option <?php echo $selected; ?> value='<?php echo $key; ?>'><?php echo $argName; ?></option>
+                    <option <?php echo esc_attr($selected); ?> value='<?php echo esc_attr($key); ?>'><?php echo esc_attr($argName); ?></option>
                     <?php
                 endforeach;
                 ?>
@@ -3841,13 +3841,13 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
 
                             console.log(last_value);
 
-                            var limit = <?php  echo $limit; ?>;
+                            var limit = <?php  echo esc_attr($limit); ?>;
                             //var node_count = $(".field-select-wrapper-<?php esc_attr($id); ?> select :selected").length;
                             //var node_count = $( ".field-select-wrapper-<?php esc_attr($id); ?> .field-list .item-wrap" ).size();
                             //console.log(node_count);
                             if(limit >= node_count){
 
-                                //jQuery('.<?php echo 'field-select-wrapper-'.$id; ?> .field-list').append(html);
+                                //jQuery('.<?php echo 'field-select-wrapper-'.esc_attr($id); ?> .field-list').append(html);
                             }else{
                                 $(".field-select-wrapper-<?php esc_attr($id); ?> select option[value='"+last_value+"']").prop("selected", false);
                                 jQuery('.field-select-wrapper-<?php esc_attr($id); ?> .error-mgs').html('Sorry! you can select max '+limit+' item').stop().fadeIn(400).delay(3000).fadeOut(400);
@@ -3983,9 +3983,9 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
 
             ob_start();
             ?>
-            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-range-wrapper
+            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-range-wrapper
             field-range-wrapper-<?php esc_attr($id); ?>">
-                <input type='range' min='<?php echo $min; ?>' max='<?php echo $max; ?>' step='<?php echo $args['step']; ?>' name='<?php echo $field_name; ?>' id='<?php echo $field_id; ?>' value='<?php echo $value; ?>' />
+                <input type='range' min='<?php echo esc_attr($min); ?>' max='<?php echo esc_attr($max); ?>' step='<?php echo esc_attr($args['step']); ?>' name='<?php echo esc_attr($field_name); ?>' id='<?php echo esc_attr($field_id); ?>' value='<?php echo esc_attr($value); ?>' />
                 <div class="error-mgs"></div>
             </div>
 
@@ -4098,11 +4098,11 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
 
             ob_start();
             ?>
-            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-range-input-wrapper
+            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-range-input-wrapper
             field-range-input-wrapper-<?php esc_attr($id); ?>">
-                <input type="number" class="range-val" name='<?php echo $field_name; ?>' value="<?php echo $value; ?>">
-                <input type='range' class='range-hndle' id="<?php echo $field_id; ?>" min='<?php echo $args['min']; ?>' max='<?php echo
-                $args['max']; ?>' step='<?php echo $args['step']; ?>' value='<?php echo $value; ?>' />
+                <input type="number" class="range-val" name='<?php echo esc_attr($field_name); ?>' value="<?php echo esc_attr($value); ?>">
+                <input type='range' class='range-hndle' id="<?php echo esc_attr($field_id); ?>" min='<?php echo esc_attr($args['min']); ?>' max='<?php echo
+                esc_attr($args['max']); ?>' step='<?php echo esc_attr($args['step']); ?>' value='<?php echo esc_attr($value); ?>' />
                 <div class="error-mgs"></div>
             </div>
 
@@ -4213,12 +4213,12 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
 
             ob_start();
             ?>
-            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-switch-wrapper
+            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-switch-wrapper
             field-switch-wrapper-<?php esc_attr($id); ?>">
                 <?php
                 foreach( $args as $key => $argName ):
                     $checked = ( $key == $value ) ? "checked" : "";
-                    ?><label class="<?php echo $checked; ?>" for='<?php esc_attr($id); ?>-<?php echo $key; ?>'><input name='<?php echo $field_name; ?>' type='radio' id='<?php esc_attr($id); ?>-<?php echo $key; ?>' value='<?php echo $key; ?>' <?php echo $checked; ?>><span class="sw-button"><?php echo $argName; ?></span></label><?php
+                    ?><label class="<?php echo esc_attr($checked); ?>" for='<?php esc_attr($id); ?>-<?php echo esc_attr($key); ?>'><input name='<?php echo esc_attr($field_name); ?>' type='radio' id='<?php esc_attr($id); ?>-<?php echo esc_attr($key); ?>' value='<?php echo esc_attr($key); ?>' <?php echo esc_attr($checked); ?>><span class="sw-button"><?php echo esc_attr($argName); ?></span></label><?php
                 endforeach;
                 ?>
                 <div class="error-mgs"></div>
@@ -4333,13 +4333,13 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
 
             ob_start();
             ?>
-            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-switch-multi-wrapper
+            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-switch-multi-wrapper
             field-switch-multi-wrapper-<?php echo
-            $id; ?>">
+            esc_attr($id); ?>">
                 <?php
                 foreach( $args as $key => $argName ):
                     $checked = is_array( $value ) && in_array( $key, $value ) ? "checked" : "";
-                    ?><label class="<?php echo $checked; ?>" for='<?php echo $field_id; ?>-<?php echo $key; ?>'><input name='<?php echo $field_name; ?>[]' type='checkbox' id='<?php echo $field_id; ?>-<?php echo $key; ?>' value='<?php echo $key; ?>' <?php echo $checked; ?>><span class="sw-button"><?php echo $argName; ?></span></label><?php
+                    ?><label class="<?php echo esc_attr($checked); ?>" for='<?php echo esc_attr($field_id); ?>-<?php echo esc_attr($key); ?>'><input name='<?php echo esc_attr($field_name); ?>[]' type='checkbox' id='<?php echo esc_attr($field_id); ?>-<?php echo esc_attr($key); ?>' value='<?php echo esc_attr($key); ?>' <?php echo esc_attr($checked); ?>><span class="sw-button"><?php echo esc_attr($argName); ?></span></label><?php
                 endforeach;
                 ?>
                 <div class="error-mgs"></div>
@@ -4456,14 +4456,14 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
 
             ob_start();
             ?>
-            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-switch-img-wrapper
+            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-switch-img-wrapper
             field-switch-img-wrapper-<?php esc_attr($id); ?>">
                 <?php
                 foreach( $args as $key => $arg ):
                     $src = isset( $arg['src'] ) ? $arg['src'] : "";
 
                     $checked = ( $key == $value ) ? "checked" : "";
-                    ?><label class="<?php echo $checked; ?>" for='<?php esc_attr($id); ?>-<?php echo $key; ?>'><input name='<?php echo $field_name; ?>' type='radio' id='<?php esc_attr($id); ?>-<?php echo $key; ?>' value='<?php echo $key; ?>' <?php echo $checked; ?>><span class="sw-button"><img src="<?php echo $src; ?>"> </span></label><?php
+                    ?><label class="<?php echo esc_attr($checked); ?>" for='<?php esc_attr($id); ?>-<?php echo esc_attr($key); ?>'><input name='<?php echo esc_attr($field_name); ?>' type='radio' id='<?php esc_attr($id); ?>-<?php echo esc_attr($key); ?>' value='<?php echo esc_attr($key); ?>' <?php echo esc_attr($checked); ?>><span class="sw-button"><img src="<?php echo esc_url($src); ?>"> </span></label><?php
 
                 endforeach;
                 ?>
@@ -4578,7 +4578,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
 
             ob_start();
             ?>
-            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-time-format-wrapper
+            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-time-format-wrapper
             field-time-format-wrapper-<?php esc_attr($id); ?>">
                 <div class="format-list">
                     <?php
@@ -4586,17 +4586,17 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                         foreach ($args as $item):
                             $checked = ($item == $value) ? 'checked':false;
                             ?>
-                            <div class="format" datavalue="<?php echo $item; ?>">
-                                <label><input type="radio" <?php echo $checked; ?> name="preset_<?php esc_attr($id); ?>" value="<?php echo $item; ?>">
-                                    <span class="name"><?php echo date($item); ?></span></label>
-                                <span class="format"><code><?php echo $item; ?></code></span>
+                            <div class="format" datavalue="<?php echo esc_attr($item); ?>">
+                                <label><input type="radio" <?php echo esc_attr($checked); ?> name="preset_<?php esc_attr($id); ?>" value="<?php echo esc_attr($item); ?>">
+                                    <span class="name"><?php echo esc_html(gmdate($item)); ?></span></label>
+                                <span class="format"><code><?php echo esc_attr($item); ?></code></span>
                             </div>
                         <?php
                         endforeach;
                         ?>
                         <div class="format-value">
-                            <span class="format"><input value="<?php echo $value; ?>" name="<?php echo $field_name; ?>"></span>
-                            <div class="">Preview: <?php echo date($value); ?></div>
+                            <span class="format"><input value="<?php echo esc_attr($value); ?>" name="<?php echo esc_attr($field_name); ?>"></span>
+                            <div class="">Preview: <?php echo esc_html(gmdate($value)); ?></div>
                         </div>
                     <?php
                     endif;
@@ -4714,7 +4714,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
 
             ob_start();
             ?>
-            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-date-format-wrapper
+            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-date-format-wrapper
             field-date-format-wrapper-<?php esc_attr($id); ?>">
                 <div class="format-list">
                     <?php
@@ -4722,16 +4722,16 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                         foreach ($args as $item):
                             $checked = ($item == $value) ? 'checked':false;
                             ?>
-                            <div class="format" datavalue="<?php echo $item; ?>">
-                                <label><input type="radio" <?php echo $checked; ?> name="preset_<?php esc_attr($id); ?>" value="<?php echo $item; ?>"><span class="name"><?php echo date($item); ?></span></label>
-                                <span class="format"><code><?php echo $item; ?></code></span>
+                            <div class="format" datavalue="<?php echo esc_attr($item); ?>">
+                                <label><input type="radio" <?php echo esc_attr($checked); ?> name="preset_<?php esc_attr($id); ?>" value="<?php echo esc_attr($item); ?>"><span class="name"><?php echo esc_html(gmdate($item)); ?></span></label>
+                                <span class="format"><code><?php echo esc_attr($item); ?></code></span>
                             </div>
                             <?php
                         endforeach;
                         ?>
                         <div class="format-value">
-                            <span class="format"><input value="<?php echo $value; ?>" name="<?php echo $field_name; ?>"></span>
-                            <div class="">Preview: <?php echo date($value); ?></div>
+                            <span class="format"><input value="<?php echo esc_attr($value); ?>" name="<?php echo esc_attr($field_name); ?>"></span>
+                            <div class="">Preview: <?php echo esc_attr(gmdate($value)); ?></div>
                         </div>
                     <?php
                     endif;
@@ -4846,14 +4846,14 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
 
             ob_start();
             ?>
-            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-datepicker-wrapper
+            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-datepicker-wrapper
             field-datepicker-wrapper-<?php esc_attr($id); ?>">
-                <input type='text' name='<?php echo $field_name; ?>' id='<?php echo $field_id; ?>' placeholder='<?php echo $placeholder; ?>' value='<?php echo $value; ?>' />
+                <input type='text' name='<?php echo esc_attr($field_name); ?>' id='<?php echo esc_attr($field_id); ?>' placeholder='<?php echo esc_attr($placeholder); ?>' value='<?php echo esc_attr($value); ?>' />
                 <div class="error-mgs"></div>
             </div>
             <script>
                 jQuery(document).ready(function($) {
-                    $('#<?php echo $field_id; ?>').datepicker({dateFormat : '<?php echo $date_format; ?>'})});
+                    $('#<?php echo esc_attr($field_id); ?>').datepicker({dateFormat : '<?php echo esc_html($date_format); ?>'})});
             </script>
 
             <?php
@@ -4965,12 +4965,12 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
 
             ob_start();
             ?>
-            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-colorpicker-wrapper
+            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-colorpicker-wrapper
             field-colorpicker-wrapper-<?php esc_attr($id); ?>">
-                <input type='text'  name='<?php echo $field_name; ?>' id='<?php echo $field_id; ?>' placeholder='<?php echo $placeholder; ?>' value='<?php echo $value; ?>' />
+                <input type='text'  name='<?php echo esc_attr($field_name); ?>' id='<?php echo esc_attr($field_id); ?>' placeholder='<?php echo esc_attr($placeholder); ?>' value='<?php echo esc_attr($value); ?>' />
                 <div class="error-mgs"></div>
             </div>
-            <script>jQuery(document).ready(function($) { $('#<?php echo $field_id; ?>').wpColorPicker();});</script>
+            <script>jQuery(document).ready(function($) { $('#<?php echo esc_attr($field_id); ?>').wpColorPicker();});</script>
 
             <?php
             return ob_get_clean();
@@ -5081,17 +5081,17 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
             ob_start();
             if(!empty($values)):
                 ?>
-                <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-colorpicker-multi-wrapper
+                <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-colorpicker-multi-wrapper
                 field-colorpicker-multi-wrapper-<?php esc_attr($id);
                 ?>">
-                    <div class="ppof-button add"><?php echo __('Add','bus-booking-manager'); ?></div>
+                    <div class="ppof-button add"><?php echo esc_html__('Add','bus-booking-manager'); ?></div>
                     <div class="item-list">
                         <?php
                         foreach ($values as $value):
                             ?>
                             <div class="item">
-                                <span class="ppof-button remove"><?php echo $remove_text; ?></span>
-                                <input type='text' name='<?php echo $field_name; ?>[]' value='<?php echo $value; ?>' />
+                                <span class="ppof-button remove"><?php echo esc_attr($remove_text); ?></span>
+                                <input type='text' name='<?php echo esc_attr($field_name); ?>[]' value='<?php echo esc_attr($value); ?>' />
                             </div>
                         <?php
                         endforeach;
@@ -5109,14 +5109,14 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                     })
                     jQuery(document).on('click', '.field-colorpicker-multi-wrapper-<?php esc_attr($id); ?> .add', function() {
                         html='<div class="item">';
-                        html+='<span class="button remove"><?php echo $remove_text; ?></span> <input type="text"  name="<?php echo $field_name; ?>[]" value="" />';
+                        html+='<span class="button remove"><?php echo esc_attr($remove_text); ?></span> <input type="text"  name="<?php echo esc_attr($field_name); ?>[]" value="" />';
                         html+='</div>';
 
 
                         <?php
                         if(!empty($limit)):
                         ?>
-                        var limit = <?php  echo $limit; ?>;
+                        var limit = <?php  echo esc_attr($limit); ?>;
                         var node_count = $( ".field-colorpicker-multi-wrapper-<?php esc_attr($id); ?> .item-list .item" ).size();
                         if(limit > node_count){
 
@@ -5247,14 +5247,14 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
 
             ob_start();
             ?>
-            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-link-color-wrapper
+            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-link-color-wrapper
             field-link-color-wrapper-<?php esc_attr($id); ?>">
                 <?php
                 if(!empty($values) && is_array($values)):
                     foreach ($args as $argindex=>$value):
                         ?>
                         <div>
-                            <div class="item"><span class="title">a:<?php echo $argindex; ?> Color</span><div class="colorpicker"><input type='text' class='<?php esc_attr($id); ?>' name='<?php echo $field_name; ?>[<?php echo $argindex; ?>]'   value='<?php echo $values[$argindex]; ?>' /></div></div>
+                            <div class="item"><span class="title">a:<?php echo esc_html($argindex); ?> Color</span><div class="colorpicker"><input type='text' class='<?php esc_attr($id); ?>' name='<?php echo esc_attr($field_name); ?>[<?php echo esc_attr($argindex); ?>]'   value='<?php echo esc_attr($values[$argindex]); ?>' /></div></div>
                         </div>
                         <?php
                     endforeach;
@@ -5262,7 +5262,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                     foreach ($args as $argindex=>$value):
                         ?>
                         <div>
-                            <div class="item"><span class="title">a:<?php echo $argindex; ?> Color</span><div class="colorpicker"><input type='text' class='<?php esc_attr($id); ?>' name='<?php echo $field_name; ?>[<?php echo $argindex; ?>]'   value='<?php echo $value; ?>' /></div></div>
+                            <div class="item"><span class="title">a:<?php echo esc_html($argindex); ?> Color</span><div class="colorpicker"><input type='text' class='<?php esc_attr($id); ?>' name='<?php echo esc_attr($field_name); ?>[<?php echo esc_attr($argindex); ?>]'   value='<?php echo esc_attr($value); ?>' /></div></div>
                         </div>
                     <?php
                     endforeach;
@@ -5384,20 +5384,20 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
 
             ob_start();
             ?>
-            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-user-multi-wrapper
+            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-user-multi-wrapper
             field-user-multi-wrapper-<?php esc_attr($id); ?>">
                 <div class="users-wrapper" >
                     <?php if(!empty($values)):
                         foreach ($values as $user_id):
                             $get_avatar_url = get_avatar_url($user_id,array('size'=>'60'));
 
-                            ?><div class="item" title="click to remove"><img src="<?php echo $get_avatar_url; ?>" /><input type="hidden" name="<?php echo $field_name; ?>[]" value="<?php echo $user_id; ?>"></div><?php
+                            ?><div class="item" title="click to remove"><img src="<?php echo esc_url($get_avatar_url); ?>" /><input type="hidden" name="<?php echo esc_attr($field_name); ?>[]" value="<?php echo esc_attr($user_id); ?>"></div><?php
                         endforeach;
                     endif; ?>
                 </div>
                 <div class="user-list">
-                    <div class="ppof-button select-user" ><?php echo __('Choose User','bus-booking-manager');?></div>
-                    <div class="search-user" ><input class="" type="text" placeholder="<?php echo __('Start typing...','bus-booking-manager');?>"></div>
+                    <div class="ppof-button select-user" ><?php echo esc_html__('Choose User','bus-booking-manager');?></div>
+                    <div class="search-user" ><input class="" type="text" placeholder="<?php echo esc_html__('Start typing...','bus-booking-manager');?>"></div>
                     <ul>
                         <?php
                         if(!empty($icons)):
@@ -5405,10 +5405,10 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                                 $user_data = get_user_by('ID',$user_id);
                                 $get_avatar_url = get_avatar_url($user_id,array('size'=>'60'));
                                 ?>
-                                <li title="<?php echo $user_data->display_name; ?>(#<?php echo $user_id; ?>)"
+                                <li title="<?php echo esc_attr($user_data->display_name); ?>(#<?php echo esc_attr($user_id); ?>)"
                                     userSrc="<?php echo
-                                $get_avatar_url; ?>"
-                                    iconData="<?php echo $user_id; ?>"><img src="<?php echo $get_avatar_url; ?>" />
+                                esc_url($get_avatar_url); ?>"
+                                    iconData="<?php echo esc_attr($user_id); ?>"><img src="<?php echo esc_url($get_avatar_url); ?>" />
                                 </li>
                             <?php
                             endforeach;
@@ -5450,7 +5450,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                         userSrc = jQuery(this).attr('userSrc');
                         html = '';
                         html = '<div class="item" title="click to remove"><img src="'+userSrc+'" /><input type="hidden" ' +
-                        'name="<?php echo $field_name; ?>[]" value="'+iconData+'"></div>';
+                        'name="<?php echo esc_attr($field_name); ?>[]" value="'+iconData+'"></div>';
                         jQuery('.field-user-multi-wrapper-<?php esc_attr($id); ?> .users-wrapper').append(html);
                     })
                 })
@@ -5563,21 +5563,21 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
 
             ob_start();
             ?>
-            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-icon-wrapper
+            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-icon-wrapper
             field-icon-wrapper-<?php esc_attr($id); ?>">
                 <div class="icon-wrapper" >
-                    <span><i class="<?php echo $value; ?>"></i></span>
-                    <input type="hidden" name="<?php echo $field_name; ?>" value="<?php echo $value; ?>">
+                    <span><i class="<?php echo esc_attr($value); ?>"></i></span>
+                    <input type="hidden" name="<?php echo esc_attr($field_name); ?>" value="<?php echo esc_attr($value); ?>">
                 </div>
                 <div class="icon-list">
-                    <div class="ppof-button select-icon" ><?php echo __('Choose Icon','bus-booking-manager'); ?></div>
-                    <div class="search-icon" ><input class="" type="text" placeholder="<?php echo __('Start typing...','bus-booking-manager'); ?>"></div>
+                    <div class="ppof-button select-icon" ><?php echo esc_html__('Choose Icon','bus-booking-manager'); ?></div>
+                    <div class="search-icon" ><input class="" type="text" placeholder="<?php echo esc_html__('Start typing...','bus-booking-manager'); ?>"></div>
                     <ul>
                         <?php
                         if(!empty($icons)):
                             foreach ($icons as $iconindex=>$iconTitle):
                                 ?>
-                                <li title="<?php echo $iconTitle; ?>" iconData="<?php echo $iconindex; ?>"><i class="<?php echo $iconindex; ?>"></i></li>
+                                <li title="<?php echo esc_attr($iconTitle); ?>" iconData="<?php echo esc_attr($iconindex); ?>"><i class="<?php echo esc_attr($iconindex); ?>"></i></li>
                                 <?php
                             endforeach;
                         endif;
@@ -5696,23 +5696,23 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
 
             ob_start();
             ?>
-            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-icon-multi-wrapper
+            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-icon-multi-wrapper
             field-icon-multi-wrapper-<?php esc_attr($id); ?>">
                 <div class="icons-wrapper" >
                     <?php if(!empty($values)):
                         foreach ($values as $value):
-                            ?><div class="item" title="click to remove"><span><i class="<?php echo $value; ?>"></i></span><input type="hidden" name="<?php echo $field_name; ?>[]" value="<?php echo $value; ?>"></div><?php
+                            ?><div class="item" title="click to remove"><span><i class="<?php echo esc_attr($value); ?>"></i></span><input type="hidden" name="<?php echo esc_attr($field_name); ?>[]" value="<?php echo esc_attr($value); ?>"></div><?php
                         endforeach;
                     endif; ?>
                 </div>
                 <div class="icon-list">
-                    <div class="ppof-button select-icon" ><?php echo __('Choose Icon','bus-booking-manager'); ?></div>
-                    <div class="search-icon" ><input class="" type="text" placeholder="<?php echo __('Start typing...','bus-booking-manager'); ?>"></div>
+                    <div class="ppof-button select-icon" ><?php echo esc_html__('Choose Icon','bus-booking-manager'); ?></div>
+                    <div class="search-icon" ><input class="" type="text" placeholder="<?php echo esc_html__('Start typing...','bus-booking-manager'); ?>"></div>
                     <ul>
                         <?php
                         if(!empty($icons)):
                             foreach ($icons as $iconindex=>$iconTitle):
-                                ?><li title="<?php echo $iconTitle; ?>" iconData="<?php echo $iconindex; ?>"><i class="<?php echo $iconindex; ?>"></i></li><?php
+                                ?><li title="<?php echo esc_attr($iconTitle); ?>" iconData="<?php echo esc_attr($iconindex); ?>"><i class="<?php echo esc_attr($iconindex); ?>"></i></li><?php
                             endforeach;
                         endif;
                         ?>
@@ -5751,13 +5751,13 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                     })
                     jQuery(document).on('click', '.field-icon-multi-wrapper-<?php esc_attr($id); ?> .icon-list li', function(){
                         iconData = jQuery(this).attr('iconData');
-                        html = '<div class="item" title="click to remove"><span><i class="'+iconData+'"></i></span><input type="hidden" name="<?php echo $field_name; ?>[]" value="'+iconData+'"></div>';
+                        html = '<div class="item" title="click to remove"><span><i class="'+iconData+'"></i></span><input type="hidden" name="<?php echo esc_attr($field_name); ?>[]" value="'+iconData+'"></div>';
 
 
                         <?php
                         if(!empty($limit)):
                         ?>
-                        var limit = <?php  echo $limit; ?>;
+                        var limit = <?php  echo esc_attr($limit); ?>;
                         var node_count = $( ".field-icon-multi-wrapper-<?php esc_attr($id); ?> .icons-wrapper .item" ).size();
                         if(limit > node_count){
 
@@ -5893,9 +5893,9 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
 
             ob_start();
             ?>
-             <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-number-wrapper
+             <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-number-wrapper
              field-number-wrapper-<?php esc_attr($id); ?>">
-                <input type='number' class='' name='<?php echo $field_name; ?>' id='<?php echo $field_id; ?>' placeholder='<?php echo $placeholder; ?>' value='<?php echo $value; ?>' />
+                <input type='number' class='' name='<?php echo esc_attr($field_name); ?>' id='<?php echo esc_attr($field_id); ?>' placeholder='<?php echo esc_attr($placeholder); ?>' value='<?php echo esc_attr($value); ?>' />
                  <div class="error-mgs"></div>
              </div>
 
@@ -6002,7 +6002,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
 
             ob_start();
             ?>
-            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-wp_editor-wrapper
+            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-wp_editor-wrapper
             field-wp_editor-wrapper-<?php esc_attr($id); ?>">
                 <?php
                 wp_editor( $value, $id, $settings = $editor_settings);
@@ -6125,16 +6125,16 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
 
             ob_start();
             ?>
-            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-select2-wrapper
+            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-select2-wrapper
             field-select2-wrapper-<?php esc_attr($id); ?>">
                 <?php
                 if($multiple):
                     ?>
-                    <select name='<?php echo $field_name; ?>[]' id='<?php echo $field_id; ?>' multiple>
+                    <select name='<?php echo esc_attr($field_name); ?>[]' id='<?php echo esc_attr($field_id); ?>' multiple>
                     <?php
                 else:
                     ?>
-                    <select name='<?php echo $field_name; ?>' id='<?php echo $field_id; ?>'>
+                    <select name='<?php echo esc_attr($field_name); ?>' id='<?php echo esc_attr($field_id); ?>'>
                     <?php
                 endif;
                 foreach( $args as $key => $name ):
@@ -6142,7 +6142,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                     if( $multiple ) $selected = in_array( $key, $value ) ? "selected" : "";
                     else $selected = $value == $key ? "selected" : "";
                     ?>
-                    <option <?php echo $selected; ?> value='<?php echo $key; ?>'><?php echo $name; ?></option>
+                    <option <?php echo esc_attr($selected); ?> value='<?php echo esc_attr($key); ?>'><?php echo esc_html($name); ?></option>
                     <?php
                 endforeach;
                 ?>
@@ -6257,7 +6257,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
             ob_start();
             ?>
 
-            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-option-group-tabs-wrapper
+            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-option-group-tabs-wrapper
             field-option-group-tabs-wrapper-<?php esc_attr($id); ?>">
 
                         <?php
@@ -6280,133 +6280,133 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
 
                                     ?>
                                     <tr>
-                                        <th scope="row"><?php echo $option_title; ?></th>
+                                        <th scope="row"><?php echo esc_html($option_title); ?></th>
                                         <td>
                                             <?php
 
                                             if( isset($option['type']) && $option['type'] === 'text' ){
-                                                echo $FormFieldsGenerator->field_text($option);
+                                                echo wp_kses_post($FormFieldsGenerator->field_text($option));
                                             }
                                             elseif( isset($option['type']) && $option['type'] === 'text_multi' ){
-                                                echo $FormFieldsGenerator->field_text_multi($option);
+                                                echo wp_kses_post($FormFieldsGenerator->field_text_multi($option));
                                             }
                                             elseif( isset($option['type']) && $option['type'] === 'textarea' ){
-                                                echo $FormFieldsGenerator->field_textarea($option);
+                                                echo wp_kses_post($FormFieldsGenerator->field_textarea($option));
                                             }
                                             elseif( isset($option['type']) && $option['type'] === 'checkbox' ){
-                                                echo $FormFieldsGenerator->field_checkbox($option);
+                                                echo wp_kses_post($FormFieldsGenerator->field_checkbox($option));
                                             }
                                             elseif( isset($option['type']) && $option['type'] === 'checkbox_multi' ){
-                                                echo $FormFieldsGenerator->field_checkbox_multi($option);
+                                                echo wp_kses_post($FormFieldsGenerator->field_checkbox_multi($option));
                                             }
                                             elseif( isset($option['type']) && $option['type'] === 'radio' ){
-                                                echo $FormFieldsGenerator->field_radio($option);
+                                                echo wp_kses_post($FormFieldsGenerator->field_radio($option));
                                             }
                                             elseif( isset($option['type']) && $option['type'] === 'select' ){
-                                                echo $FormFieldsGenerator->field_select($option);
+                                                echo wp_kses_post($FormFieldsGenerator->field_select($option));
                                             }
                                             elseif( isset($option['type']) && $option['type'] === 'range' ){
-                                                echo $FormFieldsGenerator->field_range($option);
+                                                echo wp_kses_post($FormFieldsGenerator->field_range($option));
                                             }
                                             elseif( isset($option['type']) && $option['type'] === 'range_input' ){
-                                                echo $FormFieldsGenerator->field_range_input($option);
+                                                echo wp_kses_post($FormFieldsGenerator->field_range_input($option));
                                             }
                                             elseif( isset($option['type']) && $option['type'] === 'switch' ){
-                                                echo $FormFieldsGenerator->field_switch($option);
+                                                echo wp_kses_post($FormFieldsGenerator->field_switch($option));
                                             }
                                             elseif( isset($option['type']) && $option['type'] === 'switch_multi' ){
-                                                echo $FormFieldsGenerator->field_switch_multi($option);
+                                                echo wp_kses_post($FormFieldsGenerator->field_switch_multi($option));
                                             }
                                             elseif( isset($option['type']) && $option['type'] === 'switch_img' ){
-                                                echo $FormFieldsGenerator->field_switch_img($option);
+                                                echo wp_kses_post($FormFieldsGenerator->field_switch_img($option));
                                             }
                                             elseif( isset($option['type']) && $option['type'] === 'time_format' ){
-                                                echo $FormFieldsGenerator->field_time_format($option);
+                                                echo wp_kses_post($FormFieldsGenerator->field_time_format($option));
                                             }
                                             elseif( isset($option['type']) && $option['type'] === 'date_format' ){
-                                                echo $FormFieldsGenerator->field_date_format($option);
+                                                echo wp_kses_post($FormFieldsGenerator->field_date_format($option));
                                             }
 
                                             elseif( isset($option['type']) && $option['type'] === 'datepicker' ){
-                                                echo $FormFieldsGenerator->field_datepicker($option);
+                                                echo wp_kses_post($FormFieldsGenerator->field_datepicker($option));
                                             }
 
                                             elseif( isset($option['type']) && $option['type'] === 'colorpicker' ){
-                                                echo $FormFieldsGenerator->field_colorpicker($option);
+                                                echo wp_kses_post($FormFieldsGenerator->field_colorpicker($option));
                                             }
 
                                             elseif( isset($option['type']) && $option['type'] === 'colorpicker_multi' ){
-                                                echo $FormFieldsGenerator->field_colorpicker_multi($option);
+                                                echo wp_kses_post($FormFieldsGenerator->field_colorpicker_multi($option));
                                             }
                                             elseif( isset($option['type']) && $option['type'] === 'link_color' ){
-                                                echo $FormFieldsGenerator->field_link_color($option);
+                                                echo wp_kses_post($FormFieldsGenerator->field_link_color($option));
                                             }
                                             elseif( isset($option['type']) && $option['type'] === 'icon' ){
-                                                echo $FormFieldsGenerator->field_icon($option);
+                                                echo wp_kses_post($FormFieldsGenerator->field_icon($option));
                                             }
                                             elseif( isset($option['type']) && $option['type'] === 'icon_multi' ){
-                                                echo $FormFieldsGenerator->field_icon_multi($option);
+                                                echo wp_kses_post($FormFieldsGenerator->field_icon_multi($option));
                                             }
                                             elseif( isset($option['type']) && $option['type'] === 'dimensions' ){
-                                                echo $FormFieldsGenerator->field_dimensions($option);
+                                                echo wp_kses_post($FormFieldsGenerator->field_dimensions($option));
                                             }
                                             elseif( isset($option['type']) && $option['type'] === 'wp_editor' ){
-                                                echo $FormFieldsGenerator->field_wp_editor($option);
+                                                echo wp_kses_post($FormFieldsGenerator->field_wp_editor($option));
                                             }
                                             elseif( isset($option['type']) && $option['type'] === 'select2' ){
-                                                echo $FormFieldsGenerator->field_select2($option);
+                                                echo wp_kses_post($FormFieldsGenerator->field_select2($option));
                                             }
                                             elseif( isset($option['type']) && $option['type'] === 'faq' ){
-                                                echo $FormFieldsGenerator->field_faq($option);
+                                                echo wp_kses_post($FormFieldsGenerator->field_faq($option));
                                             }
                                             elseif( isset($option['type']) && $option['type'] === 'grid' ){
-                                                echo $FormFieldsGenerator->field_grid($option);
+                                                echo wp_kses_post($FormFieldsGenerator->field_grid($option));
                                             }
                                             elseif( isset($option['type']) && $option['type'] === 'color_sets' ){
-                                                echo $FormFieldsGenerator->field_color_sets($option);
+                                                echo wp_kses_post($FormFieldsGenerator->field_color_sets($option));
                                             }
 
                                             elseif( isset($option['type']) && $option['type'] === 'color_palette' ){
-                                                echo $FormFieldsGenerator->field_color_palette($option);
+                                                echo wp_kses_post($FormFieldsGenerator->field_color_palette($option));
                                             }
                                             elseif( isset($option['type']) && $option['type'] === 'color_palette_multi' ){
-                                                echo $FormFieldsGenerator->field_color_palette_multi($option);
+                                                echo wp_kses_post($FormFieldsGenerator->field_color_palette_multi($option));
                                             }
                                             elseif( isset($option['type']) && $option['type'] === 'media' ){
-                                                echo $FormFieldsGenerator->field_media($option);
+                                                echo wp_kses_post($FormFieldsGenerator->field_media($option));
                                             }
                                             elseif( isset($option['type']) && $option['type'] === 'media_multi' ){
-                                                echo $FormFieldsGenerator->field_media_multi($option);
+                                                echo wp_kses_post($FormFieldsGenerator->field_media_multi($option));
                                             }
                                             elseif( isset($option['type']) && $option['type'] === 'repeatable' ){
-                                                echo $FormFieldsGenerator->field_repeatable($option);
+                                                echo wp_kses_post($FormFieldsGenerator->field_repeatable($option));
                                             }
                                             elseif( isset($option['type']) && $option['type'] === 'user' ){
-                                                echo $FormFieldsGenerator->field_user($option);
+                                                echo wp_kses_post($FormFieldsGenerator->field_user($option));
                                             }
                                             elseif( isset($option['type']) && $option['type'] === 'margin' ){
-                                                echo $FormFieldsGenerator->field_margin($option);
+                                                echo wp_kses_post($FormFieldsGenerator->field_margin($option));
                                             }
                                             elseif( isset($option['type']) && $option['type'] === 'padding' ){
-                                                echo $FormFieldsGenerator->field_padding($option);
+                                                echo wp_kses_post($FormFieldsGenerator->field_padding($option));
                                             }
                                             elseif( isset($option['type']) && $option['type'] === 'border' ){
-                                                echo $FormFieldsGenerator->field_border($option);
+                                                echo wp_kses_post($FormFieldsGenerator->field_border($option));
                                             }
                                             elseif( isset($option['type']) && $option['type'] === 'switcher' ){
-                                                echo $FormFieldsGenerator->field_switcher($option);
+                                                echo wp_kses_post($FormFieldsGenerator->field_switcher($option));
                                             }
                                             elseif( isset($option['type']) && $option['type'] === 'password' ){
-                                                echo $FormFieldsGenerator->field_password($option);
+                                                echo wp_kses_post($FormFieldsGenerator->field_password($option));
                                             }
                                             elseif( isset($option['type']) && $option['type'] === 'post_objects' ){
-                                                echo $FormFieldsGenerator->field_post_objects($option);
+                                                echo wp_kses_post($FormFieldsGenerator->field_post_objects($option));
                                             }
                                             elseif( isset($option['type']) && $option['type'] === 'google_map' ){
-                                                echo $FormFieldsGenerator->field_google_map($option);
+                                                echo wp_kses_post($FormFieldsGenerator->field_google_map($option));
                                             }
                                             elseif( isset($option['type']) && $option['type'] === 'image_link' ){
-                                                echo $FormFieldsGenerator->field_image_link($option);
+                                                echo wp_kses_post($FormFieldsGenerator->field_image_link($option));
                                             }
 
 
@@ -6552,7 +6552,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                     })
                 })
             </script>
-            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-option-group-tabs-wrapper
+            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-option-group-tabs-wrapper
             field-option-group-tabs-wrapper-<?php esc_attr($id); ?>">
 
                 <ul class="tab-navs">
@@ -6561,7 +6561,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                     foreach( $args as $key => $value ):
                         $title = $value['title'];
                         ?>
-                        <li index="<?php echo $i; ?>" class="<?php if($i == 1) echo 'active'; ?>"><?php echo $title; ?></li>
+                        <li index="<?php echo esc_attr($i); ?>" class="<?php if($i == 1) echo 'active'; ?>"><?php echo esc_html($title); ?></li>
                         <?php
                         $i++;
                     endforeach;
@@ -6576,7 +6576,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                         $link = $value['link'];
                         $options = $value['options'];
                         ?>
-                        <div class="tab-content tab-content-<?php echo $i; ?> <?php if($i == 1) echo 'active'; ?>">
+                        <div class="tab-content tab-content-<?php echo esc_attr($i); ?> <?php if($i == 1) echo 'active'; ?>">
 
 
                                 <?php
@@ -6598,133 +6598,133 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
 
                                             ?>
                                             <tr>
-                                                <th scope="row"><?php echo $option['title']; ?></th>
+                                                <th scope="row"><?php echo esc_html($option['title']); ?></th>
                                                 <td>
                                                     <?php
 
                                                     if( isset($option['type']) && $option['type'] === 'text' ){
-                                                        echo $FormFieldsGenerator->field_text($option);
+                                                        echo wp_kses_post($FormFieldsGenerator->field_text($option));
                                                     }
                                                     elseif( isset($option['type']) && $option['type'] === 'text_multi' ){
-                                                        echo $FormFieldsGenerator->field_text_multi($option);
+                                                        echo wp_kses_post($FormFieldsGenerator->field_text_multi($option));
                                                     }
                                                     elseif( isset($option['type']) && $option['type'] === 'textarea' ){
-                                                        echo $FormFieldsGenerator->field_textarea($option);
+                                                        echo wp_kses_post($FormFieldsGenerator->field_textarea($option));
                                                     }
                                                     elseif( isset($option['type']) && $option['type'] === 'checkbox' ){
-                                                        echo $FormFieldsGenerator->field_checkbox($option);
+                                                        echo wp_kses_post($FormFieldsGenerator->field_checkbox($option));
                                                     }
                                                     elseif( isset($option['type']) && $option['type'] === 'checkbox_multi' ){
-                                                        echo $FormFieldsGenerator->field_checkbox_multi($option);
+                                                        echo wp_kses_post($FormFieldsGenerator->field_checkbox_multi($option));
                                                     }
                                                     elseif( isset($option['type']) && $option['type'] === 'radio' ){
-                                                        echo $FormFieldsGenerator->field_radio($option);
+                                                        echo wp_kses_post($FormFieldsGenerator->field_radio($option));
                                                     }
                                                     elseif( isset($option['type']) && $option['type'] === 'select' ){
-                                                        echo $FormFieldsGenerator->field_select($option);
+                                                        echo wp_kses_post($FormFieldsGenerator->field_select($option));
                                                     }
                                                     elseif( isset($option['type']) && $option['type'] === 'range' ){
-                                                        echo $FormFieldsGenerator->field_range($option);
+                                                        echo wp_kses_post($FormFieldsGenerator->field_range($option));
                                                     }
                                                     elseif( isset($option['type']) && $option['type'] === 'range_input' ){
-                                                        echo $FormFieldsGenerator->field_range_input($option);
+                                                        echo wp_kses_post($FormFieldsGenerator->field_range_input($option));
                                                     }
                                                     elseif( isset($option['type']) && $option['type'] === 'switch' ){
-                                                        echo $FormFieldsGenerator->field_switch($option);
+                                                        echo wp_kses_post($FormFieldsGenerator->field_switch($option));
                                                     }
                                                     elseif( isset($option['type']) && $option['type'] === 'switch_multi' ){
-                                                        echo $FormFieldsGenerator->field_switch_multi($option);
+                                                        echo wp_kses_post($FormFieldsGenerator->field_switch_multi($option));
                                                     }
                                                     elseif( isset($option['type']) && $option['type'] === 'switch_img' ){
-                                                        echo $FormFieldsGenerator->field_switch_img($option);
+                                                        echo wp_kses_post($FormFieldsGenerator->field_switch_img($option));
                                                     }
                                                     elseif( isset($option['type']) && $option['type'] === 'time_format' ){
-                                                        echo $FormFieldsGenerator->field_time_format($option);
+                                                        echo wp_kses_post($FormFieldsGenerator->field_time_format($option));
                                                     }
                                                     elseif( isset($option['type']) && $option['type'] === 'date_format' ){
-                                                        echo $FormFieldsGenerator->field_date_format($option);
+                                                        echo wp_kses_post($FormFieldsGenerator->field_date_format($option));
                                                     }
 
                                                     elseif( isset($option['type']) && $option['type'] === 'datepicker' ){
-                                                        echo $FormFieldsGenerator->field_datepicker($option);
+                                                        echo wp_kses_post($FormFieldsGenerator->field_datepicker($option));
                                                     }
 
                                                     elseif( isset($option['type']) && $option['type'] === 'colorpicker' ){
-                                                        echo $FormFieldsGenerator->field_colorpicker($option);
+                                                        echo wp_kses_post($FormFieldsGenerator->field_colorpicker($option));
                                                     }
 
                                                     elseif( isset($option['type']) && $option['type'] === 'colorpicker_multi' ){
-                                                        echo $FormFieldsGenerator->field_colorpicker_multi($option);
+                                                        echo wp_kses_post($FormFieldsGenerator->field_colorpicker_multi($option));
                                                     }
                                                     elseif( isset($option['type']) && $option['type'] === 'link_color' ){
-                                                        echo $FormFieldsGenerator->field_link_color($option);
+                                                        echo wp_kses_post($FormFieldsGenerator->field_link_color($option));
                                                     }
                                                     elseif( isset($option['type']) && $option['type'] === 'icon' ){
-                                                        echo $FormFieldsGenerator->field_icon($option);
+                                                        echo wp_kses_post($FormFieldsGenerator->field_icon($option));
                                                     }
                                                     elseif( isset($option['type']) && $option['type'] === 'icon_multi' ){
-                                                        echo $FormFieldsGenerator->field_icon_multi($option);
+                                                        echo wp_kses_post($FormFieldsGenerator->field_icon_multi($option));
                                                     }
                                                     elseif( isset($option['type']) && $option['type'] === 'dimensions' ){
-                                                        echo $FormFieldsGenerator->field_dimensions($option);
+                                                        echo wp_kses_post($FormFieldsGenerator->field_dimensions($option));
                                                     }
                                                     elseif( isset($option['type']) && $option['type'] === 'wp_editor' ){
-                                                        echo $FormFieldsGenerator->field_wp_editor($option);
+                                                        echo wp_kses_post($FormFieldsGenerator->field_wp_editor($option));
                                                     }
                                                     elseif( isset($option['type']) && $option['type'] === 'select2' ){
-                                                        echo $FormFieldsGenerator->field_select2($option);
+                                                        echo wp_kses_post($FormFieldsGenerator->field_select2($option));
                                                     }
                                                     elseif( isset($option['type']) && $option['type'] === 'faq' ){
-                                                        echo $FormFieldsGenerator->field_faq($option);
+                                                        echo wp_kses_post($FormFieldsGenerator->field_faq($option));
                                                     }
                                                     elseif( isset($option['type']) && $option['type'] === 'grid' ){
-                                                        echo $FormFieldsGenerator->field_grid($option);
+                                                        echo wp_kses_post($FormFieldsGenerator->field_grid($option));
                                                     }
                                                     elseif( isset($option['type']) && $option['type'] === 'color_sets' ){
-                                                        echo $FormFieldsGenerator->field_color_sets($option);
+                                                        echo wp_kses_post($FormFieldsGenerator->field_color_sets($option));
                                                     }
 
                                                     elseif( isset($option['type']) && $option['type'] === 'color_palette' ){
-                                                        echo $FormFieldsGenerator->field_color_palette($option);
+                                                        echo wp_kses_post($FormFieldsGenerator->field_color_palette($option));
                                                     }
                                                     elseif( isset($option['type']) && $option['type'] === 'color_palette_multi' ){
-                                                        echo $FormFieldsGenerator->field_color_palette_multi($option);
+                                                        echo wp_kses_post($FormFieldsGenerator->field_color_palette_multi($option));
                                                     }
                                                     elseif( isset($option['type']) && $option['type'] === 'media' ){
-                                                        echo $FormFieldsGenerator->field_media($option);
+                                                        echo wp_kses_post($FormFieldsGenerator->field_media($option));
                                                     }
                                                     elseif( isset($option['type']) && $option['type'] === 'media_multi' ){
-                                                        echo $FormFieldsGenerator->field_media_multi($option);
+                                                        echo wp_kses_post($FormFieldsGenerator->field_media_multi($option));
                                                     }
                                                     elseif( isset($option['type']) && $option['type'] === 'repeatable' ){
-                                                        echo $FormFieldsGenerator->field_repeatable($option);
+                                                        echo wp_kses_post($FormFieldsGenerator->field_repeatable($option));
                                                     }
                                                     elseif( isset($option['type']) && $option['type'] === 'user' ){
-                                                        echo $FormFieldsGenerator->field_user($option);
+                                                        echo wp_kses_post($FormFieldsGenerator->field_user($option));
                                                     }
                                                     elseif( isset($option['type']) && $option['type'] === 'margin' ){
-                                                        echo $FormFieldsGenerator->field_margin($option);
+                                                        echo wp_kses_post($FormFieldsGenerator->field_margin($option));
                                                     }
                                                     elseif( isset($option['type']) && $option['type'] === 'padding' ){
-                                                        echo $FormFieldsGenerator->field_padding($option);
+                                                        echo wp_kses_post($FormFieldsGenerator->field_padding($option));
                                                     }
                                                     elseif( isset($option['type']) && $option['type'] === 'border' ){
-                                                        echo $FormFieldsGenerator->field_border($option);
+                                                        echo wp_kses_post($FormFieldsGenerator->field_border($option));
                                                     }
                                                     elseif( isset($option['type']) && $option['type'] === 'switcher' ){
-                                                        echo $FormFieldsGenerator->field_switcher($option);
+                                                        echo wp_kses_post($FormFieldsGenerator->field_switcher($option));
                                                     }
                                                     elseif( isset($option['type']) && $option['type'] === 'password' ){
-                                                        echo $FormFieldsGenerator->field_password($option);
+                                                        echo wp_kses_post($FormFieldsGenerator->field_password($option));
                                                     }
                                                     elseif( isset($option['type']) && $option['type'] === 'post_objects' ){
-                                                        echo $FormFieldsGenerator->field_post_objects($option);
+                                                        echo wp_kses_post($FormFieldsGenerator->field_post_objects($option));
                                                     }
                                                     elseif( isset($option['type']) && $option['type'] === 'google_map' ){
-                                                        echo $FormFieldsGenerator->field_google_map($option);
+                                                        echo wp_kses_post($FormFieldsGenerator->field_google_map($option));
                                                     }
                                                     elseif( isset($option['type']) && $option['type'] === 'image_link' ){
-                                                        echo $FormFieldsGenerator->field_image_link($option);
+                                                        echo wp_kses_post($FormFieldsGenerator->field_image_link($option));
                                                     }
 
 
@@ -6892,7 +6892,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                     })
                 })
             </script>
-            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-faq-wrapper
+            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-faq-wrapper
             field-faq-wrapper-<?php esc_attr($id); ?>">
                 <div class='faq-list faq-list-<?php esc_attr($id); ?>'>
                     <?php
@@ -6902,7 +6902,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                         $options = $value['options'];
                         ?>
                         <div class="faq-item">
-                            <div class="faq-header"><?php echo $title; ?></div>
+                            <div class="faq-header"><?php echo esc_attr($title); ?></div>
                             <div class="faq-content">
                                 <?php
                                 if(!empty($options)):
@@ -6920,133 +6920,133 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
 
                                                 ?>
                                                 <tr>
-                                                    <th scope="row"><?php echo $option['title']; ?></th>
+                                                    <th scope="row"><?php echo esc_html($option['title']); ?></th>
                                                     <td>
                                                         <?php
 
                                                         if( isset($option['type']) && $option['type'] === 'text' ){
-                                                            echo $FormFieldsGenerator->field_text($option);
+                                                            echo wp_kses_post(($FormFieldsGenerator->field_text($option)));
                                                         }
                                                         elseif( isset($option['type']) && $option['type'] === 'text_multi' ){
-                                                            echo $FormFieldsGenerator->field_text_multi($option);
+                                                            echo wp_kses_post(($FormFieldsGenerator->field_text_multi($option)));
                                                         }
                                                         elseif( isset($option['type']) && $option['type'] === 'textarea' ){
-                                                            echo $FormFieldsGenerator->field_textarea($option);
+                                                            echo wp_kses_post(($FormFieldsGenerator->field_textarea($option)));
                                                         }
                                                         elseif( isset($option['type']) && $option['type'] === 'checkbox' ){
-                                                            echo $FormFieldsGenerator->field_checkbox($option);
+                                                            echo wp_kses_post(($FormFieldsGenerator->field_checkbox($option)));
                                                         }
                                                         elseif( isset($option['type']) && $option['type'] === 'checkbox_multi' ){
-                                                            echo $FormFieldsGenerator->field_checkbox_multi($option);
+                                                            echo wp_kses_post(($FormFieldsGenerator->field_checkbox_multi($option)));
                                                         }
                                                         elseif( isset($option['type']) && $option['type'] === 'radio' ){
-                                                            echo $FormFieldsGenerator->field_radio($option);
+                                                            echo wp_kses_post(($FormFieldsGenerator->field_radio($option)));
                                                         }
                                                         elseif( isset($option['type']) && $option['type'] === 'select' ){
-                                                            echo $FormFieldsGenerator->field_select($option);
+                                                            echo wp_kses_post(($FormFieldsGenerator->field_select($option)));
                                                         }
                                                         elseif( isset($option['type']) && $option['type'] === 'range' ){
-                                                            echo $FormFieldsGenerator->field_range($option);
+                                                            echo wp_kses_post(($FormFieldsGenerator->field_range($option)));
                                                         }
                                                         elseif( isset($option['type']) && $option['type'] === 'range_input' ){
-                                                            echo $FormFieldsGenerator->field_range_input($option);
+                                                            echo wp_kses_post(($FormFieldsGenerator->field_range_input($option)));
                                                         }
                                                         elseif( isset($option['type']) && $option['type'] === 'switch' ){
-                                                            echo $FormFieldsGenerator->field_switch($option);
+                                                            echo wp_kses_post(($FormFieldsGenerator->field_switch($option)));
                                                         }
                                                         elseif( isset($option['type']) && $option['type'] === 'switch_multi' ){
-                                                            echo $FormFieldsGenerator->field_switch_multi($option);
+                                                            echo wp_kses_post(($FormFieldsGenerator->field_switch_multi($option)));
                                                         }
                                                         elseif( isset($option['type']) && $option['type'] === 'switch_img' ){
-                                                            echo $FormFieldsGenerator->field_switch_img($option);
+                                                            echo wp_kses_post(($FormFieldsGenerator->field_switch_img($option)));
                                                         }
                                                         elseif( isset($option['type']) && $option['type'] === 'time_format' ){
-                                                            echo $FormFieldsGenerator->field_time_format($option);
+                                                            echo wp_kses_post(($FormFieldsGenerator->field_time_format($option)));
                                                         }
                                                         elseif( isset($option['type']) && $option['type'] === 'date_format' ){
-                                                            echo $FormFieldsGenerator->field_date_format($option);
+                                                            echo wp_kses_post(($FormFieldsGenerator->field_date_format($option)));
                                                         }
 
                                                         elseif( isset($option['type']) && $option['type'] === 'datepicker' ){
-                                                            echo $FormFieldsGenerator->field_datepicker($option);
+                                                            echo wp_kses_post(($FormFieldsGenerator->field_datepicker($option)));
                                                         }
 
                                                         elseif( isset($option['type']) && $option['type'] === 'colorpicker' ){
-                                                            echo $FormFieldsGenerator->field_colorpicker($option);
+                                                            echo wp_kses_post(($FormFieldsGenerator->field_colorpicker($option)));
                                                         }
 
                                                         elseif( isset($option['type']) && $option['type'] === 'colorpicker_multi' ){
-                                                            echo $FormFieldsGenerator->field_colorpicker_multi($option);
+                                                            echo wp_kses_post(($FormFieldsGenerator->field_colorpicker_multi($option)));
                                                         }
                                                         elseif( isset($option['type']) && $option['type'] === 'link_color' ){
-                                                            echo $FormFieldsGenerator->field_link_color($option);
+                                                            echo wp_kses_post(($FormFieldsGenerator->field_link_color($option)));
                                                         }
                                                         elseif( isset($option['type']) && $option['type'] === 'icon' ){
-                                                            echo $FormFieldsGenerator->field_icon($option);
+                                                            echo wp_kses_post(($FormFieldsGenerator->field_icon($option)));
                                                         }
                                                         elseif( isset($option['type']) && $option['type'] === 'icon_multi' ){
-                                                            echo $FormFieldsGenerator->field_icon_multi($option);
+                                                            echo wp_kses_post(($FormFieldsGenerator->field_icon_multi($option)));
                                                         }
                                                         elseif( isset($option['type']) && $option['type'] === 'dimensions' ){
-                                                            echo $FormFieldsGenerator->field_dimensions($option);
+                                                            echo wp_kses_post(($FormFieldsGenerator->field_dimensions($option)));
                                                         }
                                                         elseif( isset($option['type']) && $option['type'] === 'wp_editor' ){
-                                                            echo $FormFieldsGenerator->field_wp_editor($option);
+                                                            echo wp_kses_post(($FormFieldsGenerator->field_wp_editor($option)));
                                                         }
                                                         elseif( isset($option['type']) && $option['type'] === 'select2' ){
-                                                            echo $FormFieldsGenerator->field_select2($option);
+                                                            echo wp_kses_post(($FormFieldsGenerator->field_select2($option)));
                                                         }
                                                         elseif( isset($option['type']) && $option['type'] === 'faq' ){
-                                                            echo $FormFieldsGenerator->field_faq($option);
+                                                            echo wp_kses_post(($FormFieldsGenerator->field_faq($option)));
                                                         }
                                                         elseif( isset($option['type']) && $option['type'] === 'grid' ){
-                                                            echo $FormFieldsGenerator->field_grid($option);
+                                                            echo wp_kses_post(($FormFieldsGenerator->field_grid($option)));
                                                         }
                                                         elseif( isset($option['type']) && $option['type'] === 'color_sets' ){
-                                                            echo $FormFieldsGenerator->field_color_sets($option);
+                                                            echo wp_kses_post(($FormFieldsGenerator->field_color_sets($option)));
                                                         }
 
                                                         elseif( isset($option['type']) && $option['type'] === 'color_palette' ){
-                                                            echo $FormFieldsGenerator->field_color_palette($option);
+                                                            echo wp_kses_post(($FormFieldsGenerator->field_color_palette($option)));
                                                         }
                                                         elseif( isset($option['type']) && $option['type'] === 'color_palette_multi' ){
-                                                            echo $FormFieldsGenerator->field_color_palette_multi($option);
+                                                            echo wp_kses_post(($FormFieldsGenerator->field_color_palette_multi($option)));
                                                         }
                                                         elseif( isset($option['type']) && $option['type'] === 'media' ){
-                                                            echo $FormFieldsGenerator->field_media($option);
+                                                            echo wp_kses_post(($FormFieldsGenerator->field_media($option)));
                                                         }
                                                         elseif( isset($option['type']) && $option['type'] === 'media_multi' ){
-                                                            echo $FormFieldsGenerator->field_media_multi($option);
+                                                            echo wp_kses_post(($FormFieldsGenerator->field_media_multi($option)));
                                                         }
                                                         elseif( isset($option['type']) && $option['type'] === 'repeatable' ){
-                                                            echo $FormFieldsGenerator->field_repeatable($option);
+                                                            echo wp_kses_post(($FormFieldsGenerator->field_repeatable($option)));
                                                         }
                                                         elseif( isset($option['type']) && $option['type'] === 'user' ){
-                                                            echo $FormFieldsGenerator->field_user($option);
+                                                            echo wp_kses_post(($FormFieldsGenerator->field_user($option)));
                                                         }
                                                         elseif( isset($option['type']) && $option['type'] === 'margin' ){
-                                                            echo $FormFieldsGenerator->field_margin($option);
+                                                            echo wp_kses_post(($FormFieldsGenerator->field_margin($option)));
                                                         }
                                                         elseif( isset($option['type']) && $option['type'] === 'padding' ){
-                                                            echo $FormFieldsGenerator->field_padding($option);
+                                                            echo wp_kses_post(($FormFieldsGenerator->field_padding($option)));
                                                         }
                                                         elseif( isset($option['type']) && $option['type'] === 'border' ){
-                                                            echo $FormFieldsGenerator->field_border($option);
+                                                            echo wp_kses_post(($FormFieldsGenerator->field_border($option)));
                                                         }
                                                         elseif( isset($option['type']) && $option['type'] === 'switcher' ){
-                                                            echo $FormFieldsGenerator->field_switcher($option);
+                                                            echo wp_kses_post(($FormFieldsGenerator->field_switcher($option)));
                                                         }
                                                         elseif( isset($option['type']) && $option['type'] === 'password' ){
-                                                            echo $FormFieldsGenerator->field_password($option);
+                                                            echo wp_kses_post(($FormFieldsGenerator->field_password($option)));
                                                         }
                                                         elseif( isset($option['type']) && $option['type'] === 'post_objects' ){
-                                                            echo $FormFieldsGenerator->field_post_objects($option);
+                                                            echo wp_kses_post(($FormFieldsGenerator->field_post_objects($option)));
                                                         }
                                                         elseif( isset($option['type']) && $option['type'] === 'google_map' ){
-                                                            echo $FormFieldsGenerator->field_google_map($option);
+                                                            echo wp_kses_post(($FormFieldsGenerator->field_google_map($option)));
                                                         }
                                                         elseif( isset($option['type']) && $option['type'] === 'image_link' ){
-                                                            echo $FormFieldsGenerator->field_image_link($option);
+                                                            echo wp_kses_post(($FormFieldsGenerator->field_image_link($option)));
                                                         }
 
 
@@ -7186,7 +7186,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                     })
                 })
             </script>
-            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-faq-wrapper
+            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-faq-wrapper
             field-faq-wrapper-<?php esc_attr($id); ?>">
                 <div class='faq-list faq-list-<?php esc_attr($id); ?>'>
                     <?php
@@ -7196,8 +7196,8 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                         $content = $value['content'];
                         ?>
                         <div class="faq-item">
-                            <div class="faq-header"><?php echo $title; ?></div>
-                            <div class="faq-content"><?php echo $content; ?></div>
+                            <div class="faq-header"><?php echo esc_attr($title); ?></div>
+                            <div class="faq-content"><?php echo wp_kses_post($content); ?></div>
                         </div>
                     <?php
                     endforeach;
@@ -7308,7 +7308,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
 
             ob_start();
             ?>
-            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-grid-wrapper
+            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-grid-wrapper
             field-grid-wrapper-<?php esc_attr($id); ?>">
                 <?php
                 foreach($args as $key=>$grid_item){
@@ -7317,8 +7317,8 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                     $thumb = isset($grid_item['thumb']) ? $grid_item['thumb'] : '';
                     ?>
                     <div class="item">
-                        <div class="thumb"><a href="<?php echo $link; ?>"><img src="<?php echo $thumb; ?>"></img></a></div>
-                        <div class="name"><a href="<?php echo $link; ?>"><?php echo $title; ?></a></div>
+                        <div class="thumb"><a href="<?php echo esc_url($link); ?>"><img src="<?php echo esc_url($thumb); ?>"></img></a></div>
+                        <div class="name"><a href="<?php echo esc_url($link); ?>"><?php echo esc_attr($title); ?></a></div>
                     </div>
                     <?php
                 }
@@ -7331,12 +7331,12 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                     foreach ($widths as $screen_size=>$width):
                     $height = !empty($heights[$screen_size]) ? $heights[$screen_size] : 'auto';
                     ?>
-                    @media screen and (min-width: <?php echo $screen_size; ?>) {
+                    @media screen and (min-width: <?php echo esc_attr($screen_size); ?>) {
                         .field-grid-wrapper-<?php esc_attr($id); ?> .item{
-                            width: <?php echo $width; ?>;
+                            width: <?php echo esc_attr($width); ?>;
                         }
                         .field-grid-wrapper-<?php esc_attr($id); ?> .item .thumb{
-                            height: <?php echo $height; ?>;
+                            height: <?php echo esc_attr($height); ?>;
                         }
                     }
                     <?php
@@ -7459,7 +7459,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
 
             ob_start();
             ?>
-            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-color-sets-wrapper
+            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-color-sets-wrapper
             field-color-sets-wrapper-<?php esc_attr($id); ?>">
                 <?php
                 foreach( $sets as $key => $set ):
@@ -7468,12 +7468,12 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
 
                     $checked = ( $key == $value ) ? "checked" : "";
                     ?>
-                    <label  class="<?php echo $checked; ?>" for='<?php esc_attr($id); ?>-<?php echo $key; ?>'>
-                        <input name='<?php echo $field_name; ?>' type='radio' id='<?php esc_attr($id); ?>-<?php echo $key; ?>' value='<?php echo $key; ?>' <?php echo $checked; ?>>
+                    <label  class="<?php echo esc_attr($checked); ?>" for='<?php esc_attr($id); ?>-<?php echo esc_attr($key); ?>'>
+                        <input name='<?php echo esc_attr($field_name); ?>' type='radio' id='<?php esc_attr($id); ?>-<?php echo esc_attr($key); ?>' value='<?php echo esc_attr($key); ?>' <?php echo esc_attr($checked); ?>>
                         <?php
                         foreach ($set as $color):
                             ?>
-                            <span class="color-srick" style="background-color: <?php echo $color; ?>;"></span>
+                            <span class="color-srick" style="background-color: <?php echo esc_attr($color); ?>;"></span>
                             <?php
 
                         endforeach;
@@ -7491,10 +7491,10 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                 .field-color-palette-wrapper-<?php esc_attr($id); ?> .sw-button{
                     transition: ease all 1s;
                 <?php if(!empty($width)):  ?>
-                    width: <?php echo $width; ?>;
+                    width: <?php echo esc_attr($width); ?>;
                 <?php endif; ?>
                 <?php if(!empty($height)):  ?>
-                    height: <?php echo $height; ?>;
+                    height: <?php echo esc_attr($height); ?>;
                 <?php endif; ?>
                 }
                 .field-color-palette-wrapper-<?php esc_attr($id); ?> label:hover .sw-button{
@@ -7614,7 +7614,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
 
             ob_start();
             ?>
-            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-image-link-wrapper
+            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-image-link-wrapper
             field-image-link-wrapper-<?php esc_attr($id); ?>">
                 <?php
 
@@ -7625,18 +7625,18 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
 
 
                             $checked = ( $link == $value ) ? "checked" : "";
-                            ?><label  class="<?php echo $checked; ?>" for='<?php esc_attr($id); ?>-<?php echo $key; ?>'><input
-                                    type='radio' id='<?php esc_attr($id); ?>-<?php echo $key; ?>'
-                                    value='<?php echo $key; ?>' <?php echo $checked; ?>>
-                            <img src="<?php echo $link; ?>">
+                            ?><label  class="<?php echo esc_attr($checked); ?>" for='<?php esc_attr($id); ?>-<?php echo esc_attr($key); ?>'><input
+                                    type='radio' id='<?php esc_attr($id); ?>-<?php echo esc_attr($key); ?>'
+                                    value='<?php echo esc_attr($key); ?>' <?php echo esc_attr($checked); ?>>
+                            <img src="<?php echo esc_url($link); ?>">
                             <span class="checked-icon"><i class="fas fa-check"></i></span>
                             </label><?php
                         endforeach;
                 if(!in_array($value, $links)){
                     ?><label  class="checked" for='<?php esc_attr($id); ?>-custom'><input
                             type='radio' id='<?php esc_attr($id); ?>-custom'
-                            value='<?php echo $value; ?>' checked>
-                    <img src="<?php echo $value; ?>">
+                            value='<?php echo esc_attr($value); ?>' checked>
+                    <img src="<?php echo esc_attr($value); ?>">
                     <span class="checked-icon"><i class="fas fa-check"></i></span>
                     </label><?php
                 }
@@ -7644,7 +7644,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
 
                 ?>
                 <div class="val-wrap">
-                    <input class="link-val" name='<?php echo $field_name; ?>' type="text" value="<?php echo $value; ?>"> <span class='ppof-button upload' id='media_upload_<?php esc_attr($id); ?>'><?php echo __('Upload','bus-booking-manager');?></span> <span class="ppof-button clear">Clear</span>
+                    <input class="link-val" name='<?php echo esc_attr($field_name); ?>' type="text" value="<?php echo esc_attr($value); ?>"> <span class='ppof-button upload' id='media_upload_<?php esc_attr($id); ?>'><?php echo esc_html__('Upload','bus-booking-manager');?></span> <span class="ppof-button clear">Clear</span>
                 </div>
                 <div class="error-mgs"></div>
             </div>
@@ -7667,10 +7667,10 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                 .field-image-link-wrapper-<?php esc_attr($id); ?> img{
                     transition: ease all 1s;
                 <?php if(!empty($width)):  ?>
-                    width: <?php echo $width; ?>;
+                    width: <?php echo esc_attr($width); ?>;
                 <?php endif; ?>
                 <?php if(!empty($height)):  ?>
-                    height: <?php echo $height; ?>;
+                    height: <?php echo esc_attr($height); ?>;
                 <?php endif; ?>
                 }
                 .field-color-palette-wrapper-<?php esc_attr($id); ?> label:hover .sw-button{
@@ -7809,16 +7809,16 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
 
             ob_start();
             ?>
-            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-color-palette-wrapper
+            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-color-palette-wrapper
             field-color-palette-wrapper-<?php esc_attr($id); ?>">
                 <?php
                 foreach( $colors as $key => $color ):
 
                     $checked = ( $key == $value ) ? "checked" : "";
-                    ?><label  class="<?php echo $checked; ?>" for='<?php esc_attr($id); ?>-<?php echo $key; ?>'><input
-                            name='<?php echo $field_name; ?>' type='radio' id='<?php esc_attr($id); ?>-<?php echo $key; ?>'
-                            value='<?php echo $key; ?>' <?php echo $checked; ?>><span title="<?php echo $color; ?>" style="background-color: <?php
-                    echo $color; ?>" class="sw-button"></span>
+                    ?><label  class="<?php echo esc_attr($checked); ?>" for='<?php esc_attr($id); ?>-<?php echo esc_attr($key); ?>'><input
+                            name='<?php echo esc_attr($field_name); ?>' type='radio' id='<?php esc_attr($id); ?>-<?php echo esc_attr($key); ?>'
+                            value='<?php echo esc_attr($key); ?>' <?php echo esc_attr($checked); ?>><span title="<?php echo esc_attr($color); ?>" style="background-color: <?php
+                    echo esc_attr($color); ?>" class="sw-button"></span>
                     <span class="checked-icon"><i class="fas fa-check"></i></span>
                     </label><?php
                 endforeach;
@@ -7829,10 +7829,10 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                 .field-color-palette-wrapper-<?php esc_attr($id); ?> .sw-button{
                     transition: ease all 1s;
                 <?php if(!empty($width)):  ?>
-                    width: <?php echo $width; ?>;
+                    width: <?php echo esc_attr($width); ?>;
                 <?php endif; ?>
                 <?php if(!empty($height)):  ?>
-                    height: <?php echo $height; ?>;
+                    height: <?php echo esc_attr($height); ?>;
                 <?php endif; ?>
                 }
                 .field-color-palette-wrapper-<?php esc_attr($id); ?> label:hover .sw-button{
@@ -7954,15 +7954,15 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
 
             ob_start();
             ?>
-            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-color-palette-multi-wrapper
+            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-color-palette-multi-wrapper
             field-color-palette-multi-wrapper-<?php esc_attr($id); ?>">
                 <?php
                 foreach( $colors as $key => $color ):
                     $checked = is_array( $value ) && in_array( $key, $value ) ? "checked" : "";
-                    ?><label  class="<?php echo $checked; ?>" for='<?php esc_attr($id); ?>-<?php echo $key; ?>'><input
-                            name='<?php echo $field_name; ?>[]' type='checkbox' id='<?php esc_attr($id); ?>-<?php echo $key; ?>'
-                            value='<?php echo $key; ?>' <?php echo $checked; ?>><span title="<?php echo $color; ?>" style="background-color: <?php
-                    echo $color; ?>" class="sw-button"></span>
+                    ?><label  class="<?php echo esc_attr($checked); ?>" for='<?php esc_attr($id); ?>-<?php echo esc_attr($key); ?>'><input
+                            name='<?php echo esc_attr($field_name); ?>[]' type='checkbox' id='<?php esc_attr($id); ?>-<?php echo esc_attr($key); ?>'
+                            value='<?php echo esc_attr($key); ?>' <?php echo esc_attr($checked); ?>><span title="<?php echo esc_attr($color); ?>" style="background-color: <?php
+                    echo esc_attr($color); ?>" class="sw-button"></span>
                     <span class="checked-icon"><i class="fas fa-check"></i></span>
                     </label><?php
                 endforeach;
@@ -7973,10 +7973,10 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                 .field-color-palette-multi-wrapper-<?php esc_attr($id); ?> .sw-button{
                     transition: ease all 1s;
                 <?php if(!empty($width)):  ?>
-                    width: <?php echo $width; ?>;
+                    width: <?php echo esc_attr($width); ?>;
                 <?php endif; ?>
                 <?php if(!empty($height)):  ?>
-                    height: <?php echo $height; ?>;
+                    height: <?php echo esc_attr($height); ?>;
                 <?php endif; ?>
                 }
                 .field-color-palette-multi-wrapper-<?php esc_attr($id); ?> label:hover .sw-button{
@@ -8099,7 +8099,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
             wp_enqueue_media();
 
             ?>
-            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-media-wrapper
+            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-media-wrapper
             field-media-wrapper-<?php esc_attr($id); ?>">
                 <div class='media_preview' style='width: 150px;margin-bottom: 10px;background: #eee;padding: 5px;    text-align: center;'>
                     <?php
@@ -8107,18 +8107,18 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                     if( "audio/mpeg" == $media_type ){
                         ?>
                         <div id='media_preview_$id' class='dashicons dashicons-format-audio' style='font-size: 70px;display: inline;'></div>
-                        <div><?php echo $media_title; ?></div>
+                        <div><?php echo esc_html($media_title); ?></div>
                         <?php
                     }
                     else {
                         ?>
-                        <img id='media_preview_<?php esc_attr($id); ?>' src='<?php echo $media_url; ?>' style='width:100%'/>
+                        <img id='media_preview_<?php esc_attr($id); ?>' src='<?php echo esc_url($media_url); ?>' style='width:100%'/>
                         <?php
                     }
                     ?>
                 </div>
-                <input type='hidden' name='<?php echo $field_name; ?>' id='media_input_<?php esc_attr($id); ?>' value='<?php echo $value; ?>' />
-                <div class='ppof-button upload' id='media_upload_<?php esc_attr($id); ?>'><?php echo __('Upload','bus-booking-manager');?></div><div class='ppof-button clear' id='media_clear_<?php esc_attr($id); ?>'><?php echo __('Clear','bus-booking-manager');?></div>
+                <input type='hidden' name='<?php echo esc_attr($field_name); ?>' id='media_input_<?php esc_attr($id); ?>' value='<?php echo esc_attr($value); ?>' />
+                <div class='ppof-button upload' id='media_upload_<?php esc_attr($id); ?>'><?php echo esc_html__('Upload','bus-booking-manager');?></div><div class='ppof-button clear' id='media_clear_<?php esc_attr($id); ?>'><?php echo esc_html__('Clear','bus-booking-manager');?></div>
                 <div class="error-mgs"></div>
             </div>
 
@@ -8249,12 +8249,12 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
             wp_enqueue_media();
 
             ?>
-            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-media-multi-wrapper
+            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-media-multi-wrapper
             field-media-multi-wrapper-<?php esc_attr($id); ?>">
-                <div class='ppof-button upload' id='media_upload_<?php esc_attr($id); ?>'><?php echo __('Upload','bus-booking-manager');?></div><div class='ppof-button clear'
+                <div class='ppof-button upload' id='media_upload_<?php esc_attr($id); ?>'><?php echo esc_html__('Upload','bus-booking-manager');?></div><div class='ppof-button clear'
                                                                                           id='media_clear_<?php echo
-                                                                                          $id;
-                                                                                          ?>'><?php echo __('Clear','bus-booking-manager');?></div>
+                                                                                          esc_html($id);
+                                                                                          ?>'><?php echo esc_html__('Clear','bus-booking-manager');?></div>
                 <div class="media-list media-list-<?php esc_attr($id); ?> sortable">
                     <?php
                     if(!empty($values) && is_array($values)):
@@ -8264,11 +8264,11 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                             $media_title= get_the_title( $value );
                             ?>
                             <div class="item">
-                                <span class="remove" onclick="jQuery(this).parent().remove()"><?php echo $remove_text; ?></span>
+                                <span class="remove" onclick="jQuery(this).parent().remove()"><?php echo esc_attr($remove_text); ?></span>
                                 <span class="sort" >sort</span>
-                                <img id='media_preview_<?php esc_attr($id); ?>' src='<?php echo $media_url; ?>' style='width:100%'/>
-                                <div class="item-title"><?php echo $media_title; ?></div>
-                                <input type='hidden' name='<?php echo $field_name; ?>[]' value='<?php echo $value; ?>' />
+                                <img id='media_preview_<?php esc_attr($id); ?>' src='<?php echo esc_url($media_url); ?>' style='width:100%'/>
+                                <div class="item-title"><?php echo esc_attr($media_title); ?></div>
+                                <input type='hidden' name='<?php echo esc_attr($field_name); ?>[]' value='<?php echo esc_attr($value); ?>' />
                             </div>
                         <?php
                         endforeach;
@@ -8284,9 +8284,9 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                             attachment_id = attachment.id;
                             attachment_url = attachment.url;
                             html = '<div class="item">';
-                            html += '<span class="remove" onclick="jQuery(this).parent().remove()"><?php echo $remove_text; ?></span>';
+                            html += '<span class="remove" onclick="jQuery(this).parent().remove()"><?php echo esc_attr($remove_text); ?></span>';
                             html += '<img src="'+attachment_url+'" style="width:100%"/>';
-                            html += '<input type="hidden" name="<?php echo $field_name; ?>[]" value="'+attachment_id+'" />';
+                            html += '<input type="hidden" name="<?php echo esc_attr($field_name); ?>[]" value="'+attachment_id+'" />';
                             html += '</div>';
                             $('.media-list-<?php esc_attr($id); ?>').append(html);
                             //wp.media.editor.send.attachment = send_attachment_bkp;
@@ -8401,11 +8401,11 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
 
             ob_start();
             ?>
-            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?>
+            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?>
                     id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-custom-html-wrapper
             field-custom-html-wrapper-<?php esc_attr($id); ?>">
                 <?php
-                echo $html;
+                echo wp_kses_post($html);
                 ?>
                 <div class="error-mgs"></div>
             </div>
@@ -8566,13 +8566,13 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
 
 
                         ?>
-                        var limit = <?php  echo $limit; ?>;
+                        var limit = <?php  echo esc_attr($limit); ?>;
                         var node_count = $( ".field-repeatable-wrapper-<?php esc_attr($id); ?> .field-list .item-wrap" ).size();
                         if(limit > node_count){
                             $( this ).parent().parent().clone().appendTo('.field-repeatable-wrapper-<?php esc_attr($id); ?> .field-list' );
                            // html = $( this ).parent().parent().clone();
                             //var html_new = html.replace(index_id, now);
-                            //jQuery('.<?php echo 'field-repeatable-wrapper-'.$id; ?> .field-list').append(html_new);
+                            //jQuery('.<?php echo 'field-repeatable-wrapper-'.esc_attr($id); ?> .field-list').append(html_new);
                             //console.log(html);
 
                         }else{
@@ -8613,7 +8613,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                         html += '<span class="button sort" ><i class="fas fa-arrows-alt"></i></span> ';
                         <?php endif; ?>
                         html += '<span class="button remove" ' +
-                            'onclick="jQuery(this).parent().parent().remove()"><?php echo $remove_text; ?></span> ';
+                            'onclick="jQuery(this).parent().parent().remove()"><?php echo esc_attr($remove_text); ?></span> ';
                         html += '</div>';    
                         // html += ' <span  class="title-text">#'+now+'</span></div>';
                         fields_arr.forEach(function(element) {
@@ -8626,30 +8626,30 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                             <?php endif; ?>
                             html+='<div class="item-title">'+element.name+'</div>';
                             if(type == 'text'){
-                                html+='<input type="text" name="<?php echo $field_name; ?>['+now+']['+element.item_id+']"/>';
+                                html+='<input type="text" name="<?php echo esc_attr($field_name); ?>['+now+']['+element.item_id+']"/>';
                             }else if(type == 'number'){
-                                html+='<input type="number" name="<?php echo $field_name; ?>['+now+']['+element.item_id+']"/>';
+                                html+='<input type="number" name="<?php echo esc_attr($field_name); ?>['+now+']['+element.item_id+']"/>';
                             }else if(type == 'tel'){
-                                html+='<input type="tel" name="<?php echo $field_name; ?>['+now+']['+element.item_id+']"/>';
+                                html+='<input type="tel" name="<?php echo esc_attr($field_name); ?>['+now+']['+element.item_id+']"/>';
                             }else if(type == 'time'){
-                                html+='<input type="time" name="<?php echo $field_name; ?>['+now+']['+element.item_id+']"/>';
+                                html+='<input type="time" name="<?php echo esc_attr($field_name); ?>['+now+']['+element.item_id+']"/>';
                             }else if(type == 'url'){
-                                html+='<input type="url" name="<?php echo $field_name; ?>['+now+']['+element.item_id+']"/>';
+                                html+='<input type="url" name="<?php echo esc_attr($field_name); ?>['+now+']['+element.item_id+']"/>';
                             }else if(type == 'date'){
-                                html+='<input type="date" name="<?php echo $field_name; ?>['+now+']['+element.item_id+']"/>';
+                                html+='<input type="date" name="<?php echo esc_attr($field_name); ?>['+now+']['+element.item_id+']"/>';
                             }else if(type == 'month'){
-                                html+='<input type="month" name="<?php echo $field_name; ?>['+now+']['+element.item_id+']"/>';
+                                html+='<input type="month" name="<?php echo esc_attr($field_name); ?>['+now+']['+element.item_id+']"/>';
                             }else if(type == 'search'){
-                                html+='<input type="search" name="<?php echo $field_name; ?>['+now+']['+element.item_id+']"/>';
+                                html+='<input type="search" name="<?php echo esc_attr($field_name); ?>['+now+']['+element.item_id+']"/>';
                             }else if(type == 'color'){
-                                html+='<input type="color" name="<?php echo $field_name; ?>['+now+']['+element.item_id+']"/>';
+                                html+='<input type="color" name="<?php echo esc_attr($field_name); ?>['+now+']['+element.item_id+']"/>';
                             }else if(type == 'email'){
-                                html+='<input type="email" name="<?php echo $field_name; ?>['+now+']['+element.item_id+']"/>';
+                                html+='<input type="email" name="<?php echo esc_attr($field_name); ?>['+now+']['+element.item_id+']"/>';
                             }else if(type == 'textarea'){
-                                html+='<textarea name="<?php echo $field_name; ?>['+now+']['+element.item_id+']"></textarea>';
+                                html+='<textarea name="<?php echo esc_attr($field_name); ?>['+now+']['+element.item_id+']"></textarea>';
                             }else if(type == 'select'){
                                 args = element.args;
-                                html+='<select name="<?php echo $field_name; ?>['+now+']['+element.item_id+']">';
+                                html+='<select name="<?php echo esc_attr($field_name); ?>['+now+']['+element.item_id+']">';
                                 for(argKey in args){                                                                       
                                     html+='<option value="'+argKey+'">'+args[argKey]+'</option>';
                                 }
@@ -8658,7 +8658,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                                 args = element.args;
                                 for(argKey in args){
                                     html+='<label>';
-                                    html+='<input value="'+argKey+'" type="radio" name="<?php echo $field_name; ?>['+now+']['+element.item_id+']"/>';
+                                    html+='<input value="'+argKey+'" type="radio" name="<?php echo esc_attr($field_name); ?>['+now+']['+element.item_id+']"/>';
                                     html+= args[argKey];
                                     html+='</label ><br/>';
                                 }
@@ -8666,7 +8666,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                                 args = element.args;
                                 for(argKey in args){
                                     html+='<label>';
-                                    html+='<input value="'+argKey+'" type="checkbox" name="<?php echo $field_name; ?>['+now+']['+element.item_id+']"/>';
+                                    html+='<input value="'+argKey+'" type="checkbox" name="<?php echo esc_attr($field_name); ?>['+now+']['+element.item_id+']"/>';
                                     html+= args[argKey];
                                     html+='</label ><br/>';
                                 }
@@ -8681,10 +8681,10 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                         <?php
                         if(!empty($limit)):
                             ?>
-                            var limit = <?php  echo $limit; ?>;
+                            var limit = <?php  echo esc_attr($limit); ?>;
                             var node_count = $( ".field-repeatable-wrapper-<?php esc_attr($id); ?> .field-list .item-wrap" ).size();
                             if(limit > node_count){
-                                jQuery('.<?php echo 'field-repeatable-wrapper-'.$id; ?> .field-list').append(html);
+                                jQuery('.<?php echo 'field-repeatable-wrapper-'.esc_attr($id); ?> .field-list').append(html);
                             }else{
                                 jQuery('.field-repeatable-wrapper-<?php esc_attr($id); ?> .error-mgs').html('Sorry! you can add max '+limit+' item').stop().fadeIn(400).delay(3000).fadeOut(400);
                             }
@@ -8692,14 +8692,14 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                             <?php
                         else:
                             ?>
-                            jQuery('.<?php echo 'field-repeatable-wrapper-'.$id; ?> .field-list').append(html);
+                            jQuery('.<?php echo 'field-repeatable-wrapper-'.esc_attr($id); ?> .field-list').append(html);
                             <?php
                         endif;
                         ?>
                     })
                 });
             </script>
-            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo $depends; ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-repeatable-wrapper
+            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-repeatable-wrapper
             field-repeatable-wrapper-<?php esc_attr($id); ?>">
                 
                 <div class="field-list <?php if($sortable){ echo 'sortable'; }?>" id="<?php esc_attr($id); ?>">
@@ -8714,13 +8714,13 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                                 <div class="header">
                                     <?php endif; ?>
                                   
-<!-- <span index_id="--><?php //echo $index; ?><!--" class="button clone"><i class="far fa-clone"></i></span>-->
+<!-- <span index_id="--><?php //echo esc_attr($index); ?><!--" class="button clone"><i class="far fa-clone"></i></span>-->
                                     <span  class="button title-text">Expand</span>
                                     <?php if($sortable):?>
                                         <span class="button sort"><i class="fas fa-arrows-alt"></i></span>
                                     <?php endif; ?>
-                                    <span class="button remove" onclick="jQuery(this).parent().parent().remove()"><?php echo $remove_text; ?></span>
-                                    <span class="title"><?php echo $title_field_val; ?></span>
+                                    <span class="button remove" onclick="jQuery(this).parent().parent().remove()"><?php echo esc_attr($remove_text); ?></span>
+                                    <span class="title"><?php echo esc_html($title_field_val); ?></span>
                                     
                                     <?php if($collapsible):?>
                                 </div>
@@ -8731,72 +8731,72 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                                     $name = $field['name'];
                                     $title_field_class = ($title_field == $field_index) ? 'title-field':'';
                                     ?>
-                                    <div class="item <?php echo $title_field_class; ?>">
+                                    <div class="item <?php echo esc_attr($title_field_class); ?>">
                                         <?php if($collapsible):?>
                                         <div class="content">
                                             <?php endif; ?>
-                                            <div class="item-title"><?php echo $name; ?></div>
+                                            <div class="item-title"><?php echo esc_html($name); ?></div>
                                             <?php if($type == 'text'):
                                                 $default = isset($field['default']) ? $field['default'] : '';
                                                 $value = !empty($val[$item_id]) ? $val[$item_id] : $default;
                                                 ?>
-                                                <input type="text" class="regular-text" name="<?php echo $field_name; ?>[<?php echo $index; ?>][<?php echo $item_id; ?>]" placeholder="" value="<?php echo esc_html($value); ?>">
+                                                <input type="text" class="regular-text" name="<?php echo esc_attr($field_name); ?>[<?php echo esc_attr($index); ?>][<?php echo esc_attr($item_id); ?>]" placeholder="" value="<?php echo esc_attr($value); ?>">
                                             <?php elseif($type == 'number'):
                                                 $default = isset($field['default']) ? $field['default'] : '';
                                                 $value = !empty($val[$item_id]) ? $val[$item_id] : $default;
                                                 ?>
-                                                <input type="number" class="regular-text" name="<?php echo $field_name; ?>[<?php echo $index; ?>][<?php echo $item_id; ?>]" placeholder="" value="<?php echo esc_html($value); ?>">
+                                                <input type="number" class="regular-text" name="<?php echo esc_attr($field_name); ?>[<?php echo esc_attr($index); ?>][<?php echo esc_attr($item_id); ?>]" placeholder="" value="<?php echo esc_html($value); ?>">
                                             <?php elseif($type == 'url'):
                                                 $default = isset($field['default']) ? $field['default'] : '';
                                                 $value = !empty($val[$item_id]) ? $val[$item_id] : $default;
                                                 ?>
-                                                <input type="url" class="regular-text" name="<?php echo $field_name; ?>[<?php echo $index; ?>][<?php echo $item_id; ?>]" placeholder="" value="<?php echo esc_html($value); ?>">
+                                                <input type="url" class="regular-text" name="<?php echo esc_attr($field_name); ?>[<?php echo esc_attr($index); ?>][<?php echo esc_attr($item_id); ?>]" placeholder="" value="<?php echo esc_html($value); ?>">
                                             <?php elseif($type == 'tel'):
                                                 $default = isset($field['default']) ? $field['default'] : '';
                                                 $value = !empty($val[$item_id]) ? $val[$item_id] : $default;
                                                 ?>
-                                                <input type="tel" class="regular-text" name="<?php echo $field_name; ?>[<?php echo $index; ?>][<?php echo $item_id; ?>]" placeholder="" value="<?php echo esc_html($value); ?>">
+                                                <input type="tel" class="regular-text" name="<?php echo esc_attr($field_name); ?>[<?php echo esc_attr($index); ?>][<?php echo esc_attr($item_id); ?>]" placeholder="" value="<?php echo esc_html($value); ?>">
                                             <?php elseif($type == 'time'):
                                                 $default = isset($field['default']) ? $field['default'] : '';
                                                 $value = !empty($val[$item_id]) ? $val[$item_id] : $default;
                                                 ?>
-                                                <input type="time" class="regular-text" name="<?php echo $field_name; ?>[<?php echo $index; ?>][<?php echo $item_id; ?>]" placeholder="" value="<?php echo esc_html($value); ?>">
+                                                <input type="time" class="regular-text" name="<?php echo esc_attr($field_name); ?>[<?php echo esc_attr($index); ?>][<?php echo esc_attr($item_id); ?>]" placeholder="" value="<?php echo esc_html($value); ?>">
                                             <?php elseif($type == 'search'):
                                                 $default = isset($field['default']) ? $field['default'] : '';
                                                 $value = !empty($val[$item_id]) ? $val[$item_id] : $default;
                                                 ?>
-                                                <input type="search" class="regular-text" name="<?php echo $field_name; ?>[<?php echo $index; ?>][<?php echo $item_id; ?>]" placeholder="" value="<?php echo esc_html($value); ?>">
+                                                <input type="search" class="regular-text" name="<?php echo esc_attr($field_name); ?>[<?php echo esc_attr($index); ?>][<?php echo esc_attr($item_id); ?>]" placeholder="" value="<?php echo esc_html($value); ?>">
                                             <?php elseif($type == 'month'):
                                                 $default = isset($field['default']) ? $field['default'] : '';
                                                 $value = !empty($val[$item_id]) ? $val[$item_id] : $default;
                                                 ?>
-                                                <input type="month" class="regular-text" name="<?php echo $field_name; ?>[<?php echo $index; ?>][<?php echo $item_id; ?>]" placeholder="" value="<?php echo esc_html($value); ?>">
+                                                <input type="month" class="regular-text" name="<?php echo esc_attr($field_name); ?>[<?php echo esc_attr($index); ?>][<?php echo esc_attr($item_id); ?>]" placeholder="" value="<?php echo esc_html($value); ?>">
                                             <?php elseif($type == 'color'):
                                                 $default = isset($field['default']) ? $field['default'] : '';
                                                 $value = !empty($val[$item_id]) ? $val[$item_id] : $default;
                                                 ?>
-                                                <input type="color" class="regular-text" name="<?php echo $field_name; ?>[<?php echo $index; ?>][<?php echo $item_id; ?>]" placeholder="" value="<?php echo esc_html($value); ?>">
+                                                <input type="color" class="regular-text" name="<?php echo esc_attr($field_name); ?>[<?php echo esc_attr($index); ?>][<?php echo esc_attr($item_id); ?>]" placeholder="" value="<?php echo esc_html($value); ?>">
                                             <?php elseif($type == 'date'):
                                                 $default = isset($field['default']) ? $field['default'] : '';
                                                 $value = !empty($val[$item_id]) ? $val[$item_id] : $default;
                                                 ?>
-                                                <input type="date" class="regular-text" name="<?php echo $field_name; ?>[<?php echo $index; ?>][<?php echo $item_id; ?>]" placeholder="" value="<?php echo esc_html($value); ?>">
+                                                <input type="date" class="regular-text" name="<?php echo esc_attr($field_name); ?>[<?php echo esc_attr($index); ?>][<?php echo esc_attr($item_id); ?>]" placeholder="" value="<?php echo esc_html($value); ?>">
                                             <?php elseif($type == 'email'):
                                                 $default = isset($field['default']) ? $field['default'] : '';
                                                 $value = !empty($val[$item_id]) ? $val[$item_id] : $default;
                                                 ?>
-                                                <input type="email" class="regular-text" name="<?php echo $field_name; ?>[<?php echo $index; ?>][<?php echo $item_id; ?>]" placeholder="" value="<?php echo esc_html($value); ?>">
+                                                <input type="email" class="regular-text" name="<?php echo esc_attr($field_name); ?>[<?php echo esc_attr($index); ?>][<?php echo esc_attr($item_id); ?>]" placeholder="" value="<?php echo esc_html($value); ?>">
                                             <?php elseif($type == 'textarea'):
                                                 $default = isset($field['default']) ? $field['default'] : '';
                                                 $value = !empty($val[$item_id]) ? $val[$item_id] : $default;
                                                 ?>
-                                                <textarea name="<?php echo $field_name; ?>[<?php echo $index; ?>][<?php echo $item_id; ?>]"><?php echo esc_html($value); ?></textarea>
+                                                <textarea name="<?php echo esc_attr($field_name); ?>[<?php echo esc_attr($index); ?>][<?php echo esc_attr($item_id); ?>]"><?php echo esc_html($value); ?></textarea>
                                             <?php elseif($type == 'select'):
                                                 $args = isset($field['args']) ? $field['args'] : array();
                                                 $default = isset($field['default']) ? $field['default'] : '';
                                                 $value = !empty($val[$item_id]) ? $val[$item_id] : $default;
                                                 ?>
-                                                <select class="" name="<?php echo $field_name; ?>[<?php echo $index; ?>][<?php echo $item_id; ?>]">
+                                                <select class="" name="<?php echo esc_attr($field_name); ?>[<?php echo esc_attr($index); ?>][<?php echo esc_attr($item_id); ?>]">
                                                 <?php                                                    
                                                    if(!is_array($args)){                                                   
                                                    $this->args_from_string($args);
@@ -8804,7 +8804,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                                                         foreach ($args as $argIndex => $argName):
                                                         $selected = ($argIndex == $value) ? 'selected' : '';
                                                         ?>
-                                                        <option <?php echo $selected; ?>  value="<?php echo $argIndex; ?>"><?php echo $argName; ?></option>
+                                                        <option <?php echo esc_attr($selected); ?>  value="<?php echo esc_attr($argIndex); ?>"><?php echo esc_attr($argName); ?></option>
                                                     <?php endforeach; }?>
                                                 </select>
                                             <?php elseif($type == 'radio'):
@@ -8821,7 +8821,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                                                 
                                                 ?>
                                                 <label class="" >
-                                                    <input  type="radio" name="<?php echo $field_name; ?>[<?php echo $index; ?>][<?php echo $item_id; ?>]" <?php echo $checked; ?>  value="<?php echo $argIndex; ?>"><?php echo $argName; ?></input>
+                                                    <input  type="radio" name="<?php echo esc_attr($field_name); ?>[<?php echo esc_attr($index); ?>][<?php echo esc_attr($item_id); ?>]" <?php echo esc_attr($checked); ?>  value="<?php echo esc_attr($argIndex); ?>"><?php echo esc_attr($argName); ?></input>
                                                 </label>
                                             <?php endforeach; } ?>
                                             <?php elseif($type == 'checkbox'):
@@ -8838,7 +8838,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                                                 // $checked = isset($argIndex) ? 'checked' : '';
                                                 ?>
                                                 <label class="" >
-                                                    <input  type="checkbox" name="<?php echo $field_name; ?>[<?php echo $index; ?>][<?php echo $item_id; ?>][]" <?php echo $checked; ?>  value="<?php echo $argIndex; ?>"><?php echo $argName; ?></input>
+                                                    <input  type="checkbox" name="<?php echo esc_attr($field_name); ?>[<?php echo esc_attr($index); ?>][<?php echo esc_attr($item_id); ?>][]" <?php echo esc_attr($checked); ?>  value="<?php echo esc_attr($argIndex); ?>"><?php echo esc_attr($argName); ?></input>
                                                 </label>
                                             <?php endforeach; ?>
                                             <?php
@@ -8867,7 +8867,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                     ?>                    
                 </div>
                 <div class="error-mgs"></div>
-                <div class="ppof-button add-item"><i class="fas fa-plus-square"></i> <?php echo $btntext; ?></div>
+                <div class="ppof-button add-item"><i class="fas fa-plus-square"></i> <?php echo esc_html($btntext); ?></div>
             </div>
 
             <?php
@@ -8876,7 +8876,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
 
         public function get_tax_data($args){
             foreach ($this->get_rep_taxonomies_array( $args ) as $argIndex => $argName):
-            $selected = ($argIndex == $value) ? 'selected' : ''; ?><option <?php echo $selected; ?>  value="<?php echo $argIndex; ?>"><?php echo $argName; ?></option> <?php endforeach;
+            $selected = ($argIndex == $value) ? 'selected' : ''; ?><option <?php echo esc_attr($selected); ?>  value="<?php echo esc_attr($argIndex); ?>"><?php echo esc_attr($argName); ?></option> <?php endforeach;
         }
 
 
@@ -8909,7 +8909,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
             if( isset( $matches[1][0] ) ) $taxonomy = $matches[1][0];
             else throw new Pick_error('Invalid taxonomy declaration !');
 
-            if( ! taxonomy_exists( $taxonomy ) ) throw new Pick_error("Taxonomy <strong>$taxonomy</strong> doesn't exists !");
+            if( ! taxonomy_exists( $taxonomy ) ) throw new Pick_error(wp_kses_post("Taxonomy <strong>$taxonomy</strong> doesn't exists !"));
 
             $terms = get_terms( $taxonomy, array(
                 'hide_empty' => false,
@@ -8927,7 +8927,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
             preg_match_all( "/\%([^\]]*)\%/", $string, $matches );
             if( isset( $matches[1][0] ) ) $taxonomy = $matches[1][0];
             else throw new Pick_error('Invalid taxonomy declaration !');
-            if( ! taxonomy_exists( $taxonomy ) ) throw new Pick_error("Taxonomy <strong>$taxonomy</strong> doesn't exists !");
+            if( ! taxonomy_exists( $taxonomy ) ) throw new Pick_error(wp_kses_post("Taxonomy <strong>$taxonomy</strong> doesn't exists !"));
             $terms = get_terms( $taxonomy, array(
                 'hide_empty' => false,
             ) );

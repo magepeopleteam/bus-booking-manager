@@ -9,7 +9,7 @@ function mage_book_now_area($available_seat = null){
     $is_sell_off = sanitize_text_field(get_post_meta(get_the_ID(), 'wbbm_sell_off', true));
 
     $search_date = (isset($_GET['j_date']) ? sanitize_text_field($_GET['j_date']) : '');
-    $current_date = date('Y-m-d');
+    $current_date = gmdate('Y-m-d');
 
     $boarding_time = sanitize_text_field(get_wbbm_datetime(boarding_dropping_time(false, false), 'time'));
     
