@@ -114,7 +114,8 @@
 						'pickpoint' => 'VARCHAR(255) NULL',
 					);
 					foreach ($columns_to_modify as $column => $definition) {
-						$column_exists = $wpdb->get_var("SHOW COLUMNS FROM $table_name LIKE '$column'");
+						$column = esc_sql($column);
+						$column_exists = $wpdb->get_var($wpdb->prepare("SHOW COLUMNS FROM $table_name LIKE %s", $column));
 						if ($column_exists !== null) {
 							$wpdb->query("ALTER TABLE $table_name MODIFY COLUMN $column $definition");
 						}
@@ -132,7 +133,7 @@
 		function wbbm_update_databas_once() {
 			global $wpdb;
 			if (get_option('wbbm_update_db_once_06') != 'completed') {
-				$table = $wpdb->prefix . "wbbm_bus_booking_list";
+				$table = esc_sql($wpdb->prefix . "wbbm_bus_booking_list");
 				$column_name_user_type = 'user_type';
 				$column_user_type = $wpdb->get_results($wpdb->prepare(
 					"SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s AND COLUMN_NAME = %s ",
@@ -141,18 +142,18 @@
 					$column_name_user_type
 				));
 				if (empty($column_user_type)) {
-					$wpdb->query(sprintf("ALTER TABLE %s  
+					$wpdb->query("ALTER TABLE $table  
                 ADD COLUMN user_type varchar(55) NOT NULL AFTER user_address,  
                 ADD COLUMN total_adult int(9) NOT NULL AFTER user_start,  
                 ADD COLUMN per_adult_price int(9) NOT NULL AFTER total_adult, 
                 ADD COLUMN total_child int(9) NOT NULL AFTER per_adult_price, 
                 ADD COLUMN per_child_price int(9) NOT NULL AFTER total_child, 
-                ADD COLUMN total_price int(9) NOT NULL AFTER per_child_price", $table));
+                ADD COLUMN total_price int(9) NOT NULL AFTER per_child_price");
 				}
 				update_option('wbbm_update_db_once_06', 'completed');
 			}
 			if (get_option('wbbm_update_db_once_07') != 'completed') {
-				$table = $wpdb->prefix . "wbbm_bus_booking_list";
+				$table = esc_sql($wpdb->prefix . "wbbm_bus_booking_list");
 				$column_name_next_stops = 'next_stops';
 				$column_next_stops = $wpdb->get_results($wpdb->prepare(
 					"SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s AND COLUMN_NAME = %s ",
@@ -161,14 +162,14 @@
 					$column_name_next_stops
 				));
 				if (empty($column_next_stops)) {
-					$wpdb->query(sprintf("ALTER TABLE %s ADD next_stops text NOT NULL AFTER boarding_point", $table));
+					$wpdb->query("ALTER TABLE $table ADD next_stops text NOT NULL AFTER boarding_point");
 				}
 				update_option('wbbm_update_db_once_07', 'completed');
 			}
 			//  Add Infant column
 			$column_name = 'total_infant';
 			$column_name_two = 'per_infant_price';
-			$table = $wpdb->prefix . "wbbm_bus_booking_list";
+			$table = esc_sql($wpdb->prefix . "wbbm_bus_booking_list");
 			$column = $wpdb->get_results($wpdb->prepare(
 				"SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s AND COLUMN_NAME = %s ",
 				DB_NAME,
@@ -182,13 +183,13 @@
 				$column_name_two
 			));
 			if (empty($column) && empty($column_two)) {
-				$wpdb->query("ALTER TABLE " . $table . " ADD total_infant INT(9) NULL AFTER per_child_price, ADD per_infant_price INT(9) NULL AFTER per_child_price");
+				$wpdb->query("ALTER TABLE $table ADD total_infant INT(9) NULL AFTER per_child_price, ADD per_infant_price INT(9) NULL AFTER per_child_price");
 			}
 			//  Add Infant column END
 			//  Add entire column
 			$column_name = 'total_entire';
 			$column_name_two = 'per_entire_price';
-			$table = $wpdb->prefix . "wbbm_bus_booking_list";
+			$table = esc_sql($wpdb->prefix . "wbbm_bus_booking_list");
 			$column = $wpdb->get_results($wpdb->prepare(
 				"SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s AND COLUMN_NAME = %s ",
 				DB_NAME,
@@ -202,7 +203,7 @@
 				$column_name_two
 			));
 			if (empty($column) && empty($column_two)) {
-				$wpdb->query("ALTER TABLE " . $table . " ADD total_entire INT(9) NULL AFTER total_infant, ADD per_entire_price INT(9) NULL AFTER total_infant");
+				$wpdb->query("ALTER TABLE $table ADD total_entire INT(9) NULL AFTER total_infant, ADD per_entire_price INT(9) NULL AFTER total_infant");
 			}
 			//  Add entire column END
 			// Add Dob, Nationality, Flight arrival no, Fligh departure no
@@ -211,7 +212,7 @@
 			$c_flight_arrial_no = 'flight_arrial_no';
 			$c_flight_departure_no = 'flight_departure_no';
 			$c_extra_bag_quantity = 'extra_bag_quantity';
-			$table = $wpdb->prefix . "wbbm_bus_booking_list";
+			$table = esc_sql($wpdb->prefix . "wbbm_bus_booking_list");
 			$cc_dob = $wpdb->get_results($wpdb->prepare(
 				"SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s AND COLUMN_NAME = %s ",
 				DB_NAME,
@@ -249,13 +250,13 @@
 				'pickpoint'
 			));
 			if (empty($pickpoint_column)) {
-				$wpdb->query(sprintf("ALTER TABLE %s ADD pickpoint VARCHAR (255) NOT NULL AFTER booking_date", $table));
+				$wpdb->query("ALTER TABLE $table ADD pickpoint VARCHAR (255) NOT NULL AFTER booking_date");
 			}
 			if (empty($cc_dob) && empty($cc_nationality) && empty($cc_flight_arrial_no) && empty($cc_flight_departure_no)) {
-				$wpdb->query("ALTER TABLE " . $table . " ADD user_dob varchar(55) NULL AFTER pickpoint, ADD nationality varchar(255) NULL AFTER pickpoint, ADD flight_arrial_no varchar(255) NULL AFTER pickpoint, ADD flight_departure_no varchar(255) NULL AFTER pickpoint");
+				$wpdb->query("ALTER TABLE $table ADD user_dob varchar(55) NULL AFTER pickpoint, ADD nationality varchar(255) NULL AFTER pickpoint, ADD flight_arrial_no varchar(255) NULL AFTER pickpoint, ADD flight_departure_no varchar(255) NULL AFTER pickpoint");
 			}
 			if (empty($cc_extra_bag_quantity)) {
-				$wpdb->query("ALTER TABLE " . $table . " ADD extra_bag_quantity varchar(55) NULL AFTER pickpoint");
+				$wpdb->query("ALTER TABLE $table ADD extra_bag_quantity varchar(55) NULL AFTER pickpoint");
 			}
 			// Add Dob, Nationality, Flight arrival no, Fligh departure no END
 			// Alter Columns datatype [ per_adult_price, total_adult, per_child_price, total_child, per_infant_price, total_infant, total_price ] on version
@@ -267,7 +268,7 @@
 				'per_adult_price'
 			));
 			if (!empty($t_column1) && $t_column1[0]->DATA_TYPE == 'int') {
-				$wpdb->query("ALTER TABLE " . $table . " MODIFY COLUMN per_adult_price FLOAT(9,2)");
+				$wpdb->query("ALTER TABLE $table MODIFY COLUMN per_adult_price FLOAT(9,2)");
 			}
 			// 2
 			$t_column2 = $wpdb->get_results($wpdb->prepare(
@@ -277,7 +278,7 @@
 				'total_adult'
 			));
 			if (!empty($t_column2) && $t_column2[0]->DATA_TYPE == 'int') {
-				$wpdb->query("ALTER TABLE " . $table . " MODIFY COLUMN total_adult FLOAT(9,2)");
+				$wpdb->query("ALTER TABLE $table MODIFY COLUMN total_adult FLOAT(9,2)");
 			}
 			// 2
 			$t_column3 = $wpdb->get_results($wpdb->prepare(
@@ -287,7 +288,7 @@
 				'per_child_price'
 			));
 			if (!empty($t_column3) && $t_column3[0]->DATA_TYPE == 'int') {
-				$wpdb->query("ALTER TABLE " . $table . " MODIFY COLUMN per_child_price FLOAT(9,2)");
+				$wpdb->query("ALTER TABLE $table MODIFY COLUMN per_child_price FLOAT(9,2)");
 			}
 			// 3
 			$t_column4 = $wpdb->get_results($wpdb->prepare(
@@ -297,7 +298,7 @@
 				'total_child'
 			));
 			if (!empty($t_column4) && $t_column4[0]->DATA_TYPE == 'int') {
-				$wpdb->query("ALTER TABLE " . $table . " MODIFY COLUMN total_child FLOAT(9,2)");
+				$wpdb->query("ALTER TABLE $table MODIFY COLUMN total_child FLOAT(9,2)");
 			}
 			// 4
 			$t_column4 = $wpdb->get_results($wpdb->prepare(
@@ -307,7 +308,7 @@
 				'total_infant'
 			));
 			if (!empty($t_column4) && $t_column4[0]->DATA_TYPE == 'int') {
-				$wpdb->query("ALTER TABLE " . $table . " MODIFY COLUMN total_infant FLOAT(9,2)");
+				$wpdb->query("ALTER TABLE $table MODIFY COLUMN total_infant FLOAT(9,2)");
 			}
 			// 5
 			$t_column5 = $wpdb->get_results($wpdb->prepare(
@@ -317,7 +318,7 @@
 				'per_infant_price'
 			));
 			if (!empty($t_column5) && $t_column5[0]->DATA_TYPE == 'int') {
-				$wpdb->query("ALTER TABLE " . $table . " MODIFY COLUMN per_infant_price FLOAT(9,2)");
+				$wpdb->query("ALTER TABLE $table MODIFY COLUMN per_infant_price FLOAT(9,2)");
 			}
 			// 7
 			/*
@@ -338,7 +339,7 @@
 				'per_entire_price'
 			));
 			if (!empty($t_column8) && $t_column8[0]->DATA_TYPE == 'int') {
-				$wpdb->query("ALTER TABLE " . $table . " MODIFY COLUMN per_entire_price FLOAT(9,2)");
+				$wpdb->query("ALTER TABLE $table MODIFY COLUMN per_entire_price FLOAT(9,2)");
 			}
 			// 6
 			$t_column6 = $wpdb->get_results($wpdb->prepare(
@@ -348,7 +349,7 @@
 				'total_price'
 			));
 			if (!empty($t_column6) && $t_column6[0]->DATA_TYPE == 'int') {
-				$wpdb->query("ALTER TABLE " . $table . " MODIFY COLUMN total_price FLOAT(9,2)");
+				$wpdb->query("ALTER TABLE $table MODIFY COLUMN total_price FLOAT(9,2)");
 			}
 			// Boarding, Dropping and Pick point data type length
 			// 1
@@ -359,7 +360,7 @@
 				'boarding_point'
 			));
 			if (!empty($length_column1) && $length_column1[0]->CHARACTER_MAXIMUM_LENGTH < 253) {
-				$wpdb->query("ALTER TABLE " . $table . " MODIFY COLUMN boarding_point VARCHAR(255)");
+				$wpdb->query("ALTER TABLE $table MODIFY COLUMN boarding_point VARCHAR(255)");
 			}
 			// 2
 			$length_column2 = $wpdb->get_results($wpdb->prepare(
@@ -369,7 +370,7 @@
 				'droping_point'
 			));
 			if (!empty($length_column2) && $length_column2[0]->CHARACTER_MAXIMUM_LENGTH < 253) {
-				$wpdb->query("ALTER TABLE " . $table . " MODIFY COLUMN droping_point VARCHAR(255)");
+				$wpdb->query("ALTER TABLE $table MODIFY COLUMN droping_point VARCHAR(255)");
 			}
 			// 3
 			$length_column3 = $wpdb->get_results($wpdb->prepare(
@@ -379,7 +380,7 @@
 				'pickpoint'
 			));
 			if (!empty($length_column3) && $length_column3[0]->CHARACTER_MAXIMUM_LENGTH < 253) {
-				$wpdb->query("ALTER TABLE " . $table . " MODIFY COLUMN pickpoint VARCHAR(255)");
+				$wpdb->query("ALTER TABLE $table MODIFY COLUMN pickpoint VARCHAR(255)");
 			}
 			// Boarding, Dropping and Pick point data type length END
 			// Add 'ticket_status' column
@@ -391,7 +392,7 @@
 				$column_name
 			));
 			if (empty($column)) {
-				$wpdb->query(sprintf("ALTER TABLE %s ADD ticket_status INT NOT NULL DEFAULT 0  AFTER next_stops", $table));
+				$wpdb->query(sprintf("ALTER TABLE $table ADD ticket_status INT NOT NULL DEFAULT 0  AFTER next_stops"));
 			}
 			// Add 'ticket_status' column End
 			// wbbm_price_zero_allow
@@ -784,7 +785,7 @@
                 </div>
 				<?php
 					if (isset($_GET['bus-r'])) {
-						$busr = strip_tags($_GET['bus-r']);
+						$busr = wp_strip_all_tags($_GET['bus-r']);
 					} else {
 						$busr = 'oneway';
 					}
@@ -844,7 +845,7 @@
 			global $wpdb;
 			$total_seats = get_post_meta($bus_id, 'wbbm_total_seat', true);
 			$sold_seats = 0;
-			$table_name = $wpdb->prefix . "wbbm_bus_booking_list";
+			$table_name = esc_sql($wpdb->prefix . "wbbm_bus_booking_list");
 			$bus_start_stops_arr = maybe_unserialize(get_post_meta($bus_id, 'wbbm_bus_bp_stops', true)); // $bus_id bus start points
 			$bus_end_stops_arr = maybe_unserialize(get_post_meta($bus_id, 'wbbm_bus_next_stops', true)); // $bus_id bus end points
 			$seat_booked_status = wbbm_seat_booked_on_status();
@@ -858,12 +859,33 @@
 				$f = mage_array_slice($bus_stops_unique, 0, $sp + 1);
 				$l = mage_array_slice($bus_stops_unique, $ep, (count($bus_stops_unique) - 1));
 				$where = mage_intermidiate_available_seat_condition($start, $end, $bus_stops_unique);
-				$entire_query = "SELECT seat FROM $table_name WHERE bus_id=$bus_id AND journey_date='$date' AND $where AND status IN ($seat_booked_status)";
+
+				$seat_statuses = array_map( 'absint', (array) $seat_booked_status );
+				$placeholders  = implode( ',', array_fill( 0, count( $seat_statuses ), '%d' ) );
+				$entire_query = "SELECT seat FROM {$table_name} WHERE bus_id=%D AND journey_date=%s AND $where AND status IN ($placeholders)";
+				
+				$entire_query_prepare = $wpdb->prepare($entire_query, array_merge( array( $bus_id, $date ), $seat_statuses ));
 				//echo "<pre>"; print_r(array($start, $end, $bus_stops_unique,$where,$entire_query,$wpdb->get_var($entire_query)));echo "<pre>"; //exit;
-				if ($wpdb->get_var($entire_query) == -1) { // is entire booking
+				if ($wpdb->get_var($entire_query_prepare) == -1) { // is entire booking
 					$sold_seats = $total_seats;
 				} else { // is single booking
-					$query = "SELECT COUNT(booking_id) FROM $table_name WHERE bus_id=$bus_id AND journey_date='$date' AND $where AND ticket_status != 99 AND status IN ($seat_booked_status)";
+					// $query = "SELECT COUNT(booking_id) FROM $table_name WHERE bus_id=$bus_id AND journey_date='$date' AND $where AND ticket_status != 99 AND status IN ($seat_booked_status)";
+					$sql = "
+						SELECT COUNT(booking_id)
+						FROM {$table_name}
+						WHERE bus_id = %d
+						AND journey_date = %s
+						AND {$where}
+						AND ticket_status != %d
+						AND status IN ($placeholders)
+					";
+					$query = $wpdb->prepare(
+						$sql,
+						array_merge(
+							[ $bus_id, $date, 99 ],
+							$seat_statuses
+						)
+					);
 					$sold_seats = $wpdb->get_var($query);
 					//echo "<pre>"; print_r(array($start, $end, $bus_stops_unique,$where,$entire_query,$seat_booked_status,$wpdb->get_var($query)));echo "<pre>";
 				}
@@ -1339,7 +1361,7 @@
 				}
 				return $string;
 			}
-			return strip_tags($string, $allowed_tags);
+			return wp_strip_all_tags($string, $allowed_tags);
 		}
 		function wbbm_find_product_in_cart($id) {
 			$product_id = $id;
@@ -1360,8 +1382,8 @@
 			$date = $return ? mage_get_isset('r_date') : mage_get_isset('j_date');
 			// $available_seat = mage_available_seat(wbbm_convert_date_to_php($date));
 			$id = get_the_id();
-			$boarding = isset($_GET['bus_start_route']) ? strip_tags($_GET['bus_start_route']) : '';
-			$dropping = isset($_GET['bus_end_route']) ? strip_tags($_GET['bus_end_route']) : '';
+			$boarding = isset($_GET['bus_start_route']) ? wp_strip_all_tags($_GET['bus_start_route']) : '';
+			$dropping = isset($_GET['bus_end_route']) ? wp_strip_all_tags($_GET['bus_end_route']) : '';
 			$seat_price_adult = mage_seat_price($id, $boarding, $dropping, 'adult');
 			$seat_price_child = mage_seat_price($id, $boarding, $dropping, 'child');
 			$seat_price_infant = mage_seat_price($id, $boarding, $dropping, 'infant');
@@ -1513,12 +1535,12 @@
 				return null;
 			}
 			if (preg_match('/\s/', $setting_format)) {
-				return date($to, strtotime($date));
+				return gmdate($to, strtotime($date));
 			} else {
 				$setting_format__dashed = str_replace('/', '-', $setting_format);
 				$dash_date = str_replace('/', '-', $date);
 				// $date_f = DateTime::createFromFormat($setting_format__dashed, $dash_date);
-				$date_f = date($setting_format__dashed, strtotime($dash_date));
+				$date_f = gmdate($setting_format__dashed, strtotime($dash_date));
 				return $date_f;
 			}
 		}
@@ -1612,8 +1634,8 @@
 				set_post_thumbnail($product_id, get_post_thumbnail_id($post_id));
 				wp_publish_post($product_id);
 				// $product_type               = mep_get_option('mep_event_product_type', 'general_setting_sec','yes');
-				$_tax_status = isset($_POST['_tax_status']) ? strip_tags($_POST['_tax_status']) : 'none';
-				$_tax_class = isset($_POST['_tax_class']) ? strip_tags($_POST['_tax_class']) : '';
+				$_tax_status = isset($_POST['_tax_status']) ? wp_strip_all_tags($_POST['_tax_status']) : 'none';
+				$_tax_class = isset($_POST['_tax_class']) ? wp_strip_all_tags($_POST['_tax_class']) : '';
 				update_post_meta($product_id, '_tax_status', $_tax_status);
 				update_post_meta($product_id, '_tax_class', $_tax_class);
 				update_post_meta($product_id, '_stock_status', 'instock');

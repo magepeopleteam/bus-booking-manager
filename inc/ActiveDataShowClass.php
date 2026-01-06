@@ -20,7 +20,7 @@ class ActiveDataShowClass extends CommonClass {
                 $onday = array();
 
                 foreach ($wbtm_bus_on_dates as $ondate) {
-                    $onday[] = '"' . esc_attr(date('d-m-Y', strtotime($ondate))) . '"';
+                    $onday[] = '"' . esc_attr(gmdate('d-m-Y', strtotime($ondate))) . '"';
                 }
 
                 $on_particular_date = implode(',', $onday);
@@ -38,7 +38,7 @@ class ActiveDataShowClass extends CommonClass {
 
             $offday = array();
             foreach ($alloffdays as $alloffday) {
-                $offday[] = '"' . esc_attr(date('d-m-Y', strtotime($alloffday))) . '"';
+                $offday[] = '"' . esc_attr(gmdate('d-m-Y', strtotime($alloffday))) . '"';
             }
 
             $off_particular_date = implode(',', $offday);
@@ -60,7 +60,7 @@ class ActiveDataShowClass extends CommonClass {
                 $pday = array();
 
                 foreach ($global_offdates as $offdate) {
-                    $pday[] = '"' . esc_attr(date('d-m-Y', strtotime($offdate))) . '"';
+                    $pday[] = '"' . esc_attr(gmdate('d-m-Y', strtotime($offdate))) . '"';
                 }
 
                 $particular_date = implode(',', $pday);

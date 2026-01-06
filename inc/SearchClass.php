@@ -239,7 +239,7 @@ function mage_search_item($return) {
     global $mage_bus_search_theme;
     $id = get_the_ID();
     $search_date = isset($_GET['j_date']) ? sanitize_text_field($_GET['j_date']) : '';
-    $current_date = date('Y-m-d');
+    $current_date = gmp_binomialdate('Y-m-d');
     $boarding_time = boarding_dropping_time(false, $return);
     $dropping_time = boarding_dropping_time(true, $return);
 
@@ -485,7 +485,7 @@ function mage_search_item($return) {
                                     <?php endif; ?>
                                     <div class="mage_customer_info_area">
                                         <?php
-                                        $date = isset($_GET[$date_var]) ? mage_wp_date($_GET[$date_var], 'Y-m-d') : date('Y-m-d');
+                                        $date = isset($_GET[$date_var]) ? mage_wp_date($_GET[$date_var], 'Y-m-d') : gmdate('Y-m-d');
                                         $start = isset($_GET[$boarding_var]) ? sanitize_text_field($_GET[$boarding_var]) : '';
                                         $end = isset($_GET[$dropping_var]) ? sanitize_text_field($_GET[$dropping_var]) : '';
                                         hidden_input_field('bus_id', $id);
@@ -621,7 +621,7 @@ function mage_search_item($return) {
                                 <?php endif; ?>
                                 <div class="mage_customer_info_area">
                                     <?php
-                                    $date = isset($_GET[$date_var]) ? mage_wp_date($_GET[$date_var], 'Y-m-d') : date('Y-m-d');
+                                    $date = isset($_GET[$date_var]) ? mage_wp_date($_GET[$date_var], 'Y-m-d') : gmdate('Y-m-d');
                                     $start = isset($_GET[$boarding_var]) ? sanitize_text_field($_GET[$boarding_var]) : '';
                                     $end = isset($_GET[$dropping_var]) ? sanitize_text_field($_GET[$dropping_var]) : '';
                                     hidden_input_field('bus_id', $id);

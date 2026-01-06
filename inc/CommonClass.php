@@ -19,7 +19,7 @@ class CommonClass
                 $date = str_replace('/', '-', $date);
             }
         }
-        return date('Y-m-d', strtotime($date));
+        return gmdate('Y-m-d', strtotime($date));
     }
 
     public function get_wbbm_datetime($date, $type)

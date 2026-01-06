@@ -9,9 +9,9 @@ function wbbm_bus_admin_scripts() {
     wp_enqueue_style('wbbm-clocklet-style',plugin_dir_url( __DIR__ ).'css/clocklet.css',array());
     wp_enqueue_style('mep-admin-style',plugin_dir_url( __DIR__ ).'css/admin_style.css',array(),time());
     wp_enqueue_style('mep-jquery-ui-style',plugin_dir_url( __DIR__ ).'css/jquery-ui.css',array());
-    wp_enqueue_style('font-awesome-css-cdn', "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.2.0/css/all.min.css", null, 1);
+    wp_enqueue_style('wbbm-font-awesome', plugin_dir_url( __FILE__ ) . 'assets/admin/fontawesome.min.css', array(), '5.2.0');
     wp_enqueue_script('wbbm-select2-lib',plugin_dir_url( __DIR__ ).'js/select2.full.min.js',array('jquery','jquery-ui-core'),1,true); 
-    wp_register_script('multidatepicker-wbbm', 'https://cdn.rawgit.com/dubrox/Multiple-Dates-Picker-for-jQuery-UI/master/jquery-ui.multidatespicker.js', array('jquery'), 1, true);
+    wp_register_script('multidatepicker-wbbm', plugin_dir_url( __FILE__ ) . 'assets/admin/multidatespicker.js', array('jquery'), '1.6.9', true);
     wp_enqueue_script('multidatepicker-wbbm');
     wp_enqueue_script('wbbm-clocklet-lib',plugin_dir_url( __DIR__ ).'js/clocklet.js',array('jquery','jquery-ui-core'),1,true);
     wp_enqueue_script('gmap-scripts',plugin_dir_url( __DIR__ ).'js/mkb-admin.js',array('jquery','jquery-ui-core'),1,true);
@@ -42,7 +42,7 @@ function displayDates($date1, $date2, $format = 'd-m-Y' ) {
     $date2 = strtotime($date2);
     $stepVal = '+1 day';
     while( $current <= $date2 ) {
-        $dates[] = date($format, $current);
+        $dates[] = gmdate($format, $current);
         $current = strtotime($stepVal, $current);
     }
     return  $dates;
@@ -93,7 +93,7 @@ function wbbm_bus_enqueue_scripts() {
     wp_enqueue_style('wbbm-jquery-ui-style',plugin_dir_url( __DIR__ ).'css/jquery-ui.css',array());
     wp_enqueue_style('wbbm-bus-style',plugin_dir_url( __DIR__ ).'css/style.css',array());
     wp_enqueue_style('wbbm-ra-bus-style',plugin_dir_url( __DIR__ ).'css/wbbm-custom-style.css',array());
-    wp_enqueue_style ('wbbm-select2-style-cdn',"https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css",null,1);
+    wp_enqueue_style ('wbbm-select2',plugin_dir_url( __DIR__ ).'assets/frontend/select2.min.css',null,'4.0.6');
     wp_enqueue_style('mage_css',plugin_dir_url( __DIR__ ).'css/mage_css.css',array(), time());
 
     wp_enqueue_script('jquery');
@@ -103,7 +103,7 @@ function wbbm_bus_enqueue_scripts() {
     wp_enqueue_script('wbbm-select2-lib',plugin_dir_url( __DIR__ ).'js/select2.full.min.js',array('jquery','jquery-ui-core'),1,false);
     wp_enqueue_script('ra_script_public',plugin_dir_url( __DIR__ ).'js/wbbm_custom_public_script.js',array(),time(),false);
     wp_enqueue_script('mage_style',plugin_dir_url( __DIR__ ).'js/mage_style.js',array('jquery'),time(),true);
-    wp_enqueue_style('font-awesome-css-cdn', '//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css', array(), '5.15.3');
+    wp_enqueue_style('font-awesome-css', plugin_dir_url( __DIR__ ).'assets/frontend/fontawesome.min.css', array(), '5.2.0');
     wp_enqueue_style('wbbm-mp-styles',plugin_dir_url( __DIR__ ).'css/mpStyles.css',array(), time());
 }
 

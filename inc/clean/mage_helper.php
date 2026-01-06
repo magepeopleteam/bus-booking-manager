@@ -181,7 +181,7 @@ function mage_off_day_check($return) {
     
     $weekly_offday = get_post_meta($id, 'weekly_offday', true) ?: array();
     if ($j_date) {
-        $j_date_day = strtolower(date('N', strtotime($j_date)));
+        $j_date_day = strtolower(gmdate('N', strtotime($j_date)));
         if (in_array($j_date_day, $weekly_offday)) {
             $get_day = 'yes';
         }
@@ -375,12 +375,12 @@ function mage_wp_date($date, $format = false) {
     $date = mage_date_format_issue($date);
 
     if ($date && $format) {
-        $date = date($format, strtotime($date));
+        $date = gmdate($format, strtotime($date));
         return $date;
     }
 
     if ($date && $wp_date_format) {
-        $date = date($wp_date_format, strtotime($date));
+        $date = gmdate($wp_date_format, strtotime($date));
     }
 
     return $date;
@@ -548,7 +548,7 @@ function wbbm_extra_services_section($bus_id) {
                         if (!isset($field['option_name']) || !isset($field['option_price'])) {
                             continue;
                         }
-                        $actual_price = strip_tags(wc_price($field['option_price']));
+                        $actual_price = wp_strip_all_tags(wc_price($field['option_price']));
                         $data_price = floatval(str_replace(array(get_woocommerce_currency_symbol(), wc_get_price_thousand_separator(), wc_get_price_decimal_separator()), '', $actual_price));
                     ?>
 
@@ -701,7 +701,7 @@ function wbbm_update_seat_book_on_status_global_settings() {
 function wbbm_buffer_time_calculation($bp_time, $date) {
     $is_allow = false;
     $buffer_time_from_setting = floatval(wbbm_get_option('wbbm_buffer_time', 'wbbm_general_setting_sec', 0));
-    $bus_start_time = date('H:i:s', strtotime(sanitize_text_field($bp_time)));
+    $bus_start_time = gmdate('H:i:s', strtotime(sanitize_text_field($bp_time)));
 
     if ($buffer_time_from_setting > 0) {
         $start_bus = sanitize_text_field($date) . ' ' . $bus_start_time;

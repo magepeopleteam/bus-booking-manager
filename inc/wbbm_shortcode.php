@@ -108,8 +108,8 @@ function wbbm_bus_popular_destination($atts, $content=null) {
         "to"       => "",
         "text"     => "",
         "image"    => "",
-        "journey"  => date('Y-m-d'),
-        "return"   => date('Y-m-d')
+        "journey"  => gmdate('Y-m-d'),
+        "return"   => gmdate('Y-m-d')
     );
     $params = shortcode_atts($defaults, $atts);
     $from = sanitize_text_field($params['from']);
