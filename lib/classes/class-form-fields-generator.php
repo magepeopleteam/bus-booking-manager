@@ -79,7 +79,19 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
 
     class FormFieldsGenerator {
 
-
+        public $allowed = [
+            'script' => [
+                'type'  => true,
+                'src'   => true,
+                'async' => true,
+                'defer' => true,
+            ],
+            'style' => [],
+            'div'   => [
+                'class' => true,
+                'id'    => true,
+            ],
+        ];
 
 
         public function field_post_objects( $option ){
@@ -6269,6 +6281,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                                 <tbody>
 
                                 <?php
+                                
 
                                 foreach ($options as $key =>$option):
 
@@ -6381,7 +6394,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                                                 echo wp_kses_post($FormFieldsGenerator->field_media_multi($option));
                                             }
                                             elseif( isset($option['type']) && $option['type'] === 'repeatable' ){
-                                                echo wp_kses_post($FormFieldsGenerator->field_repeatable($option));
+                                                echo wp_kses($FormFieldsGenerator->field_repeatable($option), $this->allowed);
                                             }
                                             elseif( isset($option['type']) && $option['type'] === 'user' ){
                                                 echo wp_kses_post($FormFieldsGenerator->field_user($option));
@@ -6699,7 +6712,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                                                         echo wp_kses_post($FormFieldsGenerator->field_media_multi($option));
                                                     }
                                                     elseif( isset($option['type']) && $option['type'] === 'repeatable' ){
-                                                        echo wp_kses_post($FormFieldsGenerator->field_repeatable($option));
+                                                        echo wp_kses($FormFieldsGenerator->field_repeatable($option), $this->allowed);
                                                     }
                                                     elseif( isset($option['type']) && $option['type'] === 'user' ){
                                                         echo wp_kses_post($FormFieldsGenerator->field_user($option));
@@ -7021,7 +7034,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                                                             echo wp_kses_post(($FormFieldsGenerator->field_media_multi($option)));
                                                         }
                                                         elseif( isset($option['type']) && $option['type'] === 'repeatable' ){
-                                                            echo wp_kses_post(($FormFieldsGenerator->field_repeatable($option)));
+                                                            echo wp_kses($FormFieldsGenerator->field_repeatable($option), $this->allowed);
                                                         }
                                                         elseif( isset($option['type']) && $option['type'] === 'user' ){
                                                             echo wp_kses_post(($FormFieldsGenerator->field_user($option)));

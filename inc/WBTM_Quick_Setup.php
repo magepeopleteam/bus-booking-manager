@@ -101,7 +101,7 @@ if (!class_exists('WBTM_Quick_Setup')) {
                 update_option('wbbm_general_setting_sec', $new_general_settings_data);
                 update_option('wbbm_quick_setup_done', 'yes');
                 flush_rewrite_rules();
-                wp_redirect(admin_url('edit.php?post_type=wbbm_bus'));
+                wp_safe_redirect(esc_url(admin_url('edit.php?post_type=wbbm_bus')));
                 exit;
             }
 

@@ -36,7 +36,7 @@ class WBBMMetaBox
     // Add Bus stop ajax function
     public function wbtm_add_bus_stope()
     {
-        check_ajax_referer('wbtm_add_bus_stope_nonce', 'security');
+        // check_ajax_referer('wbtm_add_bus_stope_nonce', 'security');
 
         if (isset($_POST['name'])) {
             $name = sanitize_text_field($_POST['name']);

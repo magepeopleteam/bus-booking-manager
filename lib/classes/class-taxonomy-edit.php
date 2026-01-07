@@ -83,6 +83,20 @@ if( ! class_exists( 'TaxonomyEdit' ) ) {
             $option_value = get_term_meta($term_id, $id, true);
             $option['value'] = is_serialized($option_value) ? unserialize($option_value) : $option_value;
 
+            $allowed = [
+                'script' => [
+                    'type'  => true,
+                    'src'   => true,
+                    'async' => true,
+                    'defer' => true,
+                ],
+                'style' => [],
+                'div'   => [
+                    'class' => true,
+                    'id'    => true,
+                ],
+            ];
+
             if ( isset( $option['type'] ) ) {
                 switch ( $option['type'] ) {
                     case 'text':
@@ -170,7 +184,7 @@ if( ! class_exists( 'TaxonomyEdit' ) ) {
                         echo wp_kses_post($FormFieldsGenerator->field_media_multi( $option ));
                         break;
                     case 'repeatable':
-                        echo wp_kses_post($FormFieldsGenerator->field_repeatable( $option ));
+                        echo wp_kses($FormFieldsGenerator->field_repeatable( $option ), $allowed);
                         break;
                     case 'user':
                         echo wp_kses_post($FormFieldsGenerator->field_user( $option ));
