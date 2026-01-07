@@ -105,6 +105,11 @@ function wbbm_bus_enqueue_scripts() {
     wp_enqueue_script('mage_style',plugin_dir_url( __DIR__ ).'js/mage_style.js',array('jquery'),time(),true);
     wp_enqueue_style('font-awesome-css', plugin_dir_url( __DIR__ ).'assets/frontend/fontawesome.min.css', array(), '5.2.0');
     wp_enqueue_style('wbbm-mp-styles',plugin_dir_url( __DIR__ ).'css/mpstyles.css',array(), time());
+
+    wp_localize_script( 'mage_style', 'WbbmAjax', [
+        'ajax_url' => admin_url('admin-ajax.php'),
+        'nonce'    => wp_create_nonce('wbbm_ajax_nonce'),
+    ]);
 }
 
 // Ajax Issue

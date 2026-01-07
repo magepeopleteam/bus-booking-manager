@@ -255,8 +255,8 @@
                 $.ajax({
                     type: 'POST',
                     // url: wbtm_ajax.wbtm_ajaxurl,
-                    url: wbtm_ajaxurl,
-                    data: { "action": "wbtm_load_dropping_point", "boarding_point": boarding_point },
+                    url: WbbmAjax.ajax_url,
+                    data: { "action": "wbtm_load_dropping_point", "boarding_point": boarding_point, nonce: WbbmAjax.nonce },
                     beforeSend: function () {
                         $('#bus_end_route').val('');
                         $('#wbtm_dropping_point_list').slideUp(200);
