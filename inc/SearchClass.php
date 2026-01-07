@@ -239,7 +239,7 @@ function mage_search_item($return) {
     global $mage_bus_search_theme;
     $id = get_the_ID();
     $search_date = isset($_GET['j_date']) ? sanitize_text_field($_GET['j_date']) : '';
-    $current_date = gmp_binomialdate('Y-m-d');
+    $current_date = gmdate('Y-m-d');
     $boarding_time = boarding_dropping_time(false, $return);
     $dropping_time = boarding_dropping_time(true, $return);
 

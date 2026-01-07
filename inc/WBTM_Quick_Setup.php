@@ -19,7 +19,7 @@ if (!class_exists('WBTM_Quick_Setup')) {
             wp_enqueue_script('mp_admin_settings', WBTM_PLUGIN_URL . '/assets/admin/mp_admin_settings.js', array('jquery'), time(), true);
             wp_enqueue_style('mpwpb_admin', WBTM_PLUGIN_URL . '/assets/admin/mpwpb_admin.css', array(), time());
             wp_enqueue_script('mpwpb_admin', WBTM_PLUGIN_URL . '/assets/admin/mpwpb_admin.js', array('jquery'), time(), true);
-            wp_enqueue_style('mp-font-awesome', plugin_dir_url( __FILE__ ) . 'assets/admin/fontawesome.min.css', array(), '5.2.0');
+            // wp_enqueue_style('mp-font-awesome', plugin_dir_url( __FILE__ ) . 'assets/admin/fontawesome.min.css', array(), '5.2.0');
         }
 
         public function quick_setup_menu() {

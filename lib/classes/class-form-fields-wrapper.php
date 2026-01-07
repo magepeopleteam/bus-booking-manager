@@ -1327,8 +1327,10 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
             ?>">
                 <?php if($version == 'v2'):?>
                     <div class="g-recaptcha" data-sitekey="<?php echo esc_attr($site_key); ?>"></div>
+                    <?php // phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedScript ?>
                     <script src='https://www.google.com/recaptcha/api.js'></script>
             <?php elseif($version == 'v3'):?>
+                    <?php // phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedScript ?>
                     <script src='https://www.google.com/recaptcha/api.js?render=<?php echo esc_attr($site_key); ?>'></script>
                     <script>
                         grecaptcha.ready(function() {

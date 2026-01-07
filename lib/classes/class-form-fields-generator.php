@@ -1295,8 +1295,10 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
             ?>">
                 <?php if($version == 'v2'):?>
                     <div class="g-recaptcha" data-sitekey="<?php echo esc_attr($site_key); ?>"></div>
+                    <?php // phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedScript ?>
                     <script src='https://www.google.com/recaptcha/api.js'></script>
             <?php elseif($version == 'v3'):?>
+                    <?php // phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedScript ?>
                     <script src='https://www.google.com/recaptcha/api.js?render=<?php echo esc_attr($site_key); ?>'></script>
                     <script>
                         grecaptcha.ready(function() {
@@ -8545,7 +8547,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
             ?>
             <script>
                 jQuery(document).ready(function($) {
-                    jQuery(document).on('click', '.field-repeatable-wrapper-<?php esc_attr($id); ?> .collapsible .header .title-text', function() {
+                    jQuery(document).on('click', '.field-repeatable-wrapper-<?php echo esc_attr($id); ?> .collapsible .header .title-text', function() {
                         if(jQuery(this).parent().parent().hasClass('active')){
                             jQuery(this).parent().parent().removeClass('active');
                             jQuery(this).text('Expand');
@@ -8555,7 +8557,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                         }
                     })
 
-                    jQuery(document).on('click', '.field-repeatable-wrapper-<?php esc_attr($id); ?> .clone',function(){
+                    jQuery(document).on('click', '.field-repeatable-wrapper-<?php echo esc_attr($id); ?> .clone',function(){
 
                         //event.preventDefault();
 
@@ -8567,7 +8569,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
 
                         ?>
                         var limit = <?php  echo esc_attr($limit); ?>;
-                        var node_count = $( ".field-repeatable-wrapper-<?php esc_attr($id); ?> .field-list .item-wrap" ).size();
+                        var node_count = $( ".field-repeatable-wrapper-<?php echo esc_attr($id); ?> .field-list .item-wrap" ).size();
                         if(limit > node_count){
                             $( this ).parent().parent().clone().appendTo('.field-repeatable-wrapper-<?php esc_attr($id); ?> .field-list' );
                            // html = $( this ).parent().parent().clone();
@@ -8576,17 +8578,17 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                             //console.log(html);
 
                         }else{
-                            jQuery('.field-repeatable-wrapper-<?php esc_attr($id); ?> .error-mgs').html('Sorry! you can add max '+limit+' item').stop().fadeIn(400).delay(3000).fadeOut(400);
+                            jQuery('.field-repeatable-wrapper-<?php echo esc_attr($id); ?> .error-mgs').html('Sorry! you can add max '+limit+' item').stop().fadeIn(400).delay(3000).fadeOut(400);
                         }
                         <?php
                         else:
                         ?>
-                        $( this ).parent().clone().appendTo('.field-repeatable-wrapper-<?php esc_attr($id); ?> .field-list' );
+                        $( this ).parent().clone().appendTo('.field-repeatable-wrapper-<?php echo esc_attr($id); ?> .field-list' );
                         <?php
                         endif;
                         ?>
 
-                        //$( this ).parent().appendTo( '.field-text-multi-wrapper-<?php esc_attr($id); ?> .field-list' );
+                        //$( this ).parent().appendTo( '.field-text-multi-wrapper-<?php echo esc_attr($id); ?> .field-list' );
 
 
                         //$('.field-repeatable-wrapper-<?php //esc_attr($id); ?>// .field-list .item-wrap').each(function( index ) {

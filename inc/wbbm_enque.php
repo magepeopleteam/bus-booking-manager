@@ -9,9 +9,9 @@ function wbbm_bus_admin_scripts() {
     wp_enqueue_style('wbbm-clocklet-style',plugin_dir_url( __DIR__ ).'css/clocklet.css',array());
     wp_enqueue_style('mep-admin-style',plugin_dir_url( __DIR__ ).'css/admin_style.css',array(),time());
     wp_enqueue_style('mep-jquery-ui-style',plugin_dir_url( __DIR__ ).'css/jquery-ui.css',array());
-    wp_enqueue_style('wbbm-font-awesome', plugin_dir_url( __FILE__ ) . 'assets/admin/fontawesome.min.css', array(), '5.2.0');
+    wp_enqueue_style('wbbm-font-awesome', plugin_dir_url( __DIR__ ) . 'assets/admin/fontawesome.min.css', array(), '5.2.0');
     wp_enqueue_script('wbbm-select2-lib',plugin_dir_url( __DIR__ ).'js/select2.full.min.js',array('jquery','jquery-ui-core'),1,true); 
-    wp_register_script('multidatepicker-wbbm', plugin_dir_url( __FILE__ ) . 'assets/admin/multidatespicker.js', array('jquery'), '1.6.9', true);
+    wp_enqueue_script('multidatepicker-wbbm', plugin_dir_url( __DIR__ ) . 'assets/admin/multidatespicker.js', array('jquery'), '1.6.9', true);
     wp_enqueue_script('multidatepicker-wbbm');
     wp_enqueue_script('wbbm-clocklet-lib',plugin_dir_url( __DIR__ ).'js/clocklet.js',array('jquery','jquery-ui-core'),1,true);
     wp_enqueue_script('gmap-scripts',plugin_dir_url( __DIR__ ).'js/mkb-admin.js',array('jquery','jquery-ui-core'),1,true);
@@ -104,7 +104,7 @@ function wbbm_bus_enqueue_scripts() {
     wp_enqueue_script('ra_script_public',plugin_dir_url( __DIR__ ).'js/wbbm_custom_public_script.js',array(),time(),false);
     wp_enqueue_script('mage_style',plugin_dir_url( __DIR__ ).'js/mage_style.js',array('jquery'),time(),true);
     wp_enqueue_style('font-awesome-css', plugin_dir_url( __DIR__ ).'assets/frontend/fontawesome.min.css', array(), '5.2.0');
-    wp_enqueue_style('wbbm-mp-styles',plugin_dir_url( __DIR__ ).'css/mpStyles.css',array(), time());
+    wp_enqueue_style('wbbm-mp-styles',plugin_dir_url( __DIR__ ).'css/mpstyles.css',array(), time());
 }
 
 // Ajax Issue

@@ -19,9 +19,9 @@ function load_sortable_datepicker(parent, item) {
 	"use strict";
 	$(document).ready(function () {
 		//=========Short able==============//
-		$(document).find('.mp_sortable_area').sortable({
-			handle: $(this).find('.mp_sortable_button')
-		});
+		// $(document).find('.mp_sortable_area').sortable({
+		// 	handle: $(this).find('.mp_sortable_button')
+		// });
 	});
 	//=========upload image==============//
 	$(document).on('click', '.mp_add_single_image', function () {
