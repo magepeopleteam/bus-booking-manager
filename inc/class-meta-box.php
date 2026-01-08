@@ -36,11 +36,11 @@ class WBBMMetaBox
     // Add Bus stop ajax function
     public function wbtm_add_bus_stope()
     {
-        // check_ajax_referer('wbtm_add_bus_stope_nonce', 'security');
+        check_ajax_referer('wbbm_admin_ajax_nonce', 'nonce');
 
         if (isset($_POST['name'])) {
-            $name = sanitize_text_field($_POST['name']);
-            $description = sanitize_textarea_field($_POST['description']);
+            $name = sanitize_text_field(wp_unslash($_POST['name']));
+            $description = isset($_POST['description']) ? sanitize_textarea_field(wp_unslash($_POST['description'])) : '';
             $terms = wp_insert_term($name, 'wbbm_bus_stops', array('description' => $description));
 
             if (is_wp_error($terms)) {
@@ -61,15 +61,15 @@ class WBBMMetaBox
     // Add Bus feature ajax function
     public function wbtm_add_bus_feature()
     {
-        check_ajax_referer('wbtm_add_bus_feature_nonce', 'security');
+        check_ajax_referer('wbbm_admin_ajax_nonce', 'nonce');
 
         if (isset($_POST['name'])) {
-            $name = sanitize_text_field($_POST['name']);
-            $description = sanitize_textarea_field($_POST['description']);
+            $name = sanitize_text_field(wp_unslash($_POST['name']));
+            $description = isset($_POST['description']) ? sanitize_textarea_field(wp_unslash($_POST['description'])) : '';
             $terms = wp_insert_term($name, 'wbbm_bus_feature', array('description' => $description));
 
             if (isset($_POST['wbbm_feature_icon'])) {
-                $feature_icon = sanitize_text_field($_POST['wbbm_feature_icon']);
+                $feature_icon = sanitize_text_field(wp_unslash($_POST['wbbm_feature_icon']));
                 update_term_meta($terms['term_id'], 'feature_icon', $feature_icon);
             }
 
@@ -88,11 +88,11 @@ class WBBMMetaBox
     // Add Pickup ajax function
     public function wbtm_add_pickup()
     {
-        check_ajax_referer('wbtm_add_pickup_nonce', 'security');
+        check_ajax_referer('wbbm_admin_ajax_nonce', 'nonce');
 
         if (isset($_POST['name'])) {
-            $name = sanitize_text_field($_POST['name']);
-            $description = sanitize_textarea_field($_POST['description']);
+            $name = sanitize_text_field(wp_unslash($_POST['name']));
+            $description = isset($_POST['description']) ? sanitize_textarea_field(wp_unslash($_POST['description'])) : '';
             $terms = wp_insert_term($name, 'wbbm_bus_pickpoint', array('description' => $description));
 
             if (is_wp_error($terms)) {

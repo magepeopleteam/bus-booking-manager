@@ -594,6 +594,23 @@ if (! class_exists('MP_Global_Function')) {
             return $message;
         }
 
+        public static function wbbm_recursive_sanitize( $data ) {
+            if ( is_array( $data ) ) {
+                return array_map( 'wbbm_recursive_sanitize', $data );
+            }
+
+            if ( is_numeric($data) ) {
+                return intval($data);
+            }
+
+            if ( filter_var($data, FILTER_VALIDATE_URL) ) {
+                return esc_url_raw($data);
+            }
+
+            return sanitize_text_field($data);
+        }
+
+
         //***********************************//
         public static function get_country_list()
         {

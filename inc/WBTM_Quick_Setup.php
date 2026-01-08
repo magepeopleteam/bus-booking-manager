@@ -34,6 +34,15 @@ if (!class_exists('WBTM_Quick_Setup')) {
         }
 
         public function quick_setup() {
+            // Safely get the nonce from $_POST
+            $nonce = isset($_POST['welcome_setup_nonce']) ? sanitize_text_field(wp_unslash($_POST['welcome_setup_nonce'])) : '';
+
+            // Verify the nonce
+            if ( ! $nonce || ! wp_verify_nonce($nonce, 'welcome_setup_nonce_action') ) {
+                wc_add_notice(__('Security check failed. Please try again.', 'bus-booking-manager'), 'error');
+                return false; // Stop add to cart
+            }
+
             if (isset($_POST['active_woo_btn'])) {
                 ?>
                 <script>
@@ -89,8 +98,8 @@ if (!class_exists('WBTM_Quick_Setup')) {
             }
 
             if (isset($_POST['finish_quick_setup'])) {
-                $wbbm_cpt_label = isset($_POST['mpwpb_label']) ? sanitize_text_field($_POST['mpwpb_label']) : 'Bus';
-                $wbbm_cpt_slug = isset($_POST['mpwpb_slug']) ? sanitize_text_field($_POST['mpwpb_slug']) : 'Bus';
+                $wbbm_cpt_label = isset($_POST['mpwpb_label']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_label'])) : 'Bus';
+                $wbbm_cpt_slug = isset($_POST['mpwpb_slug']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_slug'])) : 'Bus';
 
                 $general_settings_data = get_option('wbbm_general_setting_sec');
                 $update_general_settings_arr = [
@@ -157,6 +166,7 @@ if (!class_exists('WBTM_Quick_Setup')) {
 
         public function setup_welcome_content() {
             $status = MP_Global_Function::check_woocommerce();
+            wp_nonce_field('welcome_setup_nonce_action', 'welcome_setup_nonce');
             ?>
             <div data-tabs-next="#mpwpb_qs_welcome">
                 <h2><?php esc_html_e('Bus Booking Manager For Woocommerce Plugin', 'bus-booking-manager'); ?></h2>
