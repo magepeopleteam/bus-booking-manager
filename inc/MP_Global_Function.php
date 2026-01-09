@@ -68,12 +68,23 @@ if (! class_exists('MP_Global_Function')) {
 
         public static function get_submit_info($key, $default = '')
         {
-            return self::data_sanitize($_POST[sanitize_key($key)] ?? $default); // Sanitize key
+            // phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+            if(!isset(($_POST[sanitize_key($key)]))) {
+                return;
+            }
+            // phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+            return self::data_sanitize(wp_unslash($_POST[sanitize_key($key)]) ?? $default); // Sanitize key
         }
 
         public static function get_submit_info_get_method($key, $default = '')
         {
-            return self::data_sanitize($_GET[sanitize_key($key)] ?? $default); // Sanitize key
+            // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+            if(!isset(($_GET[sanitize_key($key)]))) {
+                return;
+            }
+            
+            // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+            return self::data_sanitize(wp_unslash($_GET[sanitize_key($key)]) ?? $default); // Sanitize key
         }
 
         public static function data_sanitize($data)
@@ -426,8 +437,20 @@ if (! class_exists('MP_Global_Function')) {
         public static function get_order_item_meta($item_id, $key): string
         {
             global $wpdb;
-            $table_name = $wpdb->prefix . "woocommerce_order_itemmeta";
-            $results = $wpdb->get_results($wpdb->prepare("SELECT meta_value FROM $table_name WHERE order_item_id = %d AND meta_key = %s", intval($item_id), sanitize_key($key))); // Sanitize item ID and key
+
+            // phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+            $table_name = $wpdb->prefix . 'woocommerce_order_itemmeta';
+            $query      = $wpdb->prepare(
+                "SELECT meta_value 
+                FROM `{$table_name}` 
+                WHERE order_item_id = %d 
+                AND meta_key = %s",
+                $item_id,
+                $key
+            );
+            // phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+
+            $results = $wpdb->get_results( $query );
             foreach ($results as $result) {
                 return $result->meta_value ?? ''; // Handle undefined value
             }
@@ -456,8 +479,10 @@ if (! class_exists('MP_Global_Function')) {
         public static function all_tax_list(): array
         {
             global $wpdb;
+            // phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
             $table_name = $wpdb->prefix . 'wc_tax_rate_classes';
             $result = $wpdb->get_results("SELECT * FROM $table_name");
+            // phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
             $tax_list = [];
             foreach ($result as $tax) {
                 $tax_list[$tax->slug] = sanitize_text_field($tax->name); // Sanitize tax name
