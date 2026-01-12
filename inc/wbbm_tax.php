@@ -1,119 +1,140 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) { die; } // Cannot access pages directly.
+if (! defined('ABSPATH')) {
+    die;
+} // Cannot access pages directly.
 
-function wbbm_bus_cpt_tax(){
+function wbbm_bus_cpt_tax()
+{
 
-$cpt_label = wbbm_get_option( 'wbbm_cpt_label', 'wbbm_general_setting_sec', 'Bus');
-$cpt_slug = wbbm_get_option( 'wbbm_cpt_slug', 'wbbm_general_setting_sec', 'bus');
-	$labels = array(
-		'name'                       => sprintf(
+    $cpt_label = wbbm_get_option('wbbm_cpt_label', 'wbbm_general_setting_sec', 'Bus');
+    $cpt_slug = wbbm_get_option('wbbm_cpt_slug', 'wbbm_general_setting_sec', 'bus');
+    $labels = array(
+        'name'                       => sprintf(
             /* translators: %s: custom post type label */
-            _x( '%s Types', 'Post type general name for translators', 'bus-booking-manager' ), esc_html($cpt_label)),
-		'singular_name'              => sprintf(
+            _x('%s Types', 'Post type general name for translators', 'bus-booking-manager'),
+            esc_html($cpt_label)
+        ),
+        'singular_name'              => sprintf(
             /* translators: %s: custom post type label */
-            _x( '%s Types', 'Post type general name for translators', 'bus-booking-manager' ), esc_html($cpt_label)),
-		'menu_name'                  => sprintf(
+            _x('%s Types', 'Post type general name for translators', 'bus-booking-manager'),
+            esc_html($cpt_label)
+        ),
+        'menu_name'                  => sprintf(
             /* translators: %s: custom post type label */
-            _x( '%s Types', 'Post type general name for translators', 'bus-booking-manager' ), esc_html($cpt_label)),
-	);
+            _x('%s Types', 'Post type general name for translators', 'bus-booking-manager'),
+            esc_html($cpt_label)
+        ),
+    );
 
-	$args = array(
-		'hierarchical'          => true,
-		"public" 				=> true,
-		'labels'                => $labels,
-		'show_ui'               => true,
-		'show_admin_column'     => true,
-		'show_in_quick_edit'    => false,
-		'update_count_callback' => '_update_post_term_count',
-		'query_var'             => true,
-		'rewrite'               => array( 'slug' => $cpt_slug.'-category' ),
-	);
-register_taxonomy('wbbm_bus_cat', 'wbbm_bus', $args);
+    $args = array(
+        'hierarchical'          => true,
+        "public"                 => true,
+        'labels'                => $labels,
+        'show_ui'               => true,
+        'show_admin_column'     => true,
+        'show_in_quick_edit'    => false,
+        'update_count_callback' => '_update_post_term_count',
+        'query_var'             => true,
+        'rewrite'               => array('slug' => $cpt_slug . '-category'),
+    );
+    register_taxonomy('wbbm_bus_cat', 'wbbm_bus', $args);
 
 
 
-	$bus_stops_labels = array(
-		'singular_name'              => sprintf(
+    $bus_stops_labels = array(
+        'singular_name'              => sprintf(
             /* translators: %s: custom post type label */
-            _x( '%s Stops','Post type general name for translators','bus-booking-manager' ), esc_html($cpt_label)),
-		'name'                       => sprintf(
+            _x('%s Stops', 'Post type general name for translators', 'bus-booking-manager'),
+            esc_html($cpt_label)
+        ),
+        'name'                       => sprintf(
             /* translators: %s: custom post type label */
-            _x( '%s Stops','Post type general name for translators','bus-booking-manager' ), esc_html($cpt_label)),
-	);
+            _x('%s Stops', 'Post type general name for translators', 'bus-booking-manager'),
+            esc_html($cpt_label)
+        ),
+    );
 
-	$bus_stops_args = array(
-		'hierarchical'          => true,
-		"public" 				=> true,
-		'labels'                => $bus_stops_labels,
-		'show_ui'               => true,
-		'show_admin_column'     => true,
-		'show_in_quick_edit'    => false,
-		'update_count_callback' => '_update_post_term_count',
-		'query_var'             => true,
-		'rewrite'               => array( 'slug' => $cpt_slug.'-stops' ),
-	);
-register_taxonomy('wbbm_bus_stops', 'wbbm_bus', $bus_stops_args);
+    $bus_stops_args = array(
+        'hierarchical'          => true,
+        "public"                 => true,
+        'labels'                => $bus_stops_labels,
+        'show_ui'               => true,
+        'show_admin_column'     => true,
+        'show_in_quick_edit'    => false,
+        'update_count_callback' => '_update_post_term_count',
+        'query_var'             => true,
+        'rewrite'               => array('slug' => $cpt_slug . '-stops'),
+    );
+    register_taxonomy('wbbm_bus_stops', 'wbbm_bus', $bus_stops_args);
 
-// Register Pickup Point Taxonomy
-$bus_pickup_point_label = array(
-	'singular_name'              => sprintf(
-        /* translators: %s: custom post type label */
-        _x( '%s Pickup Points','Post type general name for translators','bus-booking-manager' ), esc_html($cpt_label)),
-	'name'                       => sprintf(
-        /* translators: %s: custom post type label */
-        _x( '%s Pickup Points','Post type general name for translators','bus-booking-manager' ), esc_html($cpt_label)),
-);
+    // Register Pickup Point Taxonomy
+    $bus_pickup_point_label = array(
+        'singular_name'              => sprintf(
+            /* translators: %s: custom post type label */
+            _x('%s Pickup Points', 'Post type general name for translators', 'bus-booking-manager'),
+            esc_html($cpt_label)
+        ),
+        'name'                       => sprintf(
+            /* translators: %s: custom post type label */
+            _x('%s Pickup Points', 'Post type general name for translators', 'bus-booking-manager'),
+            esc_html($cpt_label)
+        ),
+    );
 
-$bus_pickpoint_args = array(
-	'hierarchical'          => true,
-	"public" 				=> true,
-	'labels'                => $bus_pickup_point_label,
-	'show_ui'               => true,
-	'show_admin_column'     => false,
-	'show_in_quick_edit'    => false,
-	'update_count_callback' => '_update_post_term_count',
-	'query_var'             => true,
-	'rewrite'               => array( 'slug' => $cpt_slug.'-pickpoint' ),
-);
+    $bus_pickpoint_args = array(
+        'hierarchical'          => true,
+        "public"                 => true,
+        'labels'                => $bus_pickup_point_label,
+        'show_ui'               => true,
+        'show_admin_column'     => false,
+        'show_in_quick_edit'    => false,
+        'update_count_callback' => '_update_post_term_count',
+        'query_var'             => true,
+        'rewrite'               => array('slug' => $cpt_slug . '-pickpoint'),
+    );
 
-register_taxonomy( 'wbbm_bus_pickpoint', 'wbbm_bus', $bus_pickpoint_args );
+    register_taxonomy('wbbm_bus_pickpoint', 'wbbm_bus', $bus_pickpoint_args);
 
 
     // Register Pickup Point Taxonomy
     $bus_feature_label = array(
         'singular_name'              => sprintf(
             /* translators: %s: custom post type label */
-            _x( '%s Feature','Post type general name for translators','bus-booking-manager' ), esc_html($cpt_label)),
+            _x('%s Feature', 'Post type general name for translators', 'bus-booking-manager'),
+            esc_html($cpt_label)
+        ),
         'name'                       => sprintf(
             /* translators: %s: custom post type label */
-            _x( '%s Feature','Post type general name for translators','bus-booking-manager' ), esc_html($cpt_label)),
+            _x('%s Feature', 'Post type general name for translators', 'bus-booking-manager'),
+            esc_html($cpt_label)
+        ),
     );
 
     $bus_feature_args = array(
         'hierarchical'          => true,
-        "public" 				=> true,
+        "public"                 => true,
         'labels'                => $bus_feature_label,
         'show_ui'               => true,
         'show_admin_column'     => false,
         'show_in_quick_edit'    => false,
         'update_count_callback' => '_update_post_term_count',
         'query_var'             => true,
-        'rewrite'               => array( 'slug' => $cpt_slug.'-pickpoint' ),
+        'rewrite'               => array('slug' => $cpt_slug . '-pickpoint'),
     );
 
-    register_taxonomy( 'wbbm_bus_feature', 'wbbm_bus', $bus_feature_args );
-
+    register_taxonomy('wbbm_bus_feature', 'wbbm_bus', $bus_feature_args);
 }
 
 
 
 
-add_action ( 'edited_wbbm_bus_feature', 'save_wbbm_bus_feature');
-add_action ( 'create_wbbm_bus_feature', 'save_wbbm_bus_feature', 10, 2);
+add_action('edited_wbbm_bus_feature', 'save_wbbm_bus_feature');
+add_action('create_wbbm_bus_feature', 'save_wbbm_bus_feature', 10, 2);
 
-function save_wbbm_bus_feature($term_id) {
-    if ( isset( $_POST['wbbm_feature_icon'] ) ) {
-        update_term_meta($term_id, 'feature_icon', $_POST['wbbm_feature_icon']);
+function save_wbbm_bus_feature($term_id)
+{
+    if (isset($_POST['wbbm_feature_icon'])) {
+        update_term_meta($term_id, 'feature_icon', sanitize_text_field(wp_unslash($_POST['wbbm_feature_icon'])));
     }
 }
 
@@ -121,12 +142,13 @@ function save_wbbm_bus_feature($term_id) {
 
 
 
-add_action( 'wbbm_bus_feature_add_form_fields', 'wbbm_bus_feature_add_term_fields' );
+add_action('wbbm_bus_feature_add_form_fields', 'wbbm_bus_feature_add_term_fields');
 
-function wbbm_bus_feature_add_term_fields( $taxonomy ) {
+function wbbm_bus_feature_add_term_fields($taxonomy)
+{
 
 
-    ?>
+?>
 
     <label for="wbbm_feature_icon">Feature Icon</label>
     <div id="field-wrapper-wbbm_feature_icon" class="wbtm_feature field-wrapper field-icon-wrapper field-icon-wrapper-wbbm_feature_icon">
@@ -141,18 +163,18 @@ function wbbm_bus_feature_add_term_fields( $taxonomy ) {
     <p class="description">Please select a suitable icon for this feature</p>
 
 
-    <?php
+<?php
 
     all_font_awesome();
-
 }
 
 
-add_action ( 'wbbm_bus_feature_edit_form_fields', 'add_wbbm_bus_feature',10,2);
+add_action('wbbm_bus_feature_edit_form_fields', 'add_wbbm_bus_feature', 10, 2);
 
-function add_wbbm_bus_feature(){
+function add_wbbm_bus_feature()
+{
     $cat_title = get_term_meta($_GET['tag_ID'], 'feature_icon', true);
-    ?>
+?>
 
     <tr class="form-field">
         <th scope="row" valign="top"><label for="wbbm_feature_icon">Feature Icon</label></th>
@@ -161,10 +183,10 @@ function add_wbbm_bus_feature(){
             field-icon-wrapper-wbbm_feature_icon">
 
 
-                				<div class="mp_input_add_icon">
+                <div class="mp_input_add_icon">
                     <button type="button" class="mp_input_add_icon_button dButton_xs ">
-                    <input type="hidden" name="wbbm_feature_icon" value="<?php echo esc_attr($cat_title); ?>">
-<span class="<?php echo esc_attr($cat_title); ?>" data-empty-text="Add Icon"></span>
+                        <input type="hidden" name="wbbm_feature_icon" value="<?php echo esc_attr($cat_title); ?>">
+                        <span class="<?php echo esc_attr($cat_title); ?>" data-empty-text="Add Icon"></span>
 
                         <span class="fas fa-times remove_input_icon active " title="Remove Icon"></span>
                     </button>
@@ -180,14 +202,14 @@ function add_wbbm_bus_feature(){
 
 
 
-    <?php
+<?php
 
     all_font_awesome();
-
 }
 
-function all_font_awesome(){
-    ?>
+function all_font_awesome()
+{
+?>
     <div class="add_icon_list_popup">
         <span class="fas fa-times popupCloseIcon"></span>
         <div class="add_icon_list">
@@ -198,119 +220,119 @@ function all_font_awesome(){
                 <ul class="popupIconMenu">
                     <li class="active" data-icon-menu="all_item">All Icon&nbsp;(<strong>1453</strong>)</li>
                     <li data-icon-menu="0">
-                        Accessibility&nbsp;(<strong>17</strong>)													</li>
+                        Accessibility&nbsp;(<strong>17</strong>) </li>
                     <li data-icon-menu="1">
-                        Alert icons&nbsp;(<strong>10</strong>)													</li>
+                        Alert icons&nbsp;(<strong>10</strong>) </li>
                     <li data-icon-menu="2">
-                        Animals icons&nbsp;(<strong>16</strong>)													</li>
+                        Animals icons&nbsp;(<strong>16</strong>) </li>
                     <li data-icon-menu="3">
-                        Arrows icons&nbsp;(<strong>113</strong>)													</li>
+                        Arrows icons&nbsp;(<strong>113</strong>) </li>
                     <li data-icon-menu="4">
-                        Audio &amp; Video icons&nbsp;(<strong>57</strong>)													</li>
+                        Audio &amp; Video icons&nbsp;(<strong>57</strong>) </li>
                     <li data-icon-menu="5">
-                        Automotive icons&nbsp;(<strong>21</strong>)													</li>
+                        Automotive icons&nbsp;(<strong>21</strong>) </li>
                     <li data-icon-menu="6">
-                        Autumn icons&nbsp;(<strong>11</strong>)													</li>
+                        Autumn icons&nbsp;(<strong>11</strong>) </li>
                     <li data-icon-menu="7">
-                        Beverage icons&nbsp;(<strong>13</strong>)													</li>
+                        Beverage icons&nbsp;(<strong>13</strong>) </li>
                     <li data-icon-menu="8">
-                        Buildings icons&nbsp;(<strong>31</strong>)													</li>
+                        Buildings icons&nbsp;(<strong>31</strong>) </li>
                     <li data-icon-menu="9">
-                        Business icons&nbsp;(<strong>93</strong>)													</li>
+                        Business icons&nbsp;(<strong>93</strong>) </li>
                     <li data-icon-menu="10">
-                        Camping icons&nbsp;(<strong>12</strong>)													</li>
+                        Camping icons&nbsp;(<strong>12</strong>) </li>
                     <li data-icon-menu="11">
-                        Charity icons&nbsp;(<strong>17</strong>)													</li>
+                        Charity icons&nbsp;(<strong>17</strong>) </li>
                     <li data-icon-menu="12">
-                        Chat icons&nbsp;(<strong>22</strong>)													</li>
+                        Chat icons&nbsp;(<strong>22</strong>) </li>
                     <li data-icon-menu="13">
-                        Chess icons&nbsp;(<strong>9</strong>)													</li>
+                        Chess icons&nbsp;(<strong>9</strong>) </li>
                     <li data-icon-menu="14">
-                        Childhood icons&nbsp;(<strong>14</strong>)													</li>
+                        Childhood icons&nbsp;(<strong>14</strong>) </li>
                     <li data-icon-menu="15">
-                        Clothing icons&nbsp;(<strong>9</strong>)													</li>
+                        Clothing icons&nbsp;(<strong>9</strong>) </li>
                     <li data-icon-menu="16">
-                        Code icons&nbsp;(<strong>29</strong>)													</li>
+                        Code icons&nbsp;(<strong>29</strong>) </li>
                     <li data-icon-menu="17">
-                        Construction icons&nbsp;(<strong>17</strong>)													</li>
+                        Construction icons&nbsp;(<strong>17</strong>) </li>
                     <li data-icon-menu="18">
-                        Currency icons&nbsp;(<strong>23</strong>)													</li>
+                        Currency icons&nbsp;(<strong>23</strong>) </li>
                     <li data-icon-menu="19">
-                        Design icons&nbsp;(<strong>46</strong>)													</li>
+                        Design icons&nbsp;(<strong>46</strong>) </li>
                     <li data-icon-menu="20">
-                        Editors icons&nbsp;(<strong>33</strong>)													</li>
+                        Editors icons&nbsp;(<strong>33</strong>) </li>
                     <li data-icon-menu="21">
-                        Emoji icons&nbsp;(<strong>70</strong>)													</li>
+                        Emoji icons&nbsp;(<strong>70</strong>) </li>
                     <li data-icon-menu="23">
-                        Energy icons&nbsp;(<strong>25</strong>)													</li>
+                        Energy icons&nbsp;(<strong>25</strong>) </li>
                     <li data-icon-menu="24">
-                        Finance icons&nbsp;(<strong>4</strong>)													</li>
+                        Finance icons&nbsp;(<strong>4</strong>) </li>
                     <li data-icon-menu="25">
-                        Fitness icons&nbsp;(<strong>11</strong>)													</li>
+                        Fitness icons&nbsp;(<strong>11</strong>) </li>
                     <li data-icon-menu="26">
-                        Food icons&nbsp;(<strong>20</strong>)													</li>
+                        Food icons&nbsp;(<strong>20</strong>) </li>
                     <li data-icon-menu="27">
-                        Animals icons&nbsp;(<strong>7</strong>)													</li>
+                        Animals icons&nbsp;(<strong>7</strong>) </li>
                     <li data-icon-menu="28">
-                        Games icons&nbsp;(<strong>27</strong>)													</li>
+                        Games icons&nbsp;(<strong>27</strong>) </li>
                     <li data-icon-menu="29">
-                        Health icons&nbsp;(<strong>7</strong>)													</li>
+                        Health icons&nbsp;(<strong>7</strong>) </li>
                     <li data-icon-menu="30">
-                        Holiday icons&nbsp;(<strong>10</strong>)													</li>
+                        Holiday icons&nbsp;(<strong>10</strong>) </li>
                     <li data-icon-menu="31">
-                        Interfaces icons&nbsp;(<strong>116</strong>)													</li>
+                        Interfaces icons&nbsp;(<strong>116</strong>) </li>
                     <li data-icon-menu="32">
-                        Payments icons&nbsp;(<strong>32</strong>)													</li>
+                        Payments icons&nbsp;(<strong>32</strong>) </li>
                     <li data-icon-menu="33">
-                        Music icons&nbsp;(<strong>9</strong>)													</li>
+                        Music icons&nbsp;(<strong>9</strong>) </li>
                     <li data-icon-menu="34">
-                        Moving icons&nbsp;(<strong>13</strong>)													</li>
+                        Moving icons&nbsp;(<strong>13</strong>) </li>
                     <li data-icon-menu="35">
-                        Mathematics icons&nbsp;(<strong>16</strong>)													</li>
+                        Mathematics icons&nbsp;(<strong>16</strong>) </li>
                     <li data-icon-menu="36">
-                        Logistics icons&nbsp;(<strong>11</strong>)													</li>
+                        Logistics icons&nbsp;(<strong>11</strong>) </li>
                     <li data-icon-menu="37">
-                        Weather icons&nbsp;(<strong>24</strong>)													</li>
+                        Weather icons&nbsp;(<strong>24</strong>) </li>
                     <li data-icon-menu="38">
-                        Pharmacy icons&nbsp;(<strong>27</strong>)													</li>
+                        Pharmacy icons&nbsp;(<strong>27</strong>) </li>
                     <li data-icon-menu="39">
-                        Sports icons&nbsp;(<strong>19</strong>)													</li>
+                        Sports icons&nbsp;(<strong>19</strong>) </li>
                     <li data-icon-menu="40">
-                        Medical icons&nbsp;(<strong>27</strong>)													</li>
+                        Medical icons&nbsp;(<strong>27</strong>) </li>
                     <li data-icon-menu="41">
-                        Summer icons&nbsp;(<strong>7</strong>)													</li>
+                        Summer icons&nbsp;(<strong>7</strong>) </li>
                     <li data-icon-menu="42">
-                        Security icons&nbsp;(<strong>17</strong>)													</li>
+                        Security icons&nbsp;(<strong>17</strong>) </li>
                     <li data-icon-menu="43">
-                        Halloween icons&nbsp;(<strong>11</strong>)													</li>
+                        Halloween icons&nbsp;(<strong>11</strong>) </li>
                     <li data-icon-menu="44">
-                        Religion icons&nbsp;(<strong>31</strong>)													</li>
+                        Religion icons&nbsp;(<strong>31</strong>) </li>
                     <li data-icon-menu="45">
-                        Genders icons&nbsp;(<strong>13</strong>)													</li>
+                        Genders icons&nbsp;(<strong>13</strong>) </li>
                     <li data-icon-menu="46">
-                        Science Fiction icons&nbsp;(<strong>19</strong>)													</li>
+                        Science Fiction icons&nbsp;(<strong>19</strong>) </li>
                     <li data-icon-menu="47">
-                        Spinners icons&nbsp;(<strong>22</strong>)													</li>
+                        Spinners icons&nbsp;(<strong>22</strong>) </li>
                     <li data-icon-menu="48">
-                        Toggle icons&nbsp;(<strong>17</strong>)													</li>
+                        Toggle icons&nbsp;(<strong>17</strong>) </li>
                     <li data-icon-menu="49">
-                        Tabletop Gaming icons&nbsp;(<strong>17</strong>)													</li>
+                        Tabletop Gaming icons&nbsp;(<strong>17</strong>) </li>
                     <li data-icon-menu="50">
-                        Writing icons&nbsp;(<strong>37</strong>)													</li>
+                        Writing icons&nbsp;(<strong>37</strong>) </li>
                     <li data-icon-menu="51">
-                        Winter icons&nbsp;(<strong>10</strong>)													</li>
+                        Winter icons&nbsp;(<strong>10</strong>) </li>
                     <li data-icon-menu="52">
-                        Vehicles icons&nbsp;(<strong>33</strong>)													</li>
+                        Vehicles icons&nbsp;(<strong>33</strong>) </li>
                     <li data-icon-menu="53">
-                        Science icons&nbsp;(<strong>29</strong>)													</li>
+                        Science icons&nbsp;(<strong>29</strong>) </li>
                     <li data-icon-menu="54">
-                        Maritime icons&nbsp;(<strong>11</strong>)													</li>
+                        Maritime icons&nbsp;(<strong>11</strong>) </li>
                     <li data-icon-menu="55">
-                        Images icons&nbsp;(<strong>31</strong>)													</li>
+                        Images icons&nbsp;(<strong>31</strong>) </li>
                     <li data-icon-menu="56">
-                        Shapes icons&nbsp;(<strong>24</strong>)													</li>
+                        Shapes icons&nbsp;(<strong>24</strong>) </li>
                     <li data-icon-menu="57">
-                        Hotel icons&nbsp;(<strong>36</strong>)													</li>
+                        Hotel icons&nbsp;(<strong>36</strong>) </li>
                 </ul>
                 <div class="popup_all_icon">
                     <div class="popupTabItem" data-icon-list="0">
@@ -4905,7 +4927,7 @@ function all_font_awesome(){
         </div>
     </div>
 
-    <?php
+<?php
 }
 
 
@@ -4914,23 +4936,23 @@ function all_font_awesome(){
 
 
 
-add_action("init","wbbm_bus_cpt_tax",10);
+add_action("init", "wbbm_bus_cpt_tax", 10);
 
 $wbbm_route_point = array(
     array(
-        'id'		=> 'wbbm_bus_routes_name_list',
-        'title'		=> __('Route Point','bus-booking-manager'),
-        'details'	=> __('Please Select Route Point ','bus-booking-manager'),
-        'collapsible'=>true,
-        'type'		=> 'repeatable',
-        'btn_text'	=> 'Add New Route Point',
+        'id'        => 'wbbm_bus_routes_name_list',
+        'title'        => __('Route Point', 'bus-booking-manager'),
+        'details'    => __('Please Select Route Point ', 'bus-booking-manager'),
+        'collapsible' => true,
+        'type'        => 'repeatable',
+        'btn_text'    => 'Add New Route Point',
         'title_field' => 'wbbm_bus_routes_name',
         'fields'    => array(
             array(
-                'type'         =>'select',
-                'default'      =>'option_1',
-                'item_id'      =>'wbbm_bus_routes_name',
-                'name'         =>'Stops Name',
+                'type'         => 'select',
+                'default'      => 'option_1',
+                'item_id'      => 'wbbm_bus_routes_name',
+                'name'         => 'Stops Name',
                 'args'         => 'TAXN_%wbbm_bus_stops%'
             )
         ),
@@ -4940,7 +4962,7 @@ $wbbm_route_point = array(
 
 $args = array(
     'taxonomy'       => 'wbbm_bus_stops',
-    'options' 	        => $wbbm_route_point,
+    'options'             => $wbbm_route_point,
 );
 
-new TaxonomyEdit( $args );
+new TaxonomyEdit($args);

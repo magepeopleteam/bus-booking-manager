@@ -4,11 +4,13 @@ if (!defined('ABSPATH')) {
     die;
 }
 
-function mage_get_isset($parameter) {
+function mage_get_isset($parameter)
+{
     return isset($_GET[$parameter]) ? sanitize_text_field(wp_unslash($_GET[$parameter])) : '';
 }
 
-function mage_qty_box($price, $name, $return) {
+function mage_qty_box($price, $name, $return)
+{
     $date = $return ? mage_get_isset('r_date') : mage_get_isset('j_date');
     $available_seat = wbbm_intermidiate_available_seat(
         sanitize_text_field(wp_unslash($_GET['bus_start_route'])),
@@ -17,37 +19,37 @@ function mage_qty_box($price, $name, $return) {
     );
     if ($available_seat > 0) {
 
-        if($name == 'child_quantity') {
+        if ($name == 'child_quantity') {
             $ticket_title = wbbm_get_option('wbbm_child_text', 'wbbm_label_setting_sec', __('Child', 'bus-booking-manager'));
             $ticket_type = 'child';
-        } elseif($name == 'infant_quantity') {
+        } elseif ($name == 'infant_quantity') {
             $ticket_title = wbbm_get_option('wbbm_infant_text', 'wbbm_label_setting_sec', __('Infant', 'bus-booking-manager'));
             $ticket_type = 'infant';
         } else {
             $ticket_title = wbbm_get_option('wbbm_adult_text', 'wbbm_label_setting_sec', __('Adult', 'bus-booking-manager'));
             $ticket_type = 'adult';
         }
-        ?>
+?>
         <div class="mage_form_group">
             <div class="mage_flex mage_qty_dec"><span class="fa fa-minus"></span></div>
             <input type="text"
-                   class="mage_form mage_seat_qty"
-                   data-ticket-title="<?php echo esc_attr($ticket_title . ' ' . __('Passenger info', 'bus-booking-manager')); ?>"
-                   data-ticket-type="<?php echo esc_attr($ticket_type); ?>"
-                   data-price="<?php echo esc_attr($price); ?>"
-                   name="<?php echo esc_attr($name); ?>"
-                   value="0"
-                   min="0"
-                   max="<?php echo esc_attr($available_seat); ?>"
-                   <?php echo ($ticket_type === 'adult' ? 'required' : ''); ?>
-            />
+                class="mage_form mage_seat_qty"
+                data-ticket-title="<?php echo esc_attr($ticket_title . ' ' . __('Passenger info', 'bus-booking-manager')); ?>"
+                data-ticket-type="<?php echo esc_attr($ticket_type); ?>"
+                data-price="<?php echo esc_attr($price); ?>"
+                name="<?php echo esc_attr($name); ?>"
+                value="0"
+                min="0"
+                max="<?php echo esc_attr($available_seat); ?>"
+                <?php echo ($ticket_type === 'adult' ? 'required' : ''); ?> />
             <div class="mage_flex mage_qty_inc"><span class="fa fa-plus"></span></div>
         </div>
-        <?php
+    <?php
     }
 }
 
-function wbbm_entire_switch($price, $name, $return) {
+function wbbm_entire_switch($price, $name, $return)
+{
     $date = $return ? mage_get_isset('r_date') : mage_get_isset('j_date');
     $available_seat = wbbm_intermidiate_available_seat(
         sanitize_text_field(wp_unslash($_GET['bus_start_route'])),
@@ -63,25 +65,26 @@ function wbbm_entire_switch($price, $name, $return) {
     <div class="wbbm_entire_switch_wrapper" data-entire-price="<?php echo esc_attr($price); ?>">
         <label class="switch">
             <input type="checkbox"
-                   id="wbbm_entire_bus"
-                   name="<?php echo esc_attr($name); ?>"
-                   value="0"
-                   data-ticket-title="<?php echo esc_attr($ticket_title . ' ' . __('Passenger info', 'bus-booking-manager')); ?>"
-                   data-ticket-type="<?php echo esc_attr($ticket_type); ?>"
-                   data-price="<?php echo esc_attr($price); ?>"
-                   class="mage_form"
-            />
+                id="wbbm_entire_bus"
+                name="<?php echo esc_attr($name); ?>"
+                value="0"
+                data-ticket-title="<?php echo esc_attr($ticket_title . ' ' . __('Passenger info', 'bus-booking-manager')); ?>"
+                data-ticket-type="<?php echo esc_attr($ticket_type); ?>"
+                data-price="<?php echo esc_attr($price); ?>"
+                class="mage_form" />
             <span class="slider round"></span>
         </label>
     </div>
     <?php
 }
 
-function hidden_input_field($name, $value) {
+function hidden_input_field($name, $value)
+{
     echo '<input type="hidden" name="' . esc_attr($name) . '" value="' . esc_attr($value) . '"/>';
 }
 
-function cart_qty($name) {
+function cart_qty($name)
+{
     $qty_type = ($name == 'adult_quantity') ? 'wbbm_total_adult_qt' : 'wbbm_total_child_qt';
     $product_id = get_the_id();
     $cart = WC()->cart->get_cart();
@@ -93,7 +96,8 @@ function cart_qty($name) {
     return 0;
 }
 
-function mage_route_list($drop = false) {
+function mage_route_list($drop = false)
+{
     $routes = get_terms(array(
         'taxonomy' => 'wbbm_bus_stops',
         'hide_empty' => false,
@@ -102,18 +106,27 @@ function mage_route_list($drop = false) {
     $search_form_dropdown_b_color = esc_attr(wbbm_get_option('wbbm_search_form_dropdown_b_color', 'wbbm_style_setting_sec'));
     $search_form_dropdown_text_color = esc_attr(wbbm_get_option('wbbm_search_form_dropdown_t_color', 'wbbm_style_setting_sec', ''));
 
-    echo '<div class="mage_input_select_list" ' . ($drop ? 'id="wbtm_dropping_point_list"' : '') . ' '; if ($search_form_dropdown_b_color) { echo 'style="background-color:' . esc_attr($search_form_dropdown_b_color) . '"'; } echo '><ul>';
+    echo '<div class="mage_input_select_list" ' . ($drop ? 'id="wbtm_dropping_point_list"' : '') . ' ';
+    if ($search_form_dropdown_b_color) {
+        echo 'style="background-color:' . esc_attr($search_form_dropdown_b_color) . '"';
+    }
+    echo '><ul>';
     foreach ($routes as $route) {
-        echo '<li '; if ($search_form_dropdown_text_color) { echo 'style="color:' . esc_attr($search_form_dropdown_text_color) . '"'; } echo ' data-route="' . esc_attr($route->name) . '"><span class="fa fa-map-marker"></span>' . esc_html($route->name) . '</li>';
+        echo '<li ';
+        if ($search_form_dropdown_text_color) {
+            echo 'style="color:' . esc_attr($search_form_dropdown_text_color) . '"';
+        }
+        echo ' data-route="' . esc_attr($route->name) . '"><span class="fa fa-map-marker"></span>' . esc_html($route->name) . '</li>';
     }
     echo '</ul></div>';
 }
 
 add_action('wp_ajax_wbtm_load_dropping_point', 'wbtm_load_dropping_point');
 add_action('wp_ajax_nopriv_wbtm_load_dropping_point', 'wbtm_load_dropping_point');
-function wbtm_load_dropping_point() {
+function wbtm_load_dropping_point()
+{
     check_ajax_referer('wbbm_ajax_nonce', 'nonce');
-    
+
     $boardingPoint = sanitize_text_field(wp_unslash($_POST['boarding_point']));
     $category = get_term_by('name', $boardingPoint, 'wbbm_bus_stops');
     $allStopArr = get_terms(array(
@@ -136,7 +149,8 @@ function wbtm_load_dropping_point() {
     wp_die();
 }
 
-function mage_bus_list_query($start, $end) {
+function mage_bus_list_query($start, $end)
+{
     $start = mage_get_isset($start);
     $end = mage_get_isset($end);
     return array(
@@ -164,7 +178,8 @@ function mage_bus_list_query($start, $end) {
 
 
 // Odd range check
-function mage_odd_list_check($return) {
+function mage_odd_list_check($return)
+{
     $start_date = strtotime(get_post_meta(get_the_ID(), 'wbtm_od_start', true));
     $end_date = strtotime(get_post_meta(get_the_ID(), 'wbtm_od_end', true));
     $date = mage_get_isset($return ? 'r_date' : 'j_date');
@@ -174,11 +189,12 @@ function mage_odd_list_check($return) {
 }
 
 // Off day check
-function mage_off_day_check($return) {
+function mage_off_day_check($return)
+{
     $get_day = null;
     $id = get_the_ID();
     $j_date = $return ? mage_wp_date(mage_get_isset('r_date'), 'Y-m-d') : mage_wp_date(mage_get_isset('j_date'), 'Y-m-d');
-    
+
     $weekly_offday = get_post_meta($id, 'weekly_offday', true) ?: array();
     if ($j_date) {
         $j_date_day = strtolower(gmdate('N', strtotime($j_date)));
@@ -192,7 +208,8 @@ function mage_off_day_check($return) {
 }
 
 // Check if product is already in cart
-function mage_find_product_in_cart() {
+function mage_find_product_in_cart()
+{
     if (!is_admin()) {
         $product_id = get_the_ID();
         $cart = WC()->cart->get_cart();
@@ -206,7 +223,8 @@ function mage_find_product_in_cart() {
 }
 
 // Get available seat
-function mage_available_seat($date) {
+function mage_available_seat($date)
+{
     $values = get_post_custom(get_the_ID());
     $total_seat = (int) $values['wbbm_total_seat'][0];
     $sold_seat = (int) wbbm_get_available_seat(get_the_ID(), $date);
@@ -214,7 +232,8 @@ function mage_available_seat($date) {
 }
 
 // Get cart item quantity
-function wbbm_get_cart_item($bus_id, $date_var) {
+function wbbm_get_cart_item($bus_id, $date_var)
+{
     $cart_qty = 0;
     $cart_items = WC()->cart->get_cart();
     if (count($cart_items) > 0) {
@@ -233,16 +252,18 @@ function wbbm_get_cart_item($bus_id, $date_var) {
 }
 
 // Get intermediate available seat
-function wbbm_intermidiate_available_seat($start, $end, $date, $eid = null): int {
+function wbbm_intermidiate_available_seat($start, $end, $date, $eid = null): int
+{
     $post_id = $eid ?: get_the_ID();
     $values = get_post_custom($post_id);
     $total_seat = (int) $values['wbbm_total_seat'][0];
-    $sold_seat = (int) wbbm_get_available_seat_new($post_id, sanitize_text_field($start), sanitize_text_field($end), $date); 
+    $sold_seat = (int) wbbm_get_available_seat_new($post_id, sanitize_text_field($start), sanitize_text_field($end), $date);
     return max(0, $total_seat - $sold_seat);
 }
 
 // Boarding dropping time
-function boarding_dropping_time($drop_time = '', $return = '') {
+function boarding_dropping_time($drop_time = '', $return = '')
+{
     $boarding = mage_get_isset('bus_start_route');
     $dropping = mage_get_isset('bus_end_route');
     $boarding_time = get_post_meta(get_the_ID(), 'wbbm_bus_bp_stops', true);
@@ -267,7 +288,8 @@ function boarding_dropping_time($drop_time = '', $return = '') {
 }
 
 // Return fare per ticket
-function mage_seat_price($id, $start, $end, $seat_type, $roundtrip = false) {
+function mage_seat_price($id, $start, $end, $seat_type, $roundtrip = false)
+{
     $price = get_post_meta($id, 'wbbm_bus_prices', true);
     if (is_array($price) && count($price) > 0) {
         foreach ($price as $val) {
@@ -302,7 +324,8 @@ function mage_seat_price($id, $start, $end, $seat_type, $roundtrip = false) {
 
 
 // Return Discount
-function wbbm_cart_has_opposite_route($c_start, $c_stop, $c_j_date, $return = false, $current_r_date = null) {
+function wbbm_cart_has_opposite_route($c_start, $c_stop, $c_j_date, $return = false, $current_r_date = null)
+{
     global $woocommerce;
 
     $items = $woocommerce->cart->get_cart();
@@ -351,7 +374,8 @@ function wbbm_cart_has_opposite_route($c_start, $c_stop, $c_j_date, $return = fa
 }
 
 // Convert 24 to 12 hour time format
-function wbbm_time_24_to_12($time) {
+function wbbm_time_24_to_12($time)
+{
     $t = '';
     if ($time && strpos($time, ':') !== false) {
         $t = explode(':', sanitize_text_field($time));
@@ -370,7 +394,8 @@ function wbbm_time_24_to_12($time) {
 }
 
 // Convert date format according to WP date format
-function mage_wp_date($date, $format = false) {
+function mage_wp_date($date, $format = false)
+{
     $wp_date_format = get_option('date_format');
     $date = mage_date_format_issue($date);
 
@@ -386,7 +411,8 @@ function mage_wp_date($date, $format = false) {
     return $date;
 }
 
-function mage_date_format_issue($date) {
+function mage_date_format_issue($date)
+{
     $date_format = get_option('date_format');
     $date = sanitize_text_field($date);
 
@@ -403,7 +429,8 @@ function mage_date_format_issue($date) {
 }
 
 // Get Bus Categories list
-function wbbm_get_bus_categories() {
+function wbbm_get_bus_categories()
+{
     $terms = get_terms(array(
         'taxonomy' => 'wbbm_bus_cat',
         'hide_empty' => false,
@@ -420,7 +447,8 @@ function wbbm_get_bus_categories() {
 // Global Color CSS Enqueue
 add_action('wp_footer', 'wbbm_global_css_func');
 if (!function_exists('wbbm_global_css_func')) {
-    function wbbm_global_css_func() {
+    function wbbm_global_css_func()
+    {
         $search_button_bg_color = wbbm_get_option('wbbm_search_button_bg_color', 'wbbm_style_setting_sec');
         $search_button_hover_bg_color = wbbm_get_option('wbbm_search_button_hover_bg_color', 'wbbm_style_setting_sec');
         $wbbm_cart_table_bg_color = wbbm_get_option('wbbm_cart_table_bg_color', 'wbbm_style_setting_sec');
@@ -461,13 +489,15 @@ if (!function_exists('wbbm_global_css_func')) {
 
 // Add ID column to bus categories
 add_filter('manage_edit-wbbm_bus_cat_columns', 'wbbm_bus_cat_custom_column');
-function wbbm_bus_cat_custom_column($columns) {
+function wbbm_bus_cat_custom_column($columns)
+{
     $columns['id'] = 'ID';
     return $columns;
 }
 
 add_filter('manage_wbbm_bus_cat_custom_column', 'wbbm_bus_cat_custom_column_callback', 10, 3);
-function wbbm_bus_cat_custom_column_callback($content, $column_name, $term_id) {
+function wbbm_bus_cat_custom_column_callback($content, $column_name, $term_id)
+{
     switch ($column_name) {
         case 'id':
             $content = intval($term_id);
@@ -478,13 +508,15 @@ function wbbm_bus_cat_custom_column_callback($content, $column_name, $term_id) {
 
 // Add ID column to bus stops
 add_filter('manage_edit-wbbm_bus_stops_columns', 'wbbm_bus_stops_custom_column');
-function wbbm_bus_stops_custom_column($columns) {
+function wbbm_bus_stops_custom_column($columns)
+{
     $columns['id'] = 'ID';
     return $columns;
 }
 
 add_filter('manage_wbbm_bus_stops_custom_column', 'wbbm_bus_stops_custom_column_callback', 10, 3);
-function wbbm_bus_stops_custom_column_callback($content, $column_name, $term_id) {
+function wbbm_bus_stops_custom_column_callback($content, $column_name, $term_id)
+{
     switch ($column_name) {
         case 'id':
             $content = intval($term_id);
@@ -495,20 +527,22 @@ function wbbm_bus_stops_custom_column_callback($content, $column_name, $term_id)
 
 
 /*********************************************
-* Function: Add ID column to bus pickup point
-**********************************************/
+ * Function: Add ID column to bus pickup point
+ **********************************************/
 add_filter('manage_edit-wbbm_bus_pickpoint_columns', 'wbbm_bus_pickpoint_custom_column');
-function wbbm_bus_pickpoint_custom_column($columns){
+function wbbm_bus_pickpoint_custom_column($columns)
+{
     $columns['id'] = 'ID';
     return $columns;
 }
 
 add_filter('manage_wbbm_bus_pickpoint_custom_column', 'wbbm_bus_pickpoint_custom_column_callback', 10, 3);
-function wbbm_bus_pickpoint_custom_column_callback($content, $column_name, $term_id){
-    switch ( $column_name ) {
-        case 'id' :
+function wbbm_bus_pickpoint_custom_column_callback($content, $column_name, $term_id)
+{
+    switch ($column_name) {
+        case 'id':
             $content = intval($term_id);
-        break;
+            break;
     }
     return $content;
 }
@@ -516,10 +550,11 @@ function wbbm_bus_pickpoint_custom_column_callback($content, $column_name, $term
 /**************************************
  * Function for extra service
  **************************************/
-function wbbm_extra_services_section($bus_id) {
-    $start = isset($_GET['bus_start_route']) ? sanitize_text_field($_GET['bus_start_route']) : '';
-    $end = isset($_GET['bus_end_route']) ? sanitize_text_field($_GET['bus_end_route']) : '';
-    $j_date = isset($_GET['j_date']) ? sanitize_text_field($_GET['j_date']) : '';
+function wbbm_extra_services_section($bus_id)
+{
+    $start = isset($_GET['bus_start_route']) ? sanitize_text_field(wp_unslash($_GET['bus_start_route'])) : '';
+    $end = isset($_GET['bus_end_route']) ? sanitize_text_field(wp_unslash($_GET['bus_end_route'])) : '';
+    $j_date = isset($_GET['j_date']) ? sanitize_text_field(wp_unslash($_GET['j_date'])) : '';
 
     $is_enable_extra_services = get_post_meta($bus_id, 'show_extra_service', true);
     $extra_services = get_post_meta($bus_id, 'mep_events_extra_prices', true);
@@ -553,9 +588,9 @@ function wbbm_extra_services_section($bus_id) {
                     ?>
 
                         <tr data-total="0">
-                        <td align="left"><?php echo esc_html($field['option_name']); ?>
-                            <div class="xtra-item-left"><?php echo esc_html($ext_left); ?> <?php echo esc_html(__('Left:', 'bus-booking-manager')); ?></div>
-                        </td>
+                            <td align="left"><?php echo esc_html($field['option_name']); ?>
+                                <div class="xtra-item-left"><?php echo esc_html($ext_left); ?> <?php echo esc_html(__('Left:', 'bus-booking-manager')); ?></div>
+                            </td>
 
                             <td>
                                 <?php
@@ -573,7 +608,7 @@ function wbbm_extra_services_section($bus_id) {
                                             <input size="4" inputmode="numeric" type="number" class='extra-qty-box mage_form_full' step='1' name='extra_service_qty[]' data-price='<?php echo wp_kses_post(wbbm_get_price_including_tax($bus_id, $data_price)); ?>' value='0' min="0" max="<?php echo esc_html($ext_left); ?>">
                                             <div class="mage_flex mage_es_qty_plus"><i class="fa fa-plus"></i></div>
                                         </div>
-                                    <?php }
+                                <?php }
                                 } else {
                                     echo esc_html(__('Not Available', 'bus-booking-manager'));
                                 } ?>
@@ -597,7 +632,7 @@ function wbbm_extra_services_section($bus_id) {
                                         <p style="display: none;" class="price_jq"><?php echo esc_html($data_price > 0 ? $data_price : 0); ?></p>
                                         <input type="hidden" name='extra_service_name[]' value='<?php echo esc_attr($field['option_name']); ?>'>
                                         <input type="hidden" name='extra_service_price[]' value='<?php echo esc_attr($field['option_price']); ?>'>
-                                    <?php }
+                                <?php }
                                 }
                                 ?>
                             </td>
@@ -609,13 +644,14 @@ function wbbm_extra_services_section($bus_id) {
                 </tbody>
             </table>
         </div>
-    <?php
+<?php
     endif;
 }
 
 // Extra services END
 
-function wbbm_get_price_including_tax($bus, $price, $args = array()) {
+function wbbm_get_price_including_tax($bus, $price, $args = array())
+{
     $args = wp_parse_args($args, array(
         'qty' => '',
         'price' => '',
@@ -666,7 +702,8 @@ function wbbm_get_price_including_tax($bus, $price, $args = array()) {
 }
 
 // Seat booked status
-function wbbm_seat_booked_on_status() {
+function wbbm_seat_booked_on_status()
+{
     $seat_booked_status = wbbm_get_option('wbbm_seat_booked_on_order_status', 'wbbm_general_setting_sec', array(1, 2));
     return is_array($seat_booked_status) ? implode(',', array_map('sanitize_text_field', $seat_booked_status)) : '';
 }
@@ -674,9 +711,10 @@ function wbbm_seat_booked_on_status() {
 /******************************************
 Update Seat Book On Status Option value
 Developer: Ariful
-*******************************************/
+ *******************************************/
 add_action('wp_loaded', 'wbbm_update_seat_book_on_status_global_settings');
-function wbbm_update_seat_book_on_status_global_settings() {
+function wbbm_update_seat_book_on_status_global_settings()
+{
     $general_settings = is_array(get_option('wbbm_general_setting_sec')) ? maybe_unserialize(get_option('wbbm_general_setting_sec')) : array();
     $seat_book_on_status_arr = array(
         'wbbm_seat_booked_on_order_status' => array(
@@ -698,7 +736,8 @@ function wbbm_update_seat_book_on_status_global_settings() {
  * @param date date
  * @return bool
  * */
-function wbbm_buffer_time_calculation($bp_time, $date) {
+function wbbm_buffer_time_calculation($bp_time, $date)
+{
     $is_allow = false;
     $buffer_time_from_setting = floatval(wbbm_get_option('wbbm_buffer_time', 'wbbm_general_setting_sec', 0));
     $bus_start_time = gmdate('H:i:s', strtotime(sanitize_text_field($bp_time)));

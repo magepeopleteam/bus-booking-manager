@@ -5,7 +5,8 @@ if (!defined('ABSPATH')) {
 
 // Add custom price to the cart
 add_action('woocommerce_before_calculate_totals', 'wbbm_add_custom_price');
-function wbbm_add_custom_price($cart_object) {
+function wbbm_add_custom_price($cart_object)
+{
     foreach ($cart_object->cart_contents as $key => $value) {
         $eid = isset($value['wbbm_id']) ? intval($value['wbbm_id']) : 0; // Sanitize ID
         if (get_post_type($eid) == 'wbbm_bus') {
@@ -40,7 +41,8 @@ function wbbm_add_custom_price($cart_object) {
 }
 
 // Validate checkout
-function wbbm_after_checkout_validation() {
+function wbbm_after_checkout_validation()
+{
     $cart_items = WC()->cart->get_cart();
     if (sizeof($cart_items) > 0) {
         foreach ($cart_items as $cart_item) {
@@ -50,7 +52,7 @@ function wbbm_after_checkout_validation() {
                 $end_route = isset($cart_item['wbbm_end_stops']) ? sanitize_text_field($cart_item['wbbm_end_stops']) : '';
                 $date = isset($cart_item['wbbm_journey_date']) ? sanitize_text_field($cart_item['wbbm_journey_date']) : '';
                 $available_seat = wbbm_intermidiate_available_seat($start_route, $end_route, wbbm_convert_date_to_php($date), $post_id);
-                
+
                 $adult_qty = isset($cart_item['wbbm_total_adult_qt']) ? intval($cart_item['wbbm_total_adult_qt']) : 0;
                 $child_qty = isset($cart_item['wbbm_total_child_qt']) ? intval($cart_item['wbbm_total_child_qt']) : 0;
                 $infant_qty = isset($cart_item['wbbm_total_infant_qt']) ? intval($cart_item['wbbm_total_infant_qt']) : 0;
@@ -67,7 +69,8 @@ function wbbm_after_checkout_validation() {
 add_action('woocommerce_after_checkout_validation', 'wbbm_after_checkout_validation');
 
 // Add custom fields to order items
-function wbbm_add_custom_fields_text_to_order_items($item, $cart_item_key, $values, $order) {
+function wbbm_add_custom_fields_text_to_order_items($item, $cart_item_key, $values, $order)
+{
     $eid = isset($values['wbbm_id']) ? intval($values['wbbm_id']) : 0; // Sanitize ID
     if (get_post_type($eid) == 'wbbm_bus') {
         // Extract values and sanitize
@@ -97,7 +100,7 @@ function wbbm_add_custom_fields_text_to_order_items($item, $cart_item_key, $valu
         $droping_point_label = __('Dropping Point', 'bus-booking-manager');
         $journey_date_label = __('Journey Date', 'bus-booking-manager');
         $journey_time_label = __('Journey Time', 'bus-booking-manager');
-        
+
         $item->add_meta_data($boarding_point_label, $wbbm_start_stops);
         $item->add_meta_data($droping_point_label, $wbbm_end_stops);
         $item->add_meta_data($journey_date_label, get_wbbm_datetime($wbbm_journey_date, 'date'));
@@ -106,7 +109,7 @@ function wbbm_add_custom_fields_text_to_order_items($item, $cart_item_key, $valu
         $item->add_meta_data('_droping_point', $wbbm_end_stops);
         $item->add_meta_data('_journey_date', $wbbm_journey_date);
         $item->add_meta_data('_journey_time', $wbbm_journey_time);
-        
+
         // Build passenger info content
         $p_content = '';
         if ($custom_reg_user == 'no') {
@@ -192,7 +195,7 @@ function wbbm_add_custom_fields_text_to_order_items($item, $cart_item_key, $valu
                 }
             }
         }
-        
+
         // Add metadata
         $item->add_meta_data($passenger_info_label, $p_content);
         $item->add_meta_data('Pickpoint', $pickpoint);
@@ -216,12 +219,13 @@ function wbbm_add_custom_fields_text_to_order_items($item, $cart_item_key, $valu
 add_action('woocommerce_checkout_create_order_line_item', 'wbbm_add_custom_fields_text_to_order_items', 10, 4);
 
 // Validate added to cart
-function add_the_date_validation($passed) {
+function add_the_date_validation($passed)
+{
     // Safely get the nonce from $_POST
     $nonce = isset($_POST['add_to_cart_nonce']) ? sanitize_text_field(wp_unslash($_POST['add_to_cart_nonce'])) : '';
 
     // Verify the nonce
-    if ( ! $nonce || ! wp_verify_nonce($nonce, 'add_to_cart_nonce_action') ) {
+    if (! $nonce || ! wp_verify_nonce($nonce, 'add_to_cart_nonce_action')) {
         wc_add_notice(__('Security check failed. Please try again.', 'bus-booking-manager'), 'error');
         return false; // Stop add to cart
     }
@@ -233,7 +237,7 @@ function add_the_date_validation($passed) {
             $boarding_var = $return ? 'bus_end_route' : 'bus_start_route';
             $dropping_var = $return ? 'bus_start_route' : 'bus_end_route';
             $date_var = $return ? 'r_date' : 'j_date';
-            $available_seat = isset($_GET[$boarding_var]) && isset($_GET[$dropping_var]) ? wbbm_intermidiate_available_seat(sanitize_text_field(@wp_unslash($_GET[$boarding_var])), sanitize_text_field(@wp_unslash($_GET[$dropping_var])), wbbm_convert_date_to_php(mage_get_isset($date_var)), $eid) : 0;
+            $available_seat = isset($_GET[$boarding_var]) && isset($_GET[$dropping_var]) ? wbbm_intermidiate_available_seat(sanitize_text_field(wp_unslash($_GET[$boarding_var])), sanitize_text_field(wp_unslash($_GET[$dropping_var])), wbbm_convert_date_to_php(mage_get_isset($date_var)), $eid) : 0;
             $adult_qty = isset($_POST['adult_quantity']) ? intval($_POST['adult_quantity']) : 0;
             $child_qty = isset($_POST['child_quantity']) ? intval($_POST['child_quantity']) : 0;
             $infant_qty = isset($_POST['infant_quantity']) ? intval($_POST['infant_quantity']) : 0;
@@ -249,7 +253,6 @@ function add_the_date_validation($passed) {
 add_filter('woocommerce_add_to_cart_validation', 'add_the_date_validation', 10, 5);
 
 // Add a nonce field to the add-to-cart form
-add_action('woocommerce_before_add_to_cart_button', function() {
+add_action('woocommerce_before_add_to_cart_button', function () {
     wp_nonce_field('add_to_cart_nonce_action', 'add_to_cart_nonce');
 });
-

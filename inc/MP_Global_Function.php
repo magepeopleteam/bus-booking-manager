@@ -69,7 +69,7 @@ if (! class_exists('MP_Global_Function')) {
         public static function get_submit_info($key, $default = '')
         {
             // phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
-            if(!isset(($_POST[sanitize_key($key)]))) {
+            if (!isset(($_POST[sanitize_key($key)]))) {
                 return;
             }
             // phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
@@ -79,10 +79,10 @@ if (! class_exists('MP_Global_Function')) {
         public static function get_submit_info_get_method($key, $default = '')
         {
             // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
-            if(!isset(($_GET[sanitize_key($key)]))) {
+            if (!isset(($_GET[sanitize_key($key)]))) {
                 return;
             }
-            
+
             // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
             return self::data_sanitize(wp_unslash($_GET[sanitize_key($key)]) ?? $default); // Sanitize key
         }
@@ -94,14 +94,14 @@ if (! class_exists('MP_Global_Function')) {
                 if (is_array($data)) {
                     $data = self::data_sanitize($data);
                 } else {
-                    $data = sanitize_text_field(stripslashes(wp_strip_all_tags($data)));
+                    $data = sanitize_text_field(wp_strip_all_tags($data));
                 }
             } elseif (is_array($data)) {
                 foreach ($data as &$value) {
                     if (is_array($value)) {
                         $value = self::data_sanitize($value);
                     } else {
-                        $value = sanitize_text_field(stripslashes(wp_strip_all_tags($value)));
+                        $value = sanitize_text_field(wp_strip_all_tags($value));
                     }
                 }
             }
@@ -450,7 +450,7 @@ if (! class_exists('MP_Global_Function')) {
             );
             // phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
-            $results = $wpdb->get_results( $query );
+            $results = $wpdb->get_results($query);
             foreach ($results as $result) {
                 return $result->meta_value ?? ''; // Handle undefined value
             }
@@ -619,16 +619,17 @@ if (! class_exists('MP_Global_Function')) {
             return $message;
         }
 
-        public static function wbbm_recursive_sanitize( $data ) {
-            if ( is_array( $data ) ) {
-                return array_map( 'wbbm_recursive_sanitize', $data );
+        public static function wbbm_recursive_sanitize($data)
+        {
+            if (is_array($data)) {
+                return array_map('wbbm_recursive_sanitize', $data);
             }
 
-            if ( is_numeric($data) ) {
+            if (is_numeric($data)) {
                 return intval($data);
             }
 
-            if ( filter_var($data, FILTER_VALIDATE_URL) ) {
+            if (filter_var($data, FILTER_VALIDATE_URL)) {
                 return esc_url_raw($data);
             }
 
