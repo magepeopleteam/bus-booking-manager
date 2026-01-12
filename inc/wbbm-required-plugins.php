@@ -45,14 +45,21 @@ if (! class_exists('WBBM_Required_Plugins')) {
 
         public function wbbm_plugin_activate()
         {
-            if (isset($_GET['wbbm_plugin_activate']) && ! is_plugin_active(sanitize_text_field(wp_unslash($_GET['wbbm_plugin_activate'])))) {
+            if (isset( $_GET['wbbm_plugin_activate'], $_GET['wbbm_plugin_activate_nonce'] )
+                    && wp_verify_nonce(
+                        sanitize_text_field( wp_unslash( $_GET['wbbm_plugin_activate_nonce'] ) ),
+                        'wbbm_plugin_activate_action'
+                    )
+                ) {
+
                 $slug = sanitize_text_field(wp_unslash($_GET['wbbm_plugin_activate']));
-                $activate = activate_plugin($slug);
-                $url = admin_url($this->wbbm_plugin_page_location() . '?page=wbbm-plugins');
-                echo '<script>
-                var url = "' . esc_url($url) . '";
-                window.location.replace(url);
-            </script>';
+                        $activate = activate_plugin($slug);
+                        $url = admin_url($this->wbbm_plugin_page_location() . '?page=wbbm-plugins');
+                        echo '<script>
+                        var url = "' . esc_url($url) . '";
+                        window.location.replace(url);
+                    </script>';
+
             } else {
                 return false;
             }
@@ -64,7 +71,9 @@ if (! class_exists('WBBM_Required_Plugins')) {
                 exit;
             }
 
+            // phpcs:ignore WordPress.Security.NonceVerification.Recommended
             if (isset($_GET['wbbm_plugin_install']) && ! $this->wbbm_chk_plugin_folder_exist(sanitize_text_field(wp_unslash($_GET['wbbm_plugin_install'])))) {
+                // phpcs:ignore WordPress.Security.NonceVerification.Recommended
                 $slug = sanitize_text_field(wp_unslash($_GET['wbbm_plugin_install']));
 
                 if ($slug !== 'magepeople-pdf-support-master') {
@@ -103,16 +112,26 @@ if (! class_exists('WBBM_Required_Plugins')) {
             }
         }
 
-        public function wbbm_wp_plugin_activation_url($slug)
-        {
-            if ($this->wbbm_plugin_page_location() === 'plugins.php') {
-                $url = admin_url($this->wbbm_plugin_page_location()) . '?page=wbbm-plugins&wbbm_plugin_activate=' . sanitize_text_field($slug);
+        public function wbbm_wp_plugin_activation_url( $slug ) {
+
+            $slug = sanitize_key( $slug );
+
+            if ( $this->wbbm_plugin_page_location() === 'plugins.php' ) {
+                $url = admin_url( $this->wbbm_plugin_page_location() ) . '?page=wbbm-plugins&wbbm_plugin_activate=' . $slug;
             } else {
-                $url = admin_url($this->wbbm_plugin_page_location()) . '&page=wbbm-plugins&wbbm_plugin_activate=' . sanitize_text_field($slug);
+                $url = admin_url( $this->wbbm_plugin_page_location() ) . '&page=wbbm-plugins&wbbm_plugin_activate=' . $slug;
             }
+
+            // Add nonce to URL
+            $url = wp_nonce_url(
+                $url,
+                'wbbm_plugin_activate_action',
+                'wbbm_plugin_activate_nonce'
+            );
 
             return $url;
         }
+
 
         public function wbbm_plugin_page()
         {

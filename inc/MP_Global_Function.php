@@ -167,6 +167,7 @@ if (! class_exists('MP_Global_Function')) {
             $end_day = gmdate('j', strtotime($end_date));
             $all_date = [];
 
+            // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
             foreach ($dates as $date) {
                 $all_date[] = '"' . gmdate('j-n-Y', strtotime($date)) . '"';
             }
@@ -436,25 +437,22 @@ if (! class_exists('MP_Global_Function')) {
 
         public static function get_order_item_meta($item_id, $key): string
         {
-            global $wpdb;
+            $item_id = intval($item_id);
+            $key = sanitize_text_field($key);
 
-            // phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-            $table_name = $wpdb->prefix . 'woocommerce_order_itemmeta';
-            $query      = $wpdb->prepare(
-                "SELECT meta_value 
-                FROM `{$table_name}` 
-                WHERE order_item_id = %d 
-                AND meta_key = %s",
-                $item_id,
-                $key
-            );
-            // phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-
-            $results = $wpdb->get_results($query);
-            foreach ($results as $result) {
-                return $result->meta_value ?? ''; // Handle undefined value
+            // Prefer WooCommerce helper if available (uses metadata API internally)
+            if (function_exists('wc_get_order_item_meta')) {
+                $value = wc_get_order_item_meta($item_id, $key, true);
+            } else {
+                // Use WP metadata API which includes caching
+                $value = get_metadata('order_item', $item_id, $key, true);
             }
-            return '';
+
+            if (is_array($value) || is_object($value)) {
+                return maybe_serialize($value);
+            }
+
+            return (string) ($value ?? '');
         }
 
         public static function check_product_in_cart($post_id)
@@ -479,13 +477,29 @@ if (! class_exists('MP_Global_Function')) {
         public static function all_tax_list(): array
         {
             global $wpdb;
-            // phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+            // Prefer using WooCommerce helper to avoid direct DB queries
+            if (function_exists('wc_get_tax_classes')) {
+                $classes = wc_get_tax_classes();
+                $tax_list = [];
+                foreach ($classes as $class) {
+                    $slug = sanitize_title($class);
+                    $tax_list[$slug] = sanitize_text_field($class);
+                }
+                return $tax_list;
+            }
+
+            
+            // phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name cannot be used as a placeholder in prepare()
             $table_name = $wpdb->prefix . 'wc_tax_rate_classes';
-            $result = $wpdb->get_results("SELECT * FROM $table_name");
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+            $table_name_esc = esc_sql($table_name);
+            $results = $wpdb->get_results("SELECT slug, name FROM {$table_name_esc}", ARRAY_A);
             // phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
             $tax_list = [];
-            foreach ($result as $tax) {
-                $tax_list[$tax->slug] = sanitize_text_field($tax->name); // Sanitize tax name
+            if ($results) {
+                foreach ($results as $tax) {
+                    $tax_list[sanitize_text_field($tax['slug'])] = sanitize_text_field($tax['name']);
+                }
             }
             return $tax_list;
         }

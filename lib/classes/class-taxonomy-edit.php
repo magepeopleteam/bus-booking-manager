@@ -20,18 +20,28 @@ if( ! class_exists( 'TaxonomyEdit' ) ) {
         }
 
         public function save_update_taxonomy($term_id){
-            foreach ($this->get_panels() as $optionIndex => $option) {
-                $option_value = isset($_POST[$option['id']]) ? $_POST[$option['id']] : '';
+            // Capability check
+            if ( ! current_user_can( 'manage_options' ) ) {
+                return;
+            }
+
+            // Verify nonce
+            if ( ! isset( $_POST['wbbm_taxonomy_nonce'] ) || ! wp_verify_nonce( sanitize_text_field(wp_unslash( $_POST['wbbm_taxonomy_nonce'] )), 'wbbm_taxonomy_nonce_action' ) ) {
+                return;
+            }
+
+            foreach ( $this->get_panels() as $optionIndex => $option ) {
+                $raw_value = isset( $_POST[ $option['id'] ] ) ? sanitize_text_field(wp_unslash( $_POST[ $option['id'] ] )) : '';
 
                 // Sanitize the input based on the type of the field
-                if (is_array($option_value)) {
-                    $option_value = array_map('sanitize_text_field', $option_value);
-                    $option_value = serialize($option_value);
+                if ( is_array( $raw_value ) ) {
+                    $sanitized = array_map( 'sanitize_text_field', $raw_value );
+                    $option_value = serialize( $sanitized );
                 } else {
-                    $option_value = sanitize_text_field($option_value);
+                    $option_value = sanitize_text_field( $raw_value );
                 }
 
-                update_term_meta($term_id, $option['id'], $option_value);
+                update_term_meta( $term_id, $option['id'], $option_value );
             }
         }
 
@@ -44,6 +54,8 @@ if( ! class_exists( 'TaxonomyEdit' ) ) {
                     <th scope="row" valign="top"><label for="<?php echo esc_attr($option['id']); ?>"><?php echo esc_html($option['title']); ?></label></th>
                     <td>
                         <?php
+                        // Add a nonce field for taxonomy edit/save
+                        wp_nonce_field('wbbm_taxonomy_nonce_action', 'wbbm_taxonomy_nonce');
                         $this->field_generator($option, $term_id);
                         ?>
                     </td>
@@ -63,6 +75,8 @@ if( ! class_exists( 'TaxonomyEdit' ) ) {
                     </th>
                     <td>
                         <?php
+                        // Add a nonce field for taxonomy add
+                        wp_nonce_field('wbbm_taxonomy_nonce_action', 'wbbm_taxonomy_nonce');
                         $this->field_generator($option, $term_id);
                         ?>
                     </td>

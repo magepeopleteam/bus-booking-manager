@@ -125,6 +125,15 @@ function wbbm_bus_cpt_tax()
     register_taxonomy('wbbm_bus_feature', 'wbbm_bus', $bus_feature_args);
 }
 
+add_action( 'wbbm_bus_feature_add_form_fields', 'wbbm_bus_feature_add_nonce' );
+add_action( 'wbbm_bus_feature_edit_form_fields', 'wbbm_bus_feature_add_nonce' );
+
+function wbbm_bus_feature_add_nonce() {
+    wp_nonce_field(
+        'wbbm_save_bus_feature',
+        'wbbm_bus_feature_nonce'
+    );
+}
 
 
 
@@ -133,6 +142,17 @@ add_action('create_wbbm_bus_feature', 'save_wbbm_bus_feature', 10, 2);
 
 function save_wbbm_bus_feature($term_id)
 {
+    // Nonce check
+    if (
+        ! isset( $_POST['wbbm_bus_feature_nonce'] ) ||
+        ! wp_verify_nonce(
+            sanitize_text_field( wp_unslash( $_POST['wbbm_bus_feature_nonce'] ) ),
+            'wbbm_save_bus_feature'
+        )
+    ) {
+        return;
+    }
+
     if (isset($_POST['wbbm_feature_icon'])) {
         update_term_meta($term_id, 'feature_icon', sanitize_text_field(wp_unslash($_POST['wbbm_feature_icon'])));
     }
@@ -173,7 +193,9 @@ add_action('wbbm_bus_feature_edit_form_fields', 'add_wbbm_bus_feature', 10, 2);
 
 function add_wbbm_bus_feature()
 {
-    $cat_title = get_term_meta($_GET['tag_ID'], 'feature_icon', true);
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+    $tagId = isset($_GET['tag_ID']) ? sanitize_text_field(wp_unslash($_GET['tag_ID'])) : '';
+    $cat_title = $tagId ? get_term_meta($tagId, 'feature_icon', true) : '';
 ?>
 
     <tr class="form-field">

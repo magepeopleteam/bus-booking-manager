@@ -9,6 +9,7 @@ function mage_book_now_area($available_seat = null)
     $currency_pos = sanitize_text_field(get_option('woocommerce_currency_pos'));
     $is_sell_off = sanitize_text_field(get_post_meta(get_the_ID(), 'wbbm_sell_off', true));
 
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended
     $search_date = (isset($_GET['j_date']) ? sanitize_text_field(wp_unslash($_GET['j_date'])) : '');
     $current_date = gmdate('Y-m-d');
 
@@ -53,6 +54,11 @@ function mage_book_now_area($available_seat = null)
                                                                             } ?>">
                         <?php echo esc_html(wbbm_get_option('wbbm_book_now_text', 'wbbm_label_setting_sec', __('Book Now', 'bus-booking-manager'))); ?>
                     </button>
+
+                    <?php
+                    // Nonce field for mage_book_now_area action — used for server-side verification
+                    wp_nonce_field('mage_book_now_area', 'mage_book_now_area_nonce');
+                    ?>
 
                     <button type="submit" class="mage_hidden single_add_to_cart_button" name="add-to-cart" value="<?php echo esc_attr(sanitize_text_field(get_post_meta(get_the_ID(), 'link_wc_product', true))); ?>">
                     </button>

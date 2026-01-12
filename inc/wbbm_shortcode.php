@@ -15,17 +15,12 @@ function wbbm_bus_list($atts, $content=null) {
     $paged = get_query_var("paged") ? get_query_var("paged") : 1;
 
     if ($cat > 0) {
+        // Use direct taxonomy query var to avoid building an explicit tax_query (can be slower)
         $args_search_qqq = array(
             'post_type'      => array('wbbm_bus'),
             'paged'          => $paged,
             'posts_per_page' => $show,
-            'tax_query'      => array(
-                array(
-                    'taxonomy' => 'wbbm_bus_cat',
-                    'field'    => 'term_id',
-                    'terms'    => $cat,
-                )
-            )
+            'wbbm_bus_cat'   => $cat,
         );
     } else {
         $args_search_qqq = array(

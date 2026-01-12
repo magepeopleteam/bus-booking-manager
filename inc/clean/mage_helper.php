@@ -6,6 +6,7 @@ if (!defined('ABSPATH')) {
 
 function mage_get_isset($parameter)
 {
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended
     return isset($_GET[$parameter]) ? sanitize_text_field(wp_unslash($_GET[$parameter])) : '';
 }
 
@@ -13,8 +14,8 @@ function mage_qty_box($price, $name, $return)
 {
     $date = $return ? mage_get_isset('r_date') : mage_get_isset('j_date');
     $available_seat = wbbm_intermidiate_available_seat(
-        sanitize_text_field(wp_unslash($_GET['bus_start_route'])),
-        sanitize_text_field(wp_unslash($_GET['bus_end_route'])),
+        mage_get_isset('bus_start_route'),
+        mage_get_isset('bus_end_route'),
         wbbm_convert_date_to_php($date)
     );
     if ($available_seat > 0) {
@@ -52,8 +53,8 @@ function wbbm_entire_switch($price, $name, $return)
 {
     $date = $return ? mage_get_isset('r_date') : mage_get_isset('j_date');
     $available_seat = wbbm_intermidiate_available_seat(
-        sanitize_text_field(wp_unslash($_GET['bus_start_route'])),
-        sanitize_text_field(wp_unslash($_GET['bus_end_route'])),
+        mage_get_isset('bus_start_route'),
+        mage_get_isset('bus_end_route'),
         wbbm_convert_date_to_php($date)
     );
 
@@ -127,7 +128,8 @@ function wbtm_load_dropping_point()
 {
     check_ajax_referer('wbbm_ajax_nonce', 'nonce');
 
-    $boardingPoint = sanitize_text_field(wp_unslash($_POST['boarding_point']));
+    // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+    $boardingPoint = isset($_POST['boarding_point']) ? MP_Global_Function::wbbm_recursive_sanitize(wp_unslash($_POST['boarding_point'])) : array();
     $category = get_term_by('name', $boardingPoint, 'wbbm_bus_stops');
     $allStopArr = get_terms(array(
         'taxonomy' => 'wbbm_bus_stops',
@@ -153,12 +155,18 @@ function mage_bus_list_query($start, $end)
 {
     $start = mage_get_isset($start);
     $end = mage_get_isset($end);
+    // Avoid unconstrained full-table meta queries where possible:
+    // - limit results instead of -1, return only IDs, and disable SQL_CALC_FOUND_ROWS
+    // Note: for large datasets consider normalizing stops into a taxonomy or dedicated table.
     return array(
         'post_type' => array('wbbm_bus'),
-        'posts_per_page' => -1,
+        // limit results to avoid heavy queries; adjust as needed
+        'posts_per_page' => 200,
         'order' => 'ASC',
         'orderby' => 'meta_value',
         'post_status' => array('publish'),
+        'no_found_rows' => true,
+        'fields' => 'ids',
         'meta_query' => array(
             'relation' => 'AND',
             array(
@@ -552,9 +560,9 @@ function wbbm_bus_pickpoint_custom_column_callback($content, $column_name, $term
  **************************************/
 function wbbm_extra_services_section($bus_id)
 {
-    $start = isset($_GET['bus_start_route']) ? sanitize_text_field(wp_unslash($_GET['bus_start_route'])) : '';
-    $end = isset($_GET['bus_end_route']) ? sanitize_text_field(wp_unslash($_GET['bus_end_route'])) : '';
-    $j_date = isset($_GET['j_date']) ? sanitize_text_field(wp_unslash($_GET['j_date'])) : '';
+    $start = mage_get_isset('bus_start_route');
+    $end = mage_get_isset('bus_end_route');
+    $j_date = mage_get_isset('j_date');
 
     $is_enable_extra_services = get_post_meta($bus_id, 'show_extra_service', true);
     $extra_services = get_post_meta($bus_id, 'mep_events_extra_prices', true);

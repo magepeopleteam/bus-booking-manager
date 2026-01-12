@@ -1626,20 +1626,22 @@
 		}
 		add_action('wp_insert_post', 'wbbm_on_post_publish', 10, 3);
 		function wbbm_count_hidden_wc_product($event_id) {
+			// Use a lightweight query that returns only IDs to avoid heavy meta queries and memory usage.
 			$args = array(
-				'post_type' => 'product',
+				'post_type'      => 'product',
 				'posts_per_page' => -1,
-				'meta_query' => array(
+				'fields'         => 'ids',
+				'no_found_rows'  => true,
+				'meta_query'     => array(
 					array(
-						'key' => 'link_wbbm_bus',
-						'value' => $event_id,
+						'key'     => 'link_wbbm_bus',
+						'value'   => $event_id,
 						'compare' => '='
 					)
 				)
 			);
-			$loop = new WP_Query($args);
-			// print_r($loop->posts);
-			return $loop->post_count;
+			$posts = get_posts($args);
+			return is_array($posts) ? count($posts) : 0;
 		}
 		add_action('save_post', 'wbbm_wc_link_product_on_save', 99, 1);
 		function wbbm_wc_link_product_on_save($post_id) {
@@ -1688,12 +1690,15 @@
 			$taxonomy = 'product_visibility';
 			$q_vars = &$query->query_vars;
 			if ($pagenow == 'edit.php' && isset($q_vars['post_type']) && $q_vars['post_type'] == 'product') {
-				$tax_query = array([
-					'taxonomy' => 'product_visibility',
-					'field' => 'slug',
-					'terms' => 'exclude-from-catalog',
-					'operator' => 'NOT IN',
-				]);
+				// Use a standard tax_query array (terms as array) to make the query structure explicit.
+				$tax_query = array(
+					array(
+						'taxonomy' => 'product_visibility',
+						'field'    => 'slug',
+						'terms'    => array('exclude-from-catalog'),
+						'operator' => 'NOT IN',
+					),
+				);
 				$query->set('tax_query', $tax_query);
 			}
 		}

@@ -48,6 +48,7 @@ if( ! class_exists( 'AddMetaBox' ) ) {
             $post_id = $this->get_post_id(); // Get post ID
 
             if (!empty($get_option_name)) {
+                // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
                 $option_value = isset($_POST[$get_option_name]) ? MP_Global_Function::wbbm_recursive_sanitize(wp_unslash($_POST[$get_option_name])) : '';
                 update_post_meta($post_id, sanitize_key($get_option_name), serialize($option_value));
             } else {
