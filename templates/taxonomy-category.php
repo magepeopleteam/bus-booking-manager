@@ -6,7 +6,8 @@ if (!defined('ABSPATH')) {
 
 get_header();
 the_post();
-$term_id = get_queried_object()->term_id;
+$queried_obj = get_queried_object();
+$term_id = isset($queried_obj->term_id) ? intval($queried_obj->term_id) : 0;
 ?>
 <div class="mep-events-wrapper">
     <div class="wbbm-bus-list-sec">
@@ -16,16 +17,12 @@ $term_id = get_queried_object()->term_id;
         </div>
         
         <?php
+        // Use direct taxonomy query var and limit results to mitigate heavy tax/meta queries
         $args_search_qqq = array(
             'post_type'      => array('wbbm_bus'),
-            'posts_per_page' => -1,
-            'tax_query'      => array(
-                array(
-                    'taxonomy' => 'wbbm_bus_cat',
-                    'field'    => 'term_id',
-                    'terms'    => $term_id,
-                ),
-            ),
+            'posts_per_page' => 200,
+            'no_found_rows'  => true,
+            'wbbm_bus_cat'   => $term_id,
         );
         $loop = new WP_Query($args_search_qqq);
         

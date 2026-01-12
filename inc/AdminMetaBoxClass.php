@@ -197,10 +197,13 @@ class AdminMetaBoxClass extends CommonClass
                     $city_name_slug = str_replace(' ', '_', strtolower($city));
                     $m_array = [];
 
-                    foreach ($_POST[$selected_pickpoint_name . $city] as $i => $pickpoint) {
+                    // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+                    $selected_pickpoint_names = isset($_POST[$selected_pickpoint_name . $city]) ? MP_Global_Function::wbbm_recursive_sanitize(wp_unslash($_POST[$selected_pickpoint_name . $city])) : array();
+
+                    foreach ($selected_pickpoint_names as $i => $pickpoint) {
                         $m_array[$i] = [
                             'pickpoint' => sanitize_text_field($pickpoint),
-                            'time' => sanitize_text_field($_POST[$selected_pickpoint_time . $city][$i]),
+                            'time' => sanitize_text_field($selected_pickpoint_names[$i]),
                         ];
                     }
 
@@ -222,10 +225,10 @@ class AdminMetaBoxClass extends CommonClass
 
         // Bus Onday & Offday
         $offday_schedule_array = [];
-        $offday_date_from = isset($_POST['wbtm_od_offdate_from']) ? array_map('sanitize_text_field', $_POST['wbtm_od_offdate_from']) : [];
-        $offday_date_to = isset($_POST['wbtm_od_offdate_to']) ? array_map('sanitize_text_field', $_POST['wbtm_od_offdate_to']) : [];
-        $offday_time_from = isset($_POST['wbtm_od_offtime_from']) ? array_map('sanitize_text_field', $_POST['wbtm_od_offtime_from']) : [];
-        $offday_time_to = isset($_POST['wbtm_od_offtime_to']) ? array_map('sanitize_text_field', $_POST['wbtm_od_offtime_to']) : [];
+        $offday_date_from = isset($_POST['wbtm_od_offdate_from']) ? array_map('sanitize_text_field', wp_unslash($_POST['wbtm_od_offdate_from'])) : [];
+        $offday_date_to = isset($_POST['wbtm_od_offdate_to']) ? array_map('sanitize_text_field', wp_unslash($_POST['wbtm_od_offdate_to'])) : [];
+        $offday_time_from = isset($_POST['wbtm_od_offtime_from']) ? array_map('sanitize_text_field', wp_unslash($_POST['wbtm_od_offtime_from'])) : [];
+        $offday_time_to = isset($_POST['wbtm_od_offtime_to']) ? array_map('sanitize_text_field', wp_unslash($_POST['wbtm_od_offtime_to'])) : [];
 
         if (!empty($offday_date_from)) {
             foreach ($offday_date_from as $i => $date_from) {
@@ -242,38 +245,38 @@ class AdminMetaBoxClass extends CommonClass
 
         update_post_meta($post_id, 'wbtm_offday_schedule', $offday_schedule_array);
 
-        $wbtm_od_start = sanitize_text_field($_POST['wbtm_od_start']);
-        $wbtm_od_end = sanitize_text_field($_POST['wbtm_od_end']);
-        $wbtm_bus_on_date = isset($_POST['wbtm_bus_on_date']) ? array_map('sanitize_text_field', $_POST['wbtm_bus_on_date']) : '';
+        $wbtm_od_start = isset($_POST['wbtm_od_start']) ? sanitize_text_field(wp_unslash($_POST['wbtm_od_start'])) : '';
+        $wbtm_od_end = isset($_POST['wbtm_od_end']) ? sanitize_text_field(wp_unslash($_POST['wbtm_od_end'])) : '';
+        $wbtm_bus_on_date = isset($_POST['wbtm_bus_on_date']) ? array_map('sanitize_text_field', wp_unslash($_POST['wbtm_bus_on_date'])) : '';
 
-        $od = isset($_POST['weekly_offday']) ? array_map('sanitize_text_field', $_POST['weekly_offday']) : [];
+        $od = isset($_POST['weekly_offday']) ? array_map('sanitize_text_field', wp_unslash($_POST['weekly_offday'])) : [];
         update_post_meta($post_id, 'weekly_offday', $od);
 
-        $show_boarding_points = sanitize_text_field($_POST['show_boarding_points']);
+        $show_boarding_points = isset($_POST['show_boarding_points']) ? sanitize_text_field(wp_unslash($_POST['show_boarding_points'])) : '';
         update_post_meta($post_id, '_virtual', 'yes');
         update_post_meta($post_id, 'wbtm_od_start', $wbtm_od_start);
         update_post_meta($post_id, 'wbtm_od_end', $wbtm_od_end);
         update_post_meta($post_id, 'wbtm_bus_on_date', $wbtm_bus_on_date);
         update_post_meta($post_id, 'show_boarding_points', $show_boarding_points);
 
-        $show_extra_service = isset($_POST['show_extra_service']) ? sanitize_text_field($_POST['show_extra_service']) : 'no';
+        $show_extra_service = isset($_POST['show_extra_service']) ? sanitize_text_field(wp_unslash($_POST['show_extra_service'])) : 'no';
         update_post_meta($post_id, 'show_extra_service', $show_extra_service);
 
-        $show_pickup_point = isset($_POST['show_pickup_point']) ? sanitize_text_field($_POST['show_pickup_point']) : 'no';
+        $show_pickup_point = isset($_POST['show_pickup_point']) ? sanitize_text_field(wp_unslash($_POST['show_pickup_point'])) : 'no';
         update_post_meta($post_id, 'show_pickup_point', $show_pickup_point);
 
-        $show_operational_on_day = isset($_POST['show_operational_on_day']) ? sanitize_text_field($_POST['show_operational_on_day']) : 'no';
+        $show_operational_on_day = isset($_POST['show_operational_on_day']) ? sanitize_text_field(wp_unslash($_POST['show_operational_on_day'])) : 'no';
         update_post_meta($post_id, 'show_operational_on_day', $show_operational_on_day);
 
-        $show_off_day = isset($_POST['show_off_day']) ? sanitize_text_field($_POST['show_off_day']) : 'no';
+        $show_off_day = isset($_POST['show_off_day']) ? sanitize_text_field(wp_unslash($_POST['show_off_day'])) : 'no';
         update_post_meta($post_id, 'show_off_day', $show_off_day);
 
         // Partial Payment
         do_action('wcpp_partial_settings_saved', $post_id);
 
         // Tax Settings
-        $tax_status = isset($_POST['_tax_status']) ? sanitize_text_field($_POST['_tax_status']) : '';
-        $tax_class = isset($_POST['_tax_class']) ? sanitize_text_field($_POST['_tax_class']) : '';
+        $tax_status = isset($_POST['_tax_status']) ? sanitize_text_field(wp_unslash($_POST['_tax_status'])) : '';
+        $tax_class = isset($_POST['_tax_class']) ? sanitize_text_field(wp_unslash($_POST['_tax_class'])) : '';
         update_post_meta($post_id, '_tax_status', $tax_status);
         update_post_meta($post_id, '_tax_class', $tax_class);
     }

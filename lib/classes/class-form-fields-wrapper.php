@@ -7788,9 +7788,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
 
             if( ! taxonomy_exists( $taxonomy ) ) throw new Pick_error(wp_kses_post("Taxonomy <strong>$taxonomy</strong> doesn't exists !"));
 
-            $terms = get_terms( $taxonomy, array(
-                'hide_empty' => false,
-            ) );
+            $terms = get_terms( $taxonomy );
 
             foreach( $terms as $term ) $taxonomies[ $term->term_id ] = $term->name;
 

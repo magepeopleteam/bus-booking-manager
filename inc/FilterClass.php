@@ -36,9 +36,15 @@
 
         public function wbbm_add_custom_fields_text_to_cart_item( $cart_item_data, $product_id, $variation_id = null ) {
 
-            // Verify nonce
-            $nonce = isset($_POST['add_to_cart_custom_nonce']) ? sanitize_text_field(wp_unslash($_POST['add_to_cart_custom_nonce'])) : '';
-            if ( ! $nonce || ! wp_verify_nonce($nonce, 'add_to_cart_custom_action') ) {
+            // Verify nonce: accept either the existing 'add_to_cart_custom_nonce' or the
+            // new 'mage_book_now_area_nonce' for the book-now template.
+            $nonce_custom = isset($_POST['add_to_cart_custom_nonce']) ? sanitize_text_field(wp_unslash($_POST['add_to_cart_custom_nonce'])) : '';
+            $nonce_mage = isset($_POST['mage_book_now_area_nonce']) ? sanitize_text_field(wp_unslash($_POST['mage_book_now_area_nonce'])) : '';
+
+            $custom_ok = $nonce_custom && wp_verify_nonce($nonce_custom, 'add_to_cart_custom_action');
+            $mage_ok = $nonce_mage && wp_verify_nonce($nonce_mage, 'mage_book_now_area');
+
+            if ( ! $custom_ok && ! $mage_ok ) {
                 wc_add_notice(__('Security check failed. Please try again.', 'bus-booking-manager'), 'error');
                 return $cart_item_data;
             }

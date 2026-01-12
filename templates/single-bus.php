@@ -25,8 +25,10 @@ if ($type_id != '') {
 }
 
 // Use sanitized values for query parameters
-$boarding = isset($_GET[$boarding_var]) ? sanitize_text_field($_GET[$boarding_var]) : '';
-$dropping = isset($_GET[$dropping_var]) ? sanitize_text_field($_GET[$dropping_var]) : '';
+// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+$boarding = isset($_GET[$boarding_var]) ? sanitize_text_field(wp_unslash($_GET[$boarding_var])) : '';
+// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+$dropping = isset($_GET[$dropping_var]) ? sanitize_text_field(wp_unslash($_GET[$dropping_var])) : '';
 $available_seat = wbbm_intermidiate_available_seat($boarding, $dropping, wbbm_convert_date_to_php(mage_get_isset($date_var)));
 $cart_qty = wbbm_get_cart_item($id, mage_get_isset($date_var));
 $available_seat -= $cart_qty;
@@ -85,6 +87,7 @@ if (!empty($off_day_sche) && $show_off_day === 'yes') {
     <?php do_action('woocommerce_before_single_product'); ?>
     <div class="mage_search_list <?php echo esc_attr($in_cart ? 'booked' : ''); ?>" data-seat-available="<?php echo esc_attr($available_seat); ?>">
         <form action="" method="post">
+            <?php wp_nonce_field('mage_book_now_area', 'mage_book_now_area_nonce'); ?>
             <div class="mage_flex_equal xs_not_flex">
                 <div class="mage_thumb">
                     <?php
@@ -186,7 +189,7 @@ if (!empty($off_day_sche) && $show_off_day === 'yes') {
                         <?php } ?>
                         <?php
                         // Pickup Point
-                        $boarding_point = isset($_GET[$boarding_var]) ? sanitize_text_field($_GET[$boarding_var]) : '';
+                        $boarding_point = $boarding;
                         $boarding_point_slug = strtolower($boarding_point);
                         $boarding_point_slug = preg_replace('/[^A-Za-z0-9-]/', '_', $boarding_point_slug);
                         $pickpoints = get_post_meta(get_the_ID(), 'wbbm_selected_pickpoint_name_' . $boarding_point_slug, true);
@@ -243,9 +246,9 @@ if (!empty($off_day_sche) && $show_off_day === 'yes') {
                         </div>
                         <div class="mage_customer_info_area">
                             <?php
-                            $date = isset($_GET[$date_var]) ? mage_wp_date($_GET[$date_var], 'Y-m-d') : gmdate('Y-m-d');
-                            $start = isset($_GET[$boarding_var]) ? sanitize_text_field($_GET[$boarding_var]) : '';
-                            $end = isset($_GET[$dropping_var]) ? sanitize_text_field($_GET[$dropping_var]) : '';
+                            $date = $j_date ? mage_wp_date($j_date, 'Y-m-d') : gmdate('Y-m-d');
+                            $start = $boarding;
+                            $end = $dropping;
                             hidden_input_field('bus_id', $id);
                             hidden_input_field('journey_date', $date);
                             hidden_input_field('start_stops', $start);
@@ -268,8 +271,8 @@ if (!empty($off_day_sche) && $show_off_day === 'yes') {
                         $bus_offday_schedules = get_post_meta(get_the_ID(), 'wbtm_offday_schedule', true);
                         $start_time = '';
                         foreach ($bus_stops_times as $stop) {
-                            if (isset($_GET[$boarding_var])) {
-                                if ($stop['wbbm_bus_bp_stops_name'] == $_GET[$boarding_var]) {
+                            if ($boarding) {
+                                if ($stop['wbbm_bus_bp_stops_name'] == $boarding) {
                                     $start_time = $stop['wbbm_bus_bp_start_time'];
                                 }
                             }
