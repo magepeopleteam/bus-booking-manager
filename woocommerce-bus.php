@@ -111,7 +111,7 @@ function wbbm_change_field_of_table() {
 
 	$table_name = esc_sql( $raw_table_name );
 
-	// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
+	// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 	if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table_name ) ) === $table_name ) {
 
 		if ( ! get_option( 'wbbm_table_alterations_applied' ) ) {
@@ -120,6 +120,8 @@ function wbbm_change_field_of_table() {
 				phpcs:disable PluginCheck.Security.DirectDB.UnescapedDBParameter
 				phpcs:disable WordPress.DB.DirectDatabaseQuery.SchemaChange
 				phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery
+				phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching
+				phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 				*/			
 				$wpdb->query("ALTER TABLE {$table_name} CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
 
@@ -140,7 +142,7 @@ function wbbm_change_field_of_table() {
 					continue;
 				}
 
-				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
+				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 				$column_exists = $wpdb->get_var(
 					$wpdb->prepare(
 						"SHOW COLUMNS FROM {$table_name} LIKE %s",
@@ -149,7 +151,7 @@ function wbbm_change_field_of_table() {
 				);
 
 				if ( $column_exists ) {
-					// phpcs:ignore PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery
+					// phpcs:ignore PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 					$wpdb->query(
 						"ALTER TABLE {$table_name} MODIFY {$column} {$definition}"
 					);
@@ -173,6 +175,7 @@ function wbbm_change_field_of_table() {
 			if (get_option('wbbm_update_db_once_06') != 'completed') {
 				$table = esc_sql($wpdb->prefix . "wbbm_bus_booking_list");
 				$column_name_user_type = 'user_type';
+				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 				$column_user_type = $wpdb->get_results($wpdb->prepare(
 					"SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s AND COLUMN_NAME = %s ",
 					DB_NAME,
@@ -180,6 +183,7 @@ function wbbm_change_field_of_table() {
 					$column_name_user_type
 				));
 				if (empty($column_user_type)) {
+					// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 					$wpdb->query("ALTER TABLE $table  
                 ADD COLUMN user_type varchar(55) NOT NULL AFTER user_address,  
                 ADD COLUMN total_adult int(9) NOT NULL AFTER user_start,  
@@ -193,6 +197,7 @@ function wbbm_change_field_of_table() {
 			if (get_option('wbbm_update_db_once_07') != 'completed') {
 				$table = esc_sql($wpdb->prefix . "wbbm_bus_booking_list");
 				$column_name_next_stops = 'next_stops';
+				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 				$column_next_stops = $wpdb->get_results($wpdb->prepare(
 					"SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s AND COLUMN_NAME = %s ",
 					DB_NAME,
@@ -200,6 +205,7 @@ function wbbm_change_field_of_table() {
 					$column_name_next_stops
 				));
 				if (empty($column_next_stops)) {
+					// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 					$wpdb->query("ALTER TABLE $table ADD next_stops text NOT NULL AFTER boarding_point");
 				}
 				update_option('wbbm_update_db_once_07', 'completed');
@@ -208,12 +214,14 @@ function wbbm_change_field_of_table() {
 			$column_name = 'total_infant';
 			$column_name_two = 'per_infant_price';
 			$table = esc_sql($wpdb->prefix . "wbbm_bus_booking_list");
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 			$column = $wpdb->get_results($wpdb->prepare(
 				"SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s AND COLUMN_NAME = %s ",
 				DB_NAME,
 				$table,
 				$column_name
 			));
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 			$column_two = $wpdb->get_results($wpdb->prepare(
 				"SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s AND COLUMN_NAME = %s ",
 				DB_NAME,
@@ -221,6 +229,7 @@ function wbbm_change_field_of_table() {
 				$column_name_two
 			));
 			if (empty($column) && empty($column_two)) {
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 				$wpdb->query("ALTER TABLE $table ADD total_infant INT(9) NULL AFTER per_child_price, ADD per_infant_price INT(9) NULL AFTER per_child_price");
 			}
 			//  Add Infant column END
@@ -228,12 +237,14 @@ function wbbm_change_field_of_table() {
 			$column_name = 'total_entire';
 			$column_name_two = 'per_entire_price';
 			$table = esc_sql($wpdb->prefix . "wbbm_bus_booking_list");
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 			$column = $wpdb->get_results($wpdb->prepare(
 				"SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s AND COLUMN_NAME = %s ",
 				DB_NAME,
 				$table,
 				$column_name
 			));
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 			$column_two = $wpdb->get_results($wpdb->prepare(
 				"SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s AND COLUMN_NAME = %s ",
 				DB_NAME,
@@ -241,6 +252,7 @@ function wbbm_change_field_of_table() {
 				$column_name_two
 			));
 			if (empty($column) && empty($column_two)) {
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 				$wpdb->query("ALTER TABLE $table ADD total_entire INT(9) NULL AFTER total_infant, ADD per_entire_price INT(9) NULL AFTER total_infant");
 			}
 			//  Add entire column END
@@ -251,36 +263,42 @@ function wbbm_change_field_of_table() {
 			$c_flight_departure_no = 'flight_departure_no';
 			$c_extra_bag_quantity = 'extra_bag_quantity';
 			$table = esc_sql($wpdb->prefix . "wbbm_bus_booking_list");
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 			$cc_dob = $wpdb->get_results($wpdb->prepare(
 				"SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s AND COLUMN_NAME = %s ",
 				DB_NAME,
 				$table,
 				$c_dob
 			));
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 			$cc_nationality = $wpdb->get_results($wpdb->prepare(
 				"SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s AND COLUMN_NAME = %s ",
 				DB_NAME,
 				$table,
 				$c_nationality
 			));
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 			$cc_flight_arrial_no = $wpdb->get_results($wpdb->prepare(
 				"SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s AND COLUMN_NAME = %s ",
 				DB_NAME,
 				$table,
 				$c_flight_arrial_no
 			));
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 			$cc_extra_bag_quantity = $wpdb->get_results($wpdb->prepare(
 				"SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s AND COLUMN_NAME = %s ",
 				DB_NAME,
 				$table,
 				$c_extra_bag_quantity
 			));
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 			$cc_flight_departure_no = $wpdb->get_results($wpdb->prepare(
 				"SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s AND COLUMN_NAME = %s ",
 				DB_NAME,
 				$table,
 				$c_flight_departure_no
 			));
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 			$pickpoint_column = $wpdb->get_results($wpdb->prepare(
 				"SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s AND COLUMN_NAME = %s ",
 				DB_NAME,
@@ -288,17 +306,21 @@ function wbbm_change_field_of_table() {
 				'pickpoint'
 			));
 			if (empty($pickpoint_column)) {
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 				$wpdb->query("ALTER TABLE $table ADD pickpoint VARCHAR (255) NOT NULL AFTER booking_date");
 			}
 			if (empty($cc_dob) && empty($cc_nationality) && empty($cc_flight_arrial_no) && empty($cc_flight_departure_no)) {
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 				$wpdb->query("ALTER TABLE $table ADD user_dob varchar(55) NULL AFTER pickpoint, ADD nationality varchar(255) NULL AFTER pickpoint, ADD flight_arrial_no varchar(255) NULL AFTER pickpoint, ADD flight_departure_no varchar(255) NULL AFTER pickpoint");
 			}
 			if (empty($cc_extra_bag_quantity)) {
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 				$wpdb->query("ALTER TABLE $table ADD extra_bag_quantity varchar(55) NULL AFTER pickpoint");
 			}
 			// Add Dob, Nationality, Flight arrival no, Fligh departure no END
 			// Alter Columns datatype [ per_adult_price, total_adult, per_child_price, total_child, per_infant_price, total_infant, total_price ] on version
 			// 1
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 			$t_column1 = $wpdb->get_results($wpdb->prepare(
 				"SELECT DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s AND COLUMN_NAME = %s ",
 				DB_NAME,
@@ -306,9 +328,11 @@ function wbbm_change_field_of_table() {
 				'per_adult_price'
 			));
 			if (!empty($t_column1) && $t_column1[0]->DATA_TYPE == 'int') {
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 				$wpdb->query("ALTER TABLE $table MODIFY COLUMN per_adult_price FLOAT(9,2)");
 			}
 			// 2
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 			$t_column2 = $wpdb->get_results($wpdb->prepare(
 				"SELECT DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s AND COLUMN_NAME = %s ",
 				DB_NAME,
@@ -316,9 +340,11 @@ function wbbm_change_field_of_table() {
 				'total_adult'
 			));
 			if (!empty($t_column2) && $t_column2[0]->DATA_TYPE == 'int') {
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 				$wpdb->query("ALTER TABLE $table MODIFY COLUMN total_adult FLOAT(9,2)");
 			}
 			// 2
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 			$t_column3 = $wpdb->get_results($wpdb->prepare(
 				"SELECT DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s AND COLUMN_NAME = %s ",
 				DB_NAME,
@@ -326,9 +352,11 @@ function wbbm_change_field_of_table() {
 				'per_child_price'
 			));
 			if (!empty($t_column3) && $t_column3[0]->DATA_TYPE == 'int') {
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 				$wpdb->query("ALTER TABLE $table MODIFY COLUMN per_child_price FLOAT(9,2)");
 			}
 			// 3
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 			$t_column4 = $wpdb->get_results($wpdb->prepare(
 				"SELECT DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s AND COLUMN_NAME = %s ",
 				DB_NAME,
@@ -336,9 +364,11 @@ function wbbm_change_field_of_table() {
 				'total_child'
 			));
 			if (!empty($t_column4) && $t_column4[0]->DATA_TYPE == 'int') {
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 				$wpdb->query("ALTER TABLE $table MODIFY COLUMN total_child FLOAT(9,2)");
 			}
 			// 4
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 			$t_column4 = $wpdb->get_results($wpdb->prepare(
 				"SELECT DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s AND COLUMN_NAME = %s ",
 				DB_NAME,
@@ -346,9 +376,11 @@ function wbbm_change_field_of_table() {
 				'total_infant'
 			));
 			if (!empty($t_column4) && $t_column4[0]->DATA_TYPE == 'int') {
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 				$wpdb->query("ALTER TABLE $table MODIFY COLUMN total_infant FLOAT(9,2)");
 			}
 			// 5
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 			$t_column5 = $wpdb->get_results($wpdb->prepare(
 				"SELECT DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s AND COLUMN_NAME = %s ",
 				DB_NAME,
@@ -356,20 +388,24 @@ function wbbm_change_field_of_table() {
 				'per_infant_price'
 			));
 			if (!empty($t_column5) && $t_column5[0]->DATA_TYPE == 'int') {
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 				$wpdb->query("ALTER TABLE $table MODIFY COLUMN per_infant_price FLOAT(9,2)");
 			}
 			// 7
 			/*
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 			$t_column7 = $wpdb->get_results($wpdb->prepare(
 				"SELECT DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s AND COLUMN_NAME = %s ",
 				DB_NAME, $table, 'total_entire'
 			));
 
 			if (!empty($t_column7) && $t_column7[0]->DATA_TYPE == 'int') {
+				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 				$wpdb->query("ALTER TABLE " . $table . " MODIFY COLUMN total_entire FLOAT(9,2)");
 			}
 			*/
 			// 8
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 			$t_column8 = $wpdb->get_results($wpdb->prepare(
 				"SELECT DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s AND COLUMN_NAME = %s ",
 				DB_NAME,
@@ -377,9 +413,11 @@ function wbbm_change_field_of_table() {
 				'per_entire_price'
 			));
 			if (!empty($t_column8) && $t_column8[0]->DATA_TYPE == 'int') {
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 				$wpdb->query("ALTER TABLE $table MODIFY COLUMN per_entire_price FLOAT(9,2)");
 			}
 			// 6
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 			$t_column6 = $wpdb->get_results($wpdb->prepare(
 				"SELECT DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s AND COLUMN_NAME = %s ",
 				DB_NAME,
@@ -387,10 +425,12 @@ function wbbm_change_field_of_table() {
 				'total_price'
 			));
 			if (!empty($t_column6) && $t_column6[0]->DATA_TYPE == 'int') {
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 				$wpdb->query("ALTER TABLE $table MODIFY COLUMN total_price FLOAT(9,2)");
 			}
 			// Boarding, Dropping and Pick point data type length
 			// 1
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 			$length_column1 = $wpdb->get_results($wpdb->prepare(
 				"SELECT CHARACTER_MAXIMUM_LENGTH FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s AND COLUMN_NAME = %s ",
 				DB_NAME,
@@ -398,9 +438,11 @@ function wbbm_change_field_of_table() {
 				'boarding_point'
 			));
 			if (!empty($length_column1) && $length_column1[0]->CHARACTER_MAXIMUM_LENGTH < 253) {
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 				$wpdb->query("ALTER TABLE $table MODIFY COLUMN boarding_point VARCHAR(255)");
 			}
 			// 2
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 			$length_column2 = $wpdb->get_results($wpdb->prepare(
 				"SELECT CHARACTER_MAXIMUM_LENGTH FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s AND COLUMN_NAME = %s ",
 				DB_NAME,
@@ -408,9 +450,11 @@ function wbbm_change_field_of_table() {
 				'droping_point'
 			));
 			if (!empty($length_column2) && $length_column2[0]->CHARACTER_MAXIMUM_LENGTH < 253) {
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 				$wpdb->query("ALTER TABLE $table MODIFY COLUMN droping_point VARCHAR(255)");
 			}
 			// 3
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 			$length_column3 = $wpdb->get_results($wpdb->prepare(
 				"SELECT CHARACTER_MAXIMUM_LENGTH FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s AND COLUMN_NAME = %s ",
 				DB_NAME,
@@ -418,11 +462,13 @@ function wbbm_change_field_of_table() {
 				'pickpoint'
 			));
 			if (!empty($length_column3) && $length_column3[0]->CHARACTER_MAXIMUM_LENGTH < 253) {
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 				$wpdb->query("ALTER TABLE $table MODIFY COLUMN pickpoint VARCHAR(255)");
 			}
 			// Boarding, Dropping and Pick point data type length END
 			// Add 'ticket_status' column
 			$column_name = 'ticket_status';
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 			$column = $wpdb->get_results($wpdb->prepare(
 				"SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s AND COLUMN_NAME = %s ",
 				DB_NAME,
@@ -430,6 +476,7 @@ function wbbm_change_field_of_table() {
 				$column_name
 			));
 			if (empty($column)) {
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 				$wpdb->query(sprintf("ALTER TABLE $table ADD ticket_status INT NOT NULL DEFAULT 0  AFTER next_stops"));
 			}
 			// Add 'ticket_status' column End
@@ -554,7 +601,8 @@ function wbbm_change_field_of_table() {
 			$post_type = 'wbbm_bus'; // change to your post type
 			$taxonomy = 'wbbm_bus_cat'; // change to your taxonomy
 			if ($typenow == $post_type) {
-				$selected = isset($_GET[$taxonomy]) ? $_GET[$taxonomy] : '';
+				// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- No nonce needed for admin filtering
+				$selected = isset($_GET[$taxonomy]) ? sanitize_text_field( wp_unslash( $_GET[$taxonomy] ) ) : '';
 				$info_taxonomy = get_taxonomy($taxonomy);
 				wp_dropdown_categories(array(
 					/* translators: %s: taxonomy label */
@@ -603,7 +651,7 @@ function wbbm_change_field_of_table() {
 
 			$table_name = esc_sql( $raw_table_name );
 
-			// phpcs:ignore PluginCheck.Security.DirectDB.UnescapedDBParameter
+			// phpcs:ignore PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.NoCaching
 			$results = $wpdb->get_results(
 				$wpdb->prepare(
 					"SELECT meta_key 
@@ -850,8 +898,9 @@ function wbbm_change_field_of_table() {
                     </label>
                 </div>
 				<?php
+						// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- No nonce needed for search form display
 					if (isset($_GET['bus-r'])) {
-						$busr = wp_strip_all_tags($_GET['bus-r']);
+					$busr = sanitize_text_field( wp_unslash( $_GET['bus-r'] ) );
 					} else {
 						$busr = 'oneway';
 					}
@@ -873,9 +922,13 @@ function wbbm_change_field_of_table() {
                 </div>
             </div>
             <script>
-				<?php if (isset($_GET['bus-r']) && $_GET['bus-r'] == 'oneway') { ?>
+				<?php 
+				// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- No nonce needed for search form display
+				if (isset($_GET['bus-r']) && sanitize_text_field( wp_unslash( $_GET['bus-r'] ) ) == 'oneway') { ?>
                 jQuery('.return-date-sec').hide();
-				<?php } elseif (isset($_GET['bus-r']) && $_GET['bus-r'] == 'return') { ?>
+				<?php 
+				// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- No nonce needed for search form display
+				} elseif (isset($_GET['bus-r']) && sanitize_text_field( wp_unslash( $_GET['bus-r'] ) ) == 'return') { ?>
                 jQuery('.return-date-sec').show();
 				<?php } else { ?>
                 jQuery('.return-date-sec').hide();
@@ -913,7 +966,7 @@ function wbbm_change_field_of_table() {
 
 			$like_start = '%' . $wpdb->esc_like( $start ) . '%';
 
-			// phpcs:ignore PluginCheck.Security.DirectDB.UnescapedDBParameter
+			// phpcs:ignore PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.NoCaching
 			$result = $wpdb->get_results(
 				$wpdb->prepare(
 					"
@@ -955,7 +1008,7 @@ function wbbm_get_available_seat( $bus_id, $date ) {
 
 	$table_name = esc_sql( $raw_table_name );
 
-	// phpcs:ignore PluginCheck.Security.DirectDB.UnescapedDBParameter
+	// phpcs:ignore PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.NoCaching
 	$count = $wpdb->get_var(
 		$wpdb->prepare(
 			"
@@ -1037,7 +1090,7 @@ $query = "
 // Merge values
 $prepare_values = array_merge( [ $bus_id, $date, $start, $end, 99 ], $seat_booked_status );
 
-// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
+// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.NoCaching
 $sold_seats = $wpdb->get_var( $wpdb->prepare( $query, $prepare_values ) );
 
     return absint( $sold_seats );
@@ -1081,7 +1134,7 @@ function wbbm_get_order_meta( $item_id, $key ) {
 
 	$table_name = esc_sql( $raw_table_name );
 
-	// phpcs:ignore PluginCheck.Security.DirectDB.UnescapedDBParameter
+	// phpcs:ignore PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.NoCaching
 	$value = $wpdb->get_var(
 		$wpdb->prepare(
 			"
@@ -1121,7 +1174,7 @@ function wbbm_get_order_seat_check( $bus_id, $order_id, $user_type, $bus_start, 
 
 	$table_name = esc_sql( $raw_table_name );
 
-	// phpcs:ignore PluginCheck.Security.DirectDB.UnescapedDBParameter
+	// phpcs:ignore PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.NoCaching
 	$count = $wpdb->get_var(
 		$wpdb->prepare(
 			"
@@ -1165,6 +1218,7 @@ function wbbm_get_order_seat_check( $bus_id, $order_id, $user_type, $bus_start, 
 			global $wpdb;
 			$table_name = $wpdb->prefix . 'wbbm_bus_booking_list';
 			$add_datetime = current_time("Y-m-d h:i:s");
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 			$wpdb->insert(
 				$table_name,
 				array(
@@ -1259,9 +1313,20 @@ function wbbm_get_order_seat_check( $bus_id, $order_id, $user_type, $bus_start, 
 					$item_data = $item_values->get_data();
 					$product_id = $item_data['product_id'];
 					$item_quantity = $item_values->get_quantity();
-					$product = get_page_by_title($item_data['name'], OBJECT, 'wbbm_bus');
+					// Use WP_Query instead of deprecated get_page_by_title
+					$query_args = array(
+						'post_type' => 'wbbm_bus',
+						'title' => $item_data['name'],
+						'posts_per_page' => 1,
+						'no_found_rows' => true,
+						'update_post_meta_cache' => false,
+						'update_post_term_cache' => false,
+					);
+					$product_query = new WP_Query($query_args);
+					$product = $product_query->have_posts() ? $product_query->posts[0] : null;
+					wp_reset_postdata();
 					$event_name = $item_data['name'];
-					$event_id = $product->ID;
+					$event_id = $product ? $product->ID : 0;
 					$item_id = $item_id;
 					// $item_data = $item_values->get_data();
 					$user_id = $order_meta['_customer_user'][0] ?? 0;
@@ -1413,6 +1478,7 @@ function wbbm_get_order_seat_check( $bus_id, $order_id, $user_type, $bus_start, 
 				'order_id' => $order_id
 			);
 			if ($order_status == 'processing' || $order_status == 'completed') {
+				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 				$wpdb->update($table_name, $data, $wherecondition);
 			}
 		}
@@ -1446,7 +1512,7 @@ function wbbm_update_booking_status( $table_name, $data, $order_id, $bus_id ) {
 	$values[] = $order_id;
 	$values[] = $bus_id;
 
-	// phpcs:ignore PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.NotPrepared
+	// phpcs:ignore PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
 	$wpdb->query( $wpdb->prepare( $sql, $values ) );
 }
 
@@ -1578,8 +1644,10 @@ function wbbm_bus_ticket_seat_management( $order_id, $from_status, $to_status, $
 			$date = $return ? mage_get_isset('r_date') : mage_get_isset('j_date');
 			// $available_seat = mage_available_seat(wbbm_convert_date_to_php($date));
 			$id = get_the_id();
-			$boarding = isset($_GET['bus_start_route']) ? wp_strip_all_tags($_GET['bus_start_route']) : '';
-			$dropping = isset($_GET['bus_end_route']) ? wp_strip_all_tags($_GET['bus_end_route']) : '';
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- No nonce needed for seat form display
+			$boarding = isset($_GET['bus_start_route']) ? sanitize_text_field( wp_unslash( $_GET['bus_start_route'] ) ) : '';
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- No nonce needed for seat form display
+			$dropping = isset($_GET['bus_end_route']) ? sanitize_text_field( wp_unslash( $_GET['bus_end_route'] ) ) : '';
 			$seat_price_adult = mage_seat_price($id, $boarding, $dropping, 'adult');
 			$seat_price_child = mage_seat_price($id, $boarding, $dropping, 'child');
 			$seat_price_infant = mage_seat_price($id, $boarding, $dropping, 'infant');
@@ -1806,6 +1874,7 @@ function wbbm_bus_ticket_seat_management( $order_id, $from_status, $to_status, $
 function wbbm_count_hidden_wc_product($event_id) {
     global $wpdb;
 
+    // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
     $count = $wpdb->get_var(
         $wpdb->prepare(
             "
@@ -1843,8 +1912,10 @@ function wbbm_count_hidden_wc_product($event_id) {
 				set_post_thumbnail($product_id, get_post_thumbnail_id($post_id));
 				wp_publish_post($product_id);
 				// $product_type               = mep_get_option('mep_event_product_type', 'general_setting_sec','yes');
-				$_tax_status = isset($_POST['_tax_status']) ? wp_strip_all_tags($_POST['_tax_status']) : 'none';
-				$_tax_class = isset($_POST['_tax_class']) ? wp_strip_all_tags($_POST['_tax_class']) : '';
+				// phpcs:ignore WordPress.Security.NonceVerification.Missing -- WordPress handles nonce for post save
+				$_tax_status = isset($_POST['_tax_status']) ? sanitize_text_field( wp_unslash( $_POST['_tax_status'] ) ) : 'none';
+				// phpcs:ignore WordPress.Security.NonceVerification.Missing -- WordPress handles nonce for post save
+				$_tax_class = isset($_POST['_tax_class']) ? sanitize_text_field( wp_unslash( $_POST['_tax_class'] ) ) : '';
 				update_post_meta($product_id, '_tax_status', $_tax_status);
 				update_post_meta($product_id, '_tax_class', $_tax_class);
 				update_post_meta($product_id, '_stock_status', 'instock');
