@@ -15,7 +15,7 @@ class AdminMetaBoxClass extends CommonClass
         // Security checks
         if (
             !isset($_POST['wbbm_single_bus_settings_nonce']) ||
-            !wp_verify_nonce($_POST['wbbm_single_bus_settings_nonce'], 'wbbm_single_bus_settings_nonce')
+            !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['wbbm_single_bus_settings_nonce'])), 'wbbm_single_bus_settings_nonce')
         ) {
             return;
         }
@@ -31,23 +31,23 @@ class AdminMetaBoxClass extends CommonClass
         update_post_meta($post_id, '_sold_individually', 'yes');
 
         // Bus Price Zero Allow
-        $wbbm_price_zero_allow = isset($_POST['wbbm_price_zero_allow']) ? sanitize_text_field($_POST['wbbm_price_zero_allow']) : 'off';
+        $wbbm_price_zero_allow = isset($_POST['wbbm_price_zero_allow']) ? sanitize_text_field(wp_unslash($_POST['wbbm_price_zero_allow'])) : 'off';
         update_post_meta($post_id, 'wbbm_price_zero_allow', $wbbm_price_zero_allow);
 
         // Bus Sell Off
-        $wbbm_sell_off = isset($_POST['wbbm_sell_off']) ? sanitize_text_field($_POST['wbbm_sell_off']) : 'off';
+        $wbbm_sell_off = isset($_POST['wbbm_sell_off']) ? sanitize_text_field(wp_unslash($_POST['wbbm_sell_off'])) : 'off';
         update_post_meta($post_id, 'wbbm_sell_off', $wbbm_sell_off);
 
         // Bus Seat Available Show
-        $wbbm_seat_available = isset($_POST['wbbm_seat_available']) ? sanitize_text_field($_POST['wbbm_seat_available']) : 'off';
+        $wbbm_seat_available = isset($_POST['wbbm_seat_available']) ? sanitize_text_field(wp_unslash($_POST['wbbm_seat_available'])) : 'off';
         update_post_meta($post_id, 'wbbm_seat_available', $wbbm_seat_available);
 
         // Bus Category, Coach no, and Seat
-        $wbbm_bus_category = sanitize_text_field($_POST['wbbm_bus_category']);
+        $wbbm_bus_category = isset($_POST['wbbm_bus_category']) ? sanitize_text_field(wp_unslash($_POST['wbbm_bus_category'])) : '';
         wp_set_post_terms($post_id, $wbbm_bus_category, 'wbbm_bus_cat', false);
 
-        $wbbm_bus_no = sanitize_text_field($_POST['wbbm_bus_no']);
-        $wbbm_total_seat = sanitize_text_field($_POST['wbbm_total_seat']);
+        $wbbm_bus_no = isset($_POST['wbbm_bus_no']) ? sanitize_text_field(wp_unslash($_POST['wbbm_bus_no'])) : '';
+        $wbbm_total_seat = isset($_POST['wbbm_total_seat']) ? sanitize_text_field(wp_unslash($_POST['wbbm_total_seat'])) : '';
         update_post_meta($post_id, '_manage_stock', 'no');
         update_post_meta($post_id, '_price', 0);
         update_post_meta($post_id, 'wbbm_bus_no', $wbbm_bus_no);
@@ -58,16 +58,20 @@ class AdminMetaBoxClass extends CommonClass
         // Routing
         $bus_boarding_points = [];
         $bus_dropping_points = [];
-        $boarding_points = isset($_POST['wbbm_bus_bp_stops_name']) ? $_POST['wbbm_bus_bp_stops_name'] : [];
-        $boarding_time = isset($_POST['wbbm_bus_bp_start_time']) ? $_POST['wbbm_bus_bp_start_time'] : [];
-        $dropping_points = isset($_POST['wbbm_bus_next_stops_name']) ? $_POST['wbbm_bus_next_stops_name'] : [];
-        $dropping_time = isset($_POST['wbbm_bus_next_end_time']) ? $_POST['wbbm_bus_next_end_time'] : [];
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+        $boarding_points = isset($_POST['wbbm_bus_bp_stops_name']) ? MP_Global_Function::wbbm_recursive_sanitize(wp_unslash($_POST['wbbm_bus_bp_stops_name'])) : [];
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+        $boarding_time = isset($_POST['wbbm_bus_bp_start_time']) ? MP_Global_Function::wbbm_recursive_sanitize(wp_unslash($_POST['wbbm_bus_bp_start_time'])) : [];
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+        $dropping_points = isset($_POST['wbbm_bus_next_stops_name']) ? MP_Global_Function::wbbm_recursive_sanitize(wp_unslash($_POST['wbbm_bus_next_stops_name'])) : [];
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+        $dropping_time = isset($_POST['wbbm_bus_next_end_time']) ? MP_Global_Function::wbbm_recursive_sanitize(wp_unslash($_POST['wbbm_bus_next_end_time'])) : [];
 
         if (!empty($boarding_points)) {
             foreach ($boarding_points as $i => $point) {
                 if ($point !== '') {
-                    $bus_boarding_points[$i]['wbbm_bus_bp_stops_name'] = sanitize_text_field($point);
-                    $bus_boarding_points[$i]['wbbm_bus_bp_start_time'] = sanitize_text_field($boarding_time[$i]);
+                    $bus_boarding_points[$i]['wbbm_bus_bp_stops_name'] = $point;
+                    $bus_boarding_points[$i]['wbbm_bus_bp_start_time'] = $boarding_time[$i];
                 }
             }
         }
@@ -81,7 +85,8 @@ class AdminMetaBoxClass extends CommonClass
             }
         }
 
-        $wbbm_features = isset($_POST['wbbm_features']) ? array_map('sanitize_text_field', $_POST['wbbm_features']) : [];
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+        $wbbm_features = isset($_POST['wbbm_features']) ? MP_Global_Function::wbbm_recursive_sanitize(wp_unslash($_POST['wbbm_features'])) : [];
 
         update_post_meta($post_id, 'wbbm_features', $wbbm_features);
         update_post_meta($post_id, 'wbbm_bus_bp_stops', $bus_boarding_points);
@@ -91,16 +96,26 @@ class AdminMetaBoxClass extends CommonClass
         $old_prices = get_post_meta($post_id, 'wbbm_bus_prices', true);
         $new_prices = [];
 
-        $bp_price_stops = isset($_POST['wbbm_bus_bp_price_stop']) ? $_POST['wbbm_bus_bp_price_stop'] : [];
-        $dp_price_stops = isset($_POST['wbbm_bus_dp_price_stop']) ? $_POST['wbbm_bus_dp_price_stop'] : [];
-        $the_price = isset($_POST['wbbm_bus_price']) ? $_POST['wbbm_bus_price'] : [];
-        $the_price_roundtrip = isset($_POST['wbbm_bus_price_roundtrip']) ? $_POST['wbbm_bus_price_roundtrip'] : [];
-        $the_price_child = isset($_POST['wbbm_bus_price_child']) ? $_POST['wbbm_bus_price_child'] : [];
-        $the_price_child_roundtrip = isset($_POST['wbbm_bus_price_child_roundtrip']) ? $_POST['wbbm_bus_price_child_roundtrip'] : [];
-        $the_price_infant = isset($_POST['wbbm_bus_price_infant']) ? $_POST['wbbm_bus_price_infant'] : [];
-        $the_price_infant_roundtrip = isset($_POST['wbbm_bus_price_infant_roundtrip']) ? $_POST['wbbm_bus_price_infant_roundtrip'] : [];
-        $the_price_entire = isset($_POST['wbbm_bus_price_entire']) ? $_POST['wbbm_bus_price_entire'] : [];
-        $the_price_entire_roundtrip = isset($_POST['wbbm_bus_price_entire_roundtrip']) ? $_POST['wbbm_bus_price_entire_roundtrip'] : [];
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+        $bp_price_stops = isset($_POST['wbbm_bus_bp_price_stop']) ? MP_Global_Function::wbbm_recursive_sanitize(wp_unslash($_POST['wbbm_bus_bp_price_stop'])) : [];
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+        $dp_price_stops = isset($_POST['wbbm_bus_dp_price_stop']) ? MP_Global_Function::wbbm_recursive_sanitize(wp_unslash($_POST['wbbm_bus_dp_price_stop'])) : [];
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+        $the_price = isset($_POST['wbbm_bus_price']) ? MP_Global_Function::wbbm_recursive_sanitize(wp_unslash($_POST['wbbm_bus_price'])) : [];
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+        $the_price_roundtrip = isset($_POST['wbbm_bus_price_roundtrip']) ? MP_Global_Function::wbbm_recursive_sanitize(wp_unslash($_POST['wbbm_bus_price_roundtrip'])) : [];
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+        $the_price_child = isset($_POST['wbbm_bus_price_child']) ? MP_Global_Function::wbbm_recursive_sanitize(wp_unslash($_POST['wbbm_bus_price_child'])) : [];
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+        $the_price_child_roundtrip = isset($_POST['wbbm_bus_price_child_roundtrip']) ? MP_Global_Function::wbbm_recursive_sanitize(wp_unslash($_POST['wbbm_bus_price_child_roundtrip'])) : [];
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+        $the_price_infant = isset($_POST['wbbm_bus_price_infant']) ? MP_Global_Function::wbbm_recursive_sanitize(wp_unslash($_POST['wbbm_bus_price_infant'])) : [];
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+        $the_price_infant_roundtrip = isset($_POST['wbbm_bus_price_infant_roundtrip']) ? MP_Global_Function::wbbm_recursive_sanitize(wp_unslash($_POST['wbbm_bus_price_infant_roundtrip'])) : [];
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+        $the_price_entire = isset($_POST['wbbm_bus_price_entire']) ? MP_Global_Function::wbbm_recursive_sanitize(wp_unslash($_POST['wbbm_bus_price_entire'])) : [];
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+        $the_price_entire_roundtrip = isset($_POST['wbbm_bus_price_entire_roundtrip']) ? MP_Global_Function::wbbm_recursive_sanitize(wp_unslash($_POST['wbbm_bus_price_entire_roundtrip'])) : [];
 
         if (!empty($bp_price_stops)) {
             foreach ($bp_price_stops as $i => $bp_stop) {
@@ -131,10 +146,14 @@ class AdminMetaBoxClass extends CommonClass
         $extra_service_old = get_post_meta($post_id, 'mep_events_extra_prices', true);
         $extra_service_new = [];
 
-        $names = isset($_POST['option_name']) ? $_POST['option_name'] : [];
-        $urls = isset($_POST['option_price']) ? $_POST['option_price'] : [];
-        $qty = isset($_POST['option_qty']) ? $_POST['option_qty'] : [];
-        $qty_type = isset($_POST['option_qty_type']) ? $_POST['option_qty_type'] : [];
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+        $names = isset($_POST['option_name']) ? MP_Global_Function::wbbm_recursive_sanitize(wp_unslash($_POST['option_name'])) : [];
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+        $urls = isset($_POST['option_price']) ? MP_Global_Function::wbbm_recursive_sanitize(wp_unslash($_POST['option_price'])) : [];
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+        $qty = isset($_POST['option_qty']) ? MP_Global_Function::wbbm_recursive_sanitize(wp_unslash($_POST['option_qty'])) : [];
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+        $qty_type = isset($_POST['option_qty_type']) ? MP_Global_Function::wbbm_recursive_sanitize(wp_unslash($_POST['option_qty_type'])) : [];
 
         foreach ($names as $i => $name) {
             if ($name !== '') {
@@ -155,7 +174,7 @@ class AdminMetaBoxClass extends CommonClass
         $selected_pickpoint_time = 'wbbm_selected_pickpoint_time_';
 
         if (isset($_POST['wbbm_pickpoint_selected_city'])) {
-            $selected_city = array_map('sanitize_text_field', $_POST['wbbm_pickpoint_selected_city']);
+            $selected_city = array_map('sanitize_text_field', wp_unslash($_POST['wbbm_pickpoint_selected_city']));
 
             if (!empty($selected_city)) {
                 $selected_city_str = implode(',', $selected_city);

@@ -28,8 +28,12 @@ if( ! class_exists( 'AddMetaBox' ) ) {
 
         public function save_post($post_id) {
             // Security checks
-            if ( ! isset($_POST['nonce_field']) || ! wp_verify_nonce($_POST['nonce_field'], 'nonce_action') ) {
-                return; // Invalid nonce
+            $nonce = isset($_POST['nonce_field'])
+                ? sanitize_text_field(wp_unslash( $_POST['nonce_field']) )
+                : '';
+
+            if ( ! wp_verify_nonce( $nonce, 'nonce_action' ) ) {
+                return;
             }
 
             if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
@@ -44,14 +48,13 @@ if( ! class_exists( 'AddMetaBox' ) ) {
             $post_id = $this->get_post_id(); // Get post ID
 
             if (!empty($get_option_name)) {
-                $option_value = isset($_POST[$get_option_name]) ? $_POST[$get_option_name] : '';
-                $option_value = is_array($option_value) ? array_map('sanitize_text_field', $option_value) : sanitize_text_field($option_value);
+                $option_value = isset($_POST[$get_option_name]) ? MP_Global_Function::wbbm_recursive_sanitize(wp_unslash($_POST[$get_option_name])) : '';
                 update_post_meta($post_id, sanitize_key($get_option_name), serialize($option_value));
             } else {
                 foreach ($this->get_panels() as $panelsIndex => $panel) {
                     foreach ($panel['sections'] as $sectionIndex => $section) {
                         foreach ($section['options'] as $option) {
-                            $option_value = isset($_POST[$option['id']]) ? $_POST[$option['id']] : '';
+                            $option_value = isset($_POST[$option['id']]) ? sanitize_text_field(wp_unslash($_POST[$option['id']])) : '';
                             $option_value = is_array($option_value) ? array_map('sanitize_text_field', $option_value) : sanitize_text_field($option_value);
                             update_post_meta($post_id, sanitize_key($option['id']), $option_value);
                         }

@@ -112,7 +112,7 @@ function mage_route_list($drop = false) {
 add_action('wp_ajax_wbtm_load_dropping_point', 'wbtm_load_dropping_point');
 add_action('wp_ajax_nopriv_wbtm_load_dropping_point', 'wbtm_load_dropping_point');
 function wbtm_load_dropping_point() {
-    check_ajax_referer('wbtm_nonce', 'security');
+    check_ajax_referer('wbbm_ajax_nonce', 'nonce');
     
     $boardingPoint = sanitize_text_field(wp_unslash($_POST['boarding_point']));
     $category = get_term_by('name', $boardingPoint, 'wbbm_bus_stops');

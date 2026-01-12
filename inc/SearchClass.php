@@ -7,11 +7,21 @@
 		}
 
 		function mage_search_page_horizontal() {
+
 			$the_page = sanitize_post($GLOBALS['wp_the_query']->get_queried_object());
 			$target = sanitize_title($the_page->post_name);
 			$this->mage_search_form_horizontal(false, $target);
 			
 			if (isset($_GET['bus_start_route'], $_GET['bus_end_route'], $_GET['j_date'])) {
+                // Safely get the nonce from $_POST
+                $nonce = isset($_GET['bus_search_nonce']) ? sanitize_text_field(wp_unslash($_GET['bus_search_nonce'])) : '';
+
+                // Verify the nonce
+                if ( ! $nonce || ! wp_verify_nonce($nonce, 'bus_search_nonce_action') ) {
+                    wc_add_notice(__('Security check failed. Please try again.', 'bus-booking-manager'), 'error');
+                    return false;
+                }
+               
 				?>
 				<div class="mage_container">
 					<div class="mage_row">
@@ -94,7 +104,16 @@ function mage_search_list() {
         <?php } ?>
         <?php $this->mage_search_bus_list(false); ?>
     </div>
-    <?php if (isset($_GET['r_date']) && $_GET['r_date'] !== '' && $_GET['r_date'] !== 'yy-mm-dd') { ?>
+    <?php if (isset($_GET['r_date']) && $_GET['r_date'] !== '' && $_GET['r_date'] !== 'yy-mm-dd') {
+        // Safely get the nonce from $_POST
+        $nonce = isset($_GET['bus_search_nonce']) ? sanitize_text_field(wp_unslash($_GET['bus_search_nonce'])) : '';
+
+        // Verify the nonce
+        if ( ! $nonce || ! wp_verify_nonce($nonce, 'bus_search_nonce_action') ) {
+            wc_add_notice(__('Security check failed. Please try again.', 'bus-booking-manager'), 'error');
+            return false;
+        }
+    ?>
         <div class="mage_route_title return_title" style="background-color: <?php echo esc_attr($route_title_bg_color); ?>;">
             <div>
                 <strong><?php echo esc_html(wbbm_get_option('wbbm_route_text', 'wbbm_label_setting_sec', __('Route', 'bus-booking-manager'))); echo ':'; ?></strong>
@@ -138,6 +157,14 @@ function mage_search_list() {
 }
 
 function mage_search_bus_list($return) {
+    // Safely get the nonce from $_POST
+    $nonce = isset($_GET['bus_search_nonce']) ? sanitize_text_field(wp_unslash($_GET['bus_search_nonce'])) : '';
+
+    // Verify the nonce
+    if ( ! $nonce || ! wp_verify_nonce($nonce, 'bus_search_nonce_action') ) {
+        wc_add_notice(__('Security check failed. Please try again.', 'bus-booking-manager'), 'error');
+        return false;
+    }
     do_action('woocommerce_before_single_product');
 
     if (isset($_GET['bus_start_route'], $_GET['bus_end_route']) && (isset($_GET['j_date']) || isset($_GET['r_date']))) {
@@ -146,9 +173,11 @@ function mage_search_bus_list($return) {
         $end = $return ? 'bus_start_route' : 'bus_end_route';
         
         // Sanitize input
-        $start_route = sanitize_text_field($_GET[$start]);
-        $end_route = sanitize_text_field($_GET[$end]);
-        $j_date = $return ? sanitize_text_field($_GET['r_date']) : sanitize_text_field($_GET['j_date']);
+        $start_route = isset($_GET[$start]) ? sanitize_text_field((wp_unslash($_GET[$start]))) : '';
+        $end_route = isset($_GET[$end]) ? sanitize_text_field(wp_unslash($_GET[$end])) : '';
+        $r_date = isset($_GET['r_date']) ? sanitize_text_field(wp_unslash($_GET['r_date'])) : '';
+        $input_j_date = isset($_GET['j_date']) ? sanitize_text_field(wp_unslash($_GET['j_date'])) : '';
+        $j_date = $return ? $r_date : $input_j_date;
         $j_date = mage_wp_date($j_date, 'Y-m-d');
 
         $loop = new WP_Query(mage_bus_list_query($start, $end));
@@ -237,9 +266,19 @@ function mage_search_bus_list($return) {
 
 function mage_search_item($return) {
     global $mage_bus_search_theme;
+
+    // Safely get the nonce from $_POST
+    $nonce = isset($_GET['bus_search_nonce']) ? sanitize_text_field(wp_unslash($_GET['bus_search_nonce'])) : '';
+
+    // Verify the nonce
+    if ( ! $nonce || ! wp_verify_nonce($nonce, 'bus_search_nonce_action') ) {
+        wc_add_notice(__('Security check failed. Please try again.', 'bus-booking-manager'), 'error');
+        return false;
+    }
+
     $id = get_the_ID();
-    $search_date = isset($_GET['j_date']) ? sanitize_text_field($_GET['j_date']) : '';
-    $current_date = gmp_binomialdate('Y-m-d');
+    $search_date = isset($_GET['j_date']) ? sanitize_text_field(wp_unslash($_GET['j_date'])) : '';
+    $current_date = gmdate('Y-m-d');
     $boarding_time = boarding_dropping_time(false, $return);
     $dropping_time = boarding_dropping_time(true, $return);
 
@@ -262,9 +301,12 @@ function mage_search_item($return) {
         $type_name = $type_array ? $type_array->name : '';
     }
 
+    $input_boarding_var = isset($_GET[$boarding_var]) ? sanitize_text_field(wp_unslash($_GET[$boarding_var])) : '';
+    $input_dropping_var = isset($_GET[$dropping_var]) ? sanitize_text_field(wp_unslash($_GET[$dropping_var])) : '';
+
     $available_seat = wbbm_intermidiate_available_seat(
-        sanitize_text_field($_GET[$boarding_var]),
-        sanitize_text_field($_GET[$dropping_var]),
+        $input_boarding_var,
+        $input_dropping_var,
         wbbm_convert_date_to_php(mage_get_isset($date_var))
     );
     $cart_qty = wbbm_get_cart_item($id, mage_get_isset($date_var));
@@ -275,8 +317,8 @@ function mage_search_item($return) {
     $seat_price_adult = mage_seat_price($id, $boarding, $dropping, 'adult');
     $seat_price_child = mage_seat_price($id, $boarding, $dropping, 'child');
     $seat_price_infant = mage_seat_price($id, $boarding, $dropping, 'infant');
-    $seat_price_entire = mage_seat_price($id, $boarding, $dropping, 'entire');
-    $boarding_point = isset($_GET[$boarding_var]) ? sanitize_text_field($_GET[$boarding_var]) : '';
+    $seat_price_entire = mage_seat_price($id, $boarding, $dropping, 'entire'); 
+    $boarding_point = $input_boarding_var;
     $boarding_point_slug = strtolower(preg_replace('/[^A-Za-z0-9-]/', '_', $boarding_point));
     $coach_no = get_post_meta($id, 'wbbm_bus_no', true);
     $is_enable_pickpoint = get_post_meta($id, 'show_pickup_point', true);
@@ -485,9 +527,9 @@ function mage_search_item($return) {
                                     <?php endif; ?>
                                     <div class="mage_customer_info_area">
                                         <?php
-                                        $date = isset($_GET[$date_var]) ? mage_wp_date($_GET[$date_var], 'Y-m-d') : gmdate('Y-m-d');
-                                        $start = isset($_GET[$boarding_var]) ? sanitize_text_field($_GET[$boarding_var]) : '';
-                                        $end = isset($_GET[$dropping_var]) ? sanitize_text_field($_GET[$dropping_var]) : '';
+                                        $date = isset($_GET[$date_var]) ? mage_wp_date(sanitize_text_field(wp_unslash($_GET[$date_var])), 'Y-m-d') : gmdate('Y-m-d');
+                                        $start = $input_boarding_var;
+                                        $end = $input_dropping_var;
                                         hidden_input_field('bus_id', $id);
                                         hidden_input_field('journey_date', $date);
                                         hidden_input_field('start_stops', $start);
@@ -621,9 +663,9 @@ function mage_search_item($return) {
                                 <?php endif; ?>
                                 <div class="mage_customer_info_area">
                                     <?php
-                                    $date = isset($_GET[$date_var]) ? mage_wp_date($_GET[$date_var], 'Y-m-d') : gmdate('Y-m-d');
-                                    $start = isset($_GET[$boarding_var]) ? sanitize_text_field($_GET[$boarding_var]) : '';
-                                    $end = isset($_GET[$dropping_var]) ? sanitize_text_field($_GET[$dropping_var]) : '';
+                                    $date = isset($_GET[$date_var]) ? mage_wp_date(sanitize_text_field(wp_unslash($_GET[$date_var])), 'Y-m-d') : gmdate('Y-m-d');
+                                    $start = $input_boarding_var;
+                                    $end = $input_dropping_var;
                                     hidden_input_field('bus_id', $id);
                                     hidden_input_field('journey_date', $date);
                                     hidden_input_field('start_stops', $start);
@@ -694,17 +736,25 @@ function mage_search_form_horizontal($single_bus, $target = '') {
 function mage_search_page_vertical() {
     $target = '';
     if (isset($_GET['bus_start_route'], $_GET['bus_end_route'], $_GET['j_date'])) {
+        // Safely get the nonce from $_POST
+        $nonce = isset($_GET['bus_search_nonce']) ? sanitize_text_field(wp_unslash($_GET['bus_search_nonce'])) : '';
+
+        // Verify the nonce
+        if ( ! $nonce || ! wp_verify_nonce($nonce, 'bus_search_nonce_action') ) {
+            wc_add_notice(__('Security check failed. Please try again.', 'bus-booking-manager'), 'error');
+            return false;
+        }
         // Sanitize input from the query parameters
-        $bus_start_route = sanitize_text_field($_GET['bus_start_route']);
-        $bus_end_route = sanitize_text_field($_GET['bus_end_route']);
-        $journey_date = sanitize_text_field($_GET['j_date']);
+        $bus_start_route = isset($_GET['bus_start_route']) ? sanitize_text_field(wp_unslash($_GET['bus_start_route'])) : '';
+        $bus_end_route = isset($_GET['bus_end_route']) ? sanitize_text_field(wp_unslash($_GET['bus_end_route'])) : '';
+        $journey_date = isset($_GET['j_date']) ? sanitize_text_field(wp_unslash($_GET['j_date'])) : '';
         ?>
         <div class="mage_container">
             <div class="mage_row">
                 <div class="mage_search_box_sidebar">
                     <div class="mage_sidebar_search_form">
                         <h2><?php echo esc_html(wbbm_get_option('wbbm_buy_ticket_text', 'wbbm_label_setting_sec', __('BUY TICKET', 'bus-booking-manager'))); ?></h2>
-                        <?php do_action('mage_search_from_only', sanitize_text_field($target)); ?>
+                        <?php do_action('mage_search_from_only', false, sanitize_text_field($target)); ?>
                     </div>
                 </div>
                 <div class="mage_search_area">
@@ -725,7 +775,9 @@ function search_from_only($single_bus, $target) {
     $wbbm_bus_prices = get_post_meta(get_the_ID(), 'wbbm_bus_prices', true);
     ?>
     <form action="<?php echo esc_url($single_bus ? '' : get_site_url() . '/' . sanitize_title($target) . '/'); ?>" method="get" class="mage_form">
-        <?php do_action('active_date', $single_bus, get_the_ID()); ?>
+        <?php do_action('active_date', $single_bus, get_the_ID());
+        wp_nonce_field('bus_search_nonce_action', 'bus_search_nonce');
+        ?>
         <div class="mage_form_list">
             <label for="bus_start_route">
                 <span class="fa fa-map-marker"></span>
@@ -834,6 +886,14 @@ function search_from_only($single_bus, $target) {
     </form>
     <?php
     if (isset($_GET['bus_start_route'], $_GET['bus_end_route'], $_GET['j_date'])) {
+        // Safely get the nonce from $_POST
+        $nonce = isset($_GET['bus_search_nonce']) ? sanitize_text_field(wp_unslash($_GET['bus_search_nonce'])) : '';
+
+        // Verify the nonce
+        if ( ! $nonce || ! wp_verify_nonce($nonce, 'bus_search_nonce_action') ) {
+            wc_add_notice(__('Security check failed. Please try again.', 'bus-booking-manager'), 'error');
+            return false;
+        }
         do_action('mage_next_date', false, true, $target);
     }
 }

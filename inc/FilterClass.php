@@ -35,6 +35,13 @@
         }
 
         public function wbbm_add_custom_fields_text_to_cart_item( $cart_item_data, $product_id, $variation_id = null ) {
+
+            // Verify nonce
+            $nonce = isset($_POST['add_to_cart_custom_nonce']) ? sanitize_text_field(wp_unslash($_POST['add_to_cart_custom_nonce'])) : '';
+            if ( ! $nonce || ! wp_verify_nonce($nonce, 'add_to_cart_custom_action') ) {
+                wc_add_notice(__('Security check failed. Please try again.', 'bus-booking-manager'), 'error');
+                return $cart_item_data;
+            }
             // Normalize POST inputs and sanitize
             $post = ! empty( $_POST ) ? wp_unslash( $_POST ) : array();
 

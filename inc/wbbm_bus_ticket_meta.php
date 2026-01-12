@@ -76,6 +76,7 @@ function wbbm_bus_price_zero_allow_meta_box_cb($post)
             transform: translateX(26px);
         }
     </style>
+    <?php wp_nonce_field('wbbm_price_zero_allow_action', 'wbbm_price_zero_allow_nonce') ?>
     <div class='sec'>
         <label for="wbbm_price_zero_allow"> <?php
             printf(
@@ -102,8 +103,19 @@ function wbbm_bus_price_zero_allow_meta_box_cb($post)
 add_action('save_post', 'wbbm_price_zero_allow_meta_save');
 function wbbm_price_zero_allow_meta_save($post_id)
 {
+    // Check nonce
+    if (
+        ! isset($_POST['wbbm_price_zero_allow_nonce']) ||
+        ! wp_verify_nonce(
+            sanitize_text_field(wp_unslash($_POST['wbbm_price_zero_allow_nonce'])),
+            'wbbm_price_zero_allow_action'
+        )
+    ) {
+        return;
+    }
+
     if (isset($_POST['wbbm_price_zero_allow'])) {
-        $wbbm_price_zero_allow = wp_strip_all_tags($_POST['wbbm_price_zero_allow']);
+        $wbbm_price_zero_allow = sanitize_text_field(wp_unslash($_POST['wbbm_price_zero_allow']));
     } else {
         $wbbm_price_zero_allow = 'off';
     }
@@ -168,6 +180,7 @@ function wbbm_bus_sell_off_meta_box_cb($post)
             transform: translateX(26px);
         }
     </style>
+    <?php wp_nonce_field('wbbm_sell_off_action', 'wbbm_sell_off_nonce') ?>
     <div class='sec'>
         <label for="wbbm_sell_off"> <?php 
                 /* translators: %s: post type label */
@@ -192,8 +205,19 @@ function wbbm_bus_sell_off_meta_box_cb($post)
 add_action('save_post', 'wbbm_sell_off_meta_save');
 function wbbm_sell_off_meta_save($post_id)
 {
+    // Check nonce
+    if (
+        ! isset($_POST['wbbm_sell_off_nonce']) ||
+        ! wp_verify_nonce(
+            sanitize_text_field(wp_unslash($_POST['wbbm_sell_off_nonce'])),
+            'wbbm_sell_off_action'
+        )
+    ) {
+        return;
+    }
+
     if (isset($_POST['wbbm_sell_off'])) {
-        $wbbm_sell_off = wp_strip_all_tags($_POST['wbbm_sell_off']);
+        $wbbm_sell_off = sanitize_text_field(wp_unslash($_POST['wbbm_sell_off']));
     } else {
         $wbbm_sell_off = 'off';
     }
@@ -288,11 +312,11 @@ function wbbm_seat_available_meta_save($post_id)
 {
 
     if (!isset($_POST['wbbm_bus_seat_available_nonce']) ||
-        !wp_verify_nonce($_POST['wbbm_bus_seat_available_nonce'], 'wbbm_bus_seat_available_nonce'))
+        !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['wbbm_bus_seat_available_nonce'])), 'wbbm_bus_seat_available_nonce'))
         return;
 
     if (isset($_POST['wbbm_seat_available'])) {
-        $wbbm_seat_available = wp_strip_all_tags($_POST['wbbm_seat_available']);
+        $wbbm_seat_available = sanitize_text_field(wp_unslash($_POST['wbbm_bus_seat_available_nonce']));
     } else {
         $wbbm_seat_available = 'off';
     }
@@ -809,7 +833,7 @@ function wbbm_bus_pricing_save($post_id)
     global $wpdb;
 
     if (!isset($_POST['wbbm_bus_price_nonce']) ||
-        !wp_verify_nonce($_POST['wbbm_bus_price_nonce'], 'wbbm_bus_price_nonce'))
+        !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['wbbm_bus_price_nonce'])), 'wbbm_bus_price_nonce'))
         return;
 
     if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE)
@@ -821,14 +845,22 @@ function wbbm_bus_pricing_save($post_id)
     $old = get_post_meta($post_id, 'wbbm_bus_prices', true);
     $new = array();
 
-    $bp_pice_stops = $_POST['wbbm_bus_bp_price_stop'];
-    $dp_pice_stops = $_POST['wbbm_bus_dp_price_stop'];
-    $the_price = $_POST['wbbm_bus_price'];
-    $the_price_roundtrip = $_POST['wbbm_bus_price_roundtrip'];
-    $the_price_child = $_POST['wbbm_bus_price_child'];
-    $the_price_child_roundtrip = $_POST['wbbm_bus_price_child_roundtrip'];
-    $the_price_infant = $_POST['wbbm_bus_price_infant'];
-    $the_price_infant_roundtrip = $_POST['wbbm_bus_price_infant_roundtrip'];
+    // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+    $bp_pice_stops = isset($_POST['wbbm_bus_bp_price_stop']) ? MP_Global_Function::wbbm_recursive_sanitize(wp_unslash($_POST['wbbm_bus_bp_price_stop'])) : array();
+    // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+    $dp_pice_stops = isset($_POST['wbbm_bus_dp_price_stop']) ? MP_Global_Function::wbbm_recursive_sanitize(wp_unslash($_POST['wbbm_bus_dp_price_stop'])) : array();
+    // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+    $the_price = isset($_POST['wbbm_bus_price']) ? MP_Global_Function::wbbm_recursive_sanitize(wp_unslash($_POST['wbbm_bus_price'])) : array();
+    // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+    $the_price_roundtrip = isset($_POST['wbbm_bus_price_roundtrip']) ? MP_Global_Function::wbbm_recursive_sanitize(wp_unslash($_POST['wbbm_bus_price_roundtrip'])) : array();
+    // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+    $the_price_child = isset($_POST['wbbm_bus_price_child']) ? MP_Global_Function::wbbm_recursive_sanitize(wp_unslash($_POST['wbbm_bus_price_child'])) : array();
+    // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+    $the_price_child_roundtrip = isset($_POST['wbbm_bus_price_child_roundtrip']) ? MP_Global_Function::wbbm_recursive_sanitize(wp_unslash($_POST['wbbm_bus_price_child_roundtrip'])) : array();
+    // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+    $the_price_infant = isset($_POST['wbbm_bus_price_infant']) ? MP_Global_Function::wbbm_recursive_sanitize(wp_unslash($_POST['wbbm_bus_price_infant'])) : array();
+    // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+    $the_price_infant_roundtrip = isset($_POST['wbbm_bus_price_infant_roundtrip']) ? MP_Global_Function::wbbm_recursive_sanitize(wp_unslash($_POST['wbbm_bus_price_infant_roundtrip'])) : array();
 
     $order_id = 0;
     $count = count($bp_pice_stops);
@@ -1218,7 +1250,7 @@ function wbbm_bus_pickpoint_save($post_id)
 {
 
     if (!isset($_POST['wbbm_bus_pickpoint_nonce']) ||
-        !wp_verify_nonce($_POST['wbbm_bus_pickpoint_nonce'], 'wbbm_bus_pickpoint_nonce'))
+        !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['wbbm_bus_pickpoint_nonce'])), 'wbbm_bus_pickpoint_nonce'))
         return;
 
     if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE)
@@ -1234,7 +1266,8 @@ function wbbm_bus_pickpoint_save($post_id)
     $selected_pickpoint_time = 'wbbm_selected_pickpoint_time_';
 
     if (isset($_POST['wbbm_pickpoint_selected_city'])) {
-        $selected_city = $_POST['wbbm_pickpoint_selected_city'];
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+        $selected_city = MP_Global_Function::wbbm_recursive_sanitize(wp_unslash($_POST['wbbm_pickpoint_selected_city']));
 
 
         if (!empty($selected_city)) {
@@ -1262,11 +1295,18 @@ function wbbm_bus_pickpoint_save($post_id)
             foreach ($selected_city as $city) {
                 $m_array = array();
                 $i = 0;
-                foreach ($_POST[$selected_pickpoint_name . $city] as $pickpoint) {
+                if(!isset($_POST[$selected_pickpoint_name . $city]) || !isset($_POST[$selected_pickpoint_time . $city])) {
+                    continue;
+                }
+                // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+                $selected_pickpoint_names = MP_Global_Function::wbbm_recursive_sanitize(wp_unslash($_POST[$selected_pickpoint_name . $city]));
+                // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+                $selected_pickpoint_times = MP_Global_Function::wbbm_recursive_sanitize(wp_unslash($_POST[$selected_pickpoint_time . $city]));
+                foreach ($selected_pickpoint_names as $pickpoint) {
 
                     $m_array[$i] = array(
-                        'pickpoint' => $_POST[$selected_pickpoint_name . $city][$i],
-                        'time' => $_POST[$selected_pickpoint_time . $city][$i],
+                        'pickpoint' => $selected_pickpoint_names[$i],
+                        'time' => $selected_pickpoint_times[$i],
                     );
 
                     $i++;
@@ -1301,7 +1341,7 @@ function wbbm_bus_boarding_points_save($post_id)
     global $wpdb;
 
     if (!isset($_POST['wbbm_bus_ticket_type_nonce']) ||
-        !wp_verify_nonce($_POST['wbbm_bus_ticket_type_nonce'], 'wbbm_bus_ticket_type_nonce'))
+        !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['wbbm_bus_ticket_type_nonce'])), 'wbbm_bus_ticket_type_nonce'))
         return;
 
     if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE)
@@ -1313,8 +1353,10 @@ function wbbm_bus_boarding_points_save($post_id)
     $old = get_post_meta($post_id, 'wbbm_bus_bp_stops', true);
     $new = array();
 
-    $bp_stops = $_POST['wbbm_bus_bp_stops_name'];
-    $start_t = $_POST['wbbm_bus_bp_start_time'];
+    // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+    $bp_stops = isset($_POST['wbbm_bus_bp_stops_name']) ? MP_Global_Function::wbbm_recursive_sanitize(wp_unslash($_POST['wbbm_bus_bp_stops_name'])) : array();
+    // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+    $start_t = isset($_POST['wbbm_bus_bp_start_time']) ? MP_Global_Function::wbbm_recursive_sanitize(wp_unslash($_POST['wbbm_bus_bp_start_time'])) : array();
 
 
     $order_id = 0;
@@ -1348,7 +1390,7 @@ function wbbm_bus_droping_stops_save($post_id)
     global $wpdb;
 
     if (!isset($_POST['wbbm_bus_ticket_type_nonce']) ||
-        !wp_verify_nonce($_POST['wbbm_bus_ticket_type_nonce'], 'wbbm_bus_ticket_type_nonce'))
+        !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['wbbm_bus_ticket_type_nonce'])), 'wbbm_bus_ticket_type_nonce'))
         return;
 
     if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE)
@@ -1360,8 +1402,10 @@ function wbbm_bus_droping_stops_save($post_id)
     $old = get_post_meta($post_id, 'wbbm_bus_next_stops', true);
     $new = array();
 
-    $stops = $_POST['wbbm_bus_next_stops_name'];
-    $end_t = $_POST['wbbm_bus_next_end_time'];
+    // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+    $stops = isset($_POST['wbbm_bus_next_stops_name']) ? MP_Global_Function::wbbm_recursive_sanitize(wp_unslash($_POST['wbbm_bus_next_stops_name'])) : array();
+    // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+    $end_t = isset($_POST['wbbm_bus_next_end_time']) ? MP_Global_Function::wbbm_recursive_sanitize(wp_unslash($_POST['wbbm_bus_next_end_time'])) : array();
 
 
     $order_id = 0;
@@ -1394,7 +1438,7 @@ function wbbm_bus_info_meta_box($post)
 {
     $values = get_post_custom($post->ID);
     $bus_ticket_type = get_post_meta($post->ID, 'wbbm_bus_ticket_type_info', true);
-    wp_nonce_field('wbbm_bus_ticket_type_nonce', 'wbbm_bus_ticket_type_nonce');
+    wp_nonce_field('wbbm_bus_no_action', 'wbbm_bus_no_nonce');
 // print_r($values);
     ?>
 
@@ -1481,8 +1525,20 @@ function wbbm_bus_meta_save($post_id)
         if ($post->post_type != 'wbbm_bus') {
             return;
         }
-        $wbbm_bus_no = wp_strip_all_tags($_POST['wbbm_bus_no']);
-        $wbbm_total_seat = wp_strip_all_tags($_POST['wbbm_total_seat']);
+
+        // Check nonce
+        if (
+            ! isset($_POST['wbbm_bus_no_nonce']) ||
+            ! wp_verify_nonce(
+                sanitize_text_field(wp_unslash($_POST['wbbm_bus_no_nonce'])),
+                'wbbm_bus_no_action'
+            )
+        ) {
+            return;
+        }
+
+        $wbbm_bus_no = isset($_POST['wbbm_bus_no']) ? sanitize_text_field(wp_unslash($_POST['wbbm_bus_no'])) : '';
+        $wbbm_total_seat = isset($_POST['wbbm_total_seat']) ? sanitize_text_field(wp_unslash($_POST['wbbm_total_seat'])) : '';
         $update_seat_stock_status = update_post_meta($pid, '_manage_stock', 'no');
         $update_price = update_post_meta($pid, '_price', 0);
         $update_seat5 = update_post_meta($pid, 'wbbm_bus_no', $wbbm_bus_no);
@@ -1726,7 +1782,7 @@ function wbbm_bus_od_info_save($post_id)
         $pid = $post->ID;
 
         if (!isset($_POST['wbbm_bus_offday_schedule_nonce']) ||
-            !wp_verify_nonce($_POST['wbbm_bus_offday_schedule_nonce'], 'wbbm_bus_offday_schedule_nonce'))
+            !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['wbbm_bus_offday_schedule_nonce'])), 'wbbm_bus_offday_schedule_nonce'))
             return;
 
         if ($post->post_type != 'wbbm_bus') {
@@ -1735,10 +1791,14 @@ function wbbm_bus_od_info_save($post_id)
 
         // Offday schedule
         $offday_schedule_array = array();
-        $offday_date_from = $_POST['wbtm_od_offdate_from'];
-        $offday_date_to = $_POST['wbtm_od_offdate_to'];
-        $offday_time_from = $_POST['wbtm_od_offtime_from'];
-        $offday_time_to = $_POST['wbtm_od_offtime_to'];
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+        $offday_date_from = isset($_POST['wbtm_od_offdate_from']) ? MP_Global_Function::wbbm_recursive_sanitize(wp_unslash($_POST['wbtm_od_offdate_from'])) : array();
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+        $offday_date_to = isset($_POST['wbtm_od_offdate_to']) ? MP_Global_Function::wbbm_recursive_sanitize(wp_unslash($_POST['wbtm_od_offdate_to'])) : array();
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+        $offday_time_from = isset($_POST['wbtm_od_offtime_from']) ? MP_Global_Function::wbbm_recursive_sanitize(wp_unslash($_POST['wbtm_od_offtime_from'])) : array();
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+        $offday_time_to = isset($_POST['wbtm_od_offtime_to']) ? MP_Global_Function::wbbm_recursive_sanitize(wp_unslash($_POST['wbtm_od_offtime_to'])) : array();
 
         if(is_array($offday_date_from) && !empty($offday_date_from)) {
             $i = 0;
@@ -1757,19 +1817,19 @@ function wbbm_bus_od_info_save($post_id)
         update_post_meta($pid, 'wbtm_offday_schedule', $offday_schedule_array);
         // Offday schedule END
 
-        $wbtm_od_start = wp_strip_all_tags($_POST['wbtm_od_start']);
-        $wbtm_od_end = wp_strip_all_tags($_POST['wbtm_od_end']);
+        $wbtm_od_start = isset($_POST['wbtm_od_start']) ? sanitize_text_field(wp_unslash($_POST['wbtm_od_start'])) : '';
+        $wbtm_od_end = isset($_POST['wbtm_od_end']) ? sanitize_text_field(wp_unslash($_POST['wbtm_od_end'])) : '';
 
-        $wbtm_bus_on_date = $_POST['wbtm_bus_on_date'];
+        $wbtm_bus_on_date = isset($_POST['wbtm_bus_on_date']) ? sanitize_text_field(wp_unslash($_POST['wbtm_bus_on_date'])) : '';
 
-        $od_sun = wp_strip_all_tags($_POST['od_sun']);
-        $od_mon = wp_strip_all_tags($_POST['od_mon']);
-        $od_tue = wp_strip_all_tags($_POST['od_tue']);
-        $od_wed = wp_strip_all_tags($_POST['od_wed']);
-        $od_thu = wp_strip_all_tags($_POST['od_thu']);
-        $od_fri = wp_strip_all_tags($_POST['od_fri']);
-        $od_sat = wp_strip_all_tags($_POST['od_sat']);
-        $show_boarding_points = wp_strip_all_tags($_POST['show_boarding_points']);
+        $od_sun = isset($_POST['od_sun']) ? sanitize_text_field(wp_unslash($_POST['od_sun'])) : '';
+        $od_mon = isset($_POST['od_mon']) ? sanitize_text_field(wp_unslash($_POST['od_mon'])) : '';
+        $od_tue = isset($_POST['od_tue']) ? sanitize_text_field(wp_unslash($_POST['od_tue'])) : '';
+        $od_wed = isset($_POST['od_wed']) ? sanitize_text_field(wp_unslash($_POST['od_wed'])) : '';
+        $od_thu = isset($_POST['od_thu']) ? sanitize_text_field(wp_unslash($_POST['od_thu'])) : '';
+        $od_fri = isset($_POST['od_fri']) ? sanitize_text_field(wp_unslash($_POST['od_fri'])) : '';
+        $od_sat = isset($_POST['od_sat']) ? sanitize_text_field(wp_unslash($_POST['od_sat'])) : '';
+        $show_boarding_points = isset($_POST['show_boarding_points']) ? sanitize_text_field(wp_unslash($_POST['show_boarding_points'])) : '';
         $update_virtual = update_post_meta($pid, '_virtual', 'yes');
         $update_wbtm_od_start = update_post_meta($pid, 'wbtm_od_start', $wbtm_od_start);
         $update_wbtm_od_end = update_post_meta($pid, 'wbtm_od_end', $wbtm_od_end);

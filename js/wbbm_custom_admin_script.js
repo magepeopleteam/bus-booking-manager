@@ -16,12 +16,13 @@
 			$.ajax({
 				type: 'POST',
 				// url:wbtm_ajax.wbtm_ajaxurl,
-				url: wbtm_ajaxurl,
+				url: WbbmAjaxAdmin.ajax_url,
 				dataType: 'JSON',
 				data: {
 					"action": "wbtm_add_bus_stope",
 					"name": name,
 					"description": description,
+					nonce: WbbmAjaxAdmin.nonce
 				},
 
 				beforeSend: function () {
@@ -88,13 +89,14 @@
 			$.ajax({
 				type: 'POST',
 				// url:wbtm_ajax.wbtm_ajaxurl,
-				url: wbtm_ajaxurl,
+				url: WbbmAjaxAdmin.ajax_url,
 				dataType: 'HTML',
 				data: {
 					"action": "wbtm_add_bus_feature",
 					"name": name,
 					"description": description,
 					"wbbm_feature_icon": wbbm_feature_icon,
+					nonce: WbbmAjaxAdmin.nonce
 				},
 
 				beforeSend: function () {
@@ -192,12 +194,13 @@
 			$.ajax({
 				type: 'POST',
 				// url:wbtm_ajax.wbtm_ajaxurl,
-				url: wbtm_ajaxurl,
+				url: WbbmAjaxAdmin.ajax_url,
 				dataType: 'JSON',
 				data: {
 					"action": "wbtm_add_pickup",
 					"name": name,
 					"description": description,
+					nonce: WbbmAjaxAdmin.nonce
 				},
 
 				beforeSend: function () {

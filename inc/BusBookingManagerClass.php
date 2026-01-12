@@ -37,6 +37,14 @@ class BusBookingManagerClass
 
         add_action('mage_search_from_only',array($SearchClass,'search_from_only') ,10,2);
         add_action('wbbm_prevent_form_resubmission', array($SearchClass,'wbbm_prevent_form_resubmission_fun'));
+        add_action('woocommerce_before_add_to_cart_button', function() {
+            ?>
+            <p class="form-field">
+                <label for="my_custom_text"><?php esc_html_e('Custom Text', 'bus-booking-manager'); ?></label>
+                <input type="text" id="my_custom_text" name="my_custom_text" />
+            </p>
+            <?php wp_nonce_field('add_to_cart_custom_action', 'add_to_cart_custom_nonce');
+        });
 
 
     }
