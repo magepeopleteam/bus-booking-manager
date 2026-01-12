@@ -26,7 +26,7 @@ class NextDateClass extends CommonClass
                         ?>
                         <li class="<?php echo esc_attr($date == $next_date ? 'mage_active' : ''); ?>">
                             <a href="<?php echo esc_url($single_bus ? '' : get_site_url() . '/' . esc_attr($target)); ?>?bus_start_route=<?php echo esc_attr(wp_strip_all_tags($_GET['bus_start_route'])); ?>&bus_end_route=<?php echo esc_attr(wp_strip_all_tags($_GET['bus_end_route'])); ?>&j_date=<?php echo esc_attr($return ? wp_strip_all_tags($_GET['j_date']) : $next_date_text); ?>&r_date=<?php echo esc_attr($return ? $next_date : (isset($_GET['r_date']) ? wp_strip_all_tags($_GET['r_date']) : '')); ?>&bus-r=<?php echo esc_attr(isset($_GET['bus-r']) ? wp_strip_all_tags($_GET['bus-r']) : ''); ?>&tab_date=<?php echo esc_attr($tab_date); ?>&tab_date_r=<?php echo esc_attr($tab_date_r); ?>" data-sroute='<?php echo esc_attr(wp_strip_all_tags($_GET['bus_start_route'])); ?>' data-eroute='<?php echo esc_attr(wp_strip_all_tags($_GET['bus_end_route'])); ?>' data-jdate='<?php echo esc_attr($return ? wp_strip_all_tags($_GET['j_date']) : $next_date); ?>' data-rdate='<?php echo esc_attr($return ? $next_date : (isset($_GET['r_date']) ? wp_strip_all_tags($_GET['r_date']) : '')); ?>' class='wbtm_next_day_search'>
-                                <?php echo esc_html($this->get_wbbm_datetime($next_date, 'date-text')); ?>
+                                <?php echo esc_html($this->wbbm_get_datetime($next_date, 'date-text')); ?>
                             </a>
                         </li>
                         <?php
@@ -66,13 +66,13 @@ class NextDateClass extends CommonClass
                             <?php if (!in_array($j_date, $wbtm_bus_on_dates_arr) && $i === 0) : ?>
                                 <li class="mage_active">
                                     <a href="#">
-                                        <?php echo esc_html($this->get_wbbm_datetime($j_date, 'date-text')); ?>
+                                        <?php echo esc_html($this->wbbm_get_datetime($j_date, 'date-text')); ?>
                                     </a>
                                 </li>
                             <?php endif; ?>
                             <li class="<?php echo esc_attr($j_date == $ondate ? 'mage_active' : ''); ?>">
                                 <a href="<?php echo esc_url($single_bus ? '' : get_site_url() . '/' . esc_attr($target)); ?>?bus_start_route=<?php echo esc_attr(wp_strip_all_tags($_GET['bus_start_route'])); ?>&bus_end_route=<?php echo esc_attr(wp_strip_all_tags($_GET['bus_end_route'])); ?>&j_date=<?php echo esc_attr($return ? wp_strip_all_tags($_GET['j_date']) : $ondate); ?>&r_date=<?php echo esc_attr($return ? $ondate : (isset($_GET['r_date']) ? wp_strip_all_tags($_GET['r_date']) : '')); ?>&bus-r=<?php echo esc_attr(isset($_GET['bus-r']) ? wp_strip_all_tags($_GET['bus-r']) : ''); ?>" data-sroute='<?php echo esc_attr(wp_strip_all_tags($_GET['bus_start_route'])); ?>' data-eroute='<?php echo esc_attr(wp_strip_all_tags($_GET['bus_end_route'])); ?>' data-jdate='<?php echo esc_attr($return ? wp_strip_all_tags($_GET['j_date']) : ''); ?>' data-rdate='<?php echo esc_attr($return ? '' : (isset($_GET['r_date']) ? wp_strip_all_tags($_GET['r_date']) : '')); ?>' class='wbtm_next_day_search'>
-                                    <?php echo esc_html($this->get_wbbm_datetime($ondate, 'date-text')); ?>
+                                    <?php echo esc_html($this->wbbm_get_datetime($ondate, 'date-text')); ?>
                                 </a>
                             </li>
                             <?php
@@ -107,7 +107,7 @@ class NextDateClass extends CommonClass
                             ?>
                             <li class="<?php echo esc_attr($j_date == $next_date ? 'mage_active' : ''); ?>">
                                 <a href="<?php echo esc_url($single_bus ? '' : get_site_url() . '/' . esc_url($target)); ?>?bus_start_route=<?php echo esc_attr(wp_strip_all_tags($_GET['bus_start_route'])); ?>&bus_end_route=<?php echo esc_attr(wp_strip_all_tags($_GET['bus_end_route'])); ?>&j_date=<?php echo esc_attr($return ? wp_strip_all_tags($_GET['j_date']) : $next_date_text); ?>&r_date=<?php echo esc_attr($return ? $next_date : (isset($_GET['r_date']) ? wp_strip_all_tags($_GET['r_date']) : '')); ?>&bus-r=<?php echo esc_attr(isset($_GET['bus-r']) ? wp_strip_all_tags($_GET['bus-r']) : ''); ?>" data-sroute='<?php echo esc_attr(wp_strip_all_tags($_GET['bus_start_route'])); ?>' data-eroute='<?php echo esc_attr(wp_strip_all_tags($_GET['bus_end_route'])); ?>' data-jdate='<?php echo esc_attr($return ? wp_strip_all_tags($_GET['j_date']) : $next_date); ?>' data-rdate='<?php echo esc_attr($return ? $next_date : (isset($_GET['r_date']) ? wp_strip_all_tags($_GET['r_date']) : '')); ?>' class='wbtm_next_day_search'>
-                                    <?php echo esc_html($this->get_wbbm_datetime($next_date, 'date-text')); ?>
+                                    <?php echo esc_html($this->wbbm_get_datetime($next_date, 'date-text')); ?>
                                 </a>
                             </li>
                             <?php

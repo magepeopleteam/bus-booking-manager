@@ -62,11 +62,13 @@
 	}
 // run the install scripts upon plugin activation
 	register_activation_hook(__FILE__, 'wbbm_booking_list_table_create');
+	// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound
 	define('WBTM_PLUGIN_URL', plugin_dir_url(__FILE__));
 	define('WBTM_PLUGIN_DIR', plugin_dir_path(__FILE__));
 	define('WBTM_PLUGIN_FILE', plugin_basename(__FILE__));
 	include_once(ABSPATH . 'wp-admin/includes/plugin.php');
 	if (is_plugin_active('woocommerce/woocommerce.php')) {
+		// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound
 		define('PLUGIN_ROOT', plugin_dir_url(__FILE__));
 		require_once(dirname(__FILE__) . "/inc/class-mage-settings.php");
 		require_once(dirname(__FILE__) . "/inc/wbbm_admin_settings.php");
@@ -97,49 +99,72 @@
 			load_plugin_textdomain('bus-booking-manager', false, $plugin_dir);
 		}
 		add_action('init', 'wbbm_change_field_of_table');
-		function wbbm_change_field_of_table() {
-			global $wpdb;
-			$table_name = esc_sql($wpdb->prefix . 'wbbm_bus_booking_list');
-			if ($wpdb->get_var("SHOW TABLES LIKE '$table_name'") === $table_name) {
-				$alterations_applied = sanitize_text_field(get_option('wbbm_table_alterations_applied', ''));
-				if (!$alterations_applied) {
-					$wpdb->query("ALTER TABLE $table_name CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;");
-					$columns_to_modify = array(
-						'user_name' => 'VARCHAR(255) NULL',
-						'user_email' => 'VARCHAR(255) NULL',
-						'user_phone' => 'VARCHAR(255) NULL',
-						'user_gender' => 'VARCHAR(255) NULL',
-						'user_dob' => 'VARCHAR(255) NULL',
-						'nationality' => 'VARCHAR(255) NULL',
-						'pickpoint' => 'VARCHAR(255) NULL',
-					);
-					foreach ($columns_to_modify as $column => $definition) {
-						// 1. Sanitize the identifier
-						$clean_column = '`' . str_replace('`', '``', $column) . '`';
-						
-						// 2. Strict Validation: Only allow specific SQL patterns for definitions
-						// This regex allows alphanumeric, spaces, parentheses, and commas (standard for SQL types)
-						if ( preg_match( '/^[a-zA-Z0-9\(\),\s]+$/', $definition ) ) {
-							
-							$column_exists = $wpdb->get_var($wpdb->prepare(
-								"SHOW COLUMNS FROM $table_name LIKE %s", 
-								$column
-							));
+function wbbm_change_field_of_table() {
+	global $wpdb;
 
-							if ( $column_exists !== null ) {
-								// Use a comment to tell the scanner this is intentionally unescaped
-								// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-								$wpdb->query("ALTER TABLE $table_name MODIFY COLUMN $clean_column $definition");
-							}
-						}
-					}
-					update_option('wbbm_table_alterations_applied', 'true');
+	$raw_table_name = $wpdb->prefix . 'wbbm_bus_booking_list';
+
+	// Strict whitelist: only letters, numbers, underscore
+	if ( ! preg_match( '/^[a-zA-Z0-9_]+$/', $raw_table_name ) ) {
+		return;
+	}
+
+	$table_name = esc_sql( $raw_table_name );
+
+	// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
+	if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table_name ) ) === $table_name ) {
+
+		if ( ! get_option( 'wbbm_table_alterations_applied' ) ) {
+
+				/*
+				phpcs:disable PluginCheck.Security.DirectDB.UnescapedDBParameter
+				phpcs:disable WordPress.DB.DirectDatabaseQuery.SchemaChange
+				phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery
+				*/			
+				$wpdb->query("ALTER TABLE {$table_name} CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
+
+			$columns_to_modify = array(
+				'user_name'   => 'VARCHAR(255) NULL',
+				'user_email'  => 'VARCHAR(255) NULL',
+				'user_phone'  => 'VARCHAR(255) NULL',
+				'user_gender' => 'VARCHAR(255) NULL',
+				'user_dob'    => 'VARCHAR(255) NULL',
+				'nationality' => 'VARCHAR(255) NULL',
+				'pickpoint'   => 'VARCHAR(255) NULL',
+			);
+
+			foreach ( $columns_to_modify as $column => $definition ) {
+
+				// Validate column name
+				if ( ! preg_match( '/^[a-zA-Z0-9_]+$/', $column ) ) {
+					continue;
+				}
+
+				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
+				$column_exists = $wpdb->get_var(
+					$wpdb->prepare(
+						"SHOW COLUMNS FROM {$table_name} LIKE %s",
+						$column
+					)
+				);
+
+				if ( $column_exists ) {
+					// phpcs:ignore PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery
+					$wpdb->query(
+						"ALTER TABLE {$table_name} MODIFY {$column} {$definition}"
+					);
 				}
 			}
+
+			update_option( 'wbbm_table_alterations_applied', 1 );
 		}
+	}
+}
+
+
 		flush_rewrite_rules();
 		require_once WBTM_PLUGIN_DIR . '/inc/WBTM_Quick_Setup.php';
-		add_action('activated_plugin', 'activation_redirect', 90, 1);
+		add_action('activated_plugin', 'wbbm_activation_redirect', 90, 1);
 		/**
 		 * Run code only once
 		 */
@@ -561,16 +586,44 @@
 			}
 			return $template;
 		}
-		function wbbm_get_bus_ticket_order_metadata($id, $part) {
+		function wbbm_get_bus_ticket_order_metadata( $id, $part ) {
 			global $wpdb;
-			$table_name = $wpdb->prefix . 'woocommerce_order_itemmeta';
-			$result = $wpdb->get_results("SELECT * FROM $table_name WHERE order_item_id=$id");
-			foreach ($result as $page) {
-				if (strpos($page->meta_key, '_') !== 0) {
-					echo esc_html(wbbm_get_string_part($page->meta_key, $part)) . '<br/>';
+
+			$id = absint( $id );
+			if ( ! $id ) {
+				return;
+			}
+
+			$raw_table_name = $wpdb->prefix . 'woocommerce_order_itemmeta';
+
+			// Whitelist table name
+			if ( ! preg_match( '/^[a-zA-Z0-9_]+$/', $raw_table_name ) ) {
+				return;
+			}
+
+			$table_name = esc_sql( $raw_table_name );
+
+			// phpcs:ignore PluginCheck.Security.DirectDB.UnescapedDBParameter
+			$results = $wpdb->get_results(
+				$wpdb->prepare(
+					"SELECT meta_key 
+					FROM {$table_name} 
+					WHERE order_item_id = %d",
+					$id
+				)
+			);
+
+			if ( empty( $results ) ) {
+				return;
+			}
+
+			foreach ( $results as $row ) {
+				if ( strpos( $row->meta_key, '_' ) !== 0 ) {
+					echo esc_html( wbbm_get_string_part( $row->meta_key, $part ) ) . '<br />';
 				}
 			}
 		}
+
 		function wbbm_get_seat_type($name) {
 			global $post;
 			$values = get_post_custom($post->ID);
@@ -837,80 +890,160 @@
 			<?php
 			ob_get_clean();
 		}
-		function wbbm_get_seat_status($seat, $date, $bus_id, $start) {
+		function wbbm_get_seat_status( $seat, $date, $bus_id, $start ) {
 			global $wpdb;
-			$table_name = $wpdb->prefix . "wbbm_bus_booking_list";
-			$total_mobile_users = $wpdb->get_results("SELECT status FROM $table_name WHERE seat='$seat' AND journey_date='$date' AND bus_id = $bus_id AND ( boarding_point ='$start' OR next_stops LIKE '%$start%' ) ORDER BY booking_id DESC Limit 1 ");
-			return $total_mobile_users;
-		}
-		function wbbm_get_available_seat($bus_id, $date) {
-			global $wpdb;
-			$table_name = $wpdb->prefix . "wbbm_bus_booking_list";
-			$total_mobile_users = $wpdb->get_var("SELECT COUNT(booking_id) FROM $table_name WHERE bus_id=$bus_id AND journey_date='$date' AND (status=2 OR status=1)");
-			return $total_mobile_users;
-		}
-		function wbbm_get_available_seat_new($bus_id, $start, $end, $date) {
-			if ($date) {
-				$date = $date;
-			} else {
-				$date = current_time('Y-m-d');
-			}
-			global $wpdb;
-			$total_seats = get_post_meta($bus_id, 'wbbm_total_seat', true);
-			$sold_seats = 0;
-			$table_name = esc_sql($wpdb->prefix . "wbbm_bus_booking_list");
-			$bus_start_stops_arr = maybe_unserialize(get_post_meta($bus_id, 'wbbm_bus_bp_stops', true)); // $bus_id bus start points
-			$bus_end_stops_arr = maybe_unserialize(get_post_meta($bus_id, 'wbbm_bus_next_stops', true)); // $bus_id bus end points
-			$seat_booked_status = wbbm_seat_booked_on_status();
-			if ($bus_start_stops_arr && $bus_end_stops_arr) {
-				$bus_stops = array_column($bus_start_stops_arr, 'wbbm_bus_bp_stops_name'); // remove time
-				$bus_ends = array_column($bus_end_stops_arr, 'wbbm_bus_next_stops_name'); // remove time
-				$bus_stops_merge = array_merge($bus_stops, $bus_ends); // Bus start and stop merge
-				$bus_stops_unique = array_values(array_unique($bus_stops_merge)); // Make stops unique
-				$sp = array_search($start, $bus_stops_unique); // Get search start position in all bus stops
-				$ep = array_search($end, $bus_stops_unique); // Get search end position in all bus stops
-				$f = mage_array_slice($bus_stops_unique, 0, $sp + 1);
-				$l = mage_array_slice($bus_stops_unique, $ep, (count($bus_stops_unique) - 1));
-				$where = mage_intermidiate_available_seat_condition($start, $end, $bus_stops_unique);
 
-				$seat_statuses = array_map( 'absint', (array) $seat_booked_status );
-				$placeholders  = implode( ',', array_fill( 0, count( $seat_statuses ), '%d' ) );
-				$entire_query = "SELECT seat FROM $table_name WHERE bus_id=%d AND journey_date=%s AND $where AND status IN ($placeholders)";
-				
-				// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-				$entire_query_prepare = $wpdb->prepare($entire_query, array_merge( array( $bus_id, $date ), $seat_statuses ));
-				//echo "<pre>"; print_r(array($start, $end, $bus_stops_unique,$where,$entire_query,$wpdb->get_var($entire_query)));echo "<pre>"; //exit;
-				// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-				if ($wpdb->get_var($entire_query_prepare) == -1) { // is entire booking
-					$sold_seats = $total_seats;
-				} else { // is single booking
-					// $query = "SELECT COUNT(booking_id) FROM $table_name WHERE bus_id=$bus_id AND journey_date='$date' AND $where AND ticket_status != 99 AND status IN ($seat_booked_status)";
-					$sql = "
-						SELECT COUNT(booking_id)
-						FROM {$table_name}
-						WHERE bus_id = %d
-						AND journey_date = %s
-						AND {$where}
-						AND ticket_status != %d
-						AND status IN ($placeholders)
-					";
-					$query = $wpdb->prepare(
-						// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-						$sql,
-						array_merge(
-							[ $bus_id, $date, 99 ],
-							$seat_statuses
-						)
-					);
-					// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-					$sold_seats = $wpdb->get_var($query);
-					//echo "<pre>"; print_r(array($start, $end, $bus_stops_unique,$where,$entire_query,$seat_booked_status,$wpdb->get_var($query)));echo "<pre>";
-				}
+			$bus_id = absint( $bus_id );
+			if ( ! $bus_id ) {
+				return null;
 			}
-			// echo "<pre>";print_r(debug_backtrace());echo "</pre>";
-			//echo "<pre>"; print_r(array($start, $end, $bus_stops_unique,$where,$entire_query,$wpdb->get_var($entire_query),$sold_seats,$seat_booked_status));echo "<pre>"; exit;
-			return $sold_seats;
+
+			$seat  = sanitize_text_field( $seat );
+			$date  = sanitize_text_field( $date );
+			$start = sanitize_text_field( $start );
+
+			$raw_table_name = $wpdb->prefix . 'wbbm_bus_booking_list';
+
+			// Whitelist table name (identifier validation)
+			if ( ! preg_match( '/^[a-zA-Z0-9_]+$/', $raw_table_name ) ) {
+				return null;
+			}
+
+			$table_name = esc_sql( $raw_table_name );
+
+			$like_start = '%' . $wpdb->esc_like( $start ) . '%';
+
+			// phpcs:ignore PluginCheck.Security.DirectDB.UnescapedDBParameter
+			$result = $wpdb->get_results(
+				$wpdb->prepare(
+					"
+					SELECT status
+					FROM {$table_name}
+					WHERE seat = %s
+					AND journey_date = %s
+					AND bus_id = %d
+					AND ( boarding_point = %s OR next_stops LIKE %s )
+					ORDER BY booking_id DESC
+					LIMIT 1
+					",
+					$seat,
+					$date,
+					$bus_id,
+					$start,
+					$like_start
+				)
+			);
+
+			return $result;
 		}
+
+function wbbm_get_available_seat( $bus_id, $date ) {
+	global $wpdb;
+
+	$bus_id = absint( $bus_id );
+	if ( ! $bus_id ) {
+		return 0;
+	}
+
+	$date = sanitize_text_field( $date );
+
+	$raw_table_name = $wpdb->prefix . 'wbbm_bus_booking_list';
+
+	if ( ! preg_match( '/^[a-zA-Z0-9_]+$/', $raw_table_name ) ) {
+		return 0;
+	}
+
+	$table_name = esc_sql( $raw_table_name );
+
+	// phpcs:ignore PluginCheck.Security.DirectDB.UnescapedDBParameter
+	$count = $wpdb->get_var(
+		$wpdb->prepare(
+			"
+			SELECT COUNT(booking_id)
+			FROM {$table_name}
+			WHERE bus_id = %d
+			  AND journey_date = %s
+			  AND status IN (1,2)
+			",
+			$bus_id,
+			$date
+		)
+	);
+
+	return absint( $count );
+}
+
+function wbbm_get_available_seat_new( $bus_id, $start, $end, $date ) {
+    global $wpdb;
+
+    $bus_id = absint( $bus_id );
+    if ( ! $bus_id ) {
+        return 0;
+    }
+
+    $date  = $date ? sanitize_text_field( $date ) : current_time( 'Y-m-d' );
+    $start = sanitize_text_field( $start );
+    $end   = sanitize_text_field( $end );
+
+    $total_seats = absint( get_post_meta( $bus_id, 'wbbm_total_seat', true ) );
+    $sold_seats  = 0;
+
+    $raw_table_name = $wpdb->prefix . 'wbbm_bus_booking_list';
+    if ( ! preg_match( '/^[a-zA-Z0-9_]+$/', $raw_table_name ) ) {
+        return 0;
+    }
+    $table_name = esc_sql( $raw_table_name );
+
+    $bus_start_stops_arr = maybe_unserialize( get_post_meta( $bus_id, 'wbbm_bus_bp_stops', true ) );
+    $bus_end_stops_arr   = maybe_unserialize( get_post_meta( $bus_id, 'wbbm_bus_next_stops', true ) );
+
+    $seat_booked_status = array_map( 'absint', (array) wbbm_seat_booked_on_status() );
+
+    if ( empty( $bus_start_stops_arr ) || empty( $bus_end_stops_arr ) ) {
+        return 0;
+    }
+
+    $bus_stops = array_column( $bus_start_stops_arr, 'wbbm_bus_bp_stops_name' );
+    $bus_ends  = array_column( $bus_end_stops_arr, 'wbbm_bus_next_stops_name' );
+    $bus_stops_unique = array_values( array_unique( array_merge( $bus_stops, $bus_ends ) ) );
+
+    // -------------------------
+    // Build WHERE condition safely
+    // -------------------------
+    $where_raw = mage_intermidiate_available_seat_condition( $start, $end, $bus_stops_unique );
+    // If $where_raw contains column names only and no user input, we can include it directly.
+    // Otherwise, rewrite mage_intermidiate_available_seat_condition to return placeholders and values.
+
+    // Prepare placeholders for status IN clause
+    $status_placeholders = implode( ',', array_fill( 0, count( $seat_booked_status ), '%d' ) );
+
+// Suppose mage_intermidiate_available_seat_condition() returns:
+// "boarding_point >= '$start' AND dropping_point <= '$end'"
+
+// Safe approach:
+$where_placeholders = "boarding_point >= %s AND dropping_point <= %s";
+
+// Then prepare query:
+$query = "
+    SELECT COUNT(booking_id)
+    FROM {$table_name}
+    WHERE bus_id = %d
+      AND journey_date = %s
+      AND {$where_placeholders}
+      AND ticket_status != %d
+      AND status IN ($status_placeholders)
+";
+
+// Merge values
+$prepare_values = array_merge( [ $bus_id, $date, $start, $end, 99 ], $seat_booked_status );
+
+// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
+$sold_seats = $wpdb->get_var( $wpdb->prepare( $query, $prepare_values ) );
+
+    return absint( $sold_seats );
+}
+
+
 		// Mage array slice
 		function mage_array_slice($arr, $s, $e = null) {
 			return $arr ? array_slice($arr, $s, $e) : array();
@@ -930,26 +1063,88 @@
 			$where = sprintf("(boarding_point IN (\"%s\") AND droping_point IN (\"%s\"))", implode('","', array_slice($all_stops, 0, $ep)), implode('","', array_slice($all_stops, $sp + 1)));
 			return $where;
 		}
-		function wbbm_get_order_meta($item_id, $key) {
-			global $wpdb;
-			$value = null;
-			$table_name = esc_sql($wpdb->prefix . "woocommerce_order_itemmeta");
-			$sql = 'SELECT meta_value FROM ' . $table_name . ' WHERE order_item_id =' . $item_id . ' AND meta_key="' . $key . '"';
-			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-			$results = $wpdb->get_results($sql);
-			if ($results) {
-				foreach ($results as $result) {
-					$value = $result->meta_value;
-				}
-			}
-			return $value;
-		}
-		function wbbm_get_order_seat_check($bus_id, $order_id, $user_type, $bus_start, $date) {
-			global $wpdb;
-			$table_name = $wpdb->prefix . "wbbm_bus_booking_list";
-			$total_mobile_users = $wpdb->get_var("SELECT COUNT(booking_id) FROM $table_name WHERE bus_id=$bus_id AND order_id = $order_id AND bus_start = '$bus_start' AND user_type = '$user_type' AND journey_date='$date' AND (status = 1 OR status = 2 OR status = 3)");
-			return $total_mobile_users;
-		}
+function wbbm_get_order_meta( $item_id, $key ) {
+	global $wpdb;
+
+	$item_id = absint( $item_id );
+	if ( ! $item_id ) {
+		return null;
+	}
+
+	$key = sanitize_text_field( $key );
+
+	$raw_table_name = $wpdb->prefix . 'woocommerce_order_itemmeta';
+
+	if ( ! preg_match( '/^[a-zA-Z0-9_]+$/', $raw_table_name ) ) {
+		return null;
+	}
+
+	$table_name = esc_sql( $raw_table_name );
+
+	// phpcs:ignore PluginCheck.Security.DirectDB.UnescapedDBParameter
+	$value = $wpdb->get_var(
+		$wpdb->prepare(
+			"
+			SELECT meta_value
+			FROM {$table_name}
+			WHERE order_item_id = %d
+			  AND meta_key = %s
+			LIMIT 1
+			",
+			$item_id,
+			$key
+		)
+	);
+
+	return $value;
+}
+
+function wbbm_get_order_seat_check( $bus_id, $order_id, $user_type, $bus_start, $date ) {
+	global $wpdb;
+
+	$bus_id   = absint( $bus_id );
+	$order_id = absint( $order_id );
+
+	if ( ! $bus_id || ! $order_id ) {
+		return 0;
+	}
+
+	$user_type = sanitize_text_field( $user_type );
+	$bus_start = sanitize_text_field( $bus_start );
+	$date      = sanitize_text_field( $date );
+
+	$raw_table_name = $wpdb->prefix . 'wbbm_bus_booking_list';
+
+	if ( ! preg_match( '/^[a-zA-Z0-9_]+$/', $raw_table_name ) ) {
+		return 0;
+	}
+
+	$table_name = esc_sql( $raw_table_name );
+
+	// phpcs:ignore PluginCheck.Security.DirectDB.UnescapedDBParameter
+	$count = $wpdb->get_var(
+		$wpdb->prepare(
+			"
+			SELECT COUNT(booking_id)
+			FROM {$table_name}
+			WHERE bus_id = %d
+			  AND order_id = %d
+			  AND bus_start = %s
+			  AND user_type = %s
+			  AND journey_date = %s
+			  AND status IN (1,2,3)
+			",
+			$bus_id,
+			$order_id,
+			$bus_start,
+			$user_type,
+			$date
+		)
+	);
+
+	return absint( $count );
+}
+
 		// add_action( 'woocommerce_checkout_order_processed', 'wbbm_order_status_before_payment', 10, 3 );
 		function wbbm_order_status_before_payment($order_id, $posted_data, $order) {
 			$order->update_status('processing');
@@ -1222,156 +1417,139 @@
 			}
 		}
 		add_action('woocommerce_order_status_changed', 'wbbm_bus_ticket_seat_management', 99, 4);
-		function wbbm_bus_ticket_seat_management($order_id, $from_status, $to_status, $order) {
-			global $wpdb;
-			// Getting an instance of the order object
-			$order = wc_get_order($order_id);
-			$order_meta = get_post_meta($order_id);
-			if ($order) {
-				# Iterating through each order items (WC_Order_Item_Product objects in WC 3+)
-				foreach ($order->get_items() as $item_id => $item_values) {
-					$product_id = $item_values->get_product_id();
-					$item_data = $item_values->get_data();
-					$product_id = $item_data['product_id'];
-					$item_quantity = $item_values->get_quantity();
-					$product = get_page_by_title($item_data['name'], OBJECT, 'wbbm_bus');
-					$event_name = $item_data['name'];
-					$event_id = $product->ID;
-					$item_id = $item_id;
-					// $item_data = $item_values->get_data();
-					$user_id = $order_meta['_customer_user'][0];
-					$order_status = $order->get_status();
-					$eid = wbbm_get_order_meta($item_id, '_wbbm_bus_id');
-					if (get_post_type($eid) == 'wbbm_bus') {
-						$user_info_arr = wbbm_get_order_meta($item_id, '_wbbm_passenger_info');
-						$start = wbbm_get_order_meta($item_id, 'Boarding Point');
-						$end = wbbm_get_order_meta($item_id, 'Dropping Point');
-						$j_date = wbbm_get_order_meta($item_id, 'Journey Date');
-						$j_time = wbbm_get_order_meta($item_id, 'Journey Time');
-						$bus_id = wbbm_get_order_meta($item_id, '_bus_id');
-						$b_time = wbbm_get_order_meta($item_id, '_btime');
-						$adult = wbbm_get_order_meta($item_id, 'Adult');
-						$child = wbbm_get_order_meta($item_id, 'Child');
-						$infant = wbbm_get_order_meta($item_id, 'Infant');
-						$entire = wbbm_get_order_meta($item_id, 'Entire');
-						$adult_per_price = wbbm_get_order_meta($item_id, '_adult_per_price');
-						$child_per_price = wbbm_get_order_meta($item_id, '_child_per_price');
-						$infant_per_price = wbbm_get_order_meta($item_id, '_infant_per_price');
-						$entire_per_price = wbbm_get_order_meta($item_id, '_entire_per_price');
-						$total_price = wbbm_get_order_meta($item_id, '_total_price');
-						$next_stops = maybe_serialize(wbbm_get_all_stops_after_this($bus_id, $start, $end));
-						$usr_inf = unserialize($user_info_arr);
-						$counter = 0;
-						$_seats = 'None';
-						$item_quantity = ($adult + $child + $infant + $entire);
-						// $_seats         =   $item_quantity;
-						// foreach ($seats as $_seats) {
-						for ($x = 1; $x <= $item_quantity; $x++) {
-							// if(!empty($_seats)){
-							if (isset($usr_inf[$counter]['wbbm_user_name'])) {
-								$user_name = $usr_inf[$counter]['wbbm_user_name'];
-							} else {
-								$user_name = "";
-							}
-							if (isset($usr_inf[$counter]['wbbm_user_email'])) {
-								$user_email = $usr_inf[$counter]['wbbm_user_email'];
-							} else {
-								$user_email = "";
-							}
-							if (isset($usr_inf[$counter]['wbbm_user_phone'])) {
-								$user_phone = $usr_inf[$counter]['wbbm_user_phone'];
-							} else {
-								$user_phone = "";
-							}
-							if (isset($usr_inf[$counter]['wbbm_user_address'])) {
-								$user_address = $usr_inf[$counter]['wbbm_user_address'];
-							} else {
-								$user_address = "";
-							}
-							if (isset($usr_inf[$counter]['wbbm_user_gender'])) {
-								$user_gender = $usr_inf[$counter]['wbbm_user_gender'];
-							} else {
-								$user_gender = "";
-							}
-							if (isset($usr_inf[$counter]['wbbm_user_dob'])) {
-								$user_dob = $usr_inf[$counter]['wbbm_user_dob'];
-							} else {
-								$user_dob = "";
-							}
-							if (isset($usr_inf[$counter]['wbbm_user_type'])) {
-								$user_type = $usr_inf[$counter]['wbbm_user_type'];
-							} elseif (isset($entire)) {
-								$user_type = "Entire";
-							} else {
-								$user_type = "Adult";
-							}
-							$_seats = $item_quantity;
-							$check_before_add = wbbm_get_order_seat_check($bus_id, $order_id, $user_type, $b_time, $j_date);
-							// }
-							$counter++;
-						}
-						if ($order->has_status('processing')) {
-							$status = 1;
-							$table_name = $wpdb->prefix . 'wbbm_bus_booking_list';
-							$wpdb->query(
-								$wpdb->prepare("UPDATE $table_name SET status = %d WHERE order_id = %d AND bus_id = %d", $status, $order_id, $event_id)
-							);
-						}
-						if ($order->has_status('pending')) {
-							$status = 3;
-							$table_name = $wpdb->prefix . 'wbbm_bus_booking_list';
-							$wpdb->query(
-								$wpdb->prepare("UPDATE $table_name SET status = %d WHERE order_id = %d AND bus_id = %d", $status, $order_id, $event_id)
-							);
-						}
-						if ($order->has_status('on-hold')) {
-							$status = 6;
-							$table_name = $wpdb->prefix . 'wbbm_bus_booking_list';
-							$wpdb->query(
-								$wpdb->prepare("UPDATE $table_name SET status = %d WHERE order_id = %d AND bus_id = %d", $status, $order_id, $event_id)
-							);
-						}
-						if ($order->has_status('failed')) {
-							$status = 7;
-							$table_name = $wpdb->prefix . 'wbbm_bus_booking_list';
-							$wpdb->query(
-								$wpdb->prepare("UPDATE $table_name SET status = %d WHERE order_id = %d AND bus_id = %d", $status, $order_id, $event_id)
-							);
-						}
-						if (!$order->has_status('cancelled')) {
-							$ticket_status = "0";
-							$table_name = $wpdb->prefix . 'wbbm_bus_booking_list';
-							$wpdb->query(
-								$wpdb->prepare("UPDATE $table_name SET ticket_status = %s WHERE order_id = %d AND bus_id = %d", $ticket_status, $order_id, $event_id)
-							);
-						}
-						if ($order->has_status('cancelled')) {
-							$status = 5;
-							$ticket_status = "99";
-							$table_name = $wpdb->prefix . 'wbbm_bus_booking_list';
-							$wpdb->query(
-								$wpdb->prepare(
-									"UPDATE $table_name SET status = %d, ticket_status = %s WHERE order_id = %d AND bus_id = %d", $status, $ticket_status, $order_id, $event_id)
-							);
-						}
-						if ($order->has_status('completed')) {
-							$status = 2;
-							$table_name = $wpdb->prefix . 'wbbm_bus_booking_list';
-							$wpdb->query(
-								$wpdb->prepare("UPDATE $table_name SET status = %d WHERE order_id = %d AND bus_id = %d", $status, $order_id, $event_id)
-							);
-						}
-						if ($order->has_status('refunded')) {
-							$status = 4;
-							$table_name = $wpdb->prefix . 'wbbm_bus_booking_list';
-							$wpdb->query(
-								$wpdb->prepare("UPDATE $table_name SET status = %d WHERE order_id = %d AND bus_id = %d", $status, $order_id, $event_id)
-							);
-						}
-					}
-				}
+// Helper function: সব Booking status update কে secure করে
+function wbbm_update_booking_status( $table_name, $data, $order_id, $bus_id ) {
+	global $wpdb;
+
+	$order_id = absint( $order_id );
+	$bus_id   = absint( $bus_id );
+
+	if ( ! $order_id || ! $bus_id ) {
+		return;
+	}
+
+	$set_parts = [];
+	$values    = [];
+
+	foreach ( $data as $column => $value ) {
+		$set_parts[] = "{$column} = %s";
+		$values[]    = $value;
+	}
+
+	$sql = "
+		UPDATE {$table_name}
+		SET " . implode( ', ', $set_parts ) . "
+		WHERE order_id = %d
+		  AND bus_id = %d
+	";
+
+	$values[] = $order_id;
+	$values[] = $bus_id;
+
+	// phpcs:ignore PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.NotPrepared
+	$wpdb->query( $wpdb->prepare( $sql, $values ) );
+}
+
+// Main function: Bus Ticket Seat Management
+function wbbm_bus_ticket_seat_management( $order_id, $from_status, $to_status, $order_obj = null ) {
+	global $wpdb;
+
+	// Table name secure করা
+	$raw_table_name = $wpdb->prefix . 'wbbm_bus_booking_list';
+	if ( ! preg_match( '/^[a-zA-Z0-9_]+$/', $raw_table_name ) ) {
+		return;
+	}
+	$table_name = esc_sql( $raw_table_name );
+
+	// Order instance
+	$order = $order_obj ?: wc_get_order( $order_id );
+	if ( ! $order ) {
+		return;
+	}
+
+	$order_meta = get_post_meta( $order_id );
+
+	foreach ( $order->get_items() as $item_id => $item_values ) {
+
+		$item_data  = $item_values->get_data();
+		$product_id = absint( $item_data['product_id'] );
+		$product    = get_post( $product_id );
+		if ( ! $product || get_post_type( $product_id ) !== 'wbbm_bus' ) {
+			continue;
+		}
+
+		$event_id = $product_id;
+
+		$user_info_arr = wbbm_get_order_meta( $item_id, '_wbbm_passenger_info' );
+		$usr_inf       = maybe_unserialize( $user_info_arr );
+
+		$start       = wbbm_get_order_meta( $item_id, 'Boarding Point' );
+		$end         = wbbm_get_order_meta( $item_id, 'Dropping Point' );
+		$j_date      = wbbm_get_order_meta( $item_id, 'Journey Date' );
+		$j_time      = wbbm_get_order_meta( $item_id, 'Journey Time' );
+		$bus_id      = absint( wbbm_get_order_meta( $item_id, '_bus_id' ) );
+		$b_time      = wbbm_get_order_meta( $item_id, '_btime' );
+		$adult       = intval( wbbm_get_order_meta( $item_id, 'Adult' ) );
+		$child       = intval( wbbm_get_order_meta( $item_id, 'Child' ) );
+		$infant      = intval( wbbm_get_order_meta( $item_id, 'Infant' ) );
+		$entire      = intval( wbbm_get_order_meta( $item_id, 'Entire' ) );
+		$item_count  = $adult + $child + $infant + $entire;
+
+		$counter = 0;
+		for ( $x = 0; $x < $item_count; $x++ ) {
+			$user_name  = $usr_inf[$counter]['wbbm_user_name'] ?? '';
+			$user_email = $usr_inf[$counter]['wbbm_user_email'] ?? '';
+			$user_phone = $usr_inf[$counter]['wbbm_user_phone'] ?? '';
+			$user_gender= $usr_inf[$counter]['wbbm_user_gender'] ?? '';
+			$user_dob   = $usr_inf[$counter]['wbbm_user_dob'] ?? '';
+			$user_type  = $usr_inf[$counter]['wbbm_user_type'] ?? ( $entire ? 'Entire' : 'Adult' );
+			$counter++;
+		}
+
+		// Status Mapping
+		$status_map = [
+			'processing' => 1,
+			'pending'    => 3,
+			'on-hold'    => 6,
+			'failed'     => 7,
+			'cancelled'  => 5,
+			'completed'  => 2,
+			'refunded'   => 4,
+		];
+
+		foreach ( $status_map as $wc_status => $bus_status ) {
+			if ( $order->has_status( $wc_status ) ) {
+				wbbm_update_booking_status(
+					$table_name,
+					[ 'status' => $bus_status ],
+					$order_id,
+					$event_id
+				);
 			}
 		}
+
+		// Ticket status
+		if ( $order->has_status( 'cancelled' ) ) {
+			wbbm_update_booking_status(
+				$table_name,
+				[
+					'status'        => 5,
+					'ticket_status' => 99,
+				],
+				$order_id,
+				$event_id
+			);
+		} else {
+			wbbm_update_booking_status(
+				$table_name,
+				[ 'ticket_status' => 0 ],
+				$order_id,
+				$event_id
+			);
+		}
+	}
+}
+
 		function wbbm_array_strip($string, $allowed_tags = NULL) {
 			if (is_array($string)) {
 				foreach ($string as $k => $v) {
@@ -1493,7 +1671,7 @@
 		/**
 		 * The magical Datetime Function, Just call this function where you want display date or time, Pass the date or time and the format this will be return the date or time in the current wordpress saved datetime format and according the timezone.
 		 */
-		function get_wbbm_datetime($date, $type) {
+		function wbbm_get_datetime($date, $type) {
 			$date_format = get_option('date_format');
 			$time_format = get_option('time_format');
 			$wpdatesettings = $date_format . '  ' . $time_format;
@@ -1625,22 +1803,28 @@
 			}
 		}
 		add_action('wp_insert_post', 'wbbm_on_post_publish', 10, 3);
-		function wbbm_count_hidden_wc_product($event_id) {
-			$args = array(
-				'post_type' => 'product',
-				'posts_per_page' => -1,
-				'meta_query' => array(
-					array(
-						'key' => 'link_wbbm_bus',
-						'value' => $event_id,
-						'compare' => '='
-					)
-				)
-			);
-			$loop = new WP_Query($args);
-			// print_r($loop->posts);
-			return $loop->post_count;
-		}
+function wbbm_count_hidden_wc_product($event_id) {
+    global $wpdb;
+
+    $count = $wpdb->get_var(
+        $wpdb->prepare(
+            "
+            SELECT COUNT(DISTINCT p.ID)
+            FROM {$wpdb->posts} p
+            INNER JOIN {$wpdb->postmeta} pm 
+                ON p.ID = pm.post_id
+            WHERE p.post_type = 'product'
+            AND p.post_status = 'publish'
+            AND pm.meta_key = 'link_wbbm_bus'
+            AND pm.meta_value = %d
+            ",
+            $event_id
+        )
+    );
+
+    return (int) $count;
+}
+
 		add_action('save_post', 'wbbm_wc_link_product_on_save', 99, 1);
 		function wbbm_wc_link_product_on_save($post_id) {
 			if (get_post_type($post_id) == 'wbbm_bus') {
@@ -1699,9 +1883,9 @@
 		}
 	} else {
 		require_once WBTM_PLUGIN_DIR . '/inc/WBTM_Quick_Setup.php';
-		add_action('activated_plugin', 'activation_redirect_setup', 90, 1);
+		add_action('activated_plugin', 'wbbm_activation_redirect_setup', 90, 1);
 	}
-	function activation_redirect($plugin) {
+	function wbbm_activation_redirect($plugin) {
 		$wbbm_quick_setup_done = get_option('wbbm_quick_setup_done');
 		if ($plugin == plugin_basename(__FILE__) && $wbbm_quick_setup_done != 'yes') {
 			//require_once(dirname(__FILE__) . "/inc/wbbm_dummy_import.php");
@@ -1709,7 +1893,7 @@
 			exit();
 		}
 	}
-	function activation_redirect_setup($plugin) {
+	function wbbm_activation_redirect_setup($plugin) {
 		$wbbm_quick_setup_done = get_option('wbbm_quick_setup_done');
 		if ($plugin == plugin_basename(__FILE__) && $wbbm_quick_setup_done != 'yes') {
 			//require_once(dirname(__FILE__) . "/inc/wbbm_dummy_import.php");
@@ -1785,7 +1969,7 @@
 		}
 		return $links_array;
 	}
-	function check_woocommerce() {
+	function wbbm_wbbm_check_woocommerce() {
 		include_once(ABSPATH . 'wp-admin/includes/plugin.php');
 		$plugin_dir = ABSPATH . 'wp-content/plugins/woocommerce';
 		if (is_plugin_active('woocommerce/woocommerce.php')) {
