@@ -15,9 +15,9 @@ class NextDateClass extends CommonClass
         $date = mage_wp_date($date, 'Y-m-d');
         if ($date) {
             // Verify next-date nonce if provided. If valid, allow using `tab_date`/`tab_date_r` from GET.
-            $next_date_nonce = isset($_GET['mage_next_date_nonce']) ? sanitize_text_field(wp_unslash($_GET['mage_next_date_nonce'])) : '';
-            $next_date_nonce_ok = $next_date_nonce && wp_verify_nonce($next_date_nonce, 'mage_next_date_action');
-            if ( isset($_GET['mage_next_date_nonce']) && ! $next_date_nonce_ok ) {
+            $next_date_nonce = isset($_GET['bus_search_nonce']) ? sanitize_text_field(wp_unslash($_GET['bus_search_nonce'])) : '';
+            $next_date_nonce_ok = $next_date_nonce && wp_verify_nonce($next_date_nonce, 'bus_search_nonce_action');
+            if ( isset($_GET['bus_search_nonce']) && ! $next_date_nonce_ok ) {
                 if ( function_exists('wc_add_notice') ) {
                     wc_add_notice(__('Security check failed. Invalid date request.', 'bus-booking-manager'), 'error');
                 }
@@ -41,8 +41,8 @@ class NextDateClass extends CommonClass
                 <ul class="mage_list_inline flexEqual mage_next_date">
                     <?php
                     // create a nonce for next-date links
-                    $next_date_link_nonce = wp_create_nonce('mage_next_date_action');
-                    $next_date_nonce_query = '&mage_next_date_nonce=' . rawurlencode($next_date_link_nonce);
+                    $next_date_link_nonce = wp_create_nonce('bus_search_nonce_action');
+                    $next_date_nonce_query = '&bus_search_nonce=' . rawurlencode($next_date_link_nonce);
 
                     for ($i = 0; $i < 6; $i++) {
                     ?>
@@ -75,9 +75,9 @@ class NextDateClass extends CommonClass
         $bus_r = isset($_GET['bus-r']) ? wp_strip_all_tags(wp_unslash($_GET['bus-r'])) : '';
 
         // verify incoming next-date nonce (if present) before trusting GET tab/date parameters
-        $next_date_nonce = isset($_GET['mage_next_date_nonce']) ? sanitize_text_field(wp_unslash($_GET['mage_next_date_nonce'])) : '';
-        $next_date_nonce_ok = $next_date_nonce && wp_verify_nonce($next_date_nonce, 'mage_next_date_action');
-        if ( isset($_GET['mage_next_date_nonce']) && ! $next_date_nonce_ok ) {
+        $next_date_nonce = isset($_GET['bus_search_nonce']) ? sanitize_text_field(wp_unslash($_GET['bus_search_nonce'])) : '';
+        $next_date_nonce_ok = $next_date_nonce && wp_verify_nonce($next_date_nonce, 'bus_search_nonce_action');
+        if ( isset($_GET['bus_search_nonce']) && ! $next_date_nonce_ok ) {
             if ( function_exists('wc_add_notice') ) {
                 wc_add_notice(__('Security check failed. Invalid date request.', 'bus-booking-manager'), 'error');
             }
@@ -88,8 +88,8 @@ class NextDateClass extends CommonClass
         $r_date_safe = $next_date_nonce_ok ? $r_date_get : ($this->mage_bus_isset('r_date') ? wp_strip_all_tags(wp_unslash($this->mage_bus_isset('r_date'))) : '');
 
         // create a nonce for next-date links
-        $next_date_link_nonce = wp_create_nonce('mage_next_date_action');
-        $next_date_nonce_query = '&mage_next_date_nonce=' . rawurlencode($next_date_link_nonce);
+        $next_date_link_nonce = wp_create_nonce('bus_search_nonce_action');
+        $next_date_nonce_query = '&bus_search_nonce=' . rawurlencode($next_date_link_nonce);
         $show_operational_on_day = sanitize_text_field(get_post_meta(get_the_ID(), 'show_operational_on_day', true)) ?: 'no';
         $wbtm_bus_on_dates = get_post_meta(get_the_id(), 'wbtm_bus_on_date', true) ? maybe_unserialize(get_post_meta(get_the_id(), 'wbtm_bus_on_date', true)) : [];
 

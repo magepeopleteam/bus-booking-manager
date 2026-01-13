@@ -13,8 +13,8 @@
 			$this->mage_search_form_horizontal(false, $target);
 			
 			if (isset($_GET['bus_start_route'], $_GET['bus_end_route'], $_GET['j_date'])) {
-                // Safely get the nonce from $_POST
-                $nonce = isset($_GET['bus_search_nonce']) ? sanitize_text_field(wp_unslash($_GET['bus_search_nonce'])) : '';
+                // Safely get the nonce from the request (accept GET or POST)
+                $nonce = isset($_REQUEST['bus_search_nonce']) ? sanitize_text_field(wp_unslash($_REQUEST['bus_search_nonce'])) : '';
 
                 // Verify the nonce
                 if ( ! $nonce || ! wp_verify_nonce($nonce, 'bus_search_nonce_action') ) {
@@ -105,8 +105,8 @@ function mage_search_list() {
         <?php $this->mage_search_bus_list(false); ?>
     </div>
     <?php if (isset($_GET['r_date']) && $_GET['r_date'] !== '' && $_GET['r_date'] !== 'yy-mm-dd') {
-        // Safely get the nonce from $_POST
-        $nonce = isset($_GET['bus_search_nonce']) ? sanitize_text_field(wp_unslash($_GET['bus_search_nonce'])) : '';
+        // Safely get the nonce from the request (accept GET or POST)
+        $nonce = isset($_REQUEST['bus_search_nonce']) ? sanitize_text_field(wp_unslash($_REQUEST['bus_search_nonce'])) : '';
 
         // Verify the nonce
         if ( ! $nonce || ! wp_verify_nonce($nonce, 'bus_search_nonce_action') ) {
@@ -157,8 +157,8 @@ function mage_search_list() {
 }
 
 function mage_search_bus_list($return) {
-    // Safely get the nonce from $_POST
-    $nonce = isset($_GET['bus_search_nonce']) ? sanitize_text_field(wp_unslash($_GET['bus_search_nonce'])) : '';
+    // Safely get the nonce from the request (accept GET or POST)
+    $nonce = isset($_REQUEST['bus_search_nonce']) ? sanitize_text_field(wp_unslash($_REQUEST['bus_search_nonce'])) : '';
 
     // Verify the nonce
     if ( ! $nonce || ! wp_verify_nonce($nonce, 'bus_search_nonce_action') ) {
@@ -267,8 +267,8 @@ function mage_search_bus_list($return) {
 function mage_search_item($return) {
     global $mage_bus_search_theme;
 
-    // Safely get the nonce from $_POST
-    $nonce = isset($_GET['bus_search_nonce']) ? sanitize_text_field(wp_unslash($_GET['bus_search_nonce'])) : '';
+    // Safely get the nonce from the request (accept GET or POST)
+    $nonce = isset($_REQUEST['bus_search_nonce']) ? sanitize_text_field(wp_unslash($_REQUEST['bus_search_nonce'])) : '';
 
     // Verify the nonce
     if ( ! $nonce || ! wp_verify_nonce($nonce, 'bus_search_nonce_action') ) {
@@ -736,8 +736,8 @@ function mage_search_form_horizontal($single_bus, $target = '') {
 function mage_search_page_vertical() {
     $target = '';
     if (isset($_GET['bus_start_route'], $_GET['bus_end_route'], $_GET['j_date'])) {
-        // Safely get the nonce from $_POST
-        $nonce = isset($_GET['bus_search_nonce']) ? sanitize_text_field(wp_unslash($_GET['bus_search_nonce'])) : '';
+        // Safely get the nonce from the request (accept GET or POST)
+        $nonce = isset($_REQUEST['bus_search_nonce']) ? sanitize_text_field(wp_unslash($_REQUEST['bus_search_nonce'])) : '';
 
         // Verify the nonce
         if ( ! $nonce || ! wp_verify_nonce($nonce, 'bus_search_nonce_action') ) {
@@ -886,8 +886,8 @@ function search_from_only($single_bus, $target) {
     </form>
     <?php
     if (isset($_GET['bus_start_route'], $_GET['bus_end_route'], $_GET['j_date'])) {
-        // Safely get the nonce from $_POST
-        $nonce = isset($_GET['bus_search_nonce']) ? sanitize_text_field(wp_unslash($_GET['bus_search_nonce'])) : '';
+        // Safely get the nonce from the request (accept GET or POST)
+        $nonce = isset($_REQUEST['bus_search_nonce']) ? sanitize_text_field(wp_unslash($_REQUEST['bus_search_nonce'])) : '';
 
         // Verify the nonce
         if ( ! $nonce || ! wp_verify_nonce($nonce, 'bus_search_nonce_action') ) {
