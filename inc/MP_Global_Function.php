@@ -438,23 +438,13 @@ if (! class_exists('MP_Global_Function')) {
         {
             global $wpdb;
 
-            // phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-            $table_name = $wpdb->prefix . 'woocommerce_order_itemmeta';
-            $query      = $wpdb->prepare(
-                "SELECT meta_value 
-                FROM `{$table_name}` 
-                WHERE order_item_id = %d 
-                AND meta_key = %s",
+            $meta_value = $wpdb->get_var( $wpdb->prepare(
+                "SELECT meta_value FROM `{$wpdb->prefix}woocommerce_order_itemmeta` WHERE order_item_id = %d AND meta_key = %s",
                 $item_id,
                 $key
-            );
-            // phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+            ) );
 
-            $results = $wpdb->get_results( $query );
-            foreach ($results as $result) {
-                return $result->meta_value ?? ''; // Handle undefined value
-            }
-            return '';
+            return $meta_value ?? '';
         }
 
         public static function check_product_in_cart($post_id)
@@ -479,13 +469,12 @@ if (! class_exists('MP_Global_Function')) {
         public static function all_tax_list(): array
         {
             global $wpdb;
-            // phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-            $table_name = $wpdb->prefix . 'wc_tax_rate_classes';
-            $result = $wpdb->get_results("SELECT * FROM $table_name");
-            // phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+            $results = $wpdb->get_results( "SELECT * FROM `{$wpdb->prefix}wc_tax_rate_classes`" );
             $tax_list = [];
-            foreach ($result as $tax) {
-                $tax_list[$tax->slug] = sanitize_text_field($tax->name); // Sanitize tax name
+            if ( ! empty( $results ) ) {
+                foreach ( $results as $tax ) {
+                    $tax_list[$tax->slug] = sanitize_text_field( $tax->name );
+                }
             }
             return $tax_list;
         }
