@@ -636,7 +636,7 @@ if (! class_exists('MP_Global_Function')) {
         public static function wbbm_recursive_sanitize($data)
         {
             if (is_array($data)) {
-                return array_map('wbbm_recursive_sanitize', $data);
+                return array_map([__CLASS__, 'wbbm_recursive_sanitize'], $data);
             }
 
             if (is_numeric($data)) {
