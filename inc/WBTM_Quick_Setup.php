@@ -39,7 +39,7 @@ if (!class_exists('WBTM_Quick_Setup')) {
 
             // Verify the nonce
             if ( ! $nonce || ! wp_verify_nonce($nonce, 'welcome_setup_nonce_action') ) {
-                wc_add_notice(__('Security check failed. Please try again.', 'bus-booking-manager'), 'error');
+                // wc_add_notice(__('Security check failed. Please try again.', 'bus-booking-manager'), 'error');
                 return false; // Stop add to cart
             }
 
