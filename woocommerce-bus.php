@@ -1943,12 +1943,15 @@ function wbbm_count_hidden_wc_product($event_id) {
 			$taxonomy = 'product_visibility';
 			$q_vars = &$query->query_vars;
 			if ($pagenow == 'edit.php' && isset($q_vars['post_type']) && $q_vars['post_type'] == 'product') {
-				$tax_query = array([
-					'taxonomy' => 'product_visibility',
-					'field' => 'slug',
-					'terms' => 'exclude-from-catalog',
-					'operator' => 'NOT IN',
-				]);
+				// Use a standard tax_query array (terms as array) to make the query structure explicit.
+				$tax_query = array(
+					array(
+						'taxonomy' => 'product_visibility',
+						'field'    => 'slug',
+						'terms'    => array('exclude-from-catalog'),
+						'operator' => 'NOT IN',
+					),
+				);
 				$query->set('tax_query', $tax_query);
 			}
 		}
