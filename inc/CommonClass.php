@@ -22,7 +22,7 @@ class CommonClass
         return gmdate('Y-m-d', strtotime($date));
     }
 
-    public function get_wbbm_datetime($date, $type)
+    public function wbbm_get_datetime($date, $type)
     {
         // Ensure the date is properly sanitized
         $date = sanitize_text_field($date);

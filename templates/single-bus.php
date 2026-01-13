@@ -38,8 +38,8 @@ $seat_price_adult = mage_seat_price($id, $boarding, $dropping, 'adult');
 $seat_price_child = mage_seat_price($id, $boarding, $dropping, 'child');
 $seat_price_infant = mage_seat_price($id, $boarding, $dropping, 'infant');
 $seat_price_entire = mage_seat_price($id, $boarding, $dropping, 'entire');
-$boarding_time = get_wbbm_datetime(boarding_dropping_time(false, $return), 'time');
-$dropping_time = get_wbbm_datetime(boarding_dropping_time(true, $return), 'time');
+$boarding_time = wbbm_get_datetime(boarding_dropping_time(false, $return), 'time');
+$dropping_time = wbbm_get_datetime(boarding_dropping_time(true, $return), 'time');
 
 $show_off_day = get_post_meta(get_the_ID(), 'show_off_day', true) ?: 'no';
 $odd_list = $show_off_day === 'yes' ? mage_odd_list_check(false) : true;
@@ -203,8 +203,8 @@ if (!empty($off_day_sche) && $show_off_day === 'yes') {
                                         <option value=""><?php esc_html_e('Select your Pickup Area', 'bus-booking-manager'); ?></option>
                                         <?php
                                         foreach ($pickpoints as $pickpoint) {
-                                            $time_html = $pickpoint["time"] ? ' (' . esc_html(get_wbbm_datetime($pickpoint["time"], 'time')) . ')' : '';
-                                            $time_value = $pickpoint["time"] ? '-' . esc_html(get_wbbm_datetime($pickpoint["time"], 'time')) : '';
+                                            $time_html = $pickpoint["time"] ? ' (' . esc_html(wbbm_get_datetime($pickpoint["time"], 'time')) . ')' : '';
+                                            $time_value = $pickpoint["time"] ? '-' . esc_html(wbbm_get_datetime($pickpoint["time"], 'time')) : '';
                                             $pick_desc = (get_term_by('name', $pickpoint["pickpoint"], 'wbbm_bus_pickpoint') ? get_term_by('name', $pickpoint["pickpoint"], 'wbbm_bus_pickpoint')->description : '');
                                             echo '<option value="' . esc_attr($pickpoint["pickpoint"] . $time_value) . '">' . esc_html(ucfirst($pickpoint["pickpoint"])) . esc_html($time_html) . '</option>';
                                             echo ($pick_desc ? '<option disabled>&nbsp;&nbsp; ' . esc_html($pick_desc) . '</option>' : '');

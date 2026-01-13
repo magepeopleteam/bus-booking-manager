@@ -422,7 +422,7 @@ if (! class_exists('MP_Global_Function')) {
             }
         }
 
-        public static function check_woocommerce(): int
+        public static function wbbm_check_woocommerce(): int
         {
             include_once(ABSPATH . 'wp-admin/includes/plugin.php');
             $plugin_dir = ABSPATH . 'wp-content/plugins/woocommerce';
@@ -457,7 +457,7 @@ if (! class_exists('MP_Global_Function')) {
 
         public static function check_product_in_cart($post_id)
         {
-            $status = MP_Global_Function::check_woocommerce();
+            $status = MP_Global_Function::wbbm_check_woocommerce();
             if ($status == 1) {
                 $product_id = MP_Global_Function::get_post_info($post_id, 'link_wc_product');
                 foreach (WC()->cart->get_cart() as $cart_item) {
