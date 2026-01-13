@@ -87,7 +87,7 @@ if (!empty($off_day_sche) && $show_off_day === 'yes') {
     <?php do_action('woocommerce_before_single_product'); ?>
     <div class="mage_search_list <?php echo esc_attr($in_cart ? 'booked' : ''); ?>" data-seat-available="<?php echo esc_attr($available_seat); ?>">
         <form action="" method="post">
-            <?php wp_nonce_field('mage_book_now_area', 'mage_book_now_area_nonce'); ?>
+            <?php wp_nonce_field('mage_book_now_area_action', 'mage_book_now_area_nonce'); ?>
             <div class="mage_flex_equal xs_not_flex">
                 <div class="mage_thumb">
                     <?php
@@ -151,7 +151,7 @@ if (!empty($off_day_sche) && $show_off_day === 'yes') {
                                 <div>
                                     <p>
                                         <strong><?php echo esc_html(wbbm_get_option('wbbm_adult_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_adult_text', 'wbbm_label_setting_sec') : __('Adult', 'bus-booking-manager')) . ':'; ?></strong>
-                                        <?php echo esc_html(wc_price($seat_price_adult)); ?>/
+                                        <?php echo wp_kses_post(wc_price($seat_price_adult)); ?>/
                                         <small><?php esc_html_e('Ticket', 'bus-booking-manager'); ?></small>
                                     </p>
                                 </div>
@@ -161,7 +161,7 @@ if (!empty($off_day_sche) && $show_off_day === 'yes') {
                                 <div class="mage_center_space mar_b">
                                     <p>
                                         <strong><?php echo esc_html(wbbm_get_option('wbbm_child_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_child_text', 'wbbm_label_setting_sec') : __('Child', 'bus-booking-manager')) . ':'; ?></strong>
-                                        <?php echo esc_html(wc_price($seat_price_child)); ?>/
+                                        <?php echo wp_kses_post(wc_price($seat_price_child)); ?>/
                                         <small><?php esc_html_e('Ticket', 'bus-booking-manager'); ?></small>
                                     </p>
                                     <?php mage_qty_box($seat_price_child, 'child_quantity', false); ?>
@@ -171,7 +171,7 @@ if (!empty($off_day_sche) && $show_off_day === 'yes') {
                                 <div class="mage_center_space mar_b">
                                     <p>
                                         <strong><?php echo esc_html(wbbm_get_option('wbbm_infant_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_infant_text', 'wbbm_label_setting_sec') : __('Infant', 'bus-booking-manager')) . ':'; ?></strong>
-                                        <?php echo esc_html(wc_price($seat_price_infant)); ?>/
+                                        <?php echo wp_kses_post(wc_price($seat_price_infant)); ?>/
                                         <small><?php esc_html_e('Ticket', 'bus-booking-manager'); ?></small>
                                     </p>
                                     <?php mage_qty_box($seat_price_infant, 'infant_quantity', false); ?>
