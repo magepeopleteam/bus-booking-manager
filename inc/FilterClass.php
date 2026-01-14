@@ -45,7 +45,7 @@
             $mage_ok = $nonce_mage && wp_verify_nonce($nonce_mage, 'mage_book_now_area');
 
             if ( ! $custom_ok && ! $mage_ok ) {
-                wc_add_notice(__('Security check failed. Please try again.', 'bus-booking-manager'), 'error');
+                wc_add_notice(__('Security check failed. Please try again. Fil', 'bus-booking-manager'), 'error');
                 return $cart_item_data;
             }
             // Normalize POST inputs and sanitize

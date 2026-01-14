@@ -167,6 +167,7 @@ function mage_bus_list_query($start, $end)
         'post_status' => array('publish'),
         'no_found_rows' => true,
         'fields' => 'ids',
+        // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
         'meta_query' => array(
             'relation' => 'AND',
             array(
