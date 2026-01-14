@@ -356,6 +356,7 @@ if (! class_exists('MP_Global_Function')) {
                 } else {
                     $base_tax_rates = WC_Tax::get_base_tax_rates($product->get_tax_class());
                     if (!empty(WC()->customer) && WC()->customer->get_is_vat_exempt()) {
+                        // phpcs:ignore WordPress.NamingConventions.ValidHookName
                         $remove_taxes = apply_filters('woocommerce_adjust_non_base_location_prices', true) ? WC_Tax::calc_tax($line_price, $base_tax_rates, true) : WC_Tax::calc_tax($line_price, $tax_rates, true);
                         $remove_taxes_total = 'yes' === get_option('woocommerce_tax_round_at_subtotal') ? array_sum($remove_taxes) : array_sum(array_map('wc_round_tax_total', $remove_taxes));
                         $return_price = round($line_price - $remove_taxes_total, $num_of_decimal);
@@ -422,7 +423,7 @@ if (! class_exists('MP_Global_Function')) {
             }
         }
 
-        public static function check_woocommerce(): int
+        public static function wbbm_check_woocommerce(): int
         {
             include_once(ABSPATH . 'wp-admin/includes/plugin.php');
             $plugin_dir = ABSPATH . 'wp-content/plugins/woocommerce';
@@ -457,7 +458,7 @@ if (! class_exists('MP_Global_Function')) {
 
         public static function check_product_in_cart($post_id)
         {
-            $status = MP_Global_Function::check_woocommerce();
+            $status = MP_Global_Function::wbbm_check_woocommerce();
             if ($status == 1) {
                 $product_id = MP_Global_Function::get_post_info($post_id, 'link_wc_product');
                 foreach (WC()->cart->get_cart() as $cart_item) {

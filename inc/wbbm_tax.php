@@ -137,10 +137,10 @@ function wbbm_bus_feature_add_nonce() {
 
 
 
-add_action('edited_wbbm_bus_feature', 'save_wbbm_bus_feature');
-add_action('create_wbbm_bus_feature', 'save_wbbm_bus_feature', 10, 2);
+add_action('edited_wbbm_bus_feature', 'wbbm_save_wbbm_bus_feature');
+add_action('create_wbbm_bus_feature', 'wbbm_save_wbbm_bus_feature', 10, 2);
 
-function save_wbbm_bus_feature($term_id)
+function wbbm_save_wbbm_bus_feature($term_id)
 {
     // Nonce check
     if (
@@ -185,13 +185,13 @@ function wbbm_bus_feature_add_term_fields($taxonomy)
 
 <?php
 
-    all_font_awesome();
+    wbbm_all_font_awesome();
 }
 
 
-add_action('wbbm_bus_feature_edit_form_fields', 'add_wbbm_bus_feature', 10, 2);
+add_action('wbbm_bus_feature_edit_form_fields', 'wbbm_add_bus_feature', 10, 2);
 
-function add_wbbm_bus_feature()
+function wbbm_add_bus_feature()
 {
     // phpcs:ignore WordPress.Security.NonceVerification.Recommended
     $tagId = isset($_GET['tag_ID']) ? sanitize_text_field(wp_unslash($_GET['tag_ID'])) : '';
@@ -226,10 +226,10 @@ function add_wbbm_bus_feature()
 
 <?php
 
-    all_font_awesome();
+    wbbm_all_font_awesome();
 }
 
-function all_font_awesome()
+function wbbm_all_font_awesome()
 {
 ?>
     <div class="add_icon_list_popup">
@@ -4982,9 +4982,9 @@ $wbbm_route_point = array(
 
 );
 
-$args = array(
+$wbbm_args = array(
     'taxonomy'       => 'wbbm_bus_stops',
     'options'             => $wbbm_route_point,
 );
 
-new TaxonomyEdit($args);
+new TaxonomyEdit($wbbm_args);

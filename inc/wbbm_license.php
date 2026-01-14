@@ -3,72 +3,72 @@
 		die;
     } // Cannot access pages directly.
     
-    if (!function_exists('get_mep_datetime')) {
-        function get_mep_datetime($date, $type) {
-            $date_format = get_option('date_format');
-            $time_format = get_option('time_format');
-            $wpdatesettings = $date_format . '  ' . $time_format;
-            $timezone = wp_timezone_string();
-            $timestamp = strtotime($date . ' ' . $timezone);
+    // if (!function_exists('wbbm_get_datetime')) {
+    //     function wbbm_get_datetime($date, $type) {
+    //         $date_format = get_option('date_format');
+    //         $time_format = get_option('time_format');
+    //         $wpdatesettings = $date_format . '  ' . $time_format;
+    //         $timezone = wp_timezone_string();
+    //         $timestamp = strtotime($date . ' ' . $timezone);
     
-            if ($type == 'date') {
-                return esc_html(wp_date($date_format, $timestamp));
-            }
-            if ($type == 'date-time') {
-                return esc_html(wp_date($wpdatesettings, $timestamp));
-            }
-            if ($type == 'date-text') {
+    //         if ($type == 'date') {
+    //             return esc_html(wp_date($date_format, $timestamp));
+    //         }
+    //         if ($type == 'date-time') {
+    //             return esc_html(wp_date($wpdatesettings, $timestamp));
+    //         }
+    //         if ($type == 'date-text') {
     
-                return esc_html(wp_date($date_format, $timestamp));
-            }
+    //             return esc_html(wp_date($date_format, $timestamp));
+    //         }
     
-            if ($type == 'date-time-text') {
-                return esc_html(wp_date($wpdatesettings, $timestamp, wp_timezone()));
-            }
-            if ($type == 'time') {
-                return esc_html(wp_date($time_format, $timestamp, wp_timezone()));
-            }
+    //         if ($type == 'date-time-text') {
+    //             return esc_html(wp_date($wpdatesettings, $timestamp, wp_timezone()));
+    //         }
+    //         if ($type == 'time') {
+    //             return esc_html(wp_date($time_format, $timestamp, wp_timezone()));
+    //         }
     
-            if ($type == 'Hour') {
-                return esc_html(wp_date('H', $timestamp, wp_timezone()));
-            }
-            if ($type == 'hour') {
-                return esc_html(wp_date('h', $timestamp, wp_timezone()));
-            }
-            if ($type == 'minute') {
-                return esc_html(wp_date('i', $timestamp, wp_timezone()));
-            }
+    //         if ($type == 'Hour') {
+    //             return esc_html(wp_date('H', $timestamp, wp_timezone()));
+    //         }
+    //         if ($type == 'hour') {
+    //             return esc_html(wp_date('h', $timestamp, wp_timezone()));
+    //         }
+    //         if ($type == 'minute') {
+    //             return esc_html(wp_date('i', $timestamp, wp_timezone()));
+    //         }
     
-            if ($type == 'second') {
-                return esc_html(wp_date('s', $timestamp, wp_timezone()));
-            }
+    //         if ($type == 'second') {
+    //             return esc_html(wp_date('s', $timestamp, wp_timezone()));
+    //         }
     
-            if ($type == 'day') {
-                return esc_html(wp_date('d', $timestamp));
-            }
-            if ($type == 'Dday') {
-                return esc_html(wp_date('D', $timestamp));
-            }
-            if ($type == 'month') {
-                return esc_html(wp_date('m', $timestamp));
-            }
-            if ($type == 'month-name') {
-                return esc_html(wp_date('M', $timestamp));
-            }
-            if ($type == 'year') {
-                return esc_html(wp_date('y', $timestamp));
-            }
-            if ($type == 'year-full') {
-                return esc_html(wp_date('Y', $timestamp));
-            }
-            if ($type == 'timezone') {
-                return esc_html(wp_date('T', $timestamp));
-            }
-            return '';
-        }
-    }
-    if (!function_exists('mep_license_error_code')) {
-        function mep_license_error_code($license_data, $item_name = 'this Plugin') {
+    //         if ($type == 'day') {
+    //             return esc_html(wp_date('d', $timestamp));
+    //         }
+    //         if ($type == 'Dday') {
+    //             return esc_html(wp_date('D', $timestamp));
+    //         }
+    //         if ($type == 'month') {
+    //             return esc_html(wp_date('m', $timestamp));
+    //         }
+    //         if ($type == 'month-name') {
+    //             return esc_html(wp_date('M', $timestamp));
+    //         }
+    //         if ($type == 'year') {
+    //             return esc_html(wp_date('y', $timestamp));
+    //         }
+    //         if ($type == 'year-full') {
+    //             return esc_html(wp_date('Y', $timestamp));
+    //         }
+    //         if ($type == 'timezone') {
+    //             return esc_html(wp_date('T', $timestamp));
+    //         }
+    //         return '';
+    //     }
+    // }
+    if (!function_exists('wbbm_license_error_code')) {
+        function wbbm_license_error_code($license_data, $item_name = 'this Plugin') {
         
             switch ($license_data->error) {
                 case 'expired':
@@ -109,13 +109,13 @@
         }
         }
         
-        if (!function_exists('mep_license_expire_date')) {
-            function mep_license_expire_date($date) {
+        if (!function_exists('wbbm_license_expire_date')) {
+            function wbbm_license_expire_date($date) {
     if (empty($date) || $date == 'lifetime') {
         echo esc_html($date);
     } else {
         if (strtotime(current_time('Y-m-d H:i')) < strtotime(gmdate('Y-m-d H:i', strtotime($date)))) {
-            echo esc_html(get_mep_datetime($date, 'date-time-text')); // Escape the output
+            echo esc_html(wbbm_get_datetime($date, 'date-time-text')); // Escape the output
         } else {
             esc_html_e('Expired', 'bus-booking-manager');
         }

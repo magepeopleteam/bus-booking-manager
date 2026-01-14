@@ -452,7 +452,7 @@
                                             ) . ': ';
                                         ?>
                                     </strong>
-                                    <?php echo ' ' . esc_html( get_wbbm_datetime( isset( $cart_item['wbbm_journey_date'] ) ? $cart_item['wbbm_journey_date'] : '', 'date' ) ); ?>
+                                    <?php echo ' ' . esc_html( wbbm_get_datetime( isset( $cart_item['wbbm_journey_date'] ) ? $cart_item['wbbm_journey_date'] : '', 'date' ) ); ?>
                                 </li>
                                 <li>
                                     <strong>
@@ -462,7 +462,7 @@
                                         ?>
 
                                     </strong>
-                                    <?php echo esc_html( get_wbbm_datetime( isset( $cart_item['wbbm_journey_time'] ) ? $cart_item['wbbm_journey_time'] : '', 'time' ) ); ?>
+                                    <?php echo esc_html( wbbm_get_datetime( isset( $cart_item['wbbm_journey_time'] ) ? $cart_item['wbbm_journey_time'] : '', 'time' ) ); ?>
                                 </li>
                                 <li>
                                     <strong>

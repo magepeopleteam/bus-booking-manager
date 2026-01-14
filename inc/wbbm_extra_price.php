@@ -54,11 +54,11 @@ function wbbm_after_checkout_validation() {
                 $adult_qty = isset($cart_item['wbbm_total_adult_qt']) ? intval($cart_item['wbbm_total_adult_qt']) : 0;
                 $child_qty = isset($cart_item['wbbm_total_child_qt']) ? intval($cart_item['wbbm_total_child_qt']) : 0;
                 $infant_qty = isset($cart_item['wbbm_total_infant_qt']) ? intval($cart_item['wbbm_total_infant_qt']) : 0;
-                $cart_qty = $adult_qty + $child_qty + $infant_qty;
+                $wbbm_cart_qty = $adult_qty + $child_qty + $infant_qty;
 
-                if ($available_seat < $cart_qty) {
+                if ($available_seat < $wbbm_cart_qty) {
                     WC()->cart->empty_cart();
-                    wc_add_notice(__("Sorry, your selected ticket is already booked by another user", 'woocommerce'), 'error');
+                    wc_add_notice(__("Sorry, your selected ticket is already booked by another user", 'bus-booking-manager'), 'error');
                 }
             }
         }
@@ -100,8 +100,8 @@ function wbbm_add_custom_fields_text_to_order_items($item, $cart_item_key, $valu
         
         $item->add_meta_data($boarding_point_label, $wbbm_start_stops);
         $item->add_meta_data($droping_point_label, $wbbm_end_stops);
-        $item->add_meta_data($journey_date_label, get_wbbm_datetime($wbbm_journey_date, 'date'));
-        $item->add_meta_data($journey_time_label, get_wbbm_datetime($wbbm_journey_time, 'time'));
+        $item->add_meta_data($journey_date_label, wbbm_get_datetime($wbbm_journey_date, 'date'));
+        $item->add_meta_data($journey_time_label, wbbm_get_datetime($wbbm_journey_time, 'time'));
         $item->add_meta_data('_boarding_point', $wbbm_start_stops);
         $item->add_meta_data('_droping_point', $wbbm_end_stops);
         $item->add_meta_data('_journey_date', $wbbm_journey_date);
@@ -250,4 +250,4 @@ function add_the_date_validation($passed) {
     }
     return $passed;
 }
-add_filter('woocommerce_add_to_cart_validation', 'add_the_date_validation', 10, 5);
+add_filter('woocommerce_add_to_cart_validation', 'wbbm_add_the_date_validation', 10, 5);

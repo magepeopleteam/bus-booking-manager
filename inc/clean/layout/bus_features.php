@@ -30,8 +30,8 @@ printf(esc_html__('Here you can add features for %s', 'bus-booking-manager'), es
             <?php
             $wbbm_features_name = array();
             if (!empty($wbbm_features)) {
-                foreach ($wbbm_features as $feature) {
-                    $term = get_term($feature);
+                foreach ($wbbm_features as $wbbm_feature) {
+                    $term = get_term($wbbm_feature);
                     if ($term && !is_wp_error($term)) {
                         $wbbm_features_name[] = sanitize_text_field($term->name);
                     }
@@ -47,13 +47,13 @@ printf(esc_html__('Here you can add features for %s', 'bus-booking-manager'), es
                         </label>
 
                         <div class="features">
-                            <?php foreach ($feature_terms as $feature_term) { ?>
+                            <?php foreach ($feature_terms as $wbbm_feature_term) { ?>
                                 <p>
                                     <label class="customCheckboxLabel">
-                                        <input <?php checked(in_array($feature_term->term_id, $wbbm_features)); ?> type="checkbox" name="wbbm_features[<?php echo esc_attr($feature_term->term_id); ?>]" data-checked="<?php echo esc_attr($feature_term->name); ?>" value="<?php echo esc_attr($feature_term->term_id); ?>">
+                                        <input <?php checked(in_array($wbbm_feature_term->term_id, $wbbm_features)); ?> type="checkbox" name="wbbm_features[<?php echo esc_attr($wbbm_feature_term->term_id); ?>]" data-checked="<?php echo esc_attr($wbbm_feature_term->name); ?>" value="<?php echo esc_attr($wbbm_feature_term->term_id); ?>">
                                         <span class="customCheckbox">
-                                            <span class="mR_xs <?php echo esc_attr(get_term_meta($feature_term->term_id, 'feature_icon', true)); ?>"></span>
-                                            <?php echo esc_html($feature_term->name); ?>
+                                            <span class="mR_xs <?php echo esc_attr(get_term_meta($wbbm_feature_term->term_id, 'feature_icon', true)); ?>"></span>
+                                            <?php echo esc_html($wbbm_feature_term->name); ?>
                                         </span>
                                     </label>
                                 </p>
@@ -101,7 +101,7 @@ printf(esc_html__('Here you can add features for %s', 'bus-booking-manager'), es
 
                         <p class="description"><?php echo esc_html__('Please select a suitable icon for this feature', 'bus-booking-manager'); ?></p>
 
-                        <?php all_font_awesome(); ?>
+                        <?php wbbm_all_font_awesome(); ?>
 
                     </div>
                     <div class="popupFooter">

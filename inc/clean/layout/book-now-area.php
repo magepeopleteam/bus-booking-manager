@@ -13,8 +13,8 @@ function mage_book_now_area($available_seat = null)
     $search_date = (isset($_GET['j_date']) ? sanitize_text_field(wp_unslash($_GET['j_date'])) : '');
     $current_date = gmdate('Y-m-d');
 
-    $boarding_time = sanitize_text_field(get_wbbm_datetime(boarding_dropping_time(false, false), 'time'));
-
+    $boarding_time = sanitize_text_field(wbbm_get_datetime(wbbm_boarding_dropping_time(false, false), 'time'));
+    
     // If Current time is greater than bus time
     // Bus should not be shown in search result
     if ($current_date === $search_date) {

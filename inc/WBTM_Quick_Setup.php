@@ -23,7 +23,7 @@ if (!class_exists('WBTM_Quick_Setup')) {
         }
 
         public function quick_setup_menu() {
-            $status = MP_Global_Function::check_woocommerce();
+            $status = MP_Global_Function::wbbm_check_woocommerce();
             if ($status == 1) {
                 add_submenu_page('edit.php?post_type=wbbm_bus', esc_html__('Quick Setup', 'bus-booking-manager'), '<span style="color:#10dd10">' . esc_html__('Quick Setup', 'bus-booking-manager') . '</span>', 'manage_options', 'wbbm_init_quick_setup', array($this, 'quick_setup'));
                 add_submenu_page('wbbm_bus', esc_html__('Quick Setup', 'bus-booking-manager'), '<span style="color:#10dd10">' . esc_html__('Quick Setup', 'bus-booking-manager') . '</span>', 'manage_options', 'wbtm_quick_setup', array($this, 'quick_setup'));
@@ -39,7 +39,7 @@ if (!class_exists('WBTM_Quick_Setup')) {
 
             // Verify the nonce
             if ( ! $nonce || ! wp_verify_nonce($nonce, 'welcome_setup_nonce_action') ) {
-                wc_add_notice(__('Security check failed. Please try again.', 'bus-booking-manager'), 'error');
+                // wc_add_notice(__('Security check failed. Please try again.', 'bus-booking-manager'), 'error');
                 return false; // Stop add to cart
             }
 
@@ -116,7 +116,7 @@ if (!class_exists('WBTM_Quick_Setup')) {
 
             $next_disable = '';
 
-            $status = MP_Global_Function::check_woocommerce();
+            $status = MP_Global_Function::wbbm_check_woocommerce();
             if ($status != 1) {
                 $next_disable = 'disabled';
             }
@@ -165,7 +165,7 @@ if (!class_exists('WBTM_Quick_Setup')) {
         }
 
         public function setup_welcome_content() {
-            $status = MP_Global_Function::check_woocommerce();
+            $status = MP_Global_Function::wbbm_check_woocommerce();
             wp_nonce_field('welcome_setup_nonce_action', 'welcome_setup_nonce');
             ?>
             <div data-tabs-next="#mpwpb_qs_welcome">

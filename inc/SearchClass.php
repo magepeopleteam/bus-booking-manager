@@ -82,7 +82,7 @@ function mage_search_list() {
         </div>
     </div>
     <div class="mage-search-res-wrapper">
-        <?php do_action('woocommerce_before_single_product'); ?>
+        <?php do_action('wbbm_woocommerce_before_single_product'); ?>
         <?php if ($mage_bus_search_theme == 'minimal') { ?>
             <div class="mage-search-res-header" style="background-color: <?php echo esc_attr($search_list_header_b_color ?: '#EA2330'); ?>;">
                 <div class="mage-search-res-header--img">
@@ -167,7 +167,7 @@ function mage_search_bus_list($return) {
         wc_add_notice(__('Security check failed. Please try again. 333', 'bus-booking-manager'), 'error');
         return false;
     }
-    do_action('woocommerce_before_single_product');
+    do_action('wbbm_woocommerce_before_single_product');
 
     // phpcs:ignore WordPress.Security.NonceVerification.Recommended
     if (isset($_GET['bus_start_route'], $_GET['bus_end_route']) && (isset($_GET['j_date']) || isset($_GET['r_date']))) {
@@ -283,8 +283,8 @@ function mage_search_item($return) {
     $id = get_the_ID();
     $search_date = isset($_GET['j_date']) ? sanitize_text_field(wp_unslash($_GET['j_date'])) : '';
     $current_date = gmdate('Y-m-d');
-    $boarding_time = boarding_dropping_time(false, $return);
-    $dropping_time = boarding_dropping_time(true, $return);
+    $boarding_time = wbbm_boarding_dropping_time(false, $return);
+    $dropping_time = wbbm_boarding_dropping_time(true, $return);
 
     if ($current_date === $search_date) {
         $search_timestamp = strtotime($search_date . ' ' . $boarding_time);
@@ -313,8 +313,8 @@ function mage_search_item($return) {
         $input_dropping_var,
         wbbm_convert_date_to_php(mage_get_isset($date_var))
     );
-    $cart_qty = wbbm_get_cart_item($id, mage_get_isset($date_var));
-    $available_seat -= $cart_qty;
+    $wbbm_cart_qty = wbbm_get_cart_item($id, mage_get_isset($date_var));
+    $available_seat -= $wbbm_cart_qty;
     $boarding = mage_get_isset($boarding_var);
     $dropping = mage_get_isset($dropping_var);
 
@@ -369,14 +369,14 @@ function mage_search_item($return) {
                             echo '<p class="mage-bus-stopage"><span class="dashicons dashicons-location"></span> ' .
                                 esc_html(wbbm_get_option('wbbm_from_text', 'wbbm_label_setting_sec', __('From: ', 'bus-booking-manager'))) . ' ' .
                                 esc_html($boarding) . ' ( ' .
-                                esc_html(get_wbbm_datetime($boarding_time, 'time')) . ' )</p>';
+                                esc_html(wbbm_get_datetime($boarding_time, 'time')) . ' )</p>';
                             ?>
 
                             <?php
                             echo '<p class="mage-bus-stopage"><span class="dashicons dashicons-location"></span> ' .
                                 esc_html(wbbm_get_option('wbbm_to_text', 'wbbm_label_setting_sec', __('To: ', 'bus-booking-manager'))) . ' ' .
                                 esc_html($dropping) . ' ( ' .
-                                esc_html(get_wbbm_datetime($dropping_time, 'time')) . ' )</p>';
+                                esc_html(wbbm_get_datetime($dropping_time, 'time')) . ' )</p>';
                             ?>
                         </div>
                     </div>
@@ -427,7 +427,7 @@ function mage_search_item($return) {
                                     <p>
                                         <strong><?php echo esc_html(wbbm_get_option('wbbm_boarding_points_text', 'wbbm_label_setting_sec', __('Boarding', 'bus-booking-manager'))); ?></strong>:
                                         <?php echo esc_html($boarding); ?>
-                                        <strong>(<?php echo esc_html(get_wbbm_datetime($boarding_time, 'time')); ?>)</strong>
+                                        <strong>(<?php echo esc_html(wbbm_get_datetime($boarding_time, 'time')); ?>)</strong>
                                         <?php
                                         $boarding_desc = (get_term_by('name', $boarding, 'wbbm_bus_stops') ? get_term_by('name', $boarding, 'wbbm_bus_stops')->description : '');
                                         if ($boarding_desc) {
@@ -438,7 +438,7 @@ function mage_search_item($return) {
                                     <p>
                                         <strong><?php echo esc_html(wbbm_get_option('wbbm_dropping_points_text', 'wbbm_label_setting_sec', __('Dropping', 'bus-booking-manager'))); ?></strong>:
                                         <?php echo esc_html($dropping); ?>
-                                        <strong>(<?php echo esc_html(get_wbbm_datetime($dropping_time, 'time')); ?>)</strong>
+                                        <strong>(<?php echo esc_html(wbbm_get_datetime($dropping_time, 'time')); ?>)</strong>
                                         <?php
                                         $dropoff_desc = (get_term_by('name', $dropping, 'wbbm_bus_stops') ? get_term_by('name', $dropping, 'wbbm_bus_stops')->description : '');
                                         if ($dropoff_desc) {
@@ -452,7 +452,7 @@ function mage_search_item($return) {
                                     </p>
                                     <p>
                                         <strong><?php echo esc_html(wbbm_get_option('wbbm_starting_text', 'wbbm_label_setting_sec', __('Start Time', 'bus-booking-manager'))); ?></strong>:
-                                        <?php echo esc_html(get_wbbm_datetime($boarding_time, 'time')); ?>
+                                        <?php echo esc_html(wbbm_get_datetime($boarding_time, 'time')); ?>
                                     </p>
                                     <p>
                                         <strong><?php echo esc_html(wbbm_get_option('wbbm_fare_text', 'wbbm_label_setting_sec', __('Fare', 'bus-booking-manager'))); ?></strong>:
@@ -519,8 +519,8 @@ function mage_search_item($return) {
                                                     <option value=""><?php esc_html_e('Select your Pickup Area', 'bus-booking-manager'); ?></option>
                                                     <?php
                                                     foreach ($pickpoints as $pickpoint) {
-                                                        $time_html = $pickpoint["time"] ? ' (' . get_wbbm_datetime($pickpoint["time"], 'time') . ')' : '';
-                                                        $time_value = $pickpoint["time"] ? '-' . get_wbbm_datetime($pickpoint["time"], 'time') : '';
+                                                        $time_html = $pickpoint["time"] ? ' (' . wbbm_get_datetime($pickpoint["time"], 'time') . ')' : '';
+                                                        $time_value = $pickpoint["time"] ? '-' . wbbm_get_datetime($pickpoint["time"], 'time') : '';
                                                         $pick_desc = (get_term_by('name', $pickpoint["pickpoint"], 'wbbm_bus_pickpoint') ? get_term_by('name', $pickpoint["pickpoint"], 'wbbm_bus_pickpoint')->description : '');
                                                         echo '<option value="' . esc_attr($pickpoint["pickpoint"]) . esc_attr($time_value) . '">' . esc_html(ucfirst($pickpoint["pickpoint"])) . esc_html($time_html) . '</option>';
                                                         echo ($pick_desc ? '<option disabled>&nbsp;&nbsp; ' . esc_html($pick_desc) . '</option>' : '');
@@ -534,12 +534,12 @@ function mage_search_item($return) {
                                         $date = isset($_GET[$date_var]) ? mage_wp_date(sanitize_text_field(wp_unslash($_GET[$date_var])), 'Y-m-d') : gmdate('Y-m-d');
                                         $start = $input_boarding_var;
                                         $end = $input_dropping_var;
-                                        hidden_input_field('bus_id', $id);
-                                        hidden_input_field('journey_date', $date);
-                                        hidden_input_field('start_stops', $start);
-                                        hidden_input_field('end_stops', $end);
-                                        hidden_input_field('user_start_time', $boarding_time);
-                                        hidden_input_field('bus_start_time', $dropping_time);
+                                        wbbm_hidden_input_field('bus_id', $id);
+                                        wbbm_hidden_input_field('journey_date', $date);
+                                        wbbm_hidden_input_field('start_stops', $start);
+                                        wbbm_hidden_input_field('end_stops', $end);
+                                        wbbm_hidden_input_field('user_start_time', $boarding_time);
+                                        wbbm_hidden_input_field('bus_start_time', $dropping_time);
                                         ?>
                                         <div class="adult"></div>
                                         <div class="child"></div>
@@ -655,8 +655,8 @@ function mage_search_item($return) {
                                                 <option value=""><?php echo esc_html(wbbm_get_option('wbbm_pickuppoint_area_text', 'wbbm_label_setting_sec', __('Select Pickup Area', 'bus-booking-manager'))); ?></option>
                                                 <?php
                                                 foreach ($pickpoints as $pickpoint) {
-                                                    $time_html = $pickpoint["time"] ? ' (' . get_wbbm_datetime($pickpoint["time"], 'time') . ')' : '';
-                                                    $time_value = $pickpoint["time"] ? '-' . get_wbbm_datetime($pickpoint["time"], 'time') : '';
+                                                    $time_html = $pickpoint["time"] ? ' (' . wbbm_get_datetime($pickpoint["time"], 'time') . ')' : '';
+                                                    $time_value = $pickpoint["time"] ? '-' . wbbm_get_datetime($pickpoint["time"], 'time') : '';
                                                     $pick_desc = (get_term_by('name', $pickpoint["pickpoint"], 'wbbm_bus_pickpoint') ? get_term_by('name', $pickpoint["pickpoint"], 'wbbm_bus_pickpoint')->description : '');
                                                     echo '<option value="' . esc_attr($pickpoint["pickpoint"]) . esc_attr($time_value) . '">' . esc_html(ucfirst($pickpoint["pickpoint"])) . esc_html($time_html) . '</option>';
                                                     echo ($pick_desc ? '<option disabled>&nbsp;&nbsp; ' . esc_html($pick_desc) . '</option>' : '');
@@ -670,12 +670,12 @@ function mage_search_item($return) {
                                     $date = isset($_GET[$date_var]) ? mage_wp_date(sanitize_text_field(wp_unslash($_GET[$date_var])), 'Y-m-d') : gmdate('Y-m-d');
                                     $start = $input_boarding_var;
                                     $end = $input_dropping_var;
-                                    hidden_input_field('bus_id', $id);
-                                    hidden_input_field('journey_date', $date);
-                                    hidden_input_field('start_stops', $start);
-                                    hidden_input_field('end_stops', $end);
-                                    hidden_input_field('user_start_time', $boarding_time);
-                                    hidden_input_field('bus_start_time', $dropping_time);
+                                    wbbm_hidden_input_field('bus_id', $id);
+                                    wbbm_hidden_input_field('journey_date', $date);
+                                    wbbm_hidden_input_field('start_stops', $start);
+                                    wbbm_hidden_input_field('end_stops', $end);
+                                    wbbm_hidden_input_field('user_start_time', $boarding_time);
+                                    wbbm_hidden_input_field('bus_start_time', $dropping_time);
                                     ?>
                                     <div class="adult"></div>
                                     <div class="child"></div>
@@ -779,7 +779,7 @@ function search_from_only($single_bus, $target) {
     $wbbm_bus_prices = get_post_meta(get_the_ID(), 'wbbm_bus_prices', true);
     ?>
     <form action="<?php echo esc_url($single_bus ? '' : get_site_url() . '/' . sanitize_title($target) . '/'); ?>" method="get" class="mage_form">
-        <?php do_action('active_date', $single_bus, get_the_ID());
+        <?php do_action('wbbm_active_date', $single_bus, get_the_ID());
         wp_nonce_field('bus_search_nonce_action', 'bus_search_nonce');
         ?>
         <div class="mage_form_list">
