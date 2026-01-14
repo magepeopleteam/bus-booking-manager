@@ -80,7 +80,7 @@ function mage_search_list() {
         </div>
     </div>
     <div class="mage-search-res-wrapper">
-        <?php do_action('woocommerce_before_single_product'); ?>
+        <?php do_action('wbbm_woocommerce_before_single_product'); ?>
         <?php if ($mage_bus_search_theme == 'minimal') { ?>
             <div class="mage-search-res-header" style="background-color: <?php echo esc_attr($search_list_header_b_color ?: '#EA2330'); ?>;">
                 <div class="mage-search-res-header--img">
@@ -165,7 +165,7 @@ function mage_search_bus_list($return) {
         wc_add_notice(__('Security check failed. Please try again.', 'bus-booking-manager'), 'error');
         return false;
     }
-    do_action('woocommerce_before_single_product');
+    do_action('wbbm_woocommerce_before_single_product');
 
     if (isset($_GET['bus_start_route'], $_GET['bus_end_route']) && (isset($_GET['j_date']) || isset($_GET['r_date']))) {
         $c_time = current_time('timestamp');
