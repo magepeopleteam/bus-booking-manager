@@ -898,12 +898,17 @@ function wbbm_change_field_of_table() {
                     </label>
                 </div>
 				<?php
-						// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- No nonce needed for search form display
-					if (isset($_GET['bus-r'])) {
+				if (
+					isset( $_GET['bus-r'], $_GET['bus_search_nonce'] )
+					&& wp_verify_nonce(
+						sanitize_text_field( wp_unslash( $_GET['bus_search_nonce'] ) ),
+						'bus_search_nonce_action'
+					)
+				) {
 					$busr = sanitize_text_field( wp_unslash( $_GET['bus-r'] ) );
-					} else {
-						$busr = 'oneway';
-					}
+				} else {
+					$busr = 'oneway';
+				}
 				?>
                 <div class="fields-li">
                     <div class="search-radio-sec">

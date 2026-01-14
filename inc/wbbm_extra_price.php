@@ -216,7 +216,7 @@ function wbbm_add_custom_fields_text_to_order_items($item, $cart_item_key, $valu
 add_action('woocommerce_checkout_create_order_line_item', 'wbbm_add_custom_fields_text_to_order_items', 10, 4);
 
 // Validate added to cart
-function add_the_date_validation($passed) {
+function wbbm_add_the_date_validation($passed) {
     // Verify nonce for security
     if (
         ! isset($_POST['add_to_cart_custom_nonce']) ||
