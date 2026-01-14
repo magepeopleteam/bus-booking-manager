@@ -2,11 +2,11 @@
 Contributors: magepeopleteam, aamahin
 Tags: Bus Booking Manager, bus ticket booking for wordpress
 Requires at least: 4.5
-Stable tag: 4.2.3
-Version: 4.2.3
+Stable tag: 5.0.0
+Version: 5.0.0
 Tested up to: 6.9
 WC requires at least: 3.0
-WC tested up to: 6.5
+WC tested up to: 10.0
 Requires PHP: 7.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
