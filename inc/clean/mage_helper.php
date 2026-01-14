@@ -624,9 +624,9 @@ function wbbm_extra_services_section($bus_id)
                             <td class="mage_text_center">
                                 <?php
                                 $user = get_current_user_id();
-                                $user_roles = $user ? wp_get_current_user()->roles : array();
+                                $WBBM_USER_ROLES = $user ? wp_get_current_user()->roles : array();
 
-                                if (in_array('bus_sales_agent', $user_roles, true)) {
+                                if (in_array('bus_sales_agent', $WBBM_USER_ROLES, true)) {
                                     echo '<input class="extra_service_per_price" type="text" name="extra_service_price[]" value="' . wp_kses_post(wbbm_get_price_including_tax($bus_id, $field['option_price'])) . '" style="width: 80px"/>';
 
                                     if ($ext_left > 0) { ?>
