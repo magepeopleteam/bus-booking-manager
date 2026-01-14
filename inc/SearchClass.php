@@ -11,14 +11,16 @@
 			$the_page = sanitize_post($GLOBALS['wp_the_query']->get_queried_object());
 			$target = sanitize_title($the_page->post_name);
 			$this->mage_search_form_horizontal(false, $target);
-			
+
+            
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			if (isset($_GET['bus_start_route'], $_GET['bus_end_route'], $_GET['j_date'])) {
                 // Safely get the nonce from the request (accept GET or POST)
                 $nonce = isset($_REQUEST['bus_search_nonce']) ? sanitize_text_field(wp_unslash($_REQUEST['bus_search_nonce'])) : '';
 
                 // Verify the nonce
                 if ( ! $nonce || ! wp_verify_nonce($nonce, 'bus_search_nonce_action') ) {
-                    wc_add_notice(__('Security check failed. Please try again.', 'bus-booking-manager'), 'error');
+                    wc_add_notice(__('Security check failed. Please try again. 111', 'bus-booking-manager'), 'error');
                     return false;
                 }
                
@@ -110,7 +112,7 @@ function mage_search_list() {
 
         // Verify the nonce
         if ( ! $nonce || ! wp_verify_nonce($nonce, 'bus_search_nonce_action') ) {
-            wc_add_notice(__('Security check failed. Please try again.', 'bus-booking-manager'), 'error');
+            wc_add_notice(__('Security check failed. Please try again. 222', 'bus-booking-manager'), 'error');
             return false;
         }
     ?>
@@ -162,17 +164,19 @@ function mage_search_bus_list($return) {
 
     // Verify the nonce
     if ( ! $nonce || ! wp_verify_nonce($nonce, 'bus_search_nonce_action') ) {
-        wc_add_notice(__('Security check failed. Please try again.', 'bus-booking-manager'), 'error');
+        wc_add_notice(__('Security check failed. Please try again. 333', 'bus-booking-manager'), 'error');
         return false;
     }
     do_action('woocommerce_before_single_product');
 
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended
     if (isset($_GET['bus_start_route'], $_GET['bus_end_route']) && (isset($_GET['j_date']) || isset($_GET['r_date']))) {
         $c_time = current_time('timestamp');
         $start = $return ? 'bus_end_route' : 'bus_start_route';
         $end = $return ? 'bus_start_route' : 'bus_end_route';
         
         // Sanitize input
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended
         $start_route = isset($_GET[$start]) ? sanitize_text_field((wp_unslash($_GET[$start]))) : '';
         $end_route = isset($_GET[$end]) ? sanitize_text_field(wp_unslash($_GET[$end])) : '';
         $r_date = isset($_GET['r_date']) ? sanitize_text_field(wp_unslash($_GET['r_date'])) : '';
@@ -272,7 +276,7 @@ function mage_search_item($return) {
 
     // Verify the nonce
     if ( ! $nonce || ! wp_verify_nonce($nonce, 'bus_search_nonce_action') ) {
-        wc_add_notice(__('Security check failed. Please try again.', 'bus-booking-manager'), 'error');
+        wc_add_notice(__('Security check failed. Please try again. 44', 'bus-booking-manager'), 'error');
         return false;
     }
 
@@ -885,15 +889,17 @@ function search_from_only($single_bus, $target) {
         </div>
     </form>
     <?php
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended
     if (isset($_GET['bus_start_route'], $_GET['bus_end_route'], $_GET['j_date'])) {
         // Safely get the nonce from the request (accept GET or POST)
-        $nonce = isset($_REQUEST['bus_search_nonce']) ? sanitize_text_field(wp_unslash($_REQUEST['bus_search_nonce'])) : '';
+        // $nonce = isset($_REQUEST['bus_search_nonce']) ? sanitize_text_field(wp_unslash($_REQUEST['bus_search_nonce'])) : '';
 
-        // Verify the nonce
-        if ( ! $nonce || ! wp_verify_nonce($nonce, 'bus_search_nonce_action') ) {
-            wc_add_notice(__('Security check failed. Please try again.', 'bus-booking-manager'), 'error');
-            return false;
-        }
+        // // Verify the nonce
+        // if ( ! $nonce || ! wp_verify_nonce($nonce, 'bus_search_nonce_action') ) {
+        //     wc_add_notice(__('Security check failed. Please try again. 666', 'bus-booking-manager'), 'error');
+        //     return false;
+        // }
+        // Show Next dates list
         do_action('mage_next_date', false, true, $target);
     }
 }

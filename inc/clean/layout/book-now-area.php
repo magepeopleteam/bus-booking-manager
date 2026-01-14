@@ -57,7 +57,7 @@ function mage_book_now_area($available_seat = null)
 
                     <?php
                     // Nonce field for mage_book_now_area action — used for server-side verification
-                    //wp_nonce_field('mage_book_now_area', 'mage_book_now_area_nonce');
+                    wp_nonce_field('mage_book_now_area', 'mage_book_now_area_nonce');
                     ?>
 
                     <button type="submit" class="mage_hidden single_add_to_cart_button" name="add-to-cart" value="<?php echo esc_attr(sanitize_text_field(get_post_meta(get_the_ID(), 'link_wc_product', true))); ?>">
