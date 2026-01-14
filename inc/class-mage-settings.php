@@ -212,16 +212,16 @@ if (!class_exists('MAGE_Setting_API')):
         public function args_from_string($string)
         {
 
-            if (strpos($string, 'PAGES_IDS_ARRAY')    !== false) return $this->get_pages_array();
-            if (strpos($string, 'POSTS_IDS_ARRAY')    !== false) return $this->get_posts_array();
-            if (strpos($string, 'POST_TYPES_ARRAY')   !== false) return $this->get_post_types_array();
+            if (strpos($string, 'WBBM_PAGES_IDS_ARRAY')    !== false) return $this->get_pages_array();
+            if (strpos($string, 'WBBM_POSTS_IDS_ARRAY')    !== false) return $this->get_posts_array();
+            if (strpos($string, 'WBBM_POST_TYPES_ARRAY')   !== false) return $this->get_post_types_array();
             if (strpos($string, 'TAX_')               !== false) return $this->get_taxonomies_array($string);
-            if (strpos($string, 'USER_ROLES')         !== false) return $this->get_user_roles_array();
-            if (strpos($string, 'USER_IDS_ARRAY')     !== false) return $this->get_user_ids_array();
+            if (strpos($string, 'WBBM_USER_ROLES')         !== false) return $this->get_user_roles_array();
+            if (strpos($string, 'WBBM_USER_IDS_ARRAY')     !== false) return $this->get_user_ids_array();
             if (strpos($string, 'MENUS')              !== false) return $this->get_menus_array();
-            if (strpos($string, 'SIDEBARS_ARRAY')     !== false) return $this->get_sidebars_array();
-            if (strpos($string, 'THUMB_SIEZS_ARRAY')  !== false) return $this->get_thumb_sizes_array();
-            if (strpos($string, 'FONTAWESOME_ARRAY')  !== false) return $this->get_font_aws_array();
+            if (strpos($string, 'WBBM_SIDEBARS_ARRAY')     !== false) return $this->get_sidebars_array();
+            if (strpos($string, 'WBBM_THUMB_SIEZS_ARRAY')  !== false) return $this->get_thumb_sizes_array();
+            if (strpos($string, 'WBBM_FONTAWESOME_ARRAY')  !== false) return $this->get_font_aws_array();
 
             return array();
         }
