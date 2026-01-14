@@ -33,7 +33,7 @@ class BusBookingManagerClass
         add_action('mage_next_date', array($NextDateClass,'mage_next_date_suggestion_single'), 99, 3);
         //Save meta
         add_action('save_post', array($AdminMetaBoxClass, 'wbbm_single_settings_meta_save'));
-        add_action('active_date', array($ActiveDataShowClass,'active_date_picker'), 99, 3);
+        add_action('wbbm_active_date', array($ActiveDataShowClass,'active_date_picker'), 99, 3);
 
         add_action('mage_search_from_only',array($WbbmSearchClass,'search_from_only') ,10,2);
         add_action('wbbm_prevent_form_resubmission', array($WbbmSearchClass,'wbbm_prevent_form_resubmission_fun'));

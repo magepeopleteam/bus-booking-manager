@@ -697,10 +697,10 @@ if (!class_exists('MAGE_Setting_API')):
                         <div id="<?php echo esc_attr($form['id']); ?>" class="group">
                             <form method="post" action="options.php">
 
-                                <?php do_action('wsa_form_top_' . esc_attr($form['id']), $form); ?>
+                                <?php do_action('wbbm_form_top_' . esc_attr($form['id']), $form); ?>
                                 <?php settings_fields(esc_attr($form['id'])); ?>
                                 <?php do_settings_sections(esc_attr($form['id'])); ?>
-                                <?php do_action('wsa_form_bottom_' . esc_attr($form['id']), $form); ?>
+                                <?php do_action('wbbm_form_bottom_' . esc_attr($form['id']), $form); ?>
 
                                 <div style="padding-left: 10px">
                                     <?php submit_button(); ?>

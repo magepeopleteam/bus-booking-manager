@@ -1,7 +1,7 @@
 <?php 
 if ( ! defined( 'ABSPATH' ) ) { die; } // Cannot access pages directly.
 
-class WBTM_Plugin_Activator {
+class WBBM_Plugin_Activator {
 
     // Function to get page slug
     public function wbtm_get_page_by_slug($slug) {

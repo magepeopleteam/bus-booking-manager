@@ -33,7 +33,7 @@ class ActiveDataShowClass extends CommonClass {
             foreach ($wbtm_offday_schedules as $wbtm_offday_schedule) {
                 $from_date = sanitize_text_field($wbtm_offday_schedule['from_date']);
                 $to_date = sanitize_text_field($wbtm_offday_schedule['to_date']);
-                $alloffdays = array_unique(array_merge($alloffdays, displayDates($from_date, $to_date)));
+                $alloffdays = array_unique(array_merge($alloffdays, WbbmdisplayDates($from_date, $to_date)));
             }
 
             $offday = array();
