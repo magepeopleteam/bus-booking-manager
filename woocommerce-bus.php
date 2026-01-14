@@ -58,7 +58,7 @@
 		require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 		dbDelta($sql);
 		require_once plugin_dir_path(__FILE__) . 'inc/class-plugin-activator.php';
-		WBTM_Plugin_Activator::activate();
+		WBBM_Plugin_Activator::activate();
 	}
 // run the install scripts upon plugin activation
 	register_activation_hook(__FILE__, 'wbbm_booking_list_table_create');

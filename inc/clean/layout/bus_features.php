@@ -101,7 +101,7 @@ printf(esc_html__('Here you can add features for %s', 'bus-booking-manager'), es
 
                         <p class="description"><?php echo esc_html__('Please select a suitable icon for this feature', 'bus-booking-manager'); ?></p>
 
-                        <?php all_font_awesome(); ?>
+                        <?php wbbm_all_font_awesome(); ?>
 
                     </div>
                     <div class="popupFooter">

@@ -130,7 +130,7 @@ class NextDateClass extends CommonClass
         } elseif (($wbtm_offday_schedules || $weekly_offday) && $show_off_day === 'yes') {
             $alloffdays = [];
             foreach ($wbtm_offday_schedules as $wbtm_offday_schedule) {
-                $alloffdays = array_unique(array_merge($alloffdays, displayDates($wbtm_offday_schedule['from_date'], $wbtm_offday_schedule['to_date'])));
+                $alloffdays = array_unique(array_merge($alloffdays, WbbmdisplayDates($wbtm_offday_schedule['from_date'], $wbtm_offday_schedule['to_date'])));
             }
 
             $offday = [];

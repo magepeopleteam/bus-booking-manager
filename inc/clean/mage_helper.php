@@ -79,12 +79,12 @@ function wbbm_entire_switch($price, $name, $return)
     <?php
 }
 
-function hidden_input_field($name, $value)
+function wbbm_hidden_input_field($name, $value)
 {
     echo '<input type="hidden" name="' . esc_attr($name) . '" value="' . esc_attr($value) . '"/>';
 }
 
-function cart_qty($name)
+function wbbm_cart_qty($name)
 {
     $qty_type = ($name == 'adult_quantity') ? 'wbbm_total_adult_qt' : 'wbbm_total_child_qt';
     $product_id = get_the_id();
@@ -122,9 +122,9 @@ function mage_route_list($drop = false)
     echo '</ul></div>';
 }
 
-add_action('wp_ajax_wbtm_load_dropping_point', 'wbtm_load_dropping_point');
-add_action('wp_ajax_nopriv_wbtm_load_dropping_point', 'wbtm_load_dropping_point');
-function wbtm_load_dropping_point()
+add_action('wp_ajax_wbbm_load_dropping_point', 'wbbm_load_dropping_point');
+add_action('wp_ajax_nopriv_wbbm_load_dropping_point', 'wbbm_load_dropping_point');
+function wbbm_load_dropping_point()
 {
     check_ajax_referer('wbbm_ajax_nonce', 'nonce');
 
@@ -242,7 +242,7 @@ function mage_available_seat($date)
 // Get cart item quantity
 function wbbm_get_cart_item($bus_id, $date_var)
 {
-    $cart_qty = 0;
+    $wbbm_cart_qty = 0;
     $cart_items = WC()->cart->get_cart();
     if (count($cart_items) > 0) {
         foreach ($cart_items as $cart_item) {
@@ -252,11 +252,11 @@ function wbbm_get_cart_item($bus_id, $date_var)
                 $adult_qty = isset($cart_item['wbbm_total_adult_qt']) ? (int) $cart_item['wbbm_total_adult_qt'] : 0;
                 $child_qty = isset($cart_item['wbbm_total_child_qt']) ? (int) $cart_item['wbbm_total_child_qt'] : 0;
                 $infant_qty = isset($cart_item['wbbm_total_infant_qt']) ? (int) $cart_item['wbbm_total_infant_qt'] : 0;
-                $cart_qty += $adult_qty + $child_qty + $infant_qty;
+                $wbbm_cart_qty += $adult_qty + $child_qty + $infant_qty;
             }
         }
     }
-    return $cart_qty;
+    return $wbbm_cart_qty;
 }
 
 // Get intermediate available seat
@@ -270,7 +270,7 @@ function wbbm_intermidiate_available_seat($start, $end, $date, $eid = null): int
 }
 
 // Boarding dropping time
-function boarding_dropping_time($drop_time = '', $return = '')
+function wbbm_boarding_dropping_time($drop_time = '', $return = '')
 {
     $boarding = mage_get_isset('bus_start_route');
     $dropping = mage_get_isset('bus_end_route');
@@ -691,6 +691,7 @@ function wbbm_get_price_including_tax($bus, $price, $args = array())
             $base_tax_rates = WC_Tax::get_base_tax_rates($product->get_tax_class('unfiltered'));
 
             if (!empty(WC()->customer) && WC()->customer->get_is_vat_exempt()) {
+                // phpcs:ignore WordPress.NamingConventions.ValidHookName
                 $remove_taxes = apply_filters('woocommerce_adjust_non_base_location_prices', true) ? WC_Tax::calc_tax($line_price, $base_tax_rates, true) : WC_Tax::calc_tax($line_price, $tax_rates, true);
 
                 $remove_taxes_total = ('yes' === get_option('woocommerce_tax_round_at_subtotal')) ? array_sum($remove_taxes) : array_sum(array_map('wc_round_tax_total', $remove_taxes));
@@ -706,6 +707,7 @@ function wbbm_get_price_including_tax($bus, $price, $args = array())
             }
         }
     }
+    // phpcs:ignore WordPress.NamingConventions.ValidHookName
     return apply_filters('woocommerce_get_price_including_tax', $return_price, $qty, $product);
 }
 

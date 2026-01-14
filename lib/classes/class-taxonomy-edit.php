@@ -204,7 +204,7 @@ if( ! class_exists( 'TaxonomyEdit' ) ) {
                         echo wp_kses_post($FormFieldsGenerator->field_user( $option ));
                         break;
                     default:
-                        do_action( "wp_theme_settings_field_{$option['type']}", $option );
+                        do_action( "wbbm_theme_settings_field_{$option['type']}", $option );
                         break;
                 }
 

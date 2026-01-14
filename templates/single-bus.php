@@ -30,16 +30,16 @@ $Wbbm_boarding = isset($_GET[$WbbmBoarding_var]) ? sanitize_text_field(wp_unslas
 // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 $Wbbm_boarding = isset($_GET[$WbbmDropping_var]) ? sanitize_text_field(wp_unslash($_GET[$WbbmDropping_var])) : '';
 $Wbbm_available_seat = wbbm_intermidiate_available_seat($Wbbm_boarding, $Wbbm_boarding, wbbm_convert_date_to_php(mage_get_isset($WbbmDate_var)));
-$Wbbm_cart_qty = wbbm_get_cart_item($id, mage_get_isset($WbbmDate_var));
-$Wbbm_available_seat -= $Wbbm_cart_qty;
+$Wbbm_wbbm_cart_qty = wbbm_get_cart_item($id, mage_get_isset($WbbmDate_var));
+$Wbbm_available_seat -= $Wbbm_wbbm_cart_qty;
 
 // Seat prices
 $Wbbm_seat_price_adult = mage_seat_price($id, $Wbbm_boarding, $Wbbm_boarding, 'adult');
 $Wbbm_seat_price_child = mage_seat_price($id, $Wbbm_boarding, $Wbbm_boarding, 'child');
 $Wbbm_seat_price_infant = mage_seat_price($id, $Wbbm_boarding, $Wbbm_boarding, 'infant');
 $Wbbm_seat_price_entire = mage_seat_price($id, $Wbbm_boarding, $Wbbm_boarding, 'entire');
-$Wbbm_boarding_time = wbbm_get_datetime(boarding_dropping_time(false, $WbbmReturn), 'time');
-$Wbbm_dropping_time = wbbm_get_datetime(boarding_dropping_time(true, $WbbmReturn), 'time');
+$Wbbm_boarding_time = wbbm_get_datetime(wbbm_boarding_dropping_time(false, $WbbmReturn), 'time');
+$Wbbm_dropping_time = wbbm_get_datetime(wbbm_boarding_dropping_time(true, $WbbmReturn), 'time');
 
 $Wbbm_show_off_day = get_post_meta(get_the_ID(), 'show_off_day', true) ?: 'no';
 $Wbbm_odd_list = $Wbbm_show_off_day === 'yes' ? mage_odd_list_check(false) : true;
@@ -249,12 +249,12 @@ if (!empty($wbbm_off_day_sche) && $Wbbm_show_off_day === 'yes') {
                             $wbbm_date = $WbbmJ_date ? mage_wp_date($WbbmJ_date, 'Y-m-d') : gmdate('Y-m-d');
                             $wbbm_start = $Wbbm_boarding;
                             $wbbm_end = $Wbbm_boarding;
-                            hidden_input_field('bus_id', $id);
-                            hidden_input_field('journey_date', $wbbm_date);
-                            hidden_input_field('start_stops', $wbbm_start);
-                            hidden_input_field('end_stops', $wbbm_end);
-                            hidden_input_field('user_start_time', $Wbbm_boarding_time);
-                            hidden_input_field('bus_start_time', $Wbbm_dropping_time);
+                            wbbm_hidden_input_field('bus_id', $id);
+                            wbbm_hidden_input_field('journey_date', $wbbm_date);
+                            wbbm_hidden_input_field('start_stops', $wbbm_start);
+                            wbbm_hidden_input_field('end_stops', $wbbm_end);
+                            wbbm_hidden_input_field('user_start_time', $Wbbm_boarding_time);
+                            wbbm_hidden_input_field('bus_start_time', $Wbbm_dropping_time);
                             ?>
                             <div class="adult"></div>
                             <div class="child"></div>

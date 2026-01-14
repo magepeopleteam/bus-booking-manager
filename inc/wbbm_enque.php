@@ -48,7 +48,7 @@ function wbbm_add_admin_scripts( $hook ) {
     }
 }
 
-function displayDates($date1, $date2, $format = 'd-m-Y' ) {
+function WbbmdisplayDates($date1, $date2, $format = 'd-m-Y' ) {
     $dates = array();
     $current = strtotime($date1);
     $date2 = strtotime($date2);

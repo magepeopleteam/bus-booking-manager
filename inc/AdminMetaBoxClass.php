@@ -272,7 +272,7 @@ class AdminMetaBoxClass extends CommonClass
         update_post_meta($post_id, 'show_off_day', $show_off_day);
 
         // Partial Payment
-        do_action('wcpp_partial_settings_saved', $post_id);
+        do_action('wbbm_partial_settings_saved', $post_id);
 
         // Tax Settings
         $tax_status = isset($_POST['_tax_status']) ? sanitize_text_field(wp_unslash($_POST['_tax_status'])) : '';
