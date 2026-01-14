@@ -80,7 +80,7 @@ function mage_search_list() {
         </div>
     </div>
     <div class="mage-search-res-wrapper">
-        <?php do_action('woocommerce_before_single_product'); ?>
+        <?php do_action('wbbm_woocommerce_before_single_product'); ?>
         <?php if ($mage_bus_search_theme == 'minimal') { ?>
             <div class="mage-search-res-header" style="background-color: <?php echo esc_attr($search_list_header_b_color ?: '#EA2330'); ?>;">
                 <div class="mage-search-res-header--img">
@@ -165,7 +165,7 @@ function mage_search_bus_list($return) {
         wc_add_notice(__('Security check failed. Please try again.', 'bus-booking-manager'), 'error');
         return false;
     }
-    do_action('woocommerce_before_single_product');
+    do_action('wbbm_woocommerce_before_single_product');
 
     if (isset($_GET['bus_start_route'], $_GET['bus_end_route']) && (isset($_GET['j_date']) || isset($_GET['r_date']))) {
         $c_time = current_time('timestamp');
@@ -279,8 +279,8 @@ function mage_search_item($return) {
     $id = get_the_ID();
     $search_date = isset($_GET['j_date']) ? sanitize_text_field(wp_unslash($_GET['j_date'])) : '';
     $current_date = gmdate('Y-m-d');
-    $boarding_time = boarding_dropping_time(false, $return);
-    $dropping_time = boarding_dropping_time(true, $return);
+    $boarding_time = wbbm_boarding_dropping_time(false, $return);
+    $dropping_time = wbbm_boarding_dropping_time(true, $return);
 
     if ($current_date === $search_date) {
         $search_timestamp = strtotime($search_date . ' ' . $boarding_time);
@@ -309,8 +309,8 @@ function mage_search_item($return) {
         $input_dropping_var,
         wbbm_convert_date_to_php(mage_get_isset($date_var))
     );
-    $cart_qty = wbbm_get_cart_item($id, mage_get_isset($date_var));
-    $available_seat -= $cart_qty;
+    $wbbm_cart_qty = wbbm_get_cart_item($id, mage_get_isset($date_var));
+    $available_seat -= $wbbm_cart_qty;
     $boarding = mage_get_isset($boarding_var);
     $dropping = mage_get_isset($dropping_var);
 
@@ -530,12 +530,12 @@ function mage_search_item($return) {
                                         $date = isset($_GET[$date_var]) ? mage_wp_date(sanitize_text_field(wp_unslash($_GET[$date_var])), 'Y-m-d') : gmdate('Y-m-d');
                                         $start = $input_boarding_var;
                                         $end = $input_dropping_var;
-                                        hidden_input_field('bus_id', $id);
-                                        hidden_input_field('journey_date', $date);
-                                        hidden_input_field('start_stops', $start);
-                                        hidden_input_field('end_stops', $end);
-                                        hidden_input_field('user_start_time', $boarding_time);
-                                        hidden_input_field('bus_start_time', $dropping_time);
+                                        wbbm_hidden_input_field('bus_id', $id);
+                                        wbbm_hidden_input_field('journey_date', $date);
+                                        wbbm_hidden_input_field('start_stops', $start);
+                                        wbbm_hidden_input_field('end_stops', $end);
+                                        wbbm_hidden_input_field('user_start_time', $boarding_time);
+                                        wbbm_hidden_input_field('bus_start_time', $dropping_time);
                                         ?>
                                         <div class="adult"></div>
                                         <div class="child"></div>
@@ -666,12 +666,12 @@ function mage_search_item($return) {
                                     $date = isset($_GET[$date_var]) ? mage_wp_date(sanitize_text_field(wp_unslash($_GET[$date_var])), 'Y-m-d') : gmdate('Y-m-d');
                                     $start = $input_boarding_var;
                                     $end = $input_dropping_var;
-                                    hidden_input_field('bus_id', $id);
-                                    hidden_input_field('journey_date', $date);
-                                    hidden_input_field('start_stops', $start);
-                                    hidden_input_field('end_stops', $end);
-                                    hidden_input_field('user_start_time', $boarding_time);
-                                    hidden_input_field('bus_start_time', $dropping_time);
+                                    wbbm_hidden_input_field('bus_id', $id);
+                                    wbbm_hidden_input_field('journey_date', $date);
+                                    wbbm_hidden_input_field('start_stops', $start);
+                                    wbbm_hidden_input_field('end_stops', $end);
+                                    wbbm_hidden_input_field('user_start_time', $boarding_time);
+                                    wbbm_hidden_input_field('bus_start_time', $dropping_time);
                                     ?>
                                     <div class="adult"></div>
                                     <div class="child"></div>
@@ -775,7 +775,7 @@ function search_from_only($single_bus, $target) {
     $wbbm_bus_prices = get_post_meta(get_the_ID(), 'wbbm_bus_prices', true);
     ?>
     <form action="<?php echo esc_url($single_bus ? '' : get_site_url() . '/' . sanitize_title($target) . '/'); ?>" method="get" class="mage_form">
-        <?php do_action('active_date', $single_bus, get_the_ID());
+        <?php do_action('wbbm_active_date', $single_bus, get_the_ID());
         wp_nonce_field('bus_search_nonce_action', 'bus_search_nonce');
         ?>
         <div class="mage_form_list">

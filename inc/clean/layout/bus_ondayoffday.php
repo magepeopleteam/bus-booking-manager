@@ -37,7 +37,7 @@ if (!defined('ABSPATH')) {
 
         <?php
         // Retrieve and sanitize post meta
-        $wbtm_bus_on_date = array_map('sanitize_text_field', (array)get_post_meta($post->ID, 'wbtm_bus_on_date', true));
+        $wbbm_wbtm_bus_on_date = array_map('sanitize_text_field', (array)get_post_meta($post->ID, 'wbtm_bus_on_date', true));
         ?>
 
         <div style="display: <?php echo esc_attr($show_operational_on_day == "yes" ? "block" : "none"); ?>" class='onday-sec operational-on-day'>
@@ -47,10 +47,10 @@ if (!defined('ABSPATH')) {
                     <span><?php esc_html_e('You can add specific dates for operations', 'bus-booking-manager'); ?></span>
                 </div>
                 <div>
-                    <?php foreach ($wbtm_bus_on_date as $date) : 
-                        if (!empty($date)) : ?>
+                    <?php foreach ($wbbm_wbtm_bus_on_date as $wbbm_date) : 
+                        if (!empty($wbbm_date)) : ?>
                         <div class="operate-day-row">
-                            <input type="text" class="ra_bus_on_date datepicker_has" id="bus_on_date" name="wbtm_bus_on_date[]" value="<?php echo esc_attr($date); ?>" placeholder="2024-04-30" />
+                            <input type="text" class="ra_bus_on_date datepicker_has" id="bus_on_date" name="wbtm_bus_on_date[]" value="<?php echo esc_attr($wbbm_date); ?>" placeholder="2024-04-30" />
                             <a class="button remove-bp-row" href="#"><i class="fas fa-minus-circle"></i><?php esc_html_e('Remove', 'bus-booking-manager'); ?></a>
                         </div>
                     <?php endif; endforeach; ?>
@@ -95,7 +95,7 @@ if (!defined('ABSPATH')) {
 
         <!-- ------------------Start Offday wrapper-------------------------------->
         <?php
-        $wbtm_offday_schedule = get_post_meta($post->ID, 'wbtm_offday_schedule', true);
+        $wbbm_wbtm_offday_schedule = get_post_meta($post->ID, 'wbtm_offday_schedule', true);
         ?>
 
         <section class="bgLight" style="margin-top: 20px;">
@@ -132,16 +132,16 @@ if (!defined('ABSPATH')) {
                             <th></th>
                         </tr>
                         <tbody>
-                            <?php if ($wbtm_offday_schedule) :
-                                $count = 0;
-                                foreach ($wbtm_offday_schedule as $field) : ?>
+                            <?php if ($wbbm_wbtm_offday_schedule) :
+                                $wbbm_count = 0;
+                                foreach ($wbbm_wbtm_offday_schedule as $wbbm_field) : ?>
                                     <tr>
                                         <td align="left">
                                             <div class="wbbm_bus_icon_group">
                                                 <span class="wbbm_bus_route_icon wbbm_bus_route_icon1">
                                                     <img src="<?php echo esc_url(WBTM_PLUGIN_URL . 'images/bus_calendar.png'); ?>" />
                                                 </span>
-                                                <input type="text" id="<?php echo esc_attr('db_offday_from_' . $count); ?>" class="repeatable-offday-from-field datepicker_has" name="wbtm_od_offdate_from[]" placeholder="2020-12-31" value="<?php echo esc_attr(sanitize_text_field($field['from_date'])); ?>" />
+                                                <input type="text" id="<?php echo esc_attr('db_offday_from_' . $wbbm_count); ?>" class="repeatable-offday-from-field datepicker_has" name="wbtm_od_offdate_from[]" placeholder="2020-12-31" value="<?php echo esc_attr(sanitize_text_field($wbbm_field['from_date'])); ?>" />
                                             </div>
                                         </td>
                                         <td align="left">
@@ -149,7 +149,7 @@ if (!defined('ABSPATH')) {
                                                 <span class="wbbm_bus_route_icon wbbm_bus_route_icon1">
                                                     <img src="<?php echo esc_url(WBTM_PLUGIN_URL . 'images/bus_route_clock.png'); ?>" />
                                                 </span>
-                                                <input type="text" class="repeatable-offtime-from-field" name="wbtm_od_offtime_from[]" placeholder="09:00 am" value="<?php echo esc_attr(sanitize_text_field($field['from_time'])); ?>" />
+                                                <input type="text" class="repeatable-offtime-from-field" name="wbtm_od_offtime_from[]" placeholder="09:00 am" value="<?php echo esc_attr(sanitize_text_field($wbbm_field['from_time'])); ?>" />
                                             </div>
                                         </td>
                                         <td align="left">
@@ -160,7 +160,7 @@ if (!defined('ABSPATH')) {
                                                 <span class="wbbm_bus_route_icon wbbm_bus_route_icon1">
                                                     <img src="<?php echo esc_url(WBTM_PLUGIN_URL . 'images/bus_calendar.png'); ?>" />
                                                 </span>
-                                                <input type="text" id="<?php echo esc_attr('db_offday_to_' . $count); ?>" class="repeatable-offday-to-field datepicker_has" name="wbtm_od_offdate_to[]" placeholder="2020-12-31" value="<?php echo esc_attr(sanitize_text_field($field['to_date'])); ?>" />
+                                                <input type="text" id="<?php echo esc_attr('db_offday_to_' . $wbbm_count); ?>" class="repeatable-offday-to-field datepicker_has" name="wbtm_od_offdate_to[]" placeholder="2020-12-31" value="<?php echo esc_attr(sanitize_text_field($wbbm_field['to_date'])); ?>" />
                                             </div>
                                         </td>
                                         <td align="left">
@@ -168,14 +168,14 @@ if (!defined('ABSPATH')) {
                                                 <span class="wbbm_bus_route_icon wbbm_bus_route_icon1">
                                                     <img src="<?php echo esc_url(WBTM_PLUGIN_URL . 'images/bus_route_clock.png'); ?>" />
                                                 </span>
-                                                <input type="text" class="repeatable-offtime-to-field" name="wbtm_od_offtime_to[]" placeholder="09:59 pm" value="<?php echo esc_attr(sanitize_text_field($field['to_time'])); ?>" />
+                                                <input type="text" class="repeatable-offtime-to-field" name="wbtm_od_offtime_to[]" placeholder="09:59 pm" value="<?php echo esc_attr(sanitize_text_field($wbbm_field['to_time'])); ?>" />
                                             </div>
                                         </td>
                                         <td align="left">
                                             <a class="button remove-bp-row" href="#"><i class="fas fa-minus-circle"></i><?php esc_html_e('Remove', 'bus-booking-manager'); ?></a>
                                         </td>
                                     </tr>
-                                <?php $count++;
+                                <?php $wbbm_count++;
                                 endforeach;
                             endif; ?>
                             <script>
@@ -263,7 +263,7 @@ if (!defined('ABSPATH')) {
                 </div>
                 <div class='offday-sec'>
                     <?php
-                    $days = array(
+                    $wbbm_days = array(
                         'sun' => esc_html__('Sunday', 'bus-booking-manager'),
                         'mon' => esc_html__('Monday', 'bus-booking-manager'),
                         'tue' => esc_html__('Tuesday', 'bus-booking-manager'),
@@ -272,15 +272,15 @@ if (!defined('ABSPATH')) {
                         'fri' => esc_html__('Friday', 'bus-booking-manager'),
                         'sat' => esc_html__('Saturday', 'bus-booking-manager')
                     );
-                    $day_values = array(7, 1, 2, 3, 4, 5, 6);
-                    $i = 0;
-                    foreach ($days as $day_id => $day_name) : ?>
-                        <label for="<?php echo esc_attr($day_id); ?>">
-                            <input type="checkbox" style="text-align: left;width: auto;" name="weekly_offday[]" value="<?php echo esc_attr($day_values[$i]); ?>" id="<?php echo esc_attr($day_id); ?>" <?php checked(in_array($day_values[$i], $weekly_offday)); ?>>
-                            <?php echo esc_html($day_name); ?>
+                    $wbbm_day_values = array(7, 1, 2, 3, 4, 5, 6);
+                    $wbbm_i = 0;
+                    foreach ($wbbm_days as $wbbm_day_id => $wbbm_day_name) : ?>
+                        <label for="<?php echo esc_attr($wbbm_day_id); ?>">
+                            <input type="checkbox" style="text-align: left;width: auto;" name="weekly_offday[]" value="<?php echo esc_attr($wbbm_day_values[$wbbm_i]); ?>" id="<?php echo esc_attr($wbbm_day_id); ?>" <?php checked(in_array($wbbm_day_values[$wbbm_i], $weekly_offday)); ?>>
+                            <?php echo esc_html($wbbm_day_name); ?>
                         </label>
                     <?php
-                        $i++;
+                        $wbbm_i++;
                     endforeach;
                     ?>
                 </div>

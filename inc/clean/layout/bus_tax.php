@@ -25,16 +25,16 @@
                 <span>
                 <?php
                 global $post;
-                $post_id = isset($post->ID) ? intval($post->ID) : 0;
-                $tax_status = get_post_meta($post_id, '_tax_status', true);
-                $tax_class = get_post_meta($post_id, '_tax_class', true);
-                $MP_Global_Function = new MP_Global_Function();
-                $tax_lists = $MP_Global_Function->all_tax_list();
+                $wbbm_post_id = isset($post->ID) ? intval($post->ID) : 0;
+                $wbbm_tax_status = get_post_meta($wbbm_post_id, '_tax_status', true);
+                $wbbm_tax_class = get_post_meta($wbbm_post_id, '_tax_class', true);
+                $wbbm_MP_Global_Function = new MP_Global_Function();
+                $wbbm_tax_lists = $wbbm_MP_Global_Function->all_tax_list();
                 ?>
                 <select name="_tax_status" id="_tax_status">
-                    <option value="taxable" <?php selected($tax_status, 'taxable'); ?>><?php esc_html_e('Taxable', 'bus-booking-manager'); ?></option>
-                    <option value="shipping" <?php selected($tax_status, 'shipping'); ?>><?php esc_html_e('Shipping only', 'bus-booking-manager'); ?></option>
-                    <option value="none" <?php selected($tax_status, 'none'); ?>><?php esc_html_e('None', 'bus-booking-manager'); ?></option>
+                    <option value="taxable" <?php selected($wbbm_tax_status, 'taxable'); ?>><?php esc_html_e('Taxable', 'bus-booking-manager'); ?></option>
+                    <option value="shipping" <?php selected($wbbm_tax_status, 'shipping'); ?>><?php esc_html_e('Shipping only', 'bus-booking-manager'); ?></option>
+                    <option value="none" <?php selected($wbbm_tax_status, 'none'); ?>><?php esc_html_e('None', 'bus-booking-manager'); ?></option>
                 </select>
             </section>
             <section>
@@ -45,9 +45,9 @@
                 </div>
                 <span>
                 <select name="_tax_class" id="_tax_class">
-                    <option value="standard" <?php selected($tax_class, 'standard'); ?>><?php esc_html_e('Standard', 'bus-booking-manager'); ?></option>
-                    <?php foreach ($tax_lists as $key => $value) { ?>
-                        <option value="<?php echo esc_attr($key); ?>" <?php selected($tax_class, $key); ?>><?php echo esc_html($value); ?></option>
+                    <option value="standard" <?php selected($wbbm_tax_class, 'standard'); ?>><?php esc_html_e('Standard', 'bus-booking-manager'); ?></option>
+                    <?php foreach ($wbbm_tax_lists as $wbbm_key => $wbbm_value) { ?>
+                        <option value="<?php echo esc_attr($wbbm_key); ?>" <?php selected($wbbm_tax_class, $wbbm_key); ?>><?php echo esc_html($wbbm_value); ?></option>
                     <?php } ?>
                 </select>
                 </span>

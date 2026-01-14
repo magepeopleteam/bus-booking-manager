@@ -25,8 +25,8 @@ class WBBMMetaBox
         add_action('wp_ajax_wbtm_add_bus_feature', [$this, 'wbtm_add_bus_feature']);
         add_action('wp_ajax_nopriv_wbtm_add_bus_feature', [$this, 'wbtm_add_bus_feature']);
 
-        add_action('edited_wbbm_bus_feature', 'save_wbbm_bus_feature');
-        add_action('create_wbbm_bus_feature', 'save_wbbm_bus_feature', 10, 2);
+        add_action('edited_wbbm_bus_feature', 'wbbm_save_wbbm_bus_feature');
+        add_action('create_wbbm_bus_feature', 'wbbm_save_wbbm_bus_feature', 10, 2);
 
         // Bus stop ajax
         add_action('wp_ajax_wbtm_add_pickup', [$this, 'wbtm_add_pickup']);
@@ -201,7 +201,7 @@ class WBBMMetaBox
     {
         global $post;
         $values = get_post_custom($post->ID);
-        do_action('wcpp_partial_product_settings', $values);
+        do_action('wbbm_partial_product_settings', $values);
     }
 
     public function wbbm_bus_configuration()

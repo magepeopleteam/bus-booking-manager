@@ -71,20 +71,20 @@ if( ! class_exists( 'AddMetaBox' ) ) {
                 <div class='navigation <?php echo esc_attr($get_nav_position); ?>'>
                     <div class="nav-header">
                         <?php
-                        do_action('nav_header_top');
+                        do_action('wbbm_nav_header_top');
                         ?>
                         <div class="themeName"><?php echo esc_html($this->get_item_name()); ?></div>
                         <div class="themeVersion"><?php 
                             /* translators: show the version */
                             echo esc_html(sprintf(__('Version: %s', 'bus-booking-manager'), $this->get_item_version())); ?></div>
                         <?php
-                        do_action('nav_header_bottom');
+                        do_action('wbbm_nav_header_bottom');
                         ?>
                     </div>
 
                     <div class="nav-items">
                         <?php
-                        do_action('nav_nav_items_top');
+                        do_action('wbbm_nav_nav_items_top');
                         ?>
                         <?php
                         $current_page = 1;
@@ -116,16 +116,16 @@ if( ! class_exists( 'AddMetaBox' ) ) {
                         }
                         ?>
                         <?php
-                        do_action('nav_nav_items_bottom');
+                        do_action('wbbm_nav_nav_items_bottom');
                         ?>
                     </div>
 
                     <div class="nav-footer">
                         <?php
-                        do_action('nav_footer_top');
+                        do_action('wbbm_nav_footer_top');
                         ?>
                         <?php
-                        do_action('nav_footer_bottom');
+                        do_action('wbbm_nav_footer_bottom');
                         ?>
                     </div>
 

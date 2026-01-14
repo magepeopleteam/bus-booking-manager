@@ -44,12 +44,11 @@ if (!defined('ABSPATH')) {
                 <select name="wbbm_bus_category" id="wbbm_bus_category">'
                     <option value=""><?php esc_html_e('Select Type','bus-booking-manager') ?></option>
                     <?php
-
-                    foreach ($bus_categories as $key => $value) {
-                        if ($wbbm_bus_category == $key) {
-                            echo '<option value="' . esc_attr($key) . '" selected>' . esc_html($value) . '</option>';
+                    foreach ($bus_categories as $wbbm_key => $wbbm_value) {
+                        if ($wbbm_bus_category == $wbbm_key) {
+                            echo '<option value="' . esc_attr($wbbm_key) . '" selected>' . esc_html($wbbm_value) . '</option>';
                         } else {
-                            echo '<option value="' . esc_attr($key) . '">' . esc_html($value) . '</option>';
+                            echo '<option value="' . esc_attr($wbbm_key) . '">' . esc_html($wbbm_value) . '</option>';
                         }
                     }
                     ?>
@@ -92,8 +91,8 @@ if (!defined('ABSPATH')) {
             <div>
                 <label for="wbbm_price_zero_allow" class="ra-item-label">
                 <?php
-                $bus_price_text = wbbm_get_option('wbbm_bus_price_zero_allow_text', 'wbbm_label_setting_sec');
-                echo esc_html( $bus_price_text ? $bus_price_text : esc_html__( 'Price Zero Allow', 'bus-booking-manager' ) );
+                $wbbm_bus_price_text = wbbm_get_option('wbbm_bus_price_zero_allow_text', 'wbbm_label_setting_sec');
+                echo esc_html( $wbbm_bus_price_text ? $wbbm_bus_price_text : esc_html__( 'Price Zero Allow', 'bus-booking-manager' ) );
                 ?>
                 </label>
                 <br>
@@ -118,8 +117,8 @@ if (!defined('ABSPATH')) {
             <div>
                 <label for="wbbm_sell_off" class="ra-item-label">
                 <?php
-                $bus_sell_off_text = wbbm_get_option('wbbm_bus_sell_off_text', 'wbbm_label_setting_sec');
-                echo esc_html( $bus_sell_off_text ? $bus_sell_off_text : esc_html__( 'Sell Off', 'bus-booking-manager' ) );
+                $wbbm_bus_sell_off_text = wbbm_get_option('wbbm_bus_sell_off_text', 'wbbm_label_setting_sec');
+                echo esc_html( $wbbm_bus_sell_off_text ? $wbbm_bus_sell_off_text : esc_html__( 'Sell Off', 'bus-booking-manager' ) );
                 ?>
 
                 </label>
@@ -144,8 +143,8 @@ if (!defined('ABSPATH')) {
             <div>
                 <label for="wbbm_seat_available" class="ra-item-label">
                 <?php
-                $seat_available_text = wbbm_get_option('wbbm_bus_seat_available_show_text', 'wbbm_label_setting_sec');
-                echo esc_html( $seat_available_text ? $seat_available_text : esc_html__( 'Show Seat Available', 'bus-booking-manager' ) );
+                $wbbm_seat_available_text = wbbm_get_option('wbbm_bus_seat_available_show_text', 'wbbm_label_setting_sec');
+                echo esc_html( $wbbm_seat_available_text ? $wbbm_seat_available_text : esc_html__( 'Show Seat Available', 'bus-booking-manager' ) );
                 ?>
 
                 </label>
@@ -186,29 +185,29 @@ if (!defined('ABSPATH')) {
     </script>
 
     <?php if ($bus_ticket_type) :
-        foreach ($bus_ticket_type as $field) {
-            $qty_t_type = esc_attr($field['ticket_type_qty_t_type']);
+        foreach ($bus_ticket_type as $wbbm_field) {
+            $wbbm_qty_t_type = esc_attr($wbbm_field['ticket_type_qty_t_type']);
             ?>
             <tr>
                 <td>
-                    <input type="text" class="widefat" name="ticket_type_name[]" value="<?php if ($field['ticket_type_name'] != '') echo esc_attr($field['ticket_type_name']); ?>" />
+                    <input type="text" class="widefat" name="ticket_type_name[]" value="<?php if ($wbbm_field['ticket_type_name'] != '') echo esc_attr($wbbm_field['ticket_type_name']); ?>" />
                 </td>
 
                 <td>
-                    <input type="number" class="widefat" name="ticket_type_price[]" value="<?php if ($field['ticket_type_price'] != '') echo esc_attr($field['ticket_type_price']); else echo ''; ?>" />
+                    <input type="number" class="widefat" name="ticket_type_price[]" value="<?php if ($wbbm_field['ticket_type_price'] != '') echo esc_attr($wbbm_field['ticket_type_price']); else echo ''; ?>" />
                 </td>
 
                 <td>
-                    <input type="number" class="widefat" name="ticket_type_qty[]" value="<?php if ($field['ticket_type_qty'] != '') echo esc_attr($field['ticket_type_qty']); else echo ''; ?>" />
+                    <input type="number" class="widefat" name="ticket_type_qty[]" value="<?php if ($wbbm_field['ticket_type_qty'] != '') echo esc_attr($wbbm_field['ticket_type_qty']); else echo ''; ?>" />
                 </td>
 
                 <td>
     <select name="ticket_type_qty_t_type[]" id="mep_ev_9800kj8" class=''>
-        <option value="inputbox" <?php if ($qty_t_type == 'inputbox') {
+        <option value="inputbox" <?php if ($wbbm_qty_t_type == 'inputbox') {
             echo esc_attr('selected');
         } ?>><?php esc_html_e('Input Box', 'bus-booking-manager'); ?></option>
 
-        <option value="dropdown" <?php if ($qty_t_type == 'dropdown') {
+        <option value="dropdown" <?php if ($wbbm_qty_t_type == 'dropdown') {
             echo esc_attr('selected');
         } ?>><?php esc_html_e('Dropdown List', 'bus-booking-manager'); ?></option>
     </select>

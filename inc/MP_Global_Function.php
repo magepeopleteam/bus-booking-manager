@@ -356,6 +356,7 @@ if (! class_exists('MP_Global_Function')) {
                 } else {
                     $base_tax_rates = WC_Tax::get_base_tax_rates($product->get_tax_class());
                     if (!empty(WC()->customer) && WC()->customer->get_is_vat_exempt()) {
+                        // phpcs:ignore WordPress.NamingConventions.ValidHookName
                         $remove_taxes = apply_filters('woocommerce_adjust_non_base_location_prices', true) ? WC_Tax::calc_tax($line_price, $base_tax_rates, true) : WC_Tax::calc_tax($line_price, $tax_rates, true);
                         $remove_taxes_total = 'yes' === get_option('woocommerce_tax_round_at_subtotal') ? array_sum($remove_taxes) : array_sum(array_map('wc_round_tax_total', $remove_taxes));
                         $return_price = round($line_price - $remove_taxes_total, $num_of_decimal);
@@ -491,8 +492,8 @@ if (! class_exists('MP_Global_Function')) {
             
             // phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name cannot be used as a placeholder in prepare()
             $table_name = $wpdb->prefix . 'wc_tax_rate_classes';
-            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
             $table_name_esc = esc_sql($table_name);
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
             $results = $wpdb->get_results("SELECT slug, name FROM {$table_name_esc}", ARRAY_A);
             // phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
             $tax_list = [];

@@ -8858,7 +8858,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                                             <?php endforeach; ?>
                                             <?php
                                             else:
-                                                do_action('repeatable_custom_input_field_'.$type, $field);
+                                                do_action('wbbm_repeatable_custom_input_field_'.$type, $field);
                                                 ?>
                                             <?php endif;?>
                                             <?php if($collapsible):?>
@@ -8897,18 +8897,18 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
 
         public function args_from_string( $string ){
 
-            if( strpos( $string, 'PAGES_IDS_ARRAY' )    !== false ) return $this->get_pages_array();
-            if( strpos( $string, 'POSTS_IDS_ARRAY' )    !== false ) return $this->get_posts_array();
-            if( strpos( $string, 'POST_TYPES_ARRAY' )   !== false ) return $this->get_post_types_array();
+            if( strpos( $string, 'WBBM_PAGES_IDS_ARRAY' )    !== false ) return $this->get_pages_array();
+            if( strpos( $string, 'WBBM_POSTS_IDS_ARRAY' )    !== false ) return $this->get_posts_array();
+            if( strpos( $string, 'WBBM_POST_TYPES_ARRAY' )   !== false ) return $this->get_post_types_array();
             if( strpos( $string, 'TAX_' )               !== false ) return $this->get_taxonomies_array( $string );
             if( strpos( $string, 'TAXN_' )               !== false ) return $this->get_rep_taxonomies_array( $string );
             if( strpos( $string, 'CPT_' )               !== false ) return $this->get_cpt_array( $string );
-            if( strpos( $string, 'USER_ROLES' )         !== false ) return $this->get_user_roles_array();
-            if( strpos( $string, 'USER_IDS_ARRAY' )     !== false ) return $this->get_user_ids_array();
+            if( strpos( $string, 'WBBM_USER_ROLES' )         !== false ) return $this->get_user_roles_array();
+            if( strpos( $string, 'WBBM_USER_IDS_ARRAY' )     !== false ) return $this->get_user_ids_array();
             if( strpos( $string, 'MENUS' )              !== false ) return $this->get_menus_array();
-            if( strpos( $string, 'SIDEBARS_ARRAY' )     !== false ) return $this->get_sidebars_array();
-            if( strpos( $string, 'THUMB_SIEZS_ARRAY' )  !== false ) return $this->get_thumb_sizes_array();
-            if( strpos( $string, 'FONTAWESOME_ARRAY' )  !== false ) return $this->get_font_aws_array();
+            if( strpos( $string, 'WBBM_SIDEBARS_ARRAY' )     !== false ) return $this->get_sidebars_array();
+            if( strpos( $string, 'WBBM_THUMB_SIEZS_ARRAY' )  !== false ) return $this->get_thumb_sizes_array();
+            if( strpos( $string, 'WBBM_FONTAWESOME_ARRAY' )  !== false ) return $this->get_font_aws_array();
             return array();
         }
 
@@ -8965,19 +8965,19 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
             $user_ids = array();
             $users = get_users();
             foreach( $users as $user ) $user_ids[ $user->ID ] = $user->display_name. '(#'.$user->ID.')';
-            return apply_filters( 'USER_IDS_ARRAY', $user_ids );
+            return apply_filters( 'WBBM_USER_IDS_ARRAY', $user_ids );
         }
 
 
         public function get_pages_array(){
             $pages_array = array();
             foreach( get_pages() as $page ) $pages_array[ $page->ID ] = $page->post_title;
-            return apply_filters( 'PAGES_IDS_ARRAY', $pages_array );
+            return apply_filters( 'WBBM_PAGES_IDS_ARRAY', $pages_array );
         }
 
         public function get_menus_array(){
             $menus = get_registered_nav_menus();
-            return apply_filters( 'MENUS_ARRAY', $menus );
+            return apply_filters( 'WBBM_MENUS_ARRAY', $menus );
         }
 
         public function get_sidebars_array(){
@@ -8991,7 +8991,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
             }
 
 
-            return apply_filters( 'SIDEBARS_ARRAY', $sidebars_name );
+            return apply_filters( 'WBBM_SIDEBARS_ARRAY', $sidebars_name );
         }
 
         public function get_user_roles_array(){
@@ -9004,7 +9004,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                 $role_name[$index] = $data['name'];
             }
 
-            return apply_filters( 'USER_ROLES', $role_name );
+            return apply_filters( 'WBBM_USER_ROLES', $role_name );
         }
 
 
@@ -9015,7 +9015,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
             $pages_array = array();
             foreach( $post_types as $index => $name ) $pages_array[ $index ] = $name;
 
-            return apply_filters( 'POST_TYPES_ARRAY', $pages_array );
+            return apply_filters( 'WBBM_POST_TYPES_ARRAY', $pages_array );
         }
 
 
@@ -9024,7 +9024,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
             $posts_array = array();
             foreach( get_posts(array('posts_per_page'=>-1)) as $page ) $posts_array[ $page->ID ] = $page->post_title;
 
-            return apply_filters( 'POSTS_IDS_ARRAY', $posts_array );
+            return apply_filters( 'WBBM_POSTS_IDS_ARRAY', $posts_array );
         }
 
 
@@ -9041,7 +9041,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                 $thumb_sizes_array[$name] = $size_name;
             endforeach;
 
-            return apply_filters( 'THUMB_SIEZS_ARRAY', $get_intermediate_image_sizes );
+            return apply_filters( 'WBBM_THUMB_SIEZS_ARRAY', $get_intermediate_image_sizes );
         }
 
 
@@ -10044,12 +10044,12 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
             );
 
 
-            return apply_filters( 'FONTAWESOME_ARRAY', $fonts_arr );
+            return apply_filters( 'WBBM_FONTAWESOME_ARRAY', $fonts_arr );
         }
 
 
 
     }
-    global $wbtmcore;
-    $wbtmcore = new FormFieldsGenerator();
+    global $wbbm_core;
+    $wbbm_core = new FormFieldsGenerator();
 }

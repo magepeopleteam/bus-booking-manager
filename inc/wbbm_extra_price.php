@@ -54,11 +54,11 @@ function wbbm_after_checkout_validation() {
                 $adult_qty = isset($cart_item['wbbm_total_adult_qt']) ? intval($cart_item['wbbm_total_adult_qt']) : 0;
                 $child_qty = isset($cart_item['wbbm_total_child_qt']) ? intval($cart_item['wbbm_total_child_qt']) : 0;
                 $infant_qty = isset($cart_item['wbbm_total_infant_qt']) ? intval($cart_item['wbbm_total_infant_qt']) : 0;
-                $cart_qty = $adult_qty + $child_qty + $infant_qty;
+                $wbbm_cart_qty = $adult_qty + $child_qty + $infant_qty;
 
-                if ($available_seat < $cart_qty) {
+                if ($available_seat < $wbbm_cart_qty) {
                     WC()->cart->empty_cart();
-                    wc_add_notice(__("Sorry, your selected ticket is already booked by another user", 'woocommerce'), 'error');
+                    wc_add_notice(__("Sorry, your selected ticket is already booked by another user", 'bus-booking-manager'), 'error');
                 }
             }
         }
@@ -216,7 +216,7 @@ function wbbm_add_custom_fields_text_to_order_items($item, $cart_item_key, $valu
 add_action('woocommerce_checkout_create_order_line_item', 'wbbm_add_custom_fields_text_to_order_items', 10, 4);
 
 // Validate added to cart
-function add_the_date_validation($passed) {
+function wbbm_add_the_date_validation($passed) {
     if (isset($_POST['bus_id'])) {
         $eid = intval($_POST['bus_id']); // Sanitize ID
         if (get_post_type($eid) == 'wbbm_bus') {
@@ -237,4 +237,4 @@ function add_the_date_validation($passed) {
     }
     return $passed;
 }
-add_filter('woocommerce_add_to_cart_validation', 'add_the_date_validation', 10, 5);
+add_filter('woocommerce_add_to_cart_validation', 'wbbm_add_the_date_validation', 10, 5);

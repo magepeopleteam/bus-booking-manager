@@ -998,7 +998,7 @@ echo '<small>' . esc_html(wbbm_get_plugin_data('Version')) . '</small>';
 }
 endif;
 
-$settings = new MAGE_WBBM_Setting_Controls();
+$wbbm_settings = new MAGE_WBBM_Setting_Controls();
 
 
 function wbbm_get_option( $option, $section, $default = '' ) {

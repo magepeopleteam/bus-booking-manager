@@ -56,18 +56,18 @@
     });
 
     // Extra Service Price
-    $('.extra-qty-box').change(function() {
+    $('.extra-qty-box').change(function () {
         const target = $(this);
         const value = target.find('option:selected').val();
         mageExtServiceQty(target, value);
     })
-    $('.mage_es_qty_minus').click(function() {
+    $('.mage_es_qty_minus').click(function () {
         const target = $(this).siblings('input');
         const value = parseInt(target.val()) - 1;
         target.trigger('input');
         mageExtServiceQty(target, value);
     })
-    $('.mage_es_qty_plus').click(function() {
+    $('.mage_es_qty_plus').click(function () {
         const target = $(this).siblings('input');
         const value = parseInt(target.val()) + 1;
         target.trigger('input');
@@ -85,12 +85,12 @@
         let value = parseInt(target.val());
         mageExtBagQty(target, value);
     });
-    $(document).on('click', '.mage_customer_info_area .mage_eb_form_qty .mage_eb_qty_minus', function() {
+    $(document).on('click', '.mage_customer_info_area .mage_eb_form_qty .mage_eb_qty_minus', function () {
         const target = $(this).siblings('input');
         const value = parseInt(target.val()) - 1;
         mageExtBagQty(target, value);
     })
-    $(document).on('click', '.mage_customer_info_area .mage_eb_form_qty .mage_eb_qty_plus', function() {
+    $(document).on('click', '.mage_customer_info_area .mage_eb_form_qty .mage_eb_qty_plus', function () {
         const target = $(this).siblings('input');
         const value = parseInt(target.val()) + 1;
         mageExtBagQty(target, value);
@@ -205,23 +205,23 @@
     }, '.mage-bus-detail-action');
     // Minimul Design Script END
 
-    $(document).ready(function() {
+    $(document).ready(function () {
         $('.wbbm_entire_switch_wrapper #wbbm_entire_bus').click(function (e) {
             const $this = $(this);
             const priceInfoEl = $this.parents('.mage_search_list');
             const price = priceInfoEl.find('.wbbm_entire_switch_wrapper').attr('data-entire-price')
-            if($(this)[0].hasAttribute('checked')){
-                $(this).attr('checked',false);
+            if ($(this)[0].hasAttribute('checked')) {
+                $(this).attr('checked', false);
                 priceInfoEl.find('.mage_sub_total span').html('0');
                 // $('.mage_sub_total strong span').html('0');
                 $(this).val('0');
                 $('input[name=adult_quantity]').closest('.mage_center_space').show();
                 $('input[name=child_quantity]').closest('.mage_center_space').show();
                 $('input[name=infant_quantity]').closest('.mage_center_space').show();
-                $('div.entire').hide();   
+                $('div.entire').hide();
             }
-            else{
-                $(this).attr('checked',true);
+            else {
+                $(this).attr('checked', true);
                 priceInfoEl.find('.mage_sub_total span').html(wbbm_woo_price_format(price));
                 $(this).val('1');
                 $('input[name=adult_quantity]').closest('.mage_center_space').hide();
@@ -234,7 +234,7 @@
                 infoArea.find('.child').empty().hide();
                 infoArea.find('.infant').empty().hide();
                 let passenger_info_title = $('#wbbm_entire_bus').attr('data-ticket-title');
-                
+
                 let passenger_info_form = $('.mage_hidden_customer_info_form').html();
                 $('div.entire').html(passenger_info_form);
                 let passenger_info_user_type = $('div.entire .mage_form_list input[name="wbbm_user_type[]"]');
@@ -243,7 +243,7 @@
                 $('div.entire .mage_form_list').show();
                 $('div.entire').show();
             }
-                  
+
         });
     })
 
@@ -256,7 +256,7 @@
                     type: 'POST',
                     // url: wbtm_ajax.wbtm_ajaxurl,
                     url: WbbmAjax.ajax_url,
-                    data: { "action": "wbtm_load_dropping_point", "boarding_point": boarding_point, nonce: WbbmAjax.nonce },
+                    data: { "action": "wbbm_load_dropping_point", "boarding_point": boarding_point, nonce: WbbmAjax.nonce },
                     beforeSend: function () {
                         $('#bus_end_route').val('');
                         $('#wbtm_dropping_point_list').slideUp(200);
@@ -310,12 +310,12 @@
         mageError(value, target);
         mageSubTotal(target);
     }
-    function get_max_qty(target){
-        let available_quantity = parseInt($('[name="available_quantity"]').val())||0;
-        let adult_quantity = parseInt($('[name="adult_quantity"]').val() )|| 0;
+    function get_max_qty(target) {
+        let available_quantity = parseInt($('[name="available_quantity"]').val()) || 0;
+        let adult_quantity = parseInt($('[name="adult_quantity"]').val()) || 0;
         let child_quantity = parseInt($('[name="child_quantity"]').val()) || 0;
         let infant_quantity = parseInt($('[name="infant_quantity"]').val()) || 0;
-        return available_quantity-(adult_quantity+child_quantity+infant_quantity)+(parseInt(target.val())||0);
+        return available_quantity - (adult_quantity + child_quantity + infant_quantity) + (parseInt(target.val()) || 0);
     }
 
     function mageExtBagQty(target, value) {
@@ -355,16 +355,16 @@
         });
 
         // Extra Service
-        currentTarget.find('.wbbm_extra_service_table tbody tr').each(function() {
+        currentTarget.find('.wbbm_extra_service_table tbody tr').each(function () {
             const es = $(this).find('.extra-qty-box');
             const esUnitPrice = parseFloat(es.attr('data-price'));
             const esQty = parseFloat(es.val());
             subTotal = subTotal + (esUnitPrice * esQty > 0 ? esUnitPrice * esQty : 0);
         });
         // Extra Service END
-        
+
         // Ext Bag Price
-        currentTarget.find('.mage_form_list').each(function() {
+        currentTarget.find('.mage_form_list').each(function () {
             const extBag = $(this).find('.extra_bag_qty');
             const extBagUnitPrice = parseFloat(extBag.attr('data-price'));
             const extQty = parseFloat(extBag.val());

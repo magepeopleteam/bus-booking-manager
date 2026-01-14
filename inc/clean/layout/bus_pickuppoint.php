@@ -89,9 +89,9 @@ if (!defined('ABSPATH')) {
                     </div>
                     <div class="wbbm_field_group <?php echo esc_attr($boarding_points_class) ?>">
                         <?php
-                        $selected_city_pickpoints = get_post_meta($post->ID, 'wbbm_pickpoint_selected_city', true);
+                        $wbbm_selected_city_pickpoints = get_post_meta($post->ID, 'wbbm_pickpoint_selected_city', true);
                         ?>
-                        <input type="hidden" name="select_city_pickpoints" id="select_city_pickpoints" value="<?php echo esc_attr($selected_city_pickpoints) ?>">
+                        <input type="hidden" name="select_city_pickpoints" id="select_city_pickpoints" value="<?php echo esc_attr($wbbm_selected_city_pickpoints) ?>">
                         
                         <span class="wbbm_bus_route_icon wbbm_bus_route_icon1"><img src="<?php echo esc_url(WBTM_PLUGIN_URL .'images/bus_route_map.png');?>"/></span>
                         <select name="wbbm_pick_boarding" id="wbbm_pick_boarding" class="ra_pick_boarding">
@@ -101,37 +101,37 @@ if (!defined('ABSPATH')) {
                         </button>
                     </div>
                 </section>
-                <section class="wbbm_right_col <?php echo($selected_city_pickpoints == '' ? 'all-center' : ''); ?>" >
+                <section class="wbbm_right_col <?php echo($wbbm_selected_city_pickpoints == '' ? 'all-center' : ''); ?>" >
                     <div id="wbbm_pickpoint_selected_city" style="margin:auto;">
-                        <?php if ($selected_city_pickpoints != '') {
-                            $selected_city_pickpoints = explode(',', $selected_city_pickpoints);
-                            foreach ($selected_city_pickpoints as $single) {
-                                $city_name = $single ? ucfirst(str_replace('_', ' ', $single)) : '';
-                                $get_pickpoints_data = get_post_meta($post->ID, 'wbbm_selected_pickpoint_name_' . strtolower($single), true);
+                        <?php if ($wbbm_selected_city_pickpoints != '') {
+                            $wbbm_selected_city_pickpoints = explode(',', $wbbm_selected_city_pickpoints);
+                            foreach ($wbbm_selected_city_pickpoints as $wbbm_single) {
+                                $wbbm_city_name = $wbbm_single ? ucfirst(str_replace('_', ' ', $wbbm_single)) : '';
+                                $wbbm_get_pickpoints_data = get_post_meta($post->ID, 'wbbm_selected_pickpoint_name_' . strtolower($wbbm_single), true);
 
                                 ?>
                                 <div class="wbbm_selected_city_item">
                                     <span class="remove_city_for_pickpoint"><i class="fas fa-trash-alt"></i></span>
-                                    <h4 class="wbbm_pickpoint_title"><?php echo esc_html($city_name); ?></h4>
-                                    <input type="hidden" name="wbbm_pickpoint_selected_city[]" value="<?php echo esc_attr($single); ?>">
+                                    <h4 class="wbbm_pickpoint_title"><?php echo esc_html($wbbm_city_name); ?></h4>
+                                    <input type="hidden" name="wbbm_pickpoint_selected_city[]" value="<?php echo esc_attr($wbbm_single); ?>">
                                     <div class="pickpoint-adding-wrap-main">
                                         <div class="pickpoint-adding-wrap">
                                             <?php
 
 
-                                            if ($get_pickpoints_data) {
+                                            if ($wbbm_get_pickpoints_data) {
 
 
-                                                foreach ($get_pickpoints_data as $pickpoint) : ?>
+                                                foreach ($wbbm_get_pickpoints_data as $wbbm_pickpoint) : ?>
 
                                                     <div class="pickpoint-adding">
                                                         <div class="pickpoint-adding-col">
                                                         <span class="wbbm_bus_route_icon wbbm_bus_route_icon1"> <img src="<?php echo esc_url(WBTM_PLUGIN_URL . 'images/bus_route_map.png'); ?>"/> </span>
-                                                            <select class="pickup_add_option" name="wbbm_selected_pickpoint_name_<?php echo esc_attr($single); ?>[]">
+                                                            <select class="pickup_add_option" name="wbbm_selected_pickpoint_name_<?php echo esc_attr($wbbm_single); ?>[]">
                                                                 <?php
                                                                 if ($bus_pickpoints) {
-                                                                    foreach ($bus_pickpoints as $bus_pickpoint) {
-                                                                        echo '<option value="' . esc_html($bus_pickpoint->name) . '" ' . esc_attr(($bus_pickpoint->name == $pickpoint['pickpoint'] ? "selected=selected" : '')) . '>' . esc_attr($bus_pickpoint->name) . '</option>';
+                                                                    foreach ($bus_pickpoints as $wbbm_bus_pickpoint) {
+                                                                        echo '<option value="' . esc_html($wbbm_bus_pickpoint->name) . '" ' . esc_attr(($wbbm_bus_pickpoint->name == $wbbm_pickpoint['pickpoint'] ? "selected=selected" : '')) . '>' . esc_attr($wbbm_bus_pickpoint->name) . '</option>';
                                                                     }
                                                                 }
                                                                 ?>
@@ -139,7 +139,7 @@ if (!defined('ABSPATH')) {
                                                         </div>
                                                         <div class="pickpoint-adding-col">
                                                             <span class="wbbm_bus_route_icon wbbm_bus_route_icon2"><img src="<?php echo esc_url(WBTM_PLUGIN_URL .'images/bus_route_clock.png');?>"/></span>
-                                                            <input type="text" data-clocklet name="wbbm_selected_pickpoint_time_<?php echo esc_attr($single); ?>[]" value="<?php echo esc_attr($pickpoint['time']); ?>" placeholder="15:00">
+                                                            <input type="text" data-clocklet name="wbbm_selected_pickpoint_time_<?php echo esc_attr($wbbm_single); ?>[]" value="<?php echo esc_attr($wbbm_pickpoint['time']); ?>" placeholder="15:00">
                                                         </div>
                                                         <button class="wbbm_remove_pickpoint"><i class="fas fa-minus-circle"></i> Remove
                                                         </button>
