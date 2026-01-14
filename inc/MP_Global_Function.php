@@ -492,10 +492,10 @@ if (! class_exists('MP_Global_Function')) {
             
             // Table name (safe, controlled)
             $table_name = $wpdb->prefix . 'wc_tax_rate_classes';
-            $table_name = '`' . str_replace( '`', '``', $table_name ) . '`';
 
             // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
-            $results = $wpdb->get_results("SELECT slug, name FROM {$table_name}", ARRAY_A);
+            // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name cannot be used as a placeholder in prepare()
+            $results = $wpdb->get_results("SELECT slug, name FROM " . esc_sql($table_name), ARRAY_A);
             // phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
 
             $tax_list = [];
