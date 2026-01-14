@@ -113,8 +113,8 @@ if (!defined('ABSPATH')) {
                         <tbody class="boarding-point">
 
                         <?php if ($wbbm_bus_bp) :
-                            $count = 0;
-                        foreach ($wbbm_bus_bp as $field) { ?>
+                            $wbbm_count = 0;
+                        foreach ($wbbm_bus_bp as $wbbm_field) { ?>
                             <tr>
                                 <td align="center">
                                     <div class="wbbm_bus_route_select">
@@ -122,7 +122,7 @@ if (!defined('ABSPATH')) {
                                         <select name="wbbm_bus_bp_stops_name[]" class='seat_type bus_stop_add_option wbbm_bus_stops_route'>
                                             <option value=""><?php esc_html_e('Please Select', 'bus-booking-manager'); ?></option>
                                             <?php foreach ($terms as $term) { ?>
-                                                <option data-term_id="<?php echo esc_attr($term->term_id); ?>" value="<?php echo esc_attr($term->name); ?>" <?php selected($term->name, $field['wbbm_bus_bp_stops_name']); ?>> <?php echo esc_html($term->name); ?> </option>
+                                                <option data-term_id="<?php echo esc_attr($term->term_id); ?>" value="<?php echo esc_attr($term->name); ?>" <?php selected($term->name, $wbbm_field['wbbm_bus_bp_stops_name']); ?>> <?php echo esc_html($term->name); ?> </option>
                                             <?php } ?>
                                         </select>
                                     </div>
@@ -130,7 +130,7 @@ if (!defined('ABSPATH')) {
                                 <td align="center">
                                     <div class="wbbm_bus_route_time">
                                         <span class="wbbm_bus_route_icon wbbm_bus_route_icon2"><img src="<?php echo esc_url(WBTM_PLUGIN_URL .'images/bus_route_clock.png');?>"/></span>
-                                        <input type="text" data-clocklet name='wbbm_bus_bp_start_time[]' value="<?php if (isset($field['wbbm_bus_bp_start_time']) && $field['wbbm_bus_bp_start_time'] != '') echo esc_attr($field['wbbm_bus_bp_start_time']); ?>" class="text" placeholder="15:00">
+                                        <input type="text" data-clocklet name='wbbm_bus_bp_start_time[]' value="<?php if (isset($wbbm_field['wbbm_bus_bp_start_time']) && $wbbm_field['wbbm_bus_bp_start_time'] != '') echo esc_attr($wbbm_field['wbbm_bus_bp_start_time']); ?>" class="text" placeholder="15:00">
                                     </div>
                                 </td>
                                 <td align="center">
@@ -140,7 +140,7 @@ if (!defined('ABSPATH')) {
                                 </td>
                             </tr>
 
-                            <?php $count++; } endif; ?>
+                            <?php $wbbm_count++; } endif; ?>
 
 
                             <!-- empty hidden one for jQuery -->
@@ -195,8 +195,8 @@ if (!defined('ABSPATH')) {
                             <tbody class="dropping-point">
                             <?php
                             if ($wbtm_bus_next_stops) :
-                            $count = 0;
-                            foreach ($wbtm_bus_next_stops as $field) {
+                            $wbbm_count = 0;
+                            foreach ($wbtm_bus_next_stops as $wbbm_field) {
                             ?>
                                 <tr>
                                     <td align="center">
@@ -205,7 +205,7 @@ if (!defined('ABSPATH')) {
                                             <select name="wbbm_bus_next_stops_name[]" class='seat_type bus_stop_add_option wbbm_bus_stops_route'>
                                                 <option value=""><?php esc_html_e('Please Select', 'bus-booking-manager'); ?></option>
                                                 <?php foreach ($terms as $term) {?>
-                                                    <option data-term_id="<?php echo esc_attr($term->term_id); ?>" value="<?php echo esc_attr($term->name); ?>" <?php selected($term->name, $field['wbbm_bus_next_stops_name']); ?>> <?php echo esc_html($term->name); ?> </option>
+                                                    <option data-term_id="<?php echo esc_attr($term->term_id); ?>" value="<?php echo esc_attr($term->name); ?>" <?php selected($term->name, $wbbm_field['wbbm_bus_next_stops_name']); ?>> <?php echo esc_html($term->name); ?> </option>
                                                 <?php } ?>
                                             </select>
                                         </div>
@@ -215,7 +215,7 @@ if (!defined('ABSPATH')) {
                                         <div class="wbbm_bus_route_time">
                                             <span class="wbbm_bus_route_icon wbbm_bus_route_icon2"><img src="<?php echo esc_url(WBTM_PLUGIN_URL .'images/bus_route_clock.png');?>"/></span>
                                             <input type="text" data-clocklet name='wbbm_bus_next_end_time[]'
-                                                value="<?php if (isset($field['wbbm_bus_next_end_time']) && $field['wbbm_bus_next_end_time'] != '') echo esc_attr($field['wbbm_bus_next_end_time']); ?>"
+                                                value="<?php if (isset($wbbm_field['wbbm_bus_next_end_time']) && $wbbm_field['wbbm_bus_next_end_time'] != '') echo esc_attr($wbbm_field['wbbm_bus_next_end_time']); ?>"
                                                 class="text" placeholder="15:00">
                                         </div>
                                     </td>
