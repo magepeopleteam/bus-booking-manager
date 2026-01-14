@@ -90,7 +90,7 @@ class NextDateClass extends CommonClass
                                 data-jdate="<?php echo esc_attr( $next_date ); ?>"
                                 data-rdate="<?php echo esc_attr( $return ? $next_date : $r_date ); ?>"
                             >
-                                <?php echo esc_html( $this->wbbm_get_datetime( $next_date, 'date-text' ) ); ?>
+                                <?php echo esc_html( $this->get_wbbm_datetime( $next_date, 'date-text' ) ); ?>
                             </a>
                         </li>
 
@@ -200,7 +200,7 @@ class NextDateClass extends CommonClass
                                 <?php if ( ! in_array( $j_date, $wbtm_bus_on_dates_arr, true ) && $i === 0 ) : ?>
                                     <li class="mage_active">
                                         <a href="#">
-                                            <?php echo esc_html( $this->wbbm_get_datetime( $j_date, 'date-text' ) ); ?>
+                                            <?php echo esc_html( $this->get_wbbm_datetime( $j_date, 'date-text' ) ); ?>
                                         </a>
                                     </li>
                                 <?php endif; ?>
@@ -214,7 +214,7 @@ class NextDateClass extends CommonClass
                                         data-jdate="<?php echo esc_attr( $return ? $j_date : $ondate ); ?>"
                                         data-rdate="<?php echo esc_attr( $return ? $ondate : $r_date ); ?>"
                                     >
-                                        <?php echo esc_html( $this->wbbm_get_datetime( $ondate, 'date-text' ) ); ?>
+                                        <?php echo esc_html( $this->get_wbbm_datetime( $ondate, 'date-text' ) ); ?>
                                     </a>
                                 </li>
 
@@ -298,7 +298,7 @@ class NextDateClass extends CommonClass
                                     data-jdate="<?php echo esc_attr( $return ? $j_date : $next_date ); ?>"
                                     data-rdate="<?php echo esc_attr( $return ? $next_date : $r_date ); ?>"
                                 >
-                                    <?php echo esc_html( $this->wbbm_get_datetime( $next_date, 'date-text' ) ); ?>
+                                    <?php echo esc_html( $this->get_wbbm_datetime( $next_date, 'date-text' ) ); ?>
                                 </a>
                             </li>
 
