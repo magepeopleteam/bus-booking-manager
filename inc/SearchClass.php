@@ -268,6 +268,7 @@ function mage_search_bus_list($return) {
     }
 }
 
+// All bus search
 function mage_search_item($return) {
     global $mage_bus_search_theme;
 
