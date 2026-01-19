@@ -192,6 +192,7 @@ function wbbm_add_custom_fields_text_to_order_items($item, $cart_item_key, $valu
                 }
             }
         }
+        $passenger_info_label = 'Passenger info';
         
         // Add metadata
         $item->add_meta_data($passenger_info_label, $p_content);

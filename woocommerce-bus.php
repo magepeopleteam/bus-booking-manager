@@ -83,6 +83,7 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
 	//require_once(dirname(__FILE__) . "/inc/clean/mage_short_code.php");
 	require_once(dirname(__FILE__) . "/inc/clean/mage_function.php");
 	//--------------
+	require_once(dirname(__FILE__) . "/inc/wbbm_migration.php");
 	require_once(dirname(__FILE__) . "/inc/class-meta-box.php");
 	require_once(dirname(__FILE__) . "/inc/BusBookingManagerClass.php");
 	require_once(dirname(__FILE__) . "/inc/wbbm_dummy_import.php");
@@ -997,14 +998,26 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
 		$result = $wpdb->get_results(
 			$wpdb->prepare(
 				"
-					SELECT status
-					FROM {$table_name}
-					WHERE seat = %s
-					AND journey_date = %s
-					AND bus_id = %d
-					AND ( boarding_point = %s OR next_stops LIKE %s )
-					ORDER BY booking_id DESC
-					LIMIT 1
+					SELECT pm_status.meta_value as status
+                    FROM {$wpdb->posts} p
+                    INNER JOIN {$wpdb->postmeta} pm_seat ON p.ID = pm_seat.post_id
+                    INNER JOIN {$wpdb->postmeta} pm_date ON p.ID = pm_date.post_id
+                    INNER JOIN {$wpdb->postmeta} pm_bus ON p.ID = pm_bus.post_id
+                    INNER JOIN {$wpdb->postmeta} pm_status ON p.ID = pm_status.post_id
+                    LEFT JOIN {$wpdb->postmeta} pm_board ON p.ID = pm_board.post_id AND pm_board.meta_key = '_wbbm_boarding_point'
+                    LEFT JOIN {$wpdb->postmeta} pm_next ON p.ID = pm_next.post_id AND pm_next.meta_key = '_wbbm_next_stops'
+                    WHERE p.post_type = 'wbbm_booking'
+                    AND pm_seat.meta_key = '_wbbm_seat' AND pm_seat.meta_value = %s
+                    AND pm_date.meta_key = '_wbbm_journey_date' AND pm_date.meta_value = %s
+                    AND pm_bus.meta_key = '_wbbm_bus_id' AND pm_bus.meta_value = %d
+                    AND pm_status.meta_key = '_wbbm_status'
+                    AND (
+                        (pm_board.meta_value = %s)
+                        OR 
+                        (pm_next.meta_value LIKE %s)
+                    )
+                    ORDER BY p.ID DESC
+                    LIMIT 1
 					",
 				$seat,
 				$date,
@@ -1092,32 +1105,36 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
 		// -------------------------
 		// Build WHERE condition safely
 		// -------------------------
+		// -------------------------
+		// Build WHERE condition safely
+		// -------------------------
 		$where_raw = mage_intermidiate_available_seat_condition($start, $end, $bus_stops_unique);
-		// If $where_raw contains column names only and no user input, we can include it directly.
-		// Otherwise, rewrite mage_intermidiate_available_seat_condition to return placeholders and values.
+
+		// Adapt where_raw for CPT Meta Query
+		$where_raw = str_replace('boarding_point', 'pm_board.meta_value', $where_raw);
+		$where_raw = str_replace('droping_point', 'pm_drop.meta_value', $where_raw);
 
 		// Prepare placeholders for status IN clause
 		$status_placeholders = implode(',', array_fill(0, count($seat_booked_status), '%d'));
 
-		// Suppose mage_intermidiate_available_seat_condition() returns:
-		// "boarding_point >= '$start' AND dropping_point <= '$end'"
-
-		// Safe approach:
-		$where_placeholders = "boarding_point >= %s AND dropping_point <= %s";
-
 		// Then prepare query:
 		$query = "
-    SELECT COUNT(booking_id)
-    FROM {$table_name}
-    WHERE bus_id = %d
-      AND journey_date = %s
-      AND {$where_placeholders}
-      AND ticket_status != %d
-      AND status IN ($status_placeholders)
-";
+            SELECT COUNT(p.ID)
+            FROM {$wpdb->posts} p
+            INNER JOIN {$wpdb->postmeta} pm_bus ON p.ID = pm_bus.post_id AND pm_bus.meta_key = '_wbbm_bus_id'
+            INNER JOIN {$wpdb->postmeta} pm_date ON p.ID = pm_date.post_id AND pm_date.meta_key = '_wbbm_journey_date'
+            INNER JOIN {$wpdb->postmeta} pm_board ON p.ID = pm_board.post_id AND pm_board.meta_key = '_wbbm_boarding_point'
+            INNER JOIN {$wpdb->postmeta} pm_drop ON p.ID = pm_drop.post_id AND pm_drop.meta_key = '_wbbm_droping_point'
+            INNER JOIN {$wpdb->postmeta} pm_status ON p.ID = pm_status.post_id AND pm_status.meta_key = '_wbbm_status'
+            WHERE p.post_type = 'wbbm_booking'
+            AND pm_bus.meta_value = %d
+            AND pm_date.meta_value = %s
+            AND {$where_raw}
+            AND pm_status.meta_value IN ($status_placeholders)
+            ";
 
 		// Merge values
-		$prepare_values = array_merge([$bus_id, $date, $start, $end, 99], $seat_booked_status);
+		$prepare_values = array_merge([$bus_id, $date], $seat_booked_status);
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$sold_seats = $wpdb->get_var($wpdb->prepare($query, $prepare_values));
@@ -1208,17 +1225,25 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
 		$table_name = esc_sql($raw_table_name);
 
 		// phpcs:ignore PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.NoCaching
+		// phpcs:ignore PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$count = $wpdb->get_var(
 			$wpdb->prepare(
 				"
-			SELECT COUNT(booking_id)
-			FROM {$table_name}
-			WHERE bus_id = %d
-			  AND order_id = %d
-			  AND bus_start = %s
-			  AND user_type = %s
-			  AND journey_date = %s
-			  AND status IN (1,2,3)
+			SELECT COUNT(p.ID)
+            FROM {$wpdb->posts} p
+            INNER JOIN {$wpdb->postmeta} pm_bus ON p.ID = pm_bus.post_id AND pm_bus.meta_key = '_wbbm_bus_id'
+            INNER JOIN {$wpdb->postmeta} pm_order ON p.ID = pm_order.post_id AND pm_order.meta_key = '_wbbm_order_id'
+            INNER JOIN {$wpdb->postmeta} pm_start ON p.ID = pm_start.post_id AND pm_start.meta_key = '_wbbm_bus_start'
+            INNER JOIN {$wpdb->postmeta} pm_type ON p.ID = pm_type.post_id AND pm_type.meta_key = '_wbbm_user_type'
+            INNER JOIN {$wpdb->postmeta} pm_date ON p.ID = pm_date.post_id AND pm_date.meta_key = '_wbbm_journey_date'
+            INNER JOIN {$wpdb->postmeta} pm_status ON p.ID = pm_status.post_id AND pm_status.meta_key = '_wbbm_status'
+            WHERE p.post_type = 'wbbm_booking'
+            AND pm_bus.meta_value = %d
+            AND pm_order.meta_value = %d
+            AND pm_start.meta_value = %s
+            AND pm_type.meta_value = %s
+            AND pm_date.meta_value = %s
+            AND pm_status.meta_value IN (1,2,3)
 			",
 				$bus_id,
 				$order_id,
@@ -1329,16 +1354,65 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
 			)
 		);
 		$wpdb->print_error();
+
+		// [New] Insert into Custom Post Type (Dual Write)
+		$post_title = 'Booking #' . $wpdb->insert_id . ' - ' . $user_name;
+		$post_data = array(
+			'post_title'  => $post_title,
+			'post_type'   => 'wbbm_booking',
+			'post_status' => 'publish',
+			'post_date'   => $add_datetime,
+		);
+
+		$booking_post_id = wp_insert_post($post_data);
+
+		if ($booking_post_id && ! is_wp_error($booking_post_id)) {
+			update_post_meta($booking_post_id, '_wbbm_old_booking_id', $wpdb->insert_id);
+			update_post_meta($booking_post_id, '_wbbm_order_id', $order_id);
+			update_post_meta($booking_post_id, '_wbbm_bus_id', $bus_id);
+			update_post_meta($booking_post_id, '_wbbm_user_id', $user_id);
+			update_post_meta($booking_post_id, '_wbbm_boarding_point', $start);
+			update_post_meta($booking_post_id, '_wbbm_droping_point', $end);
+			update_post_meta($booking_post_id, '_wbbm_next_stops', $next_stops);
+			update_post_meta($booking_post_id, '_wbbm_user_name', $user_name);
+			update_post_meta($booking_post_id, '_wbbm_user_email', $user_email);
+			update_post_meta($booking_post_id, '_wbbm_user_phone', $user_phone);
+			update_post_meta($booking_post_id, '_wbbm_user_gender', $user_gender);
+			update_post_meta($booking_post_id, '_wbbm_user_dob', $user_dob);
+			update_post_meta($booking_post_id, '_wbbm_nationality', $nationality);
+			update_post_meta($booking_post_id, '_wbbm_flight_arrial_no', $flight_arrival_no);
+			update_post_meta($booking_post_id, '_wbbm_flight_departure_no', $flight_departure_no);
+			update_post_meta($booking_post_id, '_wbbm_extra_bag_quantity', $extra_bag_quantity);
+			update_post_meta($booking_post_id, '_wbbm_user_address', $user_address);
+			update_post_meta($booking_post_id, '_wbbm_user_type', $user_type);
+			update_post_meta($booking_post_id, '_wbbm_bus_start', $b_time);
+			update_post_meta($booking_post_id, '_wbbm_user_start', $j_time);
+			update_post_meta($booking_post_id, '_wbbm_total_adult', $adult);
+			update_post_meta($booking_post_id, '_wbbm_per_adult_price', $adult_per_price);
+			update_post_meta($booking_post_id, '_wbbm_total_child', $child);
+			update_post_meta($booking_post_id, '_wbbm_per_child_price', $child_per_price);
+			update_post_meta($booking_post_id, '_wbbm_total_infant', $infant);
+			update_post_meta($booking_post_id, '_wbbm_per_infant_price', $infant_per_price);
+			update_post_meta($booking_post_id, '_wbbm_total_entire', $entire);
+			update_post_meta($booking_post_id, '_wbbm_per_entire_price', $entire_per_price);
+			update_post_meta($booking_post_id, '_wbbm_total_price', $total_price);
+			update_post_meta($booking_post_id, '_wbbm_seat', $item_quantity);
+			update_post_meta($booking_post_id, '_wbbm_journey_date', $j_date);
+			update_post_meta($booking_post_id, '_wbbm_status', $status);
+			update_post_meta($booking_post_id, '_wbbm_pickpoint', $pickpoint);
+		}
 	}
 	add_action('woocommerce_checkout_order_processed', 'wbbm_add_passenger_to_db', 1, 1);
 	function wbbm_add_passenger_to_db($order_id)
 	{
+		error_log("WBBM DEBUG: wbbm_add_passenger_to_db called for Order $order_id");
 		global $wpdb;
 		// Getting an instance of the order object
 		$order = wc_get_order($order_id);
 		$order_meta = get_post_meta($order_id);
 		if ($order) {
 			$order_status = $order->get_status();
+			error_log("WBBM DEBUG: Order Status: $order_status");
 			if ($order_status == 'processing' || $order_status == 'completed') {
 				$status = 1;
 			} else {
@@ -1346,6 +1420,7 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
 			}
 			# Iterating through each order items (WC_Order_Item_Product objects in WC 3+)
 			foreach ($order->get_items() as $item_id => $item_values) {
+				error_log("WBBM DEBUG: Processing Item $item_id");
 				$product_id = $item_values->get_product_id();
 				$item_data = $item_values->get_data();
 				$product_id = $item_data['product_id'];
@@ -1368,6 +1443,7 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
 				// $item_data = $item_values->get_data();
 				$user_id = $order_meta['_customer_user'][0] ?? 0;
 				$eid = wbbm_get_order_meta($item_id, '_wbbm_bus_id');
+				error_log("WBBM DEBUG: Bus ID (eid) found: $eid. Post Type: " . get_post_type($eid));
 				if (get_post_type($eid) == 'wbbm_bus') {
 					$user_info_arr = wbbm_get_order_meta($item_id, '_wbbm_passenger_info');
 					$start = wbbm_get_order_meta($item_id, '_boarding_point');
@@ -1486,14 +1562,22 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
 						}
 						$_seats = $item_quantity;
 						$check_before_add = wbbm_get_order_seat_check($bus_id, $order_id, $user_type, $b_time, $j_date);
+						error_log("WBBM DEBUG: Check Before Add Result: $check_before_add");
 						if ($check_before_add == 0) {
+							error_log("WBBM DEBUG: Invoking wbbm_add_passenger");
 							wbbm_add_passenger($order_id, $bus_id, $user_id, $start, $next_stops, $end, $user_name, $user_email, $user_phone, $user_gender, $user_dob, $nationality, $flight_arrival_no, $flight_departure_no, $extra_bag_quantity, $user_address, $user_type, $b_time, $j_time, $adult, $adult_per_price, $child, $child_per_price, $infant, $infant_per_price, $entire, $entire_per_price, $total_price, $item_quantity, $j_date, current_time("Y-m-d h:i:s"), $pickpoint, 0);
+						} else {
+							error_log("WBBM DEBUG: Check Before Add was NOT 0. Skipping.");
 						}
 						// }
 						$counter++;
 					}
+				} else {
+					error_log("WBBM DEBUG: Eid $eid is NOT wbbm_bus");
 				}
 			}
+		} else {
+			error_log("WBBM DEBUG: Order Object not found");
 		}
 		return 0;
 	}
@@ -1518,6 +1602,20 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
 		if ($order_status == 'processing' || $order_status == 'completed') {
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 			$wpdb->update($table_name, $data, $wherecondition);
+
+			// [New] Update CPT Meta
+			$posts = get_posts([
+				'post_type' => 'wbbm_booking',
+				'meta_key' => '_wbbm_order_id',
+				'meta_value' => $order_id,
+				'posts_per_page' => -1
+			]);
+
+			if (! empty($posts)) {
+				foreach ($posts as $post) {
+					update_post_meta($post->ID, '_wbbm_status', $status);
+				}
+			}
 		}
 	}
 	add_action('woocommerce_order_status_changed', 'wbbm_bus_ticket_seat_management', 99, 4);
