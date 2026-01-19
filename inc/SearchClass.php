@@ -59,6 +59,11 @@ function mage_search_list() {
     }
 
     $general_setting = get_option('wbbm_general_setting_sec') ? maybe_unserialize(get_option('wbbm_general_setting_sec')) : array();
+    
+    // Show WooCommerce notices (e.g., added to cart message)
+    if ( function_exists( 'wc_print_notices' ) ) {
+        wc_print_notices();
+    }
     ?>
     <div class="mage_route_title" style="background-color: <?php echo esc_attr($route_title_bg_color); ?>; color: <?php echo esc_attr($route_title_color); ?>">
         <div>

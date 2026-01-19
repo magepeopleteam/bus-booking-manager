@@ -58,7 +58,10 @@
     // Extra Service Price
     $('.extra-qty-box').change(function () {
         const target = $(this);
-        const value = target.find('option:selected').val();
+        let value = target.find('option:selected').val();
+        if (value == undefined) {
+            value = target.val();
+        }
         mageExtServiceQty(target, value);
     })
     $('.mage_es_qty_minus').click(function () {
@@ -212,8 +215,6 @@
             const price = priceInfoEl.find('.wbbm_entire_switch_wrapper').attr('data-entire-price')
             if ($(this)[0].hasAttribute('checked')) {
                 $(this).attr('checked', false);
-                priceInfoEl.find('.mage_sub_total span').html('0');
-                // $('.mage_sub_total strong span').html('0');
                 $(this).val('0');
                 $('input[name=adult_quantity]').closest('.mage_center_space').show();
                 $('input[name=child_quantity]').closest('.mage_center_space').show();
@@ -222,7 +223,6 @@
             }
             else {
                 $(this).attr('checked', true);
-                priceInfoEl.find('.mage_sub_total span').html(wbbm_woo_price_format(price));
                 $(this).val('1');
                 $('input[name=adult_quantity]').closest('.mage_center_space').hide();
                 $('input[name=child_quantity]').closest('.mage_center_space').hide();
@@ -243,6 +243,7 @@
                 $('div.entire .mage_form_list').show();
                 $('div.entire').show();
             }
+            mageSubTotal($(this));
 
         });
     })

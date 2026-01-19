@@ -218,14 +218,21 @@ add_action('woocommerce_checkout_create_order_line_item', 'wbbm_add_custom_field
 
 // Validate added to cart
 function wbbm_add_the_date_validation($passed) {
-    // Verify nonce for security
-    if (
-        ! isset($_POST['add_to_cart_custom_nonce']) ||
-        ! wp_verify_nonce(
-            sanitize_text_field(wp_unslash($_POST['add_to_cart_custom_nonce'])),
-            'add_to_cart_custom_action'
-        )
-    ) {
+    // Verify nonce: accept either the existing 'add_to_cart_custom_nonce' or the
+    // new 'mage_book_now_area_nonce' for the book-now template.
+    $nonce_custom = isset($_POST['add_to_cart_custom_nonce']) ? sanitize_text_field(wp_unslash($_POST['add_to_cart_custom_nonce'])) : '';
+    $nonce_mage = isset($_POST['mage_book_now_area_nonce']) ? sanitize_text_field(wp_unslash($_POST['mage_book_now_area_nonce'])) : '';
+
+    $custom_ok = $nonce_custom && wp_verify_nonce($nonce_custom, 'add_to_cart_custom_action');
+    $mage_ok = $nonce_mage && wp_verify_nonce($nonce_mage, 'mage_book_now_area');
+
+    if ( ! $custom_ok && ! $mage_ok ) {
+        // If no valid nonce, we don't return false because we don't want to block
+        // other products. But for wbbm_bus, the next check will handle it.
+        if ( isset($_POST['bus_id']) ) {
+            wc_add_notice(__('Security check failed. Please try again.', 'bus-booking-manager'), 'error');
+            return false;
+        }
         return $passed;
     }
     
@@ -236,13 +243,33 @@ function wbbm_add_the_date_validation($passed) {
             $boarding_var = $return ? 'bus_end_route' : 'bus_start_route';
             $dropping_var = $return ? 'bus_start_route' : 'bus_end_route';
             $date_var = $return ? 'r_date' : 'j_date';
-            $boarding_var_get = isset($_GET[$boarding_var]) ? sanitize_text_field(wp_unslash(@$_GET[$boarding_var])) : '';
-            $dropping_var_get = isset($_GET[$dropping_var]) ? sanitize_text_field(wp_unslash(@$_GET[$dropping_var])) : '';
-            $available_seat = wbbm_intermidiate_available_seat($boarding_var_get, $dropping_var_get, wbbm_convert_date_to_php(mage_get_isset($date_var)), $eid);
+            
+            $boarding_var_get = isset($_POST['start_stops']) ? sanitize_text_field(wp_unslash($_POST['start_stops'])) : (isset($_GET[$boarding_var]) ? sanitize_text_field(wp_unslash($_GET[$boarding_var])) : '');
+            $dropping_var_get = isset($_POST['end_stops']) ? sanitize_text_field(wp_unslash($_POST['end_stops'])) : (isset($_GET[$dropping_var]) ? sanitize_text_field(wp_unslash($_GET[$dropping_var])) : '');
+            $journey_date = isset($_POST['journey_date']) ? sanitize_text_field(wp_unslash($_POST['journey_date'])) : (isset($_GET[$date_var]) ? sanitize_text_field(wp_unslash($_GET[$date_var])) : '');
+
+            if (empty($journey_date)) {
+                 wc_add_notice(__('Journey date is missing.', 'bus-booking-manager'), 'error');
+                 return false;
+            }
+
+            $available_seat = wbbm_intermidiate_available_seat($boarding_var_get, $dropping_var_get, wbbm_convert_date_to_php($journey_date), $eid);
+            
+            // Subtract quantity already in cart for this bus and date
+            $cart_qty = wbbm_get_cart_item($eid, $journey_date);
+            $available_seat -= $cart_qty;
+
             $adult_qty = isset($_POST['adult_quantity']) ? intval($_POST['adult_quantity']) : 0;
             $child_qty = isset($_POST['child_quantity']) ? intval($_POST['child_quantity']) : 0;
             $infant_qty = isset($_POST['infant_quantity']) ? intval($_POST['infant_quantity']) : 0;
             $total_booking_seat = $adult_qty + $child_qty + $infant_qty;
+
+            // Prevent adding to cart if already exists for the same date
+            if ($cart_qty > 0) {
+                 wc_add_notice( sprintf( __( 'You cannot add another "%s" to your cart for the same date.', 'bus-booking-manager' ), get_the_title( $eid ) ), 'error' );
+                 return false;
+            }
+
             if ($available_seat < $total_booking_seat) {
                 wc_add_notice(__('You have booked more than available seats', 'bus-booking-manager'), 'error');
                 $passed = false;

@@ -87,7 +87,7 @@ if (!empty($wbbm_off_day_sche) && $Wbbm_show_off_day === 'yes') {
     <?php do_action('wbbm_woocommerce_before_single_product'); ?>
     <div class="mage_search_list <?php echo esc_attr($WbbmIn_cart ? 'booked' : ''); ?>" data-seat-available="<?php echo esc_attr($Wbbm_available_seat); ?>">
         <form action="" method="post">
-            <?php wp_nonce_field('mage_book_now_area_action', 'mage_book_now_area_nonce'); ?>
+            <?php wp_nonce_field('mage_book_now_area', 'mage_book_now_area_nonce'); ?>
             <div class="mage_flex_equal xs_not_flex">
                 <div class="mage_thumb">
                     <?php

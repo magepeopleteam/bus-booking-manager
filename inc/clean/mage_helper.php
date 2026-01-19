@@ -293,10 +293,6 @@ function wbbm_get_available_seat_cpt($bus_id, $start, $end, $date)
     $sp = array_search($start, $all_stops);
     $ep = array_search($end, $all_stops);
 
-    if ($sp === false || $ep === false) {
-        return 0;
-    }
-
     // Determine overlapping segments
     $overlapping_boards = array();
     $overlapping_drops = array();
@@ -690,8 +686,7 @@ function wbbm_extra_services_section($bus_id)
                         if (!isset($field['option_name']) || !isset($field['option_price'])) {
                             continue;
                         }
-                        $actual_price = wp_strip_all_tags(wc_price($field['option_price']));
-                        $data_price = floatval(str_replace(array(get_woocommerce_currency_symbol(), wc_get_price_thousand_separator(), wc_get_price_decimal_separator()), '', $actual_price));
+                        $data_price = floatval($field['option_price']);
                     ?>
 
                         <tr data-total="0">
