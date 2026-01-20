@@ -234,9 +234,10 @@ function mage_find_product_in_cart()
 // Get available seat
 function mage_available_seat($date)
 {
-    $values = get_post_custom(get_the_ID());
-    $total_seat = (int) $values['wbbm_total_seat'][0];
-    $sold_seat = (int) wbbm_get_available_seat(get_the_ID(), $date);
+    $post_id = get_the_ID();
+    $total_seat = (int) get_post_meta($post_id, 'wbbm_total_seat', true);
+    // If no route info, we count all bookings for the bus on that date
+    $sold_seat = (int) wbbm_get_available_seat_cpt($post_id, '', '', $date);
     return max(0, $total_seat - $sold_seat);
 }
 
@@ -264,11 +265,104 @@ function wbbm_get_cart_item($bus_id, $date_var)
 function wbbm_intermidiate_available_seat($start, $end, $date, $eid = null): int
 {
     $post_id = $eid ?: get_the_ID();
-    $values = get_post_custom($post_id);
-    $total_seat = (int) $values['wbbm_total_seat'][0];
-    $sold_seat = (int) wbbm_get_available_seat_new($post_id, sanitize_text_field($start), sanitize_text_field($end), $date);
+    $total_seat = (int) get_post_meta($post_id, 'wbbm_total_seat', true);
+    $sold_seat = (int) wbbm_get_available_seat_cpt($post_id, sanitize_text_field($start), sanitize_text_field($end), $date);
     return max(0, $total_seat - $sold_seat);
 }
+
+/**
+ * Get available seats from Custom Post Type (wbbm_booking)
+ * This function calculates availability based on overlapping route segments.
+ */
+function wbbm_get_available_seat_cpt($bus_id, $start, $end, $date)
+{
+    $total_seats = (int) get_post_meta($bus_id, 'wbbm_total_seat', true);
+
+    // Get all stops to calculate route overlap
+    $bus_start_stops_arr = maybe_unserialize(get_post_meta($bus_id, 'wbbm_bus_bp_stops', true));
+    $bus_end_stops_arr   = maybe_unserialize(get_post_meta($bus_id, 'wbbm_bus_next_stops', true));
+
+    if (empty($bus_start_stops_arr) || empty($bus_end_stops_arr)) {
+        return 0;
+    }
+
+    $bus_stops = array_column($bus_start_stops_arr, 'wbbm_bus_bp_stops_name');
+    $bus_ends  = array_column($bus_end_stops_arr, 'wbbm_bus_next_stops_name');
+    $all_stops = array_values(array_unique(array_merge($bus_stops, $bus_ends)));
+
+    $sp = array_search($start, $all_stops);
+    $ep = array_search($end, $all_stops);
+
+    // Determine overlapping segments
+    $overlapping_boards = array();
+    $overlapping_drops = array();
+
+    if ($sp !== false && $ep !== false) {
+        $overlapping_boards = array_slice($all_stops, 0, $ep);
+        $overlapping_drops  = array_slice($all_stops, $sp + 1);
+    }
+
+    $seat_status = wbbm_seat_booked_on_status();
+    $status_arr = $seat_status ? explode(',', $seat_status) : array(1, 2);
+
+    $meta_query = array(
+        'relation' => 'AND',
+        array(
+            'key'     => '_wbbm_bus_id',
+            'value'   => $bus_id,
+            'compare' => '=',
+        ),
+        array(
+            'key'     => '_wbbm_journey_date',
+            'value'   => $date,
+            'compare' => '=',
+        ),
+        array(
+            'key'     => '_wbbm_status',
+            'value'   => $status_arr,
+            'compare' => 'IN',
+        ),
+    );
+
+    if (!empty($overlapping_boards) && !empty($overlapping_drops)) {
+        $meta_query[] = array(
+            'key'     => '_wbbm_boarding_point',
+            'value'   => $overlapping_boards,
+            'compare' => 'IN',
+        );
+        $meta_query[] = array(
+            'key'     => '_wbbm_droping_point',
+            'value'   => $overlapping_drops,
+            'compare' => 'IN',
+        );
+    }
+
+    $args = array(
+        'post_type'      => 'wbbm_booking',
+        'posts_per_page' => -1,
+        'post_status'    => 'publish',
+        'fields'         => 'ids',
+        'meta_query'     => $meta_query,
+    );
+
+    $query = new WP_Query($args);
+    $sold_seats = 0;
+
+    if ($query->have_posts()) {
+        foreach ($query->posts as $booking_id) {
+            $entire_bus = get_post_meta($booking_id, '_wbbm_total_entire', true);
+            if ($entire_bus) {
+                return $total_seats; // All seats sold
+            }
+            $sold_seats++; // Counts one post as one seat
+        }
+    }
+
+    return (int) $sold_seats;
+}
+
+
+
 
 // Boarding dropping time
 function wbbm_boarding_dropping_time($drop_time = '', $return = '')
@@ -592,8 +686,7 @@ function wbbm_extra_services_section($bus_id)
                         if (!isset($field['option_name']) || !isset($field['option_price'])) {
                             continue;
                         }
-                        $actual_price = wp_strip_all_tags(wc_price($field['option_price']));
-                        $data_price = floatval(str_replace(array(get_woocommerce_currency_symbol(), wc_get_price_thousand_separator(), wc_get_price_decimal_separator()), '', $actual_price));
+                        $data_price = floatval($field['option_price']);
                     ?>
 
                         <tr data-total="0">

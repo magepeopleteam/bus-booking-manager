@@ -28,16 +28,16 @@ if ($Wbbm_type_id != '') {
 // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 $Wbbm_boarding = isset($_GET[$WbbmBoarding_var]) ? sanitize_text_field(wp_unslash($_GET[$WbbmBoarding_var])) : '';
 // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-$Wbbm_boarding = isset($_GET[$WbbmDropping_var]) ? sanitize_text_field(wp_unslash($_GET[$WbbmDropping_var])) : '';
-$Wbbm_available_seat = wbbm_intermidiate_available_seat($Wbbm_boarding, $Wbbm_boarding, wbbm_convert_date_to_php(mage_get_isset($WbbmDate_var)));
+$Wbbm_dropping = isset($_GET[$WbbmDropping_var]) ? sanitize_text_field(wp_unslash($_GET[$WbbmDropping_var])) : '';
+$Wbbm_available_seat = wbbm_intermidiate_available_seat($Wbbm_boarding, $Wbbm_dropping, wbbm_convert_date_to_php(mage_get_isset($WbbmDate_var)));
 $Wbbm_wbbm_cart_qty = wbbm_get_cart_item($id, mage_get_isset($WbbmDate_var));
 $Wbbm_available_seat -= $Wbbm_wbbm_cart_qty;
 
 // Seat prices
-$Wbbm_seat_price_adult = mage_seat_price($id, $Wbbm_boarding, $Wbbm_boarding, 'adult');
-$Wbbm_seat_price_child = mage_seat_price($id, $Wbbm_boarding, $Wbbm_boarding, 'child');
-$Wbbm_seat_price_infant = mage_seat_price($id, $Wbbm_boarding, $Wbbm_boarding, 'infant');
-$Wbbm_seat_price_entire = mage_seat_price($id, $Wbbm_boarding, $Wbbm_boarding, 'entire');
+$Wbbm_seat_price_adult = mage_seat_price($id, $Wbbm_boarding, $Wbbm_dropping, 'adult');
+$Wbbm_seat_price_child = mage_seat_price($id, $Wbbm_boarding, $Wbbm_dropping, 'child');
+$Wbbm_seat_price_infant = mage_seat_price($id, $Wbbm_boarding, $Wbbm_dropping, 'infant');
+$Wbbm_seat_price_entire = mage_seat_price($id, $Wbbm_boarding, $Wbbm_dropping, 'entire');
 $Wbbm_boarding_time = wbbm_get_datetime(wbbm_boarding_dropping_time(false, $WbbmReturn), 'time');
 $Wbbm_dropping_time = wbbm_get_datetime(wbbm_boarding_dropping_time(true, $WbbmReturn), 'time');
 
@@ -87,7 +87,7 @@ if (!empty($wbbm_off_day_sche) && $Wbbm_show_off_day === 'yes') {
     <?php do_action('wbbm_woocommerce_before_single_product'); ?>
     <div class="mage_search_list <?php echo esc_attr($WbbmIn_cart ? 'booked' : ''); ?>" data-seat-available="<?php echo esc_attr($Wbbm_available_seat); ?>">
         <form action="" method="post">
-            <?php wp_nonce_field('mage_book_now_area_action', 'mage_book_now_area_nonce'); ?>
+            <?php wp_nonce_field('mage_book_now_area', 'mage_book_now_area_nonce'); ?>
             <div class="mage_flex_equal xs_not_flex">
                 <div class="mage_thumb">
                     <?php
