@@ -1543,3 +1543,10 @@ a#clone-operate-date.button{
   margin: auto;
 }
 
+.long-arrow {
+    background-image: url("../images/arrow.svg");
+    background-repeat: no-repeat;
+    background-size: contain;
+    width: 100%;
+    background-position: center center;
+}

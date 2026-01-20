@@ -1,0 +1,378 @@
+/* WBBM Pricing & Routing - Exact Match to Target Plugin */
+
+/* Combined utility classes - these are used as single class names but apply multiple styles */
+.wbtm_style ._dLayout_padding_bgLight {
+    padding: var(--wbtm_dmp, 15px);
+    background-color: var(--wbtm_color_light, #f9f9f9);
+    border: 1px solid var(--wbtm_color_border, #ddd);
+    margin-top: -1px;
+    border-radius: 0;
+}
+
+.wbtm_style ._dLayout_padding {
+    padding: var(--wbtm_dmp, 15px);
+    background-color: var(--wbtm_color_white, #fff);
+    border: 1px solid var(--wbtm_color_border, #ddd);
+    margin-top: -1px;
+    border-radius: 0;
+}
+
+.wbtm_style ._bgLight_dFlex_justifyBetween_alignCenter {
+    background-color: var(--wbtm_color_light, #f9f9f9);
+    display: -webkit-flex;
+    display: flex;
+    -webkit-justify-content: space-between;
+    justify-content: space-between;
+    -webkit-align-items: center;
+    align-items: center;
+}
+
+.wbtm_style ._dFlex_justifyBetween_pT_xs {
+    display: -webkit-flex;
+    display: flex;
+    -webkit-justify-content: space-between;
+    justify-content: space-between;
+    padding-top: var(--wbtm_dmp_xs, 8px);
+}
+
+.wbtm_style ._textLeft_pL_xs {
+    text-align: left;
+    padding-left: var(--wbtm_dmp_xs, 8px);
+}
+
+.wbtm_style ._textRight_pR_xs {
+    text-align: right;
+    padding-right: var(--wbtm_dmp_xs, 8px);
+}
+
+.wbtm_style ._zeroBorder_mp_zero {
+    border: none;
+    margin: 0;
+    padding: 0;
+}
+
+.wbtm_style ._mp_zero {
+    margin: 0;
+    padding: 0;
+}
+
+.wbtm_style ._dLayout_bgWarning_mZero {
+    padding: var(--wbtm_dmp, 15px);
+    background-color: #fff3cd;
+    border: 1px solid #ffc107;
+    margin: 0;
+    border-radius: 4px;
+    text-align: center;
+}
+
+/* Individual utility classes */
+.wbtm_style ._mT {
+    margin-top: var(--wbtm_dmp, 20px);
+}
+
+.wbtm_style ._mB_xs {
+    margin-bottom: var(--wbtm_dmp_xs, 10px);
+}
+
+.wbtm_style ._mR {
+    margin-right: var(--wbtm_dmp_xs, 10px);
+}
+
+.wbtm_style ._mL_xs {
+    margin-left: var(--wbtm_dmp_xs, 8px);
+}
+
+.wbtm_style ._margin {
+    margin: var(--wbtm_dmp, 15px);
+}
+
+.wbtm_style .mp_zero {
+    margin: 0;
+    padding: 0;
+}
+
+.wbtm_style .pB_xs {
+    padding-bottom: var(--wbtm_dmp_xs, 10px);
+}
+
+/* Column system */
+.wbtm_style .col_2 {
+    -webkit-flex: 0 0 16.666%;
+    flex: 0 0 16.666%;
+    max-width: 16.666%;
+}
+
+.wbtm_style .col_4 {
+    -webkit-flex: 0 0 33.333%;
+    flex: 0 0 33.333%;
+    max-width: 33.333%;
+}
+
+.wbtm_style .col_5 {
+    -webkit-flex: 0 0 41.666%;
+    flex: 0 0 41.666%;
+    max-width: 41.666%;
+}
+
+.wbtm_style .col_6 {
+    -webkit-flex: 0 0 50%;
+    flex: 0 0 50%;
+    max-width: 50%;
+}
+
+.wbtm_style .col_12 {
+    -webkit-flex: 0 0 100%;
+    flex: 0 0 100%;
+    max-width: 100%;
+}
+
+.wbtm_style .col_12_mB {
+    -webkit-flex: 0 0 100%;
+    flex: 0 0 100%;
+    max-width: 100%;
+    margin-bottom: var(--wbtm_dmp_xs, 10px);
+}
+
+/* Max width helpers */
+.wbtm_style .max_200 {
+    max-width: 200px;
+}
+
+.wbtm_style .max_100 {
+    max-width: 100px;
+}
+
+/* Stop item styling */
+.wbtm_style .wbtm_stop_item {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+.wbtm_style .wbtm_stop_item_header {
+    cursor: pointer;
+    padding: 12px 15px;
+    transition: background-color 0.2s;
+    background-color: #f5f5f5 !important;
+}
+
+.wbtm_style .wbtm_stop_item_header:hover {
+    background-color: #eee !important;
+}
+
+.wbtm_style .wbtm_stop_item_content {
+    border-top: 1px solid #eee;
+    background: #fafafa;
+    padding: 15px;
+}
+
+/* Form controls */
+.wbtm_style .formControl {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    line-height: 1.5;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    background-color: #fff;
+}
+
+.wbtm_style .formControl:focus {
+    outline: none;
+    border-color: #0073aa;
+    box-shadow: 0 0 0 1px #0073aa;
+}
+
+/* Button group */
+/* Button group */
+.wbtm_style .buttonGroup {
+    display: inline-flex;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    border: 1px solid #ddd;
+}
+
+.wbtm_style .buttonGroup > * {
+    margin: 0 !important;
+    border-radius: 0 !important;
+    border: none !important;
+    padding: 0px 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    cursor: pointer;
+    transition: all 0.2s;
+    height: 32px;
+    min-width: 32px;
+    color: #555;
+}
+
+.wbtm_style .buttonGroup > *:hover {
+    background: #f5f5f5;
+    color: #333;
+}
+
+.wbtm_style .buttonGroup > *:not(:last-child) {
+    border-right: 1px solid #eee !important;
+}
+
+/* Theme button inside group */
+.wbtm_style .buttonGroup > ._mpBtn_themeButton_xs,
+.wbtm_style .buttonGroup > ._themeButton_xs_fullHeight {
+    background-color: var(--wbtm-primary, #f12971);
+    color: #fff;
+}
+
+.wbtm_style .buttonGroup > ._mpBtn_themeButton_xs:hover,
+.wbtm_style .buttonGroup > ._themeButton_xs_fullHeight:hover {
+    background-color: #d61c60;
+    color: #fff;
+}
+
+/* Table styling */
+.wbtm_style table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    table-layout: fixed;
+}
+
+.wbtm_style table th,
+.wbtm_style table td {
+    padding: 12px;
+    text-align: left;
+    border: 1px solid #ddd;
+    vertical-align: top;
+}
+
+.wbtm_style table thead th {
+    background: #f9f9f9;
+    font-weight: 600;
+    color: #333;
+    text-align: center;
+}
+
+.wbtm_style table tbody th {
+    text-align: left;
+}
+
+.wbtm_style table tbody tr:nth-child(even) {
+    background-color: var(--wbtm_color_light, #f9f9f9);
+}
+
+.wbtm_style table tbody tr:nth-child(odd) {
+    background-color: #fff;
+}
+
+.wbtm_style table tbody tr:hover {
+    background: #fafafa;
+}
+
+/* Long arrow for route display */
+/* Required field indicator */
+.wbtm_style .required {
+    color: #dc3232;
+}
+
+/* Sortable handle */
+.wbtm_style .wbtm_sortable_button {
+    cursor: move;
+}
+
+.wbtm_style .wbtm_sortable_area .ui-sortable-helper {
+    opacity: 0.8;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+/* Flex utility */
+.wbtm_style .d-flex {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    width: 100%;
+}
+
+/* Long arrow for route display */
+.wbtm_style .long-arrow {
+    display: block;
+    width: 100%;
+    height: 24px;
+    background-image: url("../images/arrow.svg");
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center center;
+}
+
+/* Checkbox styling for next day */
+.wbtm_style .next-day-dropping-checkbox {
+    padding: 10px 15px;
+}
+
+.wbtm_style .next-day-dropping-checkbox input[type="checkbox"] {
+    margin-left: 10px;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+/* Warning message */
+.wbtm_style ._dLayout_bgWarning_mZero h3 {
+    color: #856404;
+    margin: 0;
+}
+
+/* Loader styling */
+.wbtm_style .wbtm_loader {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+}
+
+.wbtm_style .wbtm_loader span {
+    font-size: 32px;
+    color: #0073aa;
+}
+
+/* Hidden content for templates */
+.wbtm_style .wbtm_hidden_content {
+    display: none !important;
+}
+
+/* Ensure proper spacing in admin */
+.wbtm_style .wbtm_settings_pricing_routing h3 {
+    font-size: 22px;
+    font-weight: 600;
+    color: #23282d;
+    margin: 0 0 10px 0;
+}
+
+.wbtm_style .wbtm_settings_pricing_routing > p {
+    color: #666;
+    margin-bottom: 20px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 782px) {
+    .wbtm_style .col_4,
+    .wbtm_style .col_5,
+    .wbtm_style .col_6 {
+        flex: 0 0 100%;
+        max-width: 100%;
+        margin-bottom: 10px;
+    }
+    
+    .wbtm_style ._dFlex_justifyCenter_alignCenter {
+        flex-direction: column;
+        align-items: flex-start !important;
+    }
+    
+    .wbtm_style .formControl.max_200 {
+        max-width: 100%;
+    }
+}
