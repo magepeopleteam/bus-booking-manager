@@ -13,6 +13,9 @@ class WBBMMetaBox
 
         // Tab Contents
         add_action('wbbm_meta_box_tab_content', array($this, 'wbbm_add_meta_box_tab_content'), 10);
+        
+        // Include Pricing Routing Class for AJAX support
+        require_once(dirname(__FILE__) . "/clean/layout/WBBM_Pricing_Routing.php");
 
         // Remove meta box from sidebar
         add_action('admin_init', array($this, 'wbbm_remove_sidebar_meta_box'));
@@ -125,7 +128,7 @@ class WBBMMetaBox
         $cpt_label = wbbm_get_option('wbbm_cpt_label', 'wbbm_general_setting_sec', __('Bus', 'bus-booking-manager'));
 
         ?>
-        <div class="mp_event_all_meta_in_tab mp_event_tab_area">
+        <div class="wbtm_style mp_event_all_meta_in_tab mp_event_tab_area">
             <div class="mp_tab_menu">
                 <ul>
                     <?php do_action('wbbm_meta_box_tab_label', $post_id); ?>
@@ -149,9 +152,9 @@ class WBBMMetaBox
         <li data-target-tabs="#wbtm_routing" class="wbtm_routing_tab">
             <i class="fas fa-route"></i> <?php echo esc_html(__('Routing', 'bus-booking-manager')); ?>
         </li>
-        <li data-target-tabs="#wbtm_seat_price" class="ra_seat_price">
-            <i class="fas fa-dollar-sign"></i> <?php echo esc_html(__('Seat Price', 'bus-booking-manager')); ?>
-        </li>
+        <!-- <li data-target-tabs="#wbtm_seat_price" class="ra_seat_price">
+            <i class="fas fa-dollar-sign"></i> <?php //echo esc_html(__('Seat Price', 'bus-booking-manager')); ?>
+        </li> -->
         <li class="ra_pickuppoint_tab" data-target-tabs="#wbtm_pickuppoint">
             <i class="fas fa-map-marker-alt"></i> <?php echo esc_html(__('Pickup Point', 'bus-booking-manager')); ?>
         </li>
@@ -177,9 +180,12 @@ class WBBMMetaBox
     {
         $cpt_label = wbbm_get_option('wbbm_cpt_label', 'wbbm_general_setting_sec', __('Bus', 'bus-booking-manager'));
         wp_nonce_field('wbbm_single_bus_settings_nonce', 'wbbm_single_bus_settings_nonce');
+        ?>
+        <input type="hidden" name="wbtm_post_id" value="<?php echo esc_attr($post_id); ?>"/>
+        <?php
         $this->wbbm_bus_configuration();
         $this->wbbm_bus_routing($cpt_label);
-        $this->wbbm_bus_pricing($post_id, $cpt_label);
+        // $this->wbbm_bus_pricing($post_id, $cpt_label);
         $this->wbbm_bus_pickuppoint($post_id);
         $this->wbbm_bus_ondayoffday();
         $this->wbbm_bus_features();
@@ -234,19 +240,28 @@ class WBBMMetaBox
             'hide_empty' => false
         ));
 
-        require_once(dirname(__FILE__) . "/clean/layout/bus_routing.php");
+        // require_once(dirname(__FILE__) . "/clean/layout/bus_routing.php");
+        
+        // Ensure class is loaded (if not loaded in construct)
+        require_once(dirname(__FILE__) . "/clean/layout/WBBM_Pricing_Routing.php");
+        
+        ?>
+        <div class="mp_tab_item" data-tab-item="#wbtm_routing">
+            <?php do_action('wbtm_add_settings_tab_content', $post->ID); ?>
+        </div>
+        <?php
     }
 
-    public function wbbm_bus_pricing($post_id, $cpt_label)
-    {
-        global $post;
-        $entire_bus_booking = wbbm_get_option('wbbm_entire_bus_booking_switch', 'wbbm_general_setting_sec');
-        $wbbm_bus_prices = get_post_meta($post->ID, 'wbbm_bus_prices', true);
-        $values = get_post_custom($post->ID);
-        $show_extra_service = array_key_exists('show_extra_service', $values) ? $values['show_extra_service'][0] : '';
+    // public function wbbm_bus_pricing($post_id, $cpt_label)
+    // {
+    //     global $post;
+    //     $entire_bus_booking = wbbm_get_option('wbbm_entire_bus_booking_switch', 'wbbm_general_setting_sec');
+    //     $wbbm_bus_prices = get_post_meta($post->ID, 'wbbm_bus_prices', true);
+    //     $values = get_post_custom($post->ID);
+    //     $show_extra_service = array_key_exists('show_extra_service', $values) ? $values['show_extra_service'][0] : '';
 
-        require_once(dirname(__FILE__) . "/clean/layout/bus_pricing.php");
-    }
+    //     require_once(dirname(__FILE__) . "/clean/layout/bus_pricing.php");
+    // }
 
     public function wbbm_bus_pickuppoint($cpt_label)
     {

@@ -503,6 +503,13 @@ class MAGE_WBBM_Setting_Controls {
                 'default' => 'Infant'
             ),
             array(
+                'name' => 'wbbm_student_text',
+                'label' => esc_html__('Student', 'bus-booking-manager' ),
+                'desc' => esc_html__('Enter the translated text of: <strong>Student</strong>.', 'bus-booking-manager' ),
+                'type' => 'text',
+                'default' => 'Student'
+            ),
+            array(
                 'name' => 'wbbm_pickuppoint_area_text',
                 'label' => esc_html__('Select Pickup Area', 'bus-booking-manager' ),
                 'desc' => esc_html__('Enter the translated text of: <strong>Select Pickup Area</strong>.', 'bus-booking-manager' ),

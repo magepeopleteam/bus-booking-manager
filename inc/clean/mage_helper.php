@@ -405,6 +405,9 @@ function mage_seat_price($id, $start, $end, $seat_type, $roundtrip = false)
                     case 'child':
                         $ticket_type = 'wbbm_bus_price_child';
                         break;
+                    case 'student':
+                        $ticket_type = 'wbbm_bus_price_student';
+                        break;
                     case 'entire':
                         $ticket_type = 'wbbm_bus_price_entire';
                         break;

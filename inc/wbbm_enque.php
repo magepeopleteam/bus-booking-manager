@@ -28,7 +28,24 @@ function wbbm_bus_admin_scripts() {
     wp_enqueue_style('mep-ra-admin-style',plugin_dir_url( __DIR__ ).'css/wbbm-custom-style.css',array(), $custom_style_ver);
     wp_enqueue_style('mp-style',plugin_dir_url( __DIR__ ).'css/mp_style.css',array(), $mp_style_ver);
     wp_enqueue_style('mage_css',plugin_dir_url( __DIR__ ).'css/mage_css.css',array(), $mage_css_ver);
+    
+    // Routing admin CSS
+    $routing_css_ver = file_exists($plugin_root . '/css/wbbm_routing_admin.css') ? filemtime($plugin_root . '/css/wbbm_routing_admin.css') : null;
+    wp_enqueue_style('wbbm-routing-admin',plugin_dir_url( __DIR__ ).'css/wbbm_routing_admin.css',array(), $routing_css_ver);
+    
     wp_enqueue_script('mage_style',plugin_dir_url( __DIR__ ).'js/mage_style.js',array('jquery'),time(),true);
+
+    wp_enqueue_script('wbbm-admin-routing', 
+        plugin_dir_url( __DIR__ ) . 'js/wbbm_admin_routing.js', 
+        ['jquery', 'jquery-ui-sortable'], 
+        time(), 
+        true
+    );
+
+    wp_localize_script('wbbm-admin-routing', 'WbbmAjaxAdmin', [
+        'url' => admin_url('admin-ajax.php'),
+        'nonce' => wp_create_nonce('wbbm_admin_ajax_nonce')
+    ]);
 
     wp_localize_script('wbbm_custom_admin_script', 'WbbmAjaxAdmin', [
         'ajax_url' => admin_url('admin-ajax.php'),
