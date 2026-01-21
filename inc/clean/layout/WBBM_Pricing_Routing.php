@@ -1,7 +1,6 @@
 <?php
 /*
  * Bus Pricing and Routing Configuration
- * Exact match to target plugin design
  */
 if (!defined('ABSPATH')) {
     die;

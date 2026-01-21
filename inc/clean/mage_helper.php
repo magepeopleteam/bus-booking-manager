@@ -631,6 +631,50 @@ function wbbm_bus_stops_custom_column_callback($content, $column_name, $term_id)
     return $content;
 }
 
+// // Add Bus route column in bus post type
+// add_filter('manage_wbbm_bus_posts_columns', 'wbbm_bus_route_custom_column');
+// function wbbm_bus_route_custom_column($columns)
+// {
+//     $new_columns = [];
+
+//     foreach ($columns as $key => $label) {
+
+//         if ($key === 'taxonomy-wbbm_bus_stops') {
+//             continue;
+//         }
+
+//         // Insert route column BEFORE date
+//         if ($key === 'date') {
+//             $new_columns['route'] = __('Route', 'bus-booking-manager');
+//         }
+
+//         $new_columns[$key] = $label;
+//     }
+
+//     return $new_columns;
+// }
+
+// add_filter('manage_wbbm_bus_posts_custom_column', 'wbbm_bus_route_custom_column_callback', 10, 2);
+// function wbbm_bus_route_custom_column_callback($column, $post_id)
+// {
+//     if ($column !== 'route') {
+//         return;
+//     }
+
+//     $stops = get_post_meta($post_id, 'wbbm_route_info', true);
+
+//     if (!is_array($stops)) {
+//         echo '—';
+//         return;
+//     }
+
+//     $places = array_filter(array_map(function ($stop) {
+//         return $stop['place'] ?? null;
+//     }, $stops));
+
+//     echo esc_html(implode(', ', $places));
+// }
+
 
 /*********************************************
  * Function: Add ID column to bus pickup point

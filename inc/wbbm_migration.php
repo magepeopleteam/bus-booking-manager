@@ -5,7 +5,7 @@ if (! defined('ABSPATH')) {
 
 function wbbm_run_booking_migration_once()
 {
-    if (get_option('wbbm_booking_migration_completed')) {
+    if (get_option('wbbm_booking_migration_completed_2')) {
         return;
     }
 
@@ -90,7 +90,7 @@ function wbbm_run_booking_migration_once()
         }
     }
 
-    update_option('wbbm_booking_migration_completed', 1);
+    update_option('wbbm_booking_migration_completed_2', 1);
 }
 
 add_action('admin_init', 'wbbm_run_booking_migration_once');
