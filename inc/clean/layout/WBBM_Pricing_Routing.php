@@ -101,17 +101,15 @@ if (!class_exists('WBBM_Pricing_Routing')) {
                             }
                         }
                         ?>
-                        <div class="col_4 mp_zero">
-                            <?php if (empty($location)): ?>
-                                <label><?php esc_html_e('Add Stop', 'bus-booking-manager'); ?></label>
-                            <?php else: ?>
-                                <label><?php echo esc_html($location); ?></label>
-                                <span>
-                                    <?php echo esc_html(($type == 'bp') ? ' (Bording) ' : ''); ?>
-                                    <?php echo esc_html(($type == 'dp') ? ' (Dropping) ' : ''); ?>
-                                    <?php echo esc_html(($type == 'both') ? ' (Bording+Dropping) ' : ''); ?>
-                                </span>
-                            <?php endif; ?>
+                        <div class="col_4 mp_zero wbtm_header_info">
+                            <label class="wbtm_header_place"><?php echo empty($location) ? esc_html__('Add Stop', 'bus-booking-manager') : esc_html($location); ?></label>
+                            <span class="wbtm_header_type">
+                                <?php
+                                if ($type == 'bp') echo ' (Boarding) ';
+                                elseif ($type == 'dp') echo ' (Dropping) ';
+                                elseif ($type == 'both') echo ' (Boarding & Dropping) ';
+                                ?>
+                            </span>
                         </div>
                         <label class="col_4 _mp_zero _dFlex_alignCenter" style="gap:4px">
                             <i class="far fa-clock"></i> <input class="_zeroBorder_mp_zero" type="text" value="<?php echo $time ? esc_attr(date('h:i A', strtotime($time))) : '--:-- --'; ?>" readonly>

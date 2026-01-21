@@ -355,6 +355,7 @@
     color: #666;
     margin-bottom: 20px;
 }
+
 .wbtm_add_item {
     background-color: var(--wbtm-primary, #f12971);
     color: #fff;
@@ -404,10 +405,10 @@
         position: absolute;
         content: "";
         left: 0;
-        top: -16px;
-        height: 100%;
+        top: -15px;
+        height: 103%;
         border: 1px solid #303030;
-        margin-left: 20px;
+        margin-left: 21px;
     }
 
     .wbtm_settings_pricing_routing .wbtm_stop_item {
@@ -450,9 +451,10 @@
 /* Placeholder styling for pricing inputs */
 .wbtm_style .wbtm_price_validation::placeholder {
     color: #ccc;
-    opacity: 1; /* Firefox */
+    opacity: 1;
+    /* Firefox */
 }
 
-.wbtm_style .wbtm_price_validation::-ms-input-placeholder { /* Edge 12 -18 */
+.wbtm_style .wbtm_price_validation::-ms-input-placeholder {
     color: #ccc;
 }

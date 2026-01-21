@@ -116,6 +116,27 @@ function wbtm_load_sortable_datepicker(parent, item) {
         $(this).closest('.wbtm_stop_item').find('.wbtm_stop_item_header ._zeroBorder_mp_zero').val(val);
     });
 
+    // Update header place
+    $(document).on('change', '[name="wbtm_route_place[]"]', function() {
+        let text = $(this).find('option:selected').text();
+        // Check if selected is disabled/placeholder
+        if ($(this).find('option:selected').is(':disabled')) {
+             text = "Add Stop";
+        }
+        $(this).closest('.wbtm_stop_item').find('.wbtm_header_place').text(text);
+    });
+
+    // Update header type
+    $(document).on('change', '[name="wbtm_route_type[]"]', function() {
+        let val = $(this).val();
+        let text = "";
+        if (val === 'bp') text = " (Boarding) ";
+        else if (val === 'dp') text = " (Dropping) ";
+        else if (val === 'both') text = " (Boarding & Dropping) ";
+        
+        $(this).closest('.wbtm_stop_item').find('.wbtm_header_type').text(text);
+    });
+
     // Remove stop item
     $(document).on("click", ".wbtm_item_remove", function (e) {
         e.preventDefault();
