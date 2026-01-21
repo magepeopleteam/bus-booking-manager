@@ -43,8 +43,10 @@ function wbtm_load_sortable_datepicker(parent, item) {
 
         // Handle collapse toggle - fix for double firing
         $(document).off("click", "[data-collapse-target]").on("click", "[data-collapse-target]", function (e) {
-            // Don't toggle if clicking on buttons or inputs inside the header
-            if ($(e.target).closest('button, input, select, .buttonGroup').length) {
+            // Don't toggle if clicking on buttons or inputs inside the header, unless it's the edit button
+            if ($(e.target).closest('.wbtm_edit_item_btn').length > 0) {
+                // Allow toggle
+            } else if ($(e.target).closest('button, input, select, .buttonGroup').length) {
                 return;
             }
             
@@ -103,6 +105,7 @@ function wbtm_load_sortable_datepicker(parent, item) {
                 .html();
         }
         wbtm_load_sortable_datepicker(parent, item);
+        wbtm_reload_pricing($(".wbtm_settings_pricing_routing"));
         return true;
     });
 
@@ -144,7 +147,7 @@ function wbtm_load_sortable_datepicker(parent, item) {
     // Handle route place/type change - reload pricing
     $(document).on(
         "change",
-        '.wbtm_settings_pricing_routing [name="wbtm_route_place[]"]',
+        '.wbtm_settings_pricing_routing [name="wbtm_route_place[]"], .wbtm_settings_pricing_routing [name="wbtm_route_time[]"]',
         function () {
             wbtm_reload_pricing($(".wbtm_settings_pricing_routing"));
         }
