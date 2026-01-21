@@ -2129,7 +2129,7 @@ function wbbm_activation_redirect_setup($plugin)
 	$wbbm_quick_setup_done = get_option('wbbm_quick_setup_done');
 	if ($plugin == plugin_basename(__FILE__) && $wbbm_quick_setup_done != 'yes') {
 		//require_once(dirname(__FILE__) . "/inc/wbbm_dummy_import.php");
-		wp_safe_redirect(esc_url(admin_url('admin.php?post_type=wbtm_bus&page=wbbm_init_quick_setup')));
+		wp_safe_redirect(esc_url(admin_url('admin.php?page=wbbm_init_quick_setup')));
 		exit();
 	}
 }
