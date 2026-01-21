@@ -34,15 +34,15 @@ if (!class_exists('WBTM_Quick_Setup')) {
         }
 
         public function quick_setup() {
+           
             // Safely get the nonce from $_POST
-            $nonce = isset($_POST['welcome_setup_nonce']) ? sanitize_text_field(wp_unslash($_POST['welcome_setup_nonce'])) : '';
+             $nonce = isset($_POST['welcome_setup_nonce']) ? sanitize_text_field(wp_unslash($_POST['welcome_setup_nonce'])) : '';
 
             // Verify the nonce
             if ( ! $nonce || ! wp_verify_nonce($nonce, 'welcome_setup_nonce_action') ) {
                 // wc_add_notice(__('Security check failed. Please try again.', 'bus-booking-manager'), 'error');
-                return false; // Stop add to cart
+                // return false; // Stop add to cart
             }
-
             if (isset($_POST['active_woo_btn'])) {
                 ?>
                 <script>
