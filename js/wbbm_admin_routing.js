@@ -109,6 +109,13 @@ function wbtm_load_sortable_datepicker(parent, item) {
         return true;
     });
 
+    // Update header time when input changes
+    $(document).on('change input', '[name="wbtm_route_time[]"]', function() {
+        let val = $(this).val();
+        if(!val) val = '--:-- --';
+        $(this).closest('.wbtm_stop_item').find('.wbtm_stop_item_header ._zeroBorder_mp_zero').val(val);
+    });
+
     // Remove stop item
     $(document).on("click", ".wbtm_item_remove", function (e) {
         e.preventDefault();

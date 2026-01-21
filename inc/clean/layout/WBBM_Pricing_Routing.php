@@ -114,11 +114,7 @@ if (!class_exists('WBBM_Pricing_Routing')) {
                             <?php endif; ?>
                         </div>
                         <label class="col_4 _mp_zero _dFlex_alignCenter" style="gap:4px">
-                            <?php if ($time): ?>
-                                <i class="far fa-clock"></i> <input class="_zeroBorder_mp_zero" type="text" value="<?php echo esc_attr(date('h:i A', strtotime($time))); ?>" readonly>
-                            <?php else: ?>
-                                <i class="far fa-clock"></i>&nbsp;--:-- --
-                            <?php endif; ?>
+                            <i class="far fa-clock"></i> <input class="_zeroBorder_mp_zero" type="text" value="<?php echo $time ? esc_attr(date('h:i A', strtotime($time))) : '--:-- --'; ?>" readonly>
                         </label>
                         <?php $this->edit_move_remove_button(); ?>
                     </div>
