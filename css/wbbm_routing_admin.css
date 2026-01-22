@@ -49,6 +49,7 @@
     border: none;
     margin: 0;
     padding: 0;
+    background: transparent;
 }
 
 .wbtm_style ._mp_zero {
@@ -144,8 +145,6 @@
 
 /* Stop item styling */
 .wbtm_style .wbtm_stop_item {
-    background: #fff;
-    border: 1px solid #ddd;
     border-radius: 4px;
     overflow: hidden;
     margin-bottom: 10px;
@@ -192,11 +191,11 @@
     display: inline-flex;
     border-radius: 4px;
     overflow: hidden;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-    border: 1px solid #ddd;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--wbtm-primary, #f12971);
 }
 
-.wbtm_style .buttonGroup > * {
+.wbtm_style .buttonGroup>* {
     margin: 0 !important;
     border-radius: 0 !important;
     border: none !important;
@@ -209,27 +208,27 @@
     transition: all 0.2s;
     height: 32px;
     min-width: 32px;
-    color: #555;
+    color: var(--wbtm-primary, #f12971);
 }
 
-.wbtm_style .buttonGroup > *:hover {
-    background: #f5f5f5;
+.wbtm_style .buttonGroup>*:hover {
+    background: var(--wbtm_color_theme_aa);
     color: #333;
 }
 
-.wbtm_style .buttonGroup > *:not(:last-child) {
-    border-right: 1px solid #eee !important;
+.wbtm_style .buttonGroup>*:not(:last-child) {
+    border-right: 1px solid var(--wbtm-primary, #f12971) !important;
 }
 
 /* Theme button inside group */
-.wbtm_style .buttonGroup > ._mpBtn_themeButton_xs,
-.wbtm_style .buttonGroup > ._themeButton_xs_fullHeight {
+.wbtm_style .buttonGroup>._mpBtn_themeButton_xs,
+.wbtm_style .buttonGroup>._themeButton_xs_fullHeight {
     background-color: var(--wbtm-primary, #f12971);
     color: #fff;
 }
 
-.wbtm_style .buttonGroup > ._mpBtn_themeButton_xs:hover,
-.wbtm_style .buttonGroup > ._themeButton_xs_fullHeight:hover {
+.wbtm_style .buttonGroup>._mpBtn_themeButton_xs:hover,
+.wbtm_style .buttonGroup>._themeButton_xs_fullHeight:hover {
     background-color: #d61c60;
     color: #fff;
 }
@@ -247,7 +246,7 @@
     padding: 12px;
     text-align: left;
     border: 1px solid #ddd;
-    vertical-align: top;
+    vertical-align: middle;
 }
 
 .wbtm_style table thead th {
@@ -286,7 +285,7 @@
 
 .wbtm_style .wbtm_sortable_area .ui-sortable-helper {
     opacity: 0.8;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
 /* Flex utility */
@@ -310,7 +309,7 @@
 
 /* Checkbox styling for next day */
 .wbtm_style .next-day-dropping-checkbox {
-    padding: 10px 15px;
+    padding: 10px 25px;
 }
 
 .wbtm_style .next-day-dropping-checkbox input[type="checkbox"] {
@@ -352,13 +351,28 @@
     margin: 0 0 10px 0;
 }
 
-.wbtm_style .wbtm_settings_pricing_routing > p {
+.wbtm_style .wbtm_settings_pricing_routing>p {
     color: #666;
     margin-bottom: 20px;
 }
 
+.wbtm_add_item {
+    background-color: var(--wbtm-primary, #f12971);
+    color: #fff;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 5px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    gap: 4px;
+}
+
 /* Responsive adjustments */
 @media (max-width: 782px) {
+
     .wbtm_style .col_4,
     .wbtm_style .col_5,
     .wbtm_style .col_6 {
@@ -366,13 +380,81 @@
         max-width: 100%;
         margin-bottom: 10px;
     }
-    
+
     .wbtm_style ._dFlex_justifyCenter_alignCenter {
         flex-direction: column;
         align-items: flex-start !important;
     }
-    
+
     .wbtm_style .formControl.max_200 {
         max-width: 100%;
     }
+}
+
+/* For All device */
+@media (min-width: 10px) {
+    #wbbm-single-settings-meta label {
+        margin-bottom: 0;
+    }
+
+    .wbtm_sortable_area {
+        position: relative;
+    }
+
+    .wbtm_sortable_area::before {
+        position: absolute;
+        content: "";
+        left: 0;
+        top: -15px;
+        height: 103%;
+        border: 1px solid #303030;
+        margin-left: 21px;
+    }
+
+    .wbtm_settings_pricing_routing .wbtm_stop_item {
+        position: relative;
+        width: 95%;
+        padding-left: 50px;
+    }
+
+    .wbtm_settings_pricing_routing .wbtm_stop_item .wbbm_stop_item_inner {
+        border: 1px solid #ddd;
+    }
+
+    .wbtm_settings_pricing_routing .wbtm_stop_item::before {
+        position: absolute;
+        top: 30px;
+        left: 5px;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background-color: #fff;
+        background-image: url("../images/map-location.svg");
+        content: "";
+        transform: translateY(-50%);
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: 47%;
+        border: 1px solid #303030;
+    }
+
+    .wbtm_settings_pricing_routing .wbtm_stop_item::after {
+        position: absolute;
+        top: 30px;
+        left: 40px;
+        content: "";
+        width: 8px;
+        border: 1px solid #ddd;
+    }
+}
+
+/* Placeholder styling for pricing inputs */
+.wbtm_style .wbtm_price_validation::placeholder {
+    color: #ccc;
+    opacity: 1;
+    /* Firefox */
+}
+
+.wbtm_style .wbtm_price_validation::-ms-input-placeholder {
+    color: #ccc;
 }

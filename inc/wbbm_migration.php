@@ -5,7 +5,7 @@ if (! defined('ABSPATH')) {
 
 function wbbm_run_booking_migration_once()
 {
-    if (get_option('wbbm_booking_migration_completed')) {
+    if (get_option('wbbm_booking_migration_completed_2')) {
         return;
     }
 
@@ -21,8 +21,22 @@ function wbbm_run_booking_migration_once()
 
     if (! empty($rows)) {
         foreach ($rows as $row) {
-            // Check if already migrated to avoid duplicates (optional, but good practice)
-            // For now, we rely on the option check.
+            // Check if booking already exists in post table to prevent duplicates
+            $args = array(
+                'post_type'  => 'wbbm_booking',
+                'meta_query' => array(
+                    array(
+                        'key'   => '_wbbm_old_booking_id',
+                        'value' => $row->booking_id,
+                    ),
+                ),
+                'fields'     => 'ids',
+            );
+            $existing_bookings = new WP_Query($args);
+
+            if ($existing_bookings->have_posts()) {
+                continue;
+            }
 
             $post_title = 'Booking #' . $row->booking_id . ' - ' . $row->user_name;
 
@@ -76,7 +90,7 @@ function wbbm_run_booking_migration_once()
         }
     }
 
-    update_option('wbbm_booking_migration_completed', 1);
+    update_option('wbbm_booking_migration_completed_2', 1);
 }
 
 add_action('admin_init', 'wbbm_run_booking_migration_once');

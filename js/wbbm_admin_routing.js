@@ -43,8 +43,10 @@ function wbtm_load_sortable_datepicker(parent, item) {
 
         // Handle collapse toggle - fix for double firing
         $(document).off("click", "[data-collapse-target]").on("click", "[data-collapse-target]", function (e) {
-            // Don't toggle if clicking on buttons or inputs inside the header
-            if ($(e.target).closest('button, input, select, .buttonGroup').length) {
+            // Don't toggle if clicking on buttons or inputs inside the header, unless it's the edit button
+            if ($(e.target).closest('.wbtm_edit_item_btn').length > 0) {
+                // Allow toggle
+            } else if ($(e.target).closest('button, input, select, .buttonGroup').length) {
                 return;
             }
             
@@ -103,7 +105,36 @@ function wbtm_load_sortable_datepicker(parent, item) {
                 .html();
         }
         wbtm_load_sortable_datepicker(parent, item);
+        wbtm_reload_pricing($(".wbtm_settings_pricing_routing"));
         return true;
+    });
+
+    // Update header time when input changes
+    $(document).on('change input', '[name="wbtm_route_time[]"]', function() {
+        let val = $(this).val();
+        if(!val) val = '--:-- --';
+        $(this).closest('.wbtm_stop_item').find('.wbtm_stop_item_header ._zeroBorder_mp_zero').val(val);
+    });
+
+    // Update header place
+    $(document).on('change', '[name="wbtm_route_place[]"]', function() {
+        let text = $(this).find('option:selected').text();
+        // Check if selected is disabled/placeholder
+        if ($(this).find('option:selected').is(':disabled')) {
+             text = "Add Stop";
+        }
+        $(this).closest('.wbtm_stop_item').find('.wbtm_header_place').text(text);
+    });
+
+    // Update header type
+    $(document).on('change', '[name="wbtm_route_type[]"]', function() {
+        let val = $(this).val();
+        let text = "";
+        if (val === 'bp') text = " (Boarding) ";
+        else if (val === 'dp') text = " (Dropping) ";
+        else if (val === 'both') text = " (Boarding & Dropping) ";
+        
+        $(this).closest('.wbtm_stop_item').find('.wbtm_header_type').text(text);
     });
 
     // Remove stop item
@@ -144,7 +175,7 @@ function wbtm_load_sortable_datepicker(parent, item) {
     // Handle route place/type change - reload pricing
     $(document).on(
         "change",
-        '.wbtm_settings_pricing_routing [name="wbtm_route_place[]"]',
+        '.wbtm_settings_pricing_routing [name="wbtm_route_place[]"], .wbtm_settings_pricing_routing [name="wbtm_route_time[]"]',
         function () {
             wbtm_reload_pricing($(".wbtm_settings_pricing_routing"));
         }
