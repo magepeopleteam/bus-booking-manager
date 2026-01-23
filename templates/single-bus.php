@@ -1,11 +1,31 @@
+<?php if ( wp_is_block_theme() ) {  ?>
+<!DOCTYPE html>
+<html <?php language_attributes(); ?>>
+<head>
+	<meta charset="<?php bloginfo( 'charset' ); ?>">
+	<?php
+	$block_content = do_blocks( '
+		<!-- wp:group {"layout":{"type":"constrained"}} -->
+		<div class="wp-block-group">
+		<!-- wp:post-content /-->
+		</div>
+		<!-- /wp:group -->'
+ 	);
+    wp_head(); ?>
+</head>
+<body <?php body_class(); ?>>
+<?php wp_body_open(); ?>
+<div class="wp-site-blocks">
+<header class="wp-block-template-part site-header">
+    <?php block_header_area(); ?>
+</header>
+</div>
 <?php
-
-if (!defined('ABSPATH')) {
-    die;
+} else {
+    get_header();	
+    the_post();
 }
 
-get_header();
-the_post();
 $WbbmSearchClass = new SearchClass;
 $WbbmSearchClass->mage_search_form_horizontal(true);
 $id = get_the_ID();
@@ -320,4 +340,16 @@ if (!empty($wbbm_off_day_sche) && $Wbbm_show_off_day === 'yes') {
     <?php do_action('wbbm_prevent_form_resubmission'); ?>
 </div>
 
-<?php get_footer(); ?>
+<?php if ( wp_is_block_theme() ) {
+// Code for block themes goes here.
+?>
+
+<footer class="wp-block-template-part">
+    <?php block_footer_area(); ?>
+</footer>
+<?php wp_footer(); ?>
+</body>    
+<?php
+} else {
+    get_footer();
+}
