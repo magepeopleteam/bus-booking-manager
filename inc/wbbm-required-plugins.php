@@ -186,13 +186,13 @@ if (! class_exists('WBBM_Required_Plugins')) {
 
                         <tr>
                             <td><?php esc_html_e('Multipurpose Ticket Booking Manager', 'bus-booking-manager'); ?></td>
-                            <td><?php echo esc_html($button_wbbm); ?></td>
+                            <td><?php echo wp_kses_post($button_wbbm); ?></td>
                         </tr>
 
                         <?php if (is_plugin_active('bus-booking-manager-pro/wbtm-pro.php') && $pdflibrary === 'mpdf') { ?>
                             <tr>
                                 <td><?php esc_html_e('MagePeople PDF Support', 'bus-booking-manager'); ?></td>
-                                <td><?php echo esc_html($button_mpdf); ?></td>
+                                <td><?php echo wp_kses_post($button_mpdf); ?></td>
                             </tr>
 
                         <?php } ?>
