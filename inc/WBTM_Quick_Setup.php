@@ -34,15 +34,15 @@ if (!class_exists('WBTM_Quick_Setup')) {
         }
 
         public function quick_setup() {
+           
             // Safely get the nonce from $_POST
-            $nonce = isset($_POST['welcome_setup_nonce']) ? sanitize_text_field(wp_unslash($_POST['welcome_setup_nonce'])) : '';
+             $nonce = isset($_POST['welcome_setup_nonce']) ? sanitize_text_field(wp_unslash($_POST['welcome_setup_nonce'])) : '';
 
             // Verify the nonce
             if ( ! $nonce || ! wp_verify_nonce($nonce, 'welcome_setup_nonce_action') ) {
                 // wc_add_notice(__('Security check failed. Please try again.', 'bus-booking-manager'), 'error');
-                return false; // Stop add to cart
+                // return false; // Stop add to cart
             }
-
             if (isset($_POST['active_woo_btn'])) {
                 ?>
                 <script>
@@ -121,6 +121,8 @@ if (!class_exists('WBTM_Quick_Setup')) {
                 $next_disable = 'disabled';
             }
 
+            // echo $next_disable;
+
             ?>
             <div class="mpStyle">
                 <div class="_dShadow_6_adminLayout">
@@ -145,13 +147,16 @@ if (!class_exists('WBTM_Quick_Setup')) {
                                 $this->setup_welcome_content();
                                 $this->setup_general_content();
                                 $this->setup_content_done();
+
+                               
                                 ?>
                             </div>
-                            <div class="justifyBetween">
+                            <div class="justifyBetween">                              
                                 <button type="button" class="mpBtn nextTab_prev">
-                                    <span>&longleftarrow;<?php esc_html_e('Previous', 'bus-booking-manager'); ?></span>
+                                    <span>&longleftarrow;<?php esc_html_e('Previous', 'bus-booking-manager').$status; ?></span>
                                 </button>
                                 <div></div>
+                             
 
                                 <button type="button" class="themeButton nextTab_next" <?php echo esc_attr($next_disable); ?>>
                                     <span><?php esc_html_e('Next', 'bus-booking-manager'); ?>&longrightarrow;</span>
@@ -189,6 +194,11 @@ if (!class_exists('WBTM_Quick_Setup')) {
                         <button class="themeButton" type="submit" name="active_woo_btn"><?php esc_html_e('Activate Now', 'bus-booking-manager'); ?></button>
                     <?php } ?>
                 </div>
+                   <?php if($status == 1){ ?>
+                        <div class="mT allCenter">
+                            <button type="submit" name="finish_quick_setup" class="themeButton"><?php esc_html_e('Finish & Save', 'bus-booking-manager'); ?></button>
+                        </div>
+                    <?php } ?>
             </div>
             <?php
         }
