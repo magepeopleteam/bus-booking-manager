@@ -187,6 +187,7 @@ if (!class_exists('WBBM_Pricing_Routing')) {
                                     $adult_price = '';
                                     $child_price = '';
                                     $infant_price = '';
+                                    $student_price = '';
                                     if (sizeof($price_infos) > 0) {
                                         foreach ($price_infos as $price_info) {
                                             if (strtolower($price_info['wbbm_bus_bp_price_stop']) == strtolower($bp) && strtolower($price_info['wbbm_bus_dp_price_stop']) == strtolower($dp)) {
