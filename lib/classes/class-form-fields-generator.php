@@ -3131,13 +3131,13 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
 
 
                         })
-                    jQuery(document).on('click', '.field-text-multi-wrapper-<?php esc_attr($id); ?> .add-item',function(){
-
+                    jQuery(document).on('click', '.field-text-multi-wrapper-<?php echo esc_attr($id); ?> .add-item',function(){
+                        
 
                         html_<?php esc_attr($id); ?> = '<div class="item">';
                         html_<?php esc_attr($id); ?> += '<input type="text" name="<?php echo esc_attr($field_name); ?>[]" placeholder="<?php
                             echo esc_attr($placeholder); ?>" />';
-                        html_<?php esc_attr($id); ?> += '<span class="button remove" onclick="jQuery(this).parent().remove()' +
+                        html_<?php echo esc_attr($id); ?> += '<span class="button remove" onclick="jQuery(this).parent().remove()' +
                             '"><?php echo esc_attr($remove_text); ?></span>';
                         html_<?php esc_attr($id); ?> += '<span class="button clone"><i class="far fa-clone"></i></span>';
                         <?php if($sortable):?>
@@ -8618,7 +8618,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
 
                     })
 
-                    jQuery(document).on('click', '.field-repeatable-wrapper-<?php esc_attr($id); ?> .add-item', function() {
+                    jQuery(document).on('click', '.field-repeatable-wrapper-<?php echo esc_attr($id); ?> .add-item', function() {
                         now = jQuery.now();
                         fields_arr = <?php echo json_encode($fields); ?>;
                         html = '<div class="item-wrap collapsible"><div class="header">';
@@ -8628,7 +8628,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                         html += '<span class="button sort" ><i class="fas fa-arrows-alt"></i></span> ';
                         <?php endif; ?>
                         html += '<span class="button remove" ' +
-                            'onclick="jQuery(this).parent().parent().remove()"><?php echo esc_attr($remove_text); ?></span> ';
+                            'onclick="jQuery(this).parent().parent().remove()"><?php echo wp_kses_post($remove_text); ?></span> ';
                         html += '</div>';    
                         // html += ' <span  class="title-text">#'+now+'</span></div>';
                         fields_arr.forEach(function(element) {
@@ -8697,7 +8697,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                         if(!empty($limit)):
                             ?>
                             var limit = <?php  echo esc_attr($limit); ?>;
-                            var node_count = $( ".field-repeatable-wrapper-<?php esc_attr($id); ?> .field-list .item-wrap" ).size();
+                            var node_count = $( ".field-repeatable-wrapper-<?php echo esc_attr($id); ?> .field-list .item-wrap" ).size();
                             if(limit > node_count){
                                 jQuery('.<?php echo 'field-repeatable-wrapper-'.esc_attr($id); ?> .field-list').append(html);
                             }else{
@@ -8714,10 +8714,10 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                     })
                 });
             </script>
-            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?> id="field-wrapper-<?php esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-repeatable-wrapper
-            field-repeatable-wrapper-<?php esc_attr($id); ?>">
+            <div <?php if(!empty($depends)) {?> data-depends="[<?php echo esc_attr($depends); ?>]" <?php } ?> id="field-wrapper-<?php echo esc_attr($id); ?>" class="<?php if(!empty($depends)) echo 'dependency-field'; ?> field-wrapper field-repeatable-wrapper
+            field-repeatable-wrapper-<?php echo esc_attr($id); ?>">
                 
-                <div class="field-list <?php if($sortable){ echo 'sortable'; }?>" id="<?php esc_attr($id); ?>">
+                <div class="field-list <?php if($sortable){ echo 'sortable'; }?>" id="<?php echo esc_attr($id); ?>">
                     <?php
                     if(!empty($values)):
                         $count = 1;
@@ -8734,7 +8734,7 @@ if( ! class_exists( 'FormFieldsGenerator' ) ) {
                                     <?php if($sortable):?>
                                         <span class="button sort"><i class="fas fa-arrows-alt"></i></span>
                                     <?php endif; ?>
-                                    <span class="button remove" onclick="jQuery(this).parent().parent().remove()"><?php echo esc_attr($remove_text); ?></span>
+                                    <span class="button remove" onclick="jQuery(this).parent().parent().remove()"><?php echo wp_kses_post($remove_text); ?></span>
                                     <span class="title"><?php echo esc_html($title_field_val); ?></span>
                                     
                                     <?php if($collapsible):?>

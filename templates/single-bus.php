@@ -103,8 +103,14 @@ if (!empty($wbbm_off_day_sche) && $Wbbm_show_off_day === 'yes') {
 }
 ?>
 <div class="mage_container bus_detail">
+    <div class="mage_container bus_detail_page_wrapper"> <!-- Added Wrapper -->
     <?php do_action('wbbm_before_single_product'); ?>
     <?php do_action('wbbm_woocommerce_before_single_product'); ?>
+    <?php 
+        if ( function_exists('wc_print_notices') ) {
+            wc_print_notices(); 
+        }
+    ?>
     <div class="mage_search_list <?php echo esc_attr($WbbmIn_cart ? 'booked' : ''); ?>" data-seat-available="<?php echo esc_attr($Wbbm_available_seat); ?>">
         <form action="" method="post">
             <?php wp_nonce_field('mage_book_now_area', 'mage_book_now_area_nonce'); ?>
@@ -231,7 +237,7 @@ if (!empty($wbbm_off_day_sche) && $Wbbm_show_off_day === 'yes') {
                                         } ?>
                                     </select>
                                 </div>
-                            <?php }
+                        <?php }
                         }
                         // Pickup Point END
                         ?>
@@ -338,6 +344,7 @@ if (!empty($wbbm_off_day_sche) && $Wbbm_show_off_day === 'yes') {
     </div>
     <?php do_action('wbbm_after_single_bus'); ?>
     <?php do_action('wbbm_prevent_form_resubmission'); ?>
+    </div> <!-- Close bus_detail_page_wrapper -->
 </div>
 
 <?php if ( wp_is_block_theme() ) {
