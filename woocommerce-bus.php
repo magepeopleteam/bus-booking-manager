@@ -84,6 +84,7 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
 	require_once(dirname(__FILE__) . "/inc/clean/mage_function.php");
 	//--------------
 	require_once(dirname(__FILE__) . "/inc/wbbm_migration.php");
+	require_once(dirname(__FILE__) . "/inc/class-route-migration.php");
 	require_once(dirname(__FILE__) . "/inc/class-meta-box.php");
 	require_once(dirname(__FILE__) . "/inc/BusBookingManagerClass.php");
 	require_once(dirname(__FILE__) . "/inc/wbbm_dummy_import.php");
