@@ -174,6 +174,17 @@ class MAGE_WBBM_Setting_Controls {
                     'type' => 'select',
                     'default' => 'bus-search-list',
                     'options' => wbbm_get_page_list()
+                ),
+                array(
+                    'name' => 'wbbm_shuttle_module_enable',
+                    'label' => esc_html__( 'Enable Shuttle Service Module', 'bus-booking-manager' ),
+                    'desc' => esc_html__( 'Enable or disable the shuttle booking module. When disabled, shuttle menus and features will be hidden.', 'bus-booking-manager' ),
+                    'type' => 'select',
+                    'default' => 'off',
+                    'options' => array(
+                        'on' => 'Enable',
+                        'off'  => 'Disable'
+                    )
                 )
             ),
 

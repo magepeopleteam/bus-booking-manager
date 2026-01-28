@@ -58,9 +58,19 @@ function wbbm_bus_admin_scripts() {
 function wbbm_add_admin_scripts( $hook ) {
     global $post;
     if ( $hook == 'post-new.php' || $hook == 'post.php' ) {
-        if ( 'wbbm_bus' === $post->post_type ) { 
+        if ( 'wbbm_bus' === $post->post_type || 'wbbm_shuttle' === $post->post_type ) { 
              wp_enqueue_style('mep-jquery-ui-style',plugin_dir_url( __DIR__ ).'css/jquery-ui.css',array(), '1.11.0');
-        
+        }
+
+        if ( 'wbbm_shuttle' === $post->post_type ) {
+            wp_enqueue_style('wbbm-shuttle-admin-css', plugin_dir_url( __DIR__ ) . 'css/shuttle_admin.css', array(), time());
+            wp_enqueue_script('wbbm-shuttle-admin', plugin_dir_url( __DIR__ ) . 'js/shuttle_admin.js', array('jquery', 'jquery-ui-sortable'), time(), true);
+            
+            // Pass localized data if needed
+            wp_localize_script('wbbm-shuttle-admin', 'WbbmShuttle', array(
+                'ajax_url' => admin_url('admin-ajax.php'),
+                'nonce' => wp_create_nonce('wbbm_shuttle_nonce')
+            ));
         }
     }
 }

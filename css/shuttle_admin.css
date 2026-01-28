@@ -1,0 +1,75 @@
+/* Shuttle Admin Styles */
+
+.wbbm_route_row {
+    background: #fff;
+    border: 1px solid #ccd0d4;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.04);
+    margin-bottom: 20px;
+}
+
+.wbbm_route_header {
+    padding: 10px 15px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #ccd0d4;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+}
+
+.wbbm_route_header:hover {
+    background: #f0f0f1;
+}
+
+.wbbm_route_body {
+    padding: 20px;
+}
+
+.wbbm_route_row:not(.active) .wbbm_route_body {
+    display: none;
+}
+
+.wbbm_route_fields_grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.wbbm_route_stops_wrapper {
+    background: #fdfdfd;
+    padding: 15px;
+    border: 1px solid #eee;
+}
+
+.wbbm_route_stop_row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    margin-bottom: 5px;
+}
+
+.wbbm_stop_drag_handle {
+    cursor: move;
+    color: #999;
+}
+
+.wbbm_stop_placeholder {
+    height: 40px;
+    background: #f9f9f9;
+    border: 1px dashed #ccc;
+    margin-bottom: 5px;
+}
+
+.wbbm_shuttle_field {
+    margin-bottom: 10px;
+}
+
+.wbbm_shuttle_field label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+}
