@@ -1,6 +1,15 @@
 // WBBM Admin Settings JavaScript
 // Handles routing, pricing, and dynamic form interactions
 
+function debounce(fn, delay) {
+    let timer;
+    return function () {
+        clearTimeout(timer);
+        timer = setTimeout(() => fn.apply(this, arguments), delay);
+    };
+}
+
+
 function wbtm_load_sortable_datepicker(parent, item) {
     if (parent.find(".wbtm_item_insert_before").length > 0) {
         jQuery(item)
@@ -168,8 +177,9 @@ function wbtm_load_sortable_datepicker(parent, item) {
         } else {
             nextDayCheckbox.hide();
         }
+        
         // Trigger pricing reload
-        wbtm_reload_pricing($(".wbtm_settings_pricing_routing"));
+        debouncedReloadPricing($(".wbtm_settings_pricing_routing"));
     });
 
     // Handle route place/type change - reload pricing
@@ -177,12 +187,18 @@ function wbtm_load_sortable_datepicker(parent, item) {
         "change",
         '.wbtm_settings_pricing_routing [name="wbtm_route_place[]"], .wbtm_settings_pricing_routing [name="wbtm_route_time[]"]',
         function () {
-            wbtm_reload_pricing($(".wbtm_settings_pricing_routing"));
+            debouncedReloadPricing($(".wbtm_settings_pricing_routing"));
         }
     );
 
+    // Debounce reload pricing
+    const debouncedReloadPricing = debounce(function (parent) {
+        wbtm_reload_pricing(parent);
+    }, 300);
+
     // Reload pricing table based on route configuration
     function wbtm_reload_pricing(parent) {
+        console.log("Reloading pricing...");
         let post_id = $('[name="wbtm_post_id"]').val();
         let target = parent.find(".wbtm_price_setting_area");
         let places = {};
