@@ -53,7 +53,8 @@ function wbbm_shuttle_taxonomies()
         'update_count_callback' => '_update_post_term_count',
         'query_var'             => true,
         'rewrite'               => array('slug' => $cpt_slug . '-type'),
-        'show_in_rest'          => true,
+        'show_in_rest'          => false,
+        'meta_box_cb'           => false,
     );
     register_taxonomy('wbbm_shuttle_type', 'wbbm_shuttle', $type_args);
 
@@ -93,7 +94,8 @@ function wbbm_shuttle_taxonomies()
         'update_count_callback' => '_update_post_term_count',
         'query_var'             => true,
         'rewrite'               => array('slug' => $cpt_slug . '-category'),
-        'show_in_rest'          => true,
+        'show_in_rest'          => false,
+        'meta_box_cb'           => false,
     );
     register_taxonomy('wbbm_shuttle_cat', 'wbbm_shuttle', $cat_args);
 

@@ -94,18 +94,101 @@ jQuery(document).ready(function($) {
         var $block = $(this).closest('.wbbm_route_schedule_block');
         var routeId = $block.data('route-id');
         var timeIndex = new Date().getTime();
+        var direction = $(this).data('direction') || 'forward';
         
         var template = $('#wbbm_schedule_row_template').html();
         template = template.replace(/{{route_id}}/g, routeId);
         template = template.replace(/{{time_index}}/g, timeIndex);
+        template = template.replace(/{{direction}}/g, direction);
         
-        $block.find('.wbbm_schedule_rows').append(template);
+        // Append to sibling container (robust for both structures)
+        $(this).siblings('.wbbm_schedule_rows').append(template);
     });
 
     // Remove Schedule Time
     $(document).on('click', '.wbbm_remove_schedule_row', function(e) {
         e.preventDefault();
         $(this).closest('.wbbm_schedule_row').remove();
+    });
+
+    // --- Tabs ---
+    $('.mp_tab_menu li').on('click', function() {
+        var target = $(this).data('target-tabs');
+        
+        // Toggle Menu
+        $(this).addClass('active').siblings().removeClass('active');
+        
+        // Toggle Content
+        $('.mp_tab_item').removeClass('active');
+        $(target).addClass('active');
+    });
+
+    // --- Reverse Route (Clone) ---
+    $(document).on('click', '.wbbm_reverse_route', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        var $originalRow = $(this).closest('.wbbm_route_row');
+        var originalName = $originalRow.find('.wbbm_route_name_input').val();
+        
+        // 1. Create New Route
+        var routeIndex = new Date().getTime();
+        var template = $('#wbbm_route_template').html();
+        template = template.replace(/{{route_index}}/g, routeIndex);
+        $('#wbbm_routes_container').append(template);
+        
+        var $newRow = $('#wbbm_routes_container').find('.wbbm_route_row').last();
+        
+        // 2. Set Name
+        var newName = originalName ? "Return: " + originalName : "New Return Route";
+        $newRow.find('.wbbm_route_name_input').val(newName);
+        $newRow.find('.wbbm_route_title_text').text(newName);
+        $newRow.addClass('active');
+        $newRow.find('.wbbm_route_body').show(); 
+        
+        // 3. Process Stops
+        var stops = [];
+        $originalRow.find('.wbbm_route_stop_row').each(function() {
+            var loc = $(this).find('select').val();
+            var time = parseFloat($(this).find('input[placeholder="Min"]').val()) || 0;
+            var dist = parseFloat($(this).find('input[placeholder="Km"]').val()) || parseFloat($(this).find('input[type="number"]').eq(1).val()) || 0; // Fallback selector
+            stops.push({location: loc, time: time, dist: dist});
+        });
+        
+        // If stops found, reverse them
+        if (stops.length > 0) {
+            // Assuming cumulative stats
+            var totalTime = stops[stops.length - 1].time;
+            var totalDist = stops[stops.length - 1].dist;
+            
+            // Iterate backwards
+            for (var i = stops.length - 1; i >= 0; i--) {
+                var s = stops[i];
+                var newTime = totalTime - s.time;
+                var newDist = totalDist - s.dist;
+                
+                // Add Stop
+                var stopIndex = new Date().getTime() + (stops.length - i);
+                var stopTemplate = $('#wbbm_stop_template').html();
+                stopTemplate = stopTemplate.replace(/{{route_index}}/g, routeIndex);
+                stopTemplate = stopTemplate.replace(/{{stop_index}}/g, stopIndex);
+                
+                $newRow.find('.wbbm_route_stops_container').append(stopTemplate);
+                var $stopRow = $newRow.find('.wbbm_route_stops_container .wbbm_route_stop_row').last();
+                
+                $stopRow.find('select').val(s.location);
+                $stopRow.find('input[placeholder="Min"]').val(newTime >= 0 ? newTime : 0);
+                // Try to find distance input robustly
+                $stopRow.find('input').last().prev().val(newDist >= 0 ? Math.round(newDist * 100) / 100 : 0); // Logic relies on DOM order, safer to find by attribute if possible, but placeholder="Km" is safe
+                $stopRow.find('input[placeholder="Km"]').val(newDist >= 0 ? Math.round(newDist * 100) / 100 : 0);
+            }
+        }
+        
+        initSortable(); // Re-init
+        
+        $('html, body').animate({
+            scrollTop: $newRow.offset().top - 100
+        }, 500);
     });
 
 });
