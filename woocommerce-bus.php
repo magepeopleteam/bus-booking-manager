@@ -1281,80 +1281,80 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
 		$table_name = $wpdb->prefix . 'wbbm_bus_booking_list';
 		$add_datetime = current_time("Y-m-d h:i:s");
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		$wpdb->insert(
-			$table_name,
-			array(
-				'order_id' => $order_id,
-				'bus_id' => $bus_id,
-				'user_id' => $user_id,
-				'boarding_point' => $start,
-				'next_stops' => $next_stops,
-				'droping_point' => $end,
-				'user_name' => $user_name,
-				'user_email' => $user_email,
-				'user_phone' => $user_phone,
-				'user_gender' => $user_gender,
-				'user_dob' => $user_dob,
-				'nationality' => $nationality,
-				'flight_arrial_no' => $flight_arrival_no,
-				'flight_departure_no' => $flight_departure_no,
-				'extra_bag_quantity' => $extra_bag_quantity,
-				'user_address' => $user_address,
-				'user_type' => $user_type,
-				'bus_start' => $b_time,
-				'user_start' => $j_time,
-				'total_adult' => $adult,
-				'per_adult_price' => $adult_per_price,
-				'total_child' => $child,
-				'per_child_price' => $child_per_price,
-				'total_infant' => $infant,
-				'per_infant_price' => $infant_per_price,
-				'total_entire' => $entire,
-				'per_entire_price' => $entire_per_price,
-				'total_price' => $total_price,
-				'seat' => $item_quantity,
-				'journey_date' => $j_date,
-				'booking_date' => $add_datetime,
-				'pickpoint' => $pickpoint,
-				'status' => $status
-			),
-			array(
-				'%d',
-				'%d',
-				'%d',
-				'%s',
-				'%s',
-				'%s',
-				'%s',
-				'%s',
-				'%s',
-				'%s',
-				'%s',
-				'%s',
-				'%s',
-				'%s',
-				'%s',
-				'%s',
-				'%s',
-				'%s',
-				'%f',
-				'%f',
-				'%f',
-				'%f',
-				'%f',
-				'%f',
-				'%f',
-				'%f',
-				'%f',
-				'%s',
-				'%s',
-				'%s',
-				'%s',
-				'%s',
-				'%d'
-			)
-		);
-		$wpdb->print_error();
+		// $wpdb->insert(
+		// 	$table_name,
+		// 	array(
+		// 		'order_id' => $order_id,
+		// 		'bus_id' => $bus_id,
+		// 		'user_id' => $user_id,
+		// 		'boarding_point' => $start,
+		// 		'next_stops' => $next_stops,
+		// 		'droping_point' => $end,
+		// 		'user_name' => $user_name,
+		// 		'user_email' => $user_email,
+		// 		'user_phone' => $user_phone,
+		// 		'user_gender' => $user_gender,
+		// 		'user_dob' => $user_dob,
+		// 		'nationality' => $nationality,
+		// 		'flight_arrial_no' => $flight_arrival_no,
+		// 		'flight_departure_no' => $flight_departure_no,
+		// 		'extra_bag_quantity' => $extra_bag_quantity,
+		// 		'user_address' => $user_address,
+		// 		'user_type' => $user_type,
+		// 		'bus_start' => $b_time,
+		// 		'user_start' => $j_time,
+		// 		'total_adult' => $adult,
+		// 		'per_adult_price' => $adult_per_price,
+		// 		'total_child' => $child,
+		// 		'per_child_price' => $child_per_price,
+		// 		'total_infant' => $infant,
+		// 		'per_infant_price' => $infant_per_price,
+		// 		'total_entire' => $entire,
+		// 		'per_entire_price' => $entire_per_price,
+		// 		'total_price' => $total_price,
+		// 		'seat' => $item_quantity,
+		// 		'journey_date' => $j_date,
+		// 		'booking_date' => $add_datetime,
+		// 		'pickpoint' => $pickpoint,
+		// 		'status' => $status
+		// 	),
+		// 	array(
+		// 		'%d',
+		// 		'%d',
+		// 		'%d',
+		// 		'%s',
+		// 		'%s',
+		// 		'%s',
+		// 		'%s',
+		// 		'%s',
+		// 		'%s',
+		// 		'%s',
+		// 		'%s',
+		// 		'%s',
+		// 		'%s',
+		// 		'%s',
+		// 		'%s',
+		// 		'%s',
+		// 		'%s',
+		// 		'%s',
+		// 		'%f',
+		// 		'%f',
+		// 		'%f',
+		// 		'%f',
+		// 		'%f',
+		// 		'%f',
+		// 		'%f',
+		// 		'%f',
+		// 		'%f',
+		// 		'%s',
+		// 		'%s',
+		// 		'%s',
+		// 		'%s',
+		// 		'%s',
+		// 		'%d'
+		// 	)
+		// );
+		// $wpdb->print_error();
 
 		// [New] Insert into Custom Post Type (Dual Write)
 		$post_title = 'Booking #' . $wpdb->insert_id . ' - ' . $user_name;
@@ -1404,16 +1404,26 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
 			update_post_meta($booking_post_id, '_wbbm_pickpoint', $pickpoint);
 		}
 	}
+	add_action('woocommerce_store_api_checkout_order_processed', 'api_checkout_order_processed', 10, 1);
 	add_action('woocommerce_checkout_order_processed', 'wbbm_add_passenger_to_db', 10, 3);
-	add_action('woocommerce_store_api_checkout_order_processed', 'wbbm_add_passenger_to_db', 10, 1);
-	function wbbm_add_passenger_to_db($order)
+
+	function api_checkout_order_processed($order)
+	{
+		wbbm_add_passenger_to_db($order->get_id());
+	}
+
+	function wbbm_add_passenger_to_db($order_id, $posted_data = null, $order = null)
 	{
 		// error_log("WBBM DEBUG: wbbm_add_passenger_to_db called for Order $order_id");
 		global $wpdb;
 		// Getting an instance of the order object
-		// if (!$order) {
-		// 	$order = wc_get_order($order_id);
-		// }
+		if (!$order) {
+			$order = wc_get_order($order_id);
+		}
+
+		if (!$order) {
+			return;
+		}
 		
 		if ($order) {
 			$order_status = $order->get_status();
