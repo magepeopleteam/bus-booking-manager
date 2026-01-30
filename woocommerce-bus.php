@@ -96,6 +96,7 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
 		require_once(dirname(__FILE__) . "/inc/wbbm_shuttle_cpt.php");
 		require_once(dirname(__FILE__) . "/inc/wbbm_shuttle_tax.php");
 		require_once(dirname(__FILE__) . "/inc/ShuttleMetaBoxClass.php");
+		// require_once(dirname(__FILE__) . "/inc/ShuttleSearchClass.php");
 	}
 	// Language Load
 	add_action('init', 'wbbm_language_load');

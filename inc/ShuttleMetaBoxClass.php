@@ -63,12 +63,12 @@ class ShuttleMetaBoxClass
                     <li data-target-tabs="#wbbm_shuttle_pricing">
                         <i class="fas fa-dollar-sign"></i> <?php echo esc_html(__('Pricing', 'bus-booking-manager')); ?>
                     </li>
-                    <li data-target-tabs="#wbbm_shuttle_schedule">
-                        <i class="far fa-calendar-check"></i> <?php echo esc_html(__('Schedule', 'bus-booking-manager')); ?>
-                    </li>
-                    <li data-target-tabs="#wbbm_shuttle_extra">
-                        <i class="fas fa-plus-circle"></i> <?php echo esc_html(__('Extra Services', 'bus-booking-manager')); ?>
-                    </li>
+                    <!-- <li data-target-tabs="#wbbm_shuttle_schedule">
+                        <i class="far fa-calendar-check"></i> <?php // echo esc_html(__('Schedule', 'bus-booking-manager')); ?>
+                    </li> -->
+                    <!-- <li data-target-tabs="#wbbm_shuttle_extra">
+                        <i class="fas fa-plus-circle"></i> <?php // echo esc_html(__('Extra Services', 'bus-booking-manager')); ?>
+                    </li> -->
                 </ul>
             </div>
             <div class="mp_tab_details">
@@ -77,8 +77,8 @@ class ShuttleMetaBoxClass
                 $this->wbbm_shuttle_basic_settings($post_id);
                 $this->wbbm_shuttle_routing($post_id);
                 $this->wbbm_shuttle_pricing($post_id);
-                $this->wbbm_shuttle_schedule($post_id);
-                $this->wbbm_shuttle_extra_services($post_id);
+                // $this->wbbm_shuttle_schedule($post_id);
+                // $this->wbbm_shuttle_extra_services($post_id);
                 ?>
             </div>
         </div>
@@ -328,6 +328,8 @@ class ShuttleMetaBoxClass
         $location = isset($data['location']) ? $data['location'] : '';
         $time_offset = isset($data['time_offset']) ? $data['time_offset'] : '0';
         $distance = isset($data['distance']) ? $data['distance'] : '0';
+        $pickup_points = isset($data['pickup_points']) ? $data['pickup_points'] : '';
+        $dropoff_points = isset($data['dropoff_points']) ? $data['dropoff_points'] : '';
     ?>
         <div class="wbbm_route_stop_row">
             <span class="wbbm_stop_drag_handle dashicons dashicons-move"></span>
@@ -341,6 +343,29 @@ class ShuttleMetaBoxClass
                         </option>
                     <?php endforeach; ?>
                 </select>
+                
+                <div class="wbbm_stop_points_toggle" style="margin-top: 5px; cursor: pointer; color: #0073aa; font-size: 12px;" onclick="jQuery(this).next('.wbbm_stop_points_wrapper').slideToggle();">
+                    <?php _e('+ Pickup/Drop-off Points', 'bus-booking-manager'); ?>
+                </div>
+                
+                <div class="wbbm_stop_points_wrapper" style="display: none; margin-top: 10px; border: 1px dashed #ccc; padding: 10px; background: #fafafa;">
+                    <div style="margin-bottom: 10px;">
+                        <label style="font-size: 11px; display: block; font-weight: bold;"><?php _e('Pickup Points (One per line)', 'bus-booking-manager'); ?></label>
+                        <textarea name="wbbm_shuttle_routes[<?php echo esc_attr($route_index); ?>][stops][<?php echo esc_attr($stop_index); ?>][pickup_points]" 
+                            class="formControl" 
+                            rows="3" 
+                            style="width: 100%; font-size: 12px;"
+                            placeholder="<?php _e('Terminal 1&#10;Terminal 2&#10;Hotel Lobby', 'bus-booking-manager'); ?>"><?php echo esc_textarea($pickup_points); ?></textarea>
+                    </div>
+                    <div>
+                        <label style="font-size: 11px; display: block; font-weight: bold;"><?php _e('Drop-off Points (One per line)', 'bus-booking-manager'); ?></label>
+                        <textarea name="wbbm_shuttle_routes[<?php echo esc_attr($route_index); ?>][stops][<?php echo esc_attr($stop_index); ?>][dropoff_points]" 
+                            class="formControl" 
+                            rows="3" 
+                            style="width: 100%; font-size: 12px;"
+                            placeholder="<?php _e('City Center&#10;Convention Center', 'bus-booking-manager'); ?>"><?php echo esc_textarea($dropoff_points); ?></textarea>
+                    </div>
+                </div>
             </div>
 
             <div style="flex: 1;">
@@ -684,7 +709,9 @@ class ShuttleMetaBoxClass
                             $clean_route['stops'][] = array(
                                 'location' => sanitize_text_field($stop['location']),
                                 'time_offset' => sanitize_text_field($stop['time_offset']),
-                                'distance' => sanitize_text_field($stop['distance'])
+                                'distance' => sanitize_text_field($stop['distance']),
+                                'pickup_points' => isset($stop['pickup_points']) ? sanitize_textarea_field($stop['pickup_points']) : '',
+                                'dropoff_points' => isset($stop['dropoff_points']) ? sanitize_textarea_field($stop['dropoff_points']) : ''
                             );
                         }
                     }
