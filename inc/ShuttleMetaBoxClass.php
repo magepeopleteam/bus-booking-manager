@@ -63,9 +63,9 @@ class ShuttleMetaBoxClass
                     <li data-target-tabs="#wbbm_shuttle_pricing">
                         <i class="fas fa-dollar-sign"></i> <?php echo esc_html(__('Pricing', 'bus-booking-manager')); ?>
                     </li>
-                    <!-- <li data-target-tabs="#wbbm_shuttle_schedule">
-                        <i class="far fa-calendar-check"></i> <?php // echo esc_html(__('Schedule', 'bus-booking-manager')); ?>
-                    </li> -->
+                    <li data-target-tabs="#wbbm_shuttle_schedule">
+                        <i class="far fa-calendar-check"></i> <?php echo esc_html(__('Schedule', 'bus-booking-manager')); ?>
+                    </li>
                     <!-- <li data-target-tabs="#wbbm_shuttle_extra">
                         <i class="fas fa-plus-circle"></i> <?php // echo esc_html(__('Extra Services', 'bus-booking-manager')); ?>
                     </li> -->
@@ -77,7 +77,7 @@ class ShuttleMetaBoxClass
                 $this->wbbm_shuttle_basic_settings($post_id);
                 $this->wbbm_shuttle_routing($post_id);
                 $this->wbbm_shuttle_pricing($post_id);
-                // $this->wbbm_shuttle_schedule($post_id);
+                $this->wbbm_shuttle_schedule($post_id);
                 // $this->wbbm_shuttle_extra_services($post_id);
                 ?>
             </div>
@@ -310,7 +310,7 @@ class ShuttleMetaBoxClass
                         ?>
                     </div>
 
-                    <button type="button" class="button wbbm_add_route_stop" style="margin-top: 10px;">
+                    <button type="button" class="button button-primary wbbm_add_route_stop" style="margin-top: 10px;">
                         <i class="fas fa-plus"></i> <?php echo esc_html(__('Add Stop', 'bus-booking-manager')); ?>
                     </button>
                     <p class="description"><?php echo esc_html(__('Define stops in order (Origin -> Intermediates -> Destination)', 'bus-booking-manager')); ?></p>
@@ -542,7 +542,7 @@ class ShuttleMetaBoxClass
                                         }
                                         ?>
                                     </div>
-                                    <button type="button" class="button wbbm_add_schedule_time" data-direction="forward">
+                                    <button type="button" class="button button-primary wbbm_add_schedule_time" data-direction="forward">
                                         <i class="fas fa-plus"></i> <?php echo esc_html(__('Add Departure Time (Forward)', 'bus-booking-manager')); ?>
                                     </button>
                                 </div>
@@ -560,7 +560,7 @@ class ShuttleMetaBoxClass
                                             }
                                             ?>
                                         </div>
-                                        <button type="button" class="button wbbm_add_schedule_time" data-direction="return">
+                                        <button type="button" class="button button-primary wbbm_add_schedule_time" data-direction="return">
                                             <i class="fas fa-plus"></i> <?php echo esc_html(__('Add Departure Time (Return)', 'bus-booking-manager')); ?>
                                         </button>
                                     </div>
@@ -596,16 +596,17 @@ class ShuttleMetaBoxClass
 
         $name_prefix = "wbbm_shuttle_schedule[{$route_id}][{$direction}][{$index}]";
     ?>
-        <div class="wbbm_schedule_row" style="display: flex; gap: 15px; border-bottom: 1px dashed #eee; padding-bottom: 10px; margin-bottom: 10px; align-items: center;">
+        <div class="wbbm_schedule_row" style="display: flex; gap: 15px; border-bottom: 1px dashed #eee; padding-bottom: 10px; margin-bottom: 10px; align-items: self-end;">
             <div style="width: 150px;">
                 <label style="display: block; font-size: 11px; margin-bottom: 2px;"><?php _e('Departure Time', 'bus-booking-manager'); ?></label>
                 <input type="text"
                     name="<?php echo $name_prefix; ?>[time]"
                     class="formControl wbbm_time_picker"
+                    data-clocklet
                     value="<?php echo esc_attr($time); ?>"
                     placeholder="e.g. 08:00 AM" required>
             </div>
-            <div style="flex: 1;">
+            <div class="wbbm_schedule_days_wrapper">
                 <label style="display: block; font-size: 11px; margin-bottom: 2px;"><?php _e('Operating Days', 'bus-booking-manager'); ?></label>
                 <div class="wbbm_schedule_days" style="display: flex; gap: 10px; flex-wrap: wrap;">
                     <?php foreach ($days_of_week as $key => $label): ?>
@@ -621,7 +622,7 @@ class ShuttleMetaBoxClass
             </div>
             <div>
                 <button type="button" class="button wbbm_remove_schedule_row text-danger">
-                    <span class="dashicons dashicons-trash" style="margin-top: 5px;"></span>
+                    <span class="dashicons dashicons-trash"></span>
                 </button>
             </div>
         </div>
