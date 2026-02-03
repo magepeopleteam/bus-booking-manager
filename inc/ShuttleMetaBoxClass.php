@@ -22,6 +22,9 @@ class ShuttleMetaBoxClass
 
         // Save meta box data
         add_action('save_post_wbbm_shuttle', array($this, 'wbbm_shuttle_meta_save'), 10, 2);
+
+        // AJAX for real-time pricing matrix
+        add_action('wp_ajax_wbbm_update_pricing_matrix', array($this, 'wbbm_ajax_get_updated_pricing_matrix'));
     }
 
     /**
@@ -226,9 +229,9 @@ class ShuttleMetaBoxClass
                         ?>
                     </div>
 
-                    <button type="button" class="button button-primary wbbm_add_route">
-                        <i class="fas fa-plus"></i> <?php echo esc_html(__('Add New Route', 'bus-booking-manager')); ?>
-                    </button>
+                    <!-- <button type="button" class="button button-primary wbbm_add_route">
+                        <i class="fas fa-plus"></i> <?php // echo esc_html(__('Add New Route', 'bus-booking-manager')); ?>
+                    </button> -->
 
                     <!-- Hidden Templates -->
                     <script type="text/html" id="wbbm_route_template">
@@ -386,7 +389,7 @@ class ShuttleMetaBoxClass
                     placeholder="Km" />
             </div>
 
-            <div style="width: 40px; text-align: right;">
+            <div style="width: 40px; text-align: right;margin-top:5px">
                 <button type="button" class="button wbbm_remove_route_stop text-danger">
                     <span class="dashicons dashicons-trash"></span>
                 </button>
@@ -411,91 +414,155 @@ class ShuttleMetaBoxClass
             </h3>
 
             <div class="mp_settings_panel">
-                <div class="mp_settings_panel_body">
-                    <?php if (empty($routes)): ?>
-                        <div class="notice notice-warning inline" style="margin: 0;">
-                            <p><?php _e('Please define and save Routes first to configure pricing.', 'bus-booking-manager'); ?></p>
-                        </div>
-                    <?php else: ?>
-                        <p class="description"><?php echo esc_html(__('Set prices for each stop-to-stop combination. Leaving a field empty implies service is not available for that segment.', 'bus-booking-manager')); ?></p>
-
-                        <?php foreach ($routes as $route):
-                            $route_id = isset($route['id']) ? $route['id'] : '';
-                            if (!$route_id) continue;
-
-                            $route_stops = isset($route['stops']) ? $route['stops'] : array();
-                            if (count($route_stops) < 2) continue;
-                        ?>
-                            <div class="wbbm_route_pricing_block" style="margin-bottom: 30px; border: 1px solid #ddd; padding: 15px; background: #fff;">
-                                <h4><?php printf(esc_html__('Route: %s', 'bus-booking-manager'), esc_html($route['name'])); ?></h4>
-                                <div style="overflow-x: auto;">
-                                    <table class="widefat striped shuttle-table">
-                                        <thead>
-                                            <tr>
-                                                <th><?php _e('From \ To', 'bus-booking-manager'); ?></th>
-                                                <?php for ($i = 1; $i < count($route_stops); $i++) {
-                                                    echo '<th>' . esc_html($route_stops[$i]['location']) . '</th>';
-                                                } ?>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <?php
-                                            for ($i = 0; $i < count($route_stops) - 1; $i++) {
-                                                $origin = $route_stops[$i]['location'];
-                                                echo '<tr>';
-                                                echo '<th>' . esc_html($origin) . '</th>';
-
-                                                for ($j = 1; $j < count($route_stops); $j++) {
-                                                    if ($j > $i) {
-                                                        $dest = $route_stops[$j]['location'];
-
-                                                        $val_oneway = '';
-                                                        $val_roundtrip = '';
-
-                                                        if (isset($pricing['routes'][$route_id][$origin][$dest])) {
-                                                            $p = $pricing['routes'][$route_id][$origin][$dest];
-                                                            if (is_array($p)) {
-                                                                $val_oneway = isset($p['oneway']) ? $p['oneway'] : '';
-                                                                $val_roundtrip = isset($p['roundtrip']) ? $p['roundtrip'] : '';
-                                                            } else {
-                                                                $val_oneway = $p;
-                                                            }
-                                                        }
-
-                                                        echo '<td>';
-
-                                                        // One Way Price
-                                                        $field_name_oneway = 'wbbm_shuttle_pricing[routes][' . $route_id . '][' . esc_attr($origin) . '][' . esc_attr($dest) . '][oneway]';
-                                                        echo '<div style="margin-bottom:5px;">';
-                                                        echo '<input type="number" step="0.01" name="' . $field_name_oneway . '" value="' . esc_attr($val_oneway) . '" placeholder="' . __('One Way', 'bus-booking-manager') . '" title="' . __('One Way Price', 'bus-booking-manager') . '">';
-                                                        echo '</div>';
-
-                                                        // Round Trip Price (if applicable)
-                                                        if (isset($route['type']) && $route['type'] === 'round-trip') {
-                                                            $field_name_roundtrip = 'wbbm_shuttle_pricing[routes][' . $route_id . '][' . esc_attr($origin) . '][' . esc_attr($dest) . '][roundtrip]';
-                                                            echo '<div>';
-                                                            echo '<input type="number" step="0.01" name="' . $field_name_roundtrip . '" value="' . esc_attr($val_roundtrip) . '" placeholder="' . __('Round Trip', 'bus-booking-manager') . '" title="' . __('Round Trip Price', 'bus-booking-manager') . '">';
-                                                            echo '</div>';
-                                                        }
-
-                                                        echo '</td>';
-                                                    } else {
-                                                        echo '<td>-</td>';
-                                                    }
-                                                }
-                                                echo '</tr>';
-                                            }
-                                            ?>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
+                <div class="mp_settings_panel_body" id="wbbm_pricing_matrix_container">
+                    <?php $this->render_pricing_matrix($routes, $pricing); ?>
                 </div>
             </div>
         </div>
     <?php
+    }
+
+    /**
+     * Render the pricing matrix HTML
+     */
+    public function render_pricing_matrix($routes, $pricing)
+    {
+        if (empty($routes)): ?>
+            <div class="notice notice-warning inline" style="margin: 0;">
+                <p><?php _e('Please define and save Routes first to configure pricing.', 'bus-booking-manager'); ?></p>
+            </div>
+        <?php else: ?>
+            <p class="description"><?php echo esc_html(__('Set prices for each stop-to-stop combination. Leaving a field empty implies service is not available for that segment.', 'bus-booking-manager')); ?></p>
+
+            <?php foreach ($routes as $route):
+                $route_id = isset($route['id']) ? $route['id'] : '';
+                if (!$route_id) continue;
+
+                $route_stops = isset($route['stops']) ? $route['stops'] : array();
+                if (count($route_stops) < 2) continue;
+            ?>
+                <div class="wbbm_route_pricing_block" style="margin-bottom: 30px; border: 1px solid #ddd; padding: 15px; background: #fff;">
+                    <h4><?php printf(esc_html__('Route: %s', 'bus-booking-manager'), esc_html($route['name'])); ?></h4>
+                    <div style="overflow-x: auto;">
+                        <table class="widefat striped shuttle-table">
+                            <thead>
+                                <tr>
+                                    <th><?php _e('From \ To', 'bus-booking-manager'); ?></th>
+                                    <?php for ($i = 1; $i < count($route_stops); $i++) {
+                                        echo '<th>' . (isset($route_stops[$i]['location']) ? esc_html($route_stops[$i]['location']) : __('Unknown Stop', 'bus-booking-manager')) . '</th>';
+                                    } ?>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+                                for ($i = 0; $i < count($route_stops) - 1; $i++) {
+                                    $origin = isset($route_stops[$i]['location']) ? $route_stops[$i]['location'] : '';
+                                    if (!$origin) continue;
+
+                                    echo '<tr>';
+                                    echo '<th>' . esc_html($origin) . '</th>';
+
+                                    for ($j = 1; $j < count($route_stops); $j++) {
+                                        if ($j > $i) {
+                                            $dest = isset($route_stops[$j]['location']) ? $route_stops[$j]['location'] : '';
+                                            if (!$dest) {
+                                                echo '<td>-</td>';
+                                                continue;
+                                            }
+
+                                            $val_oneway = '';
+                                            $val_roundtrip = '';
+
+                                            if (isset($pricing['routes'][$route_id][$origin][$dest])) {
+                                                $p = $pricing['routes'][$route_id][$origin][$dest];
+                                                if (is_array($p)) {
+                                                    $val_oneway = isset($p['oneway']) ? $p['oneway'] : '';
+                                                    $val_roundtrip = isset($p['roundtrip']) ? $p['roundtrip'] : '';
+                                                } else {
+                                                    $val_oneway = $p;
+                                                }
+                                            }
+
+                                            echo '<td>';
+
+                                            // One Way Price
+                                            $field_name_oneway = 'wbbm_shuttle_pricing[routes][' . $route_id . '][' . esc_attr($origin) . '][' . esc_attr($dest) . '][oneway]';
+                                            echo '<div style="margin-bottom:5px;">';
+                                            echo '<input type="number" step="0.01" name="' . $field_name_oneway . '" value="' . esc_attr($val_oneway) . '" placeholder="' . __('One Way', 'bus-booking-manager') . '" title="' . __('One Way Price', 'bus-booking-manager') . '">';
+                                            echo '</div>';
+
+                                            // Round Trip Price (if applicable)
+                                            if (isset($route['type']) && $route['type'] === 'round-trip') {
+                                                $field_name_roundtrip = 'wbbm_shuttle_pricing[routes][' . $route_id . '][' . esc_attr($origin) . '][' . esc_attr($dest) . '][roundtrip]';
+                                                echo '<div>';
+                                                echo '<input type="number" step="0.01" name="' . $field_name_roundtrip . '" value="' . esc_attr($val_roundtrip) . '" placeholder="' . __('Round Trip', 'bus-booking-manager') . '" title="' . __('Round Trip Price', 'bus-booking-manager') . '">';
+                                                echo '</div>';
+                                            }
+
+                                            echo '</td>';
+                                        } else {
+                                            echo '<td>-</td>';
+                                        }
+                                    }
+                                    echo '</tr>';
+                                }
+                                ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        <?php endif;
+    }
+
+    /**
+     * AJAX handler for updating pricing matrix
+     */
+    public function wbbm_ajax_get_updated_pricing_matrix()
+    {
+        check_ajax_referer('wbbm_shuttle_settings_nonce', 'security');
+
+        if (!current_user_can('edit_posts')) {
+            wp_send_json_error('Unauthorized');
+        }
+
+        $post_id = isset($_POST['post_id']) ? absint($_POST['post_id']) : 0;
+        $routes = isset($_POST['routes']) ? $_POST['routes'] : array();
+        
+        // Load existing pricing to preserve values
+        $existing_pricing = maybe_unserialize(get_post_meta($post_id, 'wbbm_shuttle_pricing', true)) ?: array();
+
+        // Sanitize incoming routes for rendering
+        $clean_routes = array();
+        if (is_array($routes)) {
+            foreach ($routes as $route) {
+                if (!empty($route['name'])) {
+                    $clean_route = array(
+                        'name' => sanitize_text_field($route['name']),
+                        'type' => isset($route['type']) ? sanitize_text_field($route['type']) : 'one-way',
+                        'id'   => isset($route['id']) ? sanitize_text_field($route['id']) : uniqid('route_'),
+                        'stops' => array()
+                    );
+
+                    if (isset($route['stops']) && is_array($route['stops'])) {
+                        foreach ($route['stops'] as $stop) {
+                            if (!empty($stop['location'])) {
+                                $clean_route['stops'][] = array(
+                                    'location' => sanitize_text_field($stop['location'])
+                                );
+                            }
+                        }
+                    }
+                    $clean_routes[] = $clean_route;
+                }
+            }
+        }
+
+        ob_start();
+        $this->render_pricing_matrix($clean_routes, $existing_pricing);
+        $html = ob_get_clean();
+
+        wp_send_json_success(array('html' => $html));
     }
 
     /**
