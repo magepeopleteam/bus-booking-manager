@@ -186,7 +186,7 @@
 
 .wbbm_route_stop_row {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 15px;
     padding: 15px;
     background: #fff;
@@ -204,6 +204,7 @@
     cursor: move;
     color: #bbb;
     font-size: 20px;
+    margin-top: 10px;
 }
 
 .wbbm_stop_drag_handle:hover {
