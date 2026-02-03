@@ -72,6 +72,8 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
 	require_once(dirname(__FILE__) . "/lib/classes/class-meta-box.php");
 	require_once(dirname(__FILE__) . "/lib/classes/class-taxonomy-edit.php");
 	require_once(dirname(__FILE__) . "/inc/wbbm_tax.php");
+
+	
 	//require_once(dirname(__FILE__) . "/inc/wbbm_bus_ticket_meta.php");
 	require_once(dirname(__FILE__) . "/inc/wbbm_extra_price.php");
 	require_once(dirname(__FILE__) . "/inc/class-remove-bus-info-to-cart.php");
@@ -88,6 +90,14 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
 	require_once(dirname(__FILE__) . "/inc/class-meta-box.php");
 	require_once(dirname(__FILE__) . "/inc/BusBookingManagerClass.php");
 	require_once(dirname(__FILE__) . "/inc/wbbm_dummy_import.php");
+
+	// Shuttle Service Files - Conditional loading
+	if (function_exists('wbbm_get_option') && wbbm_get_option('wbbm_shuttle_module_enable', 'wbbm_general_setting_sec', 'off') === 'on') {
+		require_once(dirname(__FILE__) . "/inc/wbbm_shuttle_cpt.php");
+		require_once(dirname(__FILE__) . "/inc/wbbm_shuttle_tax.php");
+		require_once(dirname(__FILE__) . "/inc/ShuttleMetaBoxClass.php");
+		// require_once(dirname(__FILE__) . "/inc/ShuttleSearchClass.php");
+	}
 	// Language Load
 	add_action('init', 'wbbm_language_load');
 	function wbbm_language_load()
