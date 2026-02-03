@@ -18,6 +18,9 @@ jQuery(document).ready(function($) {
         
         // Initialize any plugins for the new route (e.g., sortable)
         initSortable();
+
+        // Update pricing matrix
+        updatePricingMatrix();
     });
 
     // Remove Route
@@ -25,6 +28,7 @@ jQuery(document).ready(function($) {
         e.preventDefault();
         if(confirm('Are you sure you want to delete this route and all its stops?')) {
             $(this).closest('.wbbm_route_row').remove();
+            updatePricingMatrix();
         }
     });
 
@@ -52,6 +56,7 @@ jQuery(document).ready(function($) {
     $(document).on('click', '.wbbm_remove_route_stop', function(e) {
         e.preventDefault();
         $(this).closest('.wbbm_route_stop_row').remove();
+        updatePricingMatrix();
     });
 
     // Toggle Route Accordion
@@ -71,7 +76,10 @@ jQuery(document).ready(function($) {
             $('.wbbm_route_stops_container').sortable({
                 handle: '.wbbm_stop_drag_handle',
                 placeholder: 'wbbm_stop_placeholder',
-                forcePlaceholderSize: true
+                forcePlaceholderSize: true,
+                update: function() {
+                    updatePricingMatrix();
+                }
             });
         }
     }
@@ -189,6 +197,75 @@ jQuery(document).ready(function($) {
         $('html, body').animate({
             scrollTop: $newRow.offset().top - 100
         }, 500);
+
+        updatePricingMatrix();
     });
 
+    // --- Real-time Pricing Matrix Update ---
+
+    var updatePricingTimeout;
+    function updatePricingMatrix() {
+        clearTimeout(updatePricingTimeout);
+        updatePricingTimeout = setTimeout(function() {
+            var routes = [];
+            $('.wbbm_route_row').each(function() {
+                var $routeRow = $(this);
+                if ($routeRow.data('index') === '{{route_index}}') return;
+
+                var route = {
+                    id: $routeRow.find('input[name*="[id]"]').val(),
+                    name: $routeRow.find('.wbbm_route_name_input').val(),
+                    type: $routeRow.find('select[name*="[type]"]').val(),
+                    stops: []
+                };
+
+                $routeRow.find('.wbbm_route_stop_row').each(function() {
+                    var $stopRow = $(this);
+                    var loc = $stopRow.find('select[name*="[location]"]').val();
+                    if (loc) {
+                        route.stops.push({
+                            location: loc
+                        });
+                    }
+                });
+
+                if (route.name) {
+                    routes.push(route);
+                }
+            });
+
+            var $container = $('#wbbm_pricing_matrix_container');
+            $container.css('opacity', '0.5');
+
+            $.ajax({
+                url: ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'wbbm_update_pricing_matrix',
+                    post_id: $('input[name="wbbm_shuttle_post_id"]').val(),
+                    routes: routes,
+                    security: $('#wbbm_shuttle_settings_nonce').val()
+                },
+                success: function(response) {
+                    if (response.success) {
+                        $container.html(response.data.html);
+                    }
+                    $container.css('opacity', '1');
+                },
+                error: function() {
+                    $container.css('opacity', '1');
+                }
+            });
+        }, 500); // Debounce
+    }
+
+    // Trigger update on stop location change
+    $(document).on('change', '.wbbm_route_stop_row select[name*="[location]"]', function() {
+        updatePricingMatrix();
+    });
+
+    // Trigger update on route name/type change
+    $(document).on('keyup change', '.wbbm_route_name_input, .wbbm_route_row select[name*="[type]"]', function() {
+        updatePricingMatrix();
+    });
 });
