@@ -229,9 +229,9 @@ class ShuttleMetaBoxClass
                         ?>
                     </div>
 
-                    <!-- <button type="button" class="button button-primary wbbm_add_route">
-                        <i class="fas fa-plus"></i> <?php // echo esc_html(__('Add New Route', 'bus-booking-manager')); ?>
-                    </button> -->
+                    <button type="button" class="button button-primary wbbm_add_route" style="<?php echo !empty($routes) ? 'display:none;' : ''; ?>">
+                        <i class="fas fa-plus"></i> <?php echo esc_html(__('Add New Route', 'bus-booking-manager')); ?>
+                    </button>
 
                     <!-- Hidden Templates -->
                     <script type="text/html" id="wbbm_route_template">
