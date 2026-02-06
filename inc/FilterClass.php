@@ -40,11 +40,13 @@
             // new 'mage_book_now_area_nonce' for the book-now template.
             $nonce_custom = isset($_POST['add_to_cart_custom_nonce']) ? sanitize_text_field(wp_unslash($_POST['add_to_cart_custom_nonce'])) : '';
             $nonce_mage = isset($_POST['mage_book_now_area_nonce']) ? sanitize_text_field(wp_unslash($_POST['mage_book_now_area_nonce'])) : '';
+            $nonce_shuttle = isset($_POST['wbbm_shuttle_nonce']) ? sanitize_text_field(wp_unslash($_POST['wbbm_shuttle_nonce'])) : '';
 
             $custom_ok = $nonce_custom && wp_verify_nonce($nonce_custom, 'add_to_cart_custom_action');
             $mage_ok = $nonce_mage && wp_verify_nonce($nonce_mage, 'mage_book_now_area');
+            $shuttle_ok = $nonce_shuttle && wp_verify_nonce($nonce_shuttle, 'wbbm_shuttle_add_to_cart');
 
-            if ( ! $custom_ok && ! $mage_ok ) {
+            if ( ! $custom_ok && ! $mage_ok && ! $shuttle_ok ) {
                 wc_add_notice(__('Security check failed. Please try again.', 'bus-booking-manager'), 'error');
                 return $cart_item_data;
             }
@@ -387,6 +389,40 @@
                 $cart_item_data['total_fare_roundtrip'] = (float) $total_fare_roundtrip;
                 $cart_item_data['pickpoint'] = $pickpoint;
 
+                return $cart_item_data;
+            }
+
+            if ( get_post_type( $product_id ) == "wbbm_shuttle" ) {
+                $shuttle_id = isset( $post['shuttle_id'] ) ? absint( $post['shuttle_id'] ) : $product_id;
+                $route_id   = isset( $post['route_id'] ) ? sanitize_text_field( $post['route_id'] ) : '';
+                $pickup     = isset( $post['pickup'] ) ? sanitize_text_field( $post['pickup'] ) : '';
+                $dropoff    = isset( $post['dropoff'] ) ? sanitize_text_field( $post['dropoff'] ) : '';
+                $date       = isset( $post['date'] ) ? sanitize_text_field( $post['date'] ) : '';
+                $time       = isset( $post['time'] ) ? sanitize_text_field( $post['time'] ) : '';
+                $passengers = isset( $post['passengers'] ) ? absint( $post['passengers'] ) : 1;
+                $dropoff_point = isset( $post['dropoff_point'] ) ? sanitize_text_field( $post['dropoff_point'] ) : '';
+
+                // Calculate price for shuttle
+                $pricing = maybe_unserialize(get_post_meta($shuttle_id, 'wbbm_shuttle_pricing', true));
+                $price = 0;
+                if ($pricing && isset($pricing['routes'][$route_id][$pickup][$dropoff])) {
+                    $p = $pricing['routes'][$route_id][$pickup][$dropoff];
+                    $price = is_array($p) ? (float)$p['oneway'] : (float)$p;
+                }
+                $total = $price * $passengers;
+
+                $cart_item_data['wbbm_shuttle_id']   = $shuttle_id;
+                $cart_item_data['wbbm_route_id']     = $route_id;
+                $cart_item_data['wbbm_start_stops']  = $pickup;
+                $cart_item_data['wbbm_end_stops']    = $dropoff;
+                $cart_item_data['wbbm_journey_date'] = $date;
+                $cart_item_data['wbbm_journey_time'] = $time;
+                $cart_item_data['wbbm_total_seat']   = $passengers;
+                $cart_item_data['wbbm_tp']           = $total;
+                $cart_item_data['wbbm_id']           = $product_id;
+                $cart_item_data['line_total']        = $total;
+                $cart_item_data['line_subtotal']     = $total;
+                
                 return $cart_item_data;
             }
 
@@ -996,6 +1032,38 @@
                         <?php
                     }
 
+                } elseif ( get_post_type( $eid ) == 'wbbm_shuttle' ) {
+                    $pickup   = isset( $cart_item['wbbm_start_stops'] ) ? $cart_item['wbbm_start_stops'] : '';
+                    $dropoff  = isset( $cart_item['wbbm_end_stops'] ) ? $cart_item['wbbm_end_stops'] : '';
+                    $date     = isset( $cart_item['wbbm_journey_date'] ) ? $cart_item['wbbm_journey_date'] : '';
+                    $time     = isset( $cart_item['wbbm_journey_time'] ) ? $cart_item['wbbm_journey_time'] : '';
+                    $passengers = isset( $cart_item['wbbm_total_seat'] ) ? $cart_item['wbbm_total_seat'] : 1;
+
+                    ob_start();
+                    ?>
+                    <div class="mpStyles">
+                        <div class="cart-item-details">
+                            <ul>
+                                <li>
+                                    <strong><?php _e('Route', 'bus-booking-manager'); ?>:</strong>
+                                    <?php echo esc_html($pickup . ' ' . __('to', 'bus-booking-manager') . ' ' . $dropoff); ?>
+                                </li>
+                                <li>
+                                    <strong><?php _e('Date', 'bus-booking-manager'); ?>:</strong>
+                                    <?php echo esc_html(wbbm_get_datetime($date, 'date')); ?>
+                                </li>
+                                <li>
+                                    <strong><?php _e('Time', 'bus-booking-manager'); ?>:</strong>
+                                    <?php echo esc_html($time); ?>
+                                </li>
+                                <li>
+                                    <strong><?php _e('Passengers', 'bus-booking-manager'); ?>:</strong>
+                                    <?php echo esc_html($passengers); ?>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <?php
                 }
             }
             $item_data[] = array( 'key' => '', 'value' => ob_get_clean() );

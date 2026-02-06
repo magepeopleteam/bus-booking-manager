@@ -1267,6 +1267,36 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
 		return absint($count);
 	}
 
+	function wbbm_get_shuttle_order_check($shuttle_id, $order_id)
+	{
+		global $wpdb;
+
+		$shuttle_id = absint($shuttle_id);
+		$order_id   = absint($order_id);
+
+		if (! $shuttle_id || ! $order_id) {
+			return 0;
+		}
+
+		$count = $wpdb->get_var(
+			$wpdb->prepare(
+				"
+			SELECT COUNT(p.ID)
+	           FROM {$wpdb->posts} p
+	           INNER JOIN {$wpdb->postmeta} pm_shuttle ON p.ID = pm_shuttle.post_id AND pm_shuttle.meta_key = '_wbbm_shuttle_id'
+	           INNER JOIN {$wpdb->postmeta} pm_order ON p.ID = pm_order.post_id AND pm_order.meta_key = '_wbbm_order_id'
+	           WHERE p.post_type = 'wbbm_booking'
+	           AND pm_shuttle.meta_value = %d
+	           AND pm_order.meta_value = %d
+			",
+				$shuttle_id,
+				$order_id
+			)
+		);
+
+		return absint($count);
+	}
+
 	// add_action( 'woocommerce_checkout_order_processed', 'wbbm_order_status_before_payment', 10, 3 );
 	function wbbm_order_status_before_payment($order_id, $posted_data, $order)
 	{
@@ -1598,8 +1628,49 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
 						// }
 						$counter++;
 					}
+				} elseif (get_post_type($eid) == 'wbbm_shuttle') {
+					$shuttle_id = wbbm_get_order_meta($item_id, '_wbbm_shuttle_id');
+					$route      = wbbm_get_order_meta($item_id, 'Shuttle Route');
+					$j_date     = wbbm_get_order_meta($item_id, 'Journey Date');
+					$j_time     = wbbm_get_order_meta($item_id, 'Journey Time');
+					$passengers = wbbm_get_order_meta($item_id, 'Passengers');
+					$total_price = wbbm_get_order_meta($item_id, '_wbbm_tp');
+
+					$check_before_add = wbbm_get_shuttle_order_check($shuttle_id, $order_id);
+					if ($check_before_add == 0) {
+						$parts = explode(' to ', $route);
+						$start = isset($parts[0]) ? $parts[0] : '';
+						$end   = isset($parts[1]) ? $parts[1] : '';
+
+						$post_title = 'Shuttle Booking #' . $order_id . ' - ' . $order->get_billing_first_name();
+						$post_data = array(
+							'post_title'  => $post_title,
+							'post_type'   => 'wbbm_booking',
+							'post_status' => 'publish',
+							'post_date'   => current_time('Y-m-d H:i:s'),
+						);
+
+						$booking_post_id = wp_insert_post($post_data);
+
+						if ($booking_post_id && ! is_wp_error($booking_post_id)) {
+							update_post_meta($booking_post_id, '_wbbm_order_id', $order_id);
+							update_post_meta($booking_post_id, '_wbbm_shuttle_id', $shuttle_id);
+							update_post_meta($booking_post_id, '_wbbm_user_id', $user_id);
+							update_post_meta($booking_post_id, '_wbbm_boarding_point', $start);
+							update_post_meta($booking_post_id, '_wbbm_droping_point', $end);
+							update_post_meta($booking_post_id, '_wbbm_user_name', $order->get_billing_first_name() . ' ' . $order->get_billing_last_name());
+							update_post_meta($booking_post_id, '_wbbm_user_email', $order->get_billing_email());
+							update_post_meta($booking_post_id, '_wbbm_user_phone', $order->get_billing_phone());
+							update_post_meta($booking_post_id, '_wbbm_journey_date', $j_date);
+							update_post_meta($booking_post_id, '_wbbm_user_start', $j_time);
+							update_post_meta($booking_post_id, '_wbbm_total_price', $total_price);
+							update_post_meta($booking_post_id, '_wbbm_seat', $passengers);
+							update_post_meta($booking_post_id, '_wbbm_status', $status);
+							update_post_meta($booking_post_id, '_wbbm_is_shuttle', 'yes');
+						}
+					}
 				} else {
-					error_log("WBBM DEBUG: Eid $eid is NOT wbbm_bus");
+					error_log("WBBM DEBUG: Eid $eid is NOT wbbm_bus or wbbm_shuttle");
 				}
 			}
 		} else {
@@ -2021,7 +2092,7 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
 	}
 	function wbbm_on_post_publish($post_id, $post, $update)
 	{
-		if ($post->post_type == 'wbbm_bus' && $post->post_status == 'publish' && empty(get_post_meta($post_id, 'check_if_run_once'))) {
+		if (($post->post_type == 'wbbm_bus' || $post->post_type == 'wbbm_shuttle') && $post->post_status == 'publish' && empty(get_post_meta($post_id, 'check_if_run_once'))) {
 			// ADD THE FORM INPUT TO $new_post ARRAY
 			$new_post = array(
 				'post_title' => $post->post_title,
@@ -2073,7 +2144,7 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
 	add_action('save_post', 'wbbm_wc_link_product_on_save', 99, 1);
 	function wbbm_wc_link_product_on_save($post_id)
 	{
-		if (get_post_type($post_id) == 'wbbm_bus') {
+		if (get_post_type($post_id) == 'wbbm_bus' || get_post_type($post_id) == 'wbbm_shuttle') {
 			//   if ( ! isset( $_POST['mep_event_reg_btn_nonce'] ) ||
 			//   ! wp_verify_nonce( $_POST['mep_event_reg_btn_nonce'], 'mep_event_reg_btn_nonce' ) )
 			//     return;
