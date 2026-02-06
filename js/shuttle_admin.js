@@ -120,12 +120,22 @@ jQuery(document).ready(function($) {
         
         // Append to sibling container (robust for both structures)
         $(this).siblings('.wbbm_schedule_rows').append(template);
+        
+        // Hide add button (only one schedule time allowed)
+        $(this).hide();
     });
 
     // Remove Schedule Time
     $(document).on('click', '.wbbm_remove_schedule_row', function(e) {
         e.preventDefault();
+        var $wrapper = $(this).closest('.wbbm_schedule_rows');
+        var $button = $wrapper.siblings('.wbbm_add_schedule_time');
+        
         $(this).closest('.wbbm_schedule_row').remove();
+        
+        if ($wrapper.find('.wbbm_schedule_row').length === 0) {
+            $button.show();
+        }
     });
 
     // --- Tabs ---
@@ -252,7 +262,7 @@ jQuery(document).ready(function($) {
                 data: {
                     action: 'wbbm_update_pricing_matrix',
                     post_id: $('input[name="wbbm_shuttle_post_id"]').val(),
-                    routes: routes,
+                    routes: routes, // routes is available in scope
                     security: $('#wbbm_shuttle_settings_nonce').val()
                 },
                 success: function(response) {
@@ -265,7 +275,30 @@ jQuery(document).ready(function($) {
                     $container.css('opacity', '1');
                 }
             });
+
+            updateShuttleSchedule(routes);
         }, 500); // Debounce
+    }
+
+    function updateShuttleSchedule(routes) {
+        var $container = $('#wbbm_schedule_container');
+        // Don't change opacity to avoid flickering if not needed, or do it if you want feedback
+        
+        $.ajax({
+            url: ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'wbbm_update_schedule_layout',
+                post_id: $('input[name="wbbm_shuttle_post_id"]').val(),
+                routes: routes,
+                security: $('#wbbm_shuttle_settings_nonce').val()
+            },
+            success: function(response) {
+                if (response.success) {
+                    $container.html(response.data.html);
+                }
+            }
+        });
     }
 
     // Trigger update on stop location change
