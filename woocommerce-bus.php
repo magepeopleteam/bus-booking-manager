@@ -1629,12 +1629,12 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
 						$counter++;
 					}
 				} elseif (get_post_type($eid) == 'wbbm_shuttle') {
-					$shuttle_id = wbbm_get_order_meta($item_id, '_wbbm_shuttle_id');
+					$shuttle_id = wbbm_get_order_meta($item_id, 'wbbm_shuttle_id');
 					$route      = wbbm_get_order_meta($item_id, 'Shuttle Route');
 					$j_date     = wbbm_get_order_meta($item_id, 'Journey Date');
 					$j_time     = wbbm_get_order_meta($item_id, 'Journey Time');
 					$passengers = wbbm_get_order_meta($item_id, 'Passengers');
-					$total_price = wbbm_get_order_meta($item_id, '_wbbm_tp');
+					$total_price = wbbm_get_order_meta($item_id, 'wbbm_tp');
 
 					$check_before_add = wbbm_get_shuttle_order_check($shuttle_id, $order_id);
 					if ($check_before_add == 0) {

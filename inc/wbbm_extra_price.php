@@ -277,6 +277,33 @@ function wbbm_add_the_date_validation($passed) {
                 wc_add_notice(__('You have booked more than available seats', 'bus-booking-manager'), 'error');
                 $passed = false;
             }
+        } elseif (get_post_type($eid) == 'wbbm_shuttle') {
+            // Shuttle booking validation at checkout
+            $shuttle_id = $eid;
+            $date       = isset($_POST['date']) ? sanitize_text_field(wp_unslash($_POST['date'])) : '';
+            $route_id   = isset($_POST['route_id']) ? sanitize_text_field(wp_unslash($_POST['route_id'])) : '';
+            $pickup     = isset($_POST['pickup']) ? sanitize_text_field(wp_unslash($_POST['pickup'])) : '';
+            $dropoff    = isset($_POST['dropoff']) ? sanitize_text_field(wp_unslash($_POST['dropoff'])) : '';
+            $passengers = isset($_POST['passengers']) ? absint($_POST['passengers']) : 1;
+            
+            if (empty($date) || empty($pickup) || empty($dropoff) || $passengers <= 0) {
+                wc_add_notice(__('Invalid shuttle booking data. Please try again.', 'bus-booking-manager'), 'error');
+                return false;
+            }
+            
+            // Recheck seat availability at checkout (race condition protection)
+            $available_seats = wbbm_shuttle_available_seats($shuttle_id, $date, $route_id, $pickup, $dropoff);
+            
+            if ($available_seats < $passengers) {
+                wc_add_notice(
+                    sprintf(
+                        __('Sorry, only %d seat(s) available for this shuttle. Please reduce the number of passengers or select a different date.', 'bus-booking-manager'),
+                        $available_seats
+                    ),
+                    'error'
+                );
+                return false;
+            }
         }
     }
     return $passed;

@@ -361,6 +361,107 @@ function wbbm_get_available_seat_cpt($bus_id, $start, $end, $date)
     return (int) $sold_seats;
 }
 
+/**
+ * Get available seats for a shuttle on a specific date and route
+ * 
+ * @param int $shuttle_id The shuttle post ID
+ * @param string $date Journey date in Y-m-d format
+ * @param string $route_id Route identifier
+ * @param string $pickup Pickup location
+ * @param string $dropoff Dropoff location
+ * @return int Number of available seats
+ */
+function wbbm_shuttle_available_seats($shuttle_id, $date, $route_id = '', $pickup = '', $dropoff = '')
+{
+    $capacity = (int) get_post_meta($shuttle_id, 'wbbm_shuttle_capacity', true);
+    
+    if ($capacity <= 0) {
+        return 0;
+    }
+    
+    $booked = wbbm_get_shuttle_booked_seats($shuttle_id, $date, $route_id, $pickup, $dropoff);
+    return max(0, $capacity - $booked);
+}
+
+/**
+ * Get number of booked seats for a shuttle
+ * Queries wbbm_booking CPT for confirmed bookings AND checks current cart items
+ * 
+ * @param int $shuttle_id The shuttle post ID
+ * @param string $date Journey date
+ * @param string $route_id Route identifier
+ * @param string $pickup Pickup location
+ * @param string $dropoff Dropoff location
+ * @return int Number of booked seats
+ */
+function wbbm_get_shuttle_booked_seats($shuttle_id, $date, $route_id = '', $pickup = '', $dropoff = '')
+{
+    $seat_status = wbbm_seat_booked_on_status();
+    $status_arr = $seat_status ? explode(',', $seat_status) : array(1, 2);
+    
+    $meta_query = array(
+        'relation' => 'AND',
+        array(
+            'key'     => '_wbbm_shuttle_id',
+            'value'   => $shuttle_id,
+            'compare' => '=',
+        ),
+        array(
+            'key'     => '_wbbm_journey_date',
+            'value'   => $date,
+            'compare' => '=',
+        ),
+        array(
+            'key'     => '_wbbm_status',
+            'value'   => $status_arr,
+            'compare' => 'IN',
+        ),
+        array(
+            'key'     => '_wbbm_is_shuttle',
+            'value'   => 'yes',
+            'compare' => '=',
+        ),
+    );
+    
+    $args = array(
+        'post_type'      => 'wbbm_booking',
+        'posts_per_page' => -1,
+        'post_status'    => 'publish',
+        'fields'         => 'ids',
+        'meta_query'     => $meta_query,
+    );
+    
+    $query = new WP_Query($args);
+    $booked_seats = 0;
+    
+    if ($query->have_posts()) {
+        foreach ($query->posts as $booking_id) {
+            $seats = (int) get_post_meta($booking_id, '_wbbm_seat', true);
+            $booked_seats += max(1, $seats); // At least 1 seat per booking
+        }
+    }
+    
+    wp_reset_postdata();
+    
+    // Also check cart items to prevent overbooking
+    if (function_exists('WC') && WC()->cart) {
+        $cart_items = WC()->cart->get_cart();
+        foreach ($cart_items as $cart_item) {
+            // Check if this cart item is for the same shuttle and date
+            if (isset($cart_item['wbbm_shuttle_id']) && 
+                $cart_item['wbbm_shuttle_id'] == $shuttle_id &&
+                isset($cart_item['wbbm_journey_date']) &&
+                $cart_item['wbbm_journey_date'] == $date) {
+                
+                $cart_seats = isset($cart_item['wbbm_total_seat']) ? (int) $cart_item['wbbm_total_seat'] : 1;
+                $booked_seats += $cart_seats;
+            }
+        }
+    }
+    
+    return (int) $booked_seats;
+}
+
 
 
 

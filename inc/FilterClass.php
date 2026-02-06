@@ -400,15 +400,41 @@
                 $date       = isset( $post['date'] ) ? sanitize_text_field( $post['date'] ) : '';
                 $time       = isset( $post['time'] ) ? sanitize_text_field( $post['time'] ) : '';
                 $passengers = isset( $post['passengers'] ) ? absint( $post['passengers'] ) : 1;
-                $dropoff_point = isset( $post['dropoff_point'] ) ? sanitize_text_field( $post['dropoff_point'] ) : '';
 
-                // Calculate price for shuttle
+                // Validate required fields
+                if (empty($shuttle_id) || empty($date) || empty($pickup) || empty($dropoff) || $passengers <= 0) {
+                    wc_add_notice(__('Invalid shuttle booking data. Please try again.', 'bus-booking-manager'), 'error');
+                    return $cart_item_data;
+                }
+
+                // Check seat availability (server-side validation)
+                $available_seats = wbbm_shuttle_available_seats($shuttle_id, $date, $route_id, $pickup, $dropoff);
+                
+                if ($available_seats < $passengers) {
+                    wc_add_notice(
+                        sprintf(
+                            __('Sorry, only %d seat(s) available for this shuttle on the selected date.', 'bus-booking-manager'),
+                            $available_seats
+                        ),
+                        'error'
+                    );
+                    return $cart_item_data;
+                }
+
+                // Calculate price SERVER-SIDE (security: don't trust frontend)
                 $pricing = maybe_unserialize(get_post_meta($shuttle_id, 'wbbm_shuttle_pricing', true));
                 $price = 0;
+                
                 if ($pricing && isset($pricing['routes'][$route_id][$pickup][$dropoff])) {
                     $p = $pricing['routes'][$route_id][$pickup][$dropoff];
                     $price = is_array($p) ? (float)$p['oneway'] : (float)$p;
                 }
+                
+                if ($price <= 0) {
+                    wc_add_notice(__('Unable to calculate price for this route. Please contact support.', 'bus-booking-manager'), 'error');
+                    return $cart_item_data;
+                }
+                
                 $total = $price * $passengers;
 
                 $cart_item_data['wbbm_shuttle_id']   = $shuttle_id;
@@ -1059,6 +1085,19 @@
                                 <li>
                                     <strong><?php _e('Passengers', 'bus-booking-manager'); ?>:</strong>
                                     <?php echo esc_html($passengers); ?>
+                                </li>
+                                <?php
+                                // Display price information
+                                $total_price = isset($cart_item['wbbm_tp']) ? $cart_item['wbbm_tp'] : 0;
+                                $price_per_seat = $passengers > 0 ? ($total_price / $passengers) : 0;
+                                ?>
+                                <li>
+                                    <strong><?php _e('Price per seat', 'bus-booking-manager'); ?>:</strong>
+                                    <?php echo wc_price($price_per_seat); ?>
+                                </li>
+                                <li>
+                                    <strong><?php _e('Subtotal', 'bus-booking-manager'); ?>:</strong>
+                                    <?php echo wc_price($total_price); ?>
                                 </li>
                             </ul>
                         </div>
