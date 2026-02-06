@@ -16,6 +16,9 @@ jQuery(document).ready(function($) {
         // Append to container
         $('#wbbm_routes_container').append(template);
         
+        // Hide add button (only one route allowed)
+        $('.wbbm_add_route').hide();
+        
         // Initialize any plugins for the new route (e.g., sortable)
         initSortable();
 
@@ -28,6 +31,12 @@ jQuery(document).ready(function($) {
         e.preventDefault();
         if(confirm('Are you sure you want to delete this route and all its stops?')) {
             $(this).closest('.wbbm_route_row').remove();
+            
+            // Show add button if no routes left
+            if ($('.wbbm_route_row').length === 0) {
+                $('.wbbm_add_route').show();
+            }
+            
             updatePricingMatrix();
         }
     });
