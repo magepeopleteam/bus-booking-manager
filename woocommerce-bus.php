@@ -73,7 +73,7 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
 	require_once(dirname(__FILE__) . "/lib/classes/class-taxonomy-edit.php");
 	require_once(dirname(__FILE__) . "/inc/wbbm_tax.php");
 
-	
+
 	//require_once(dirname(__FILE__) . "/inc/wbbm_bus_ticket_meta.php");
 	require_once(dirname(__FILE__) . "/inc/wbbm_extra_price.php");
 	require_once(dirname(__FILE__) . "/inc/class-remove-bus-info-to-cart.php");
@@ -1464,7 +1464,7 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
 		if (!$order) {
 			return;
 		}
-		
+
 		if ($order) {
 			$order_status = $order->get_status();
 			// error_log("WBBM DEBUG: Order Status: $order_status");
@@ -1635,6 +1635,8 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
 					$j_time     = wbbm_get_order_meta($item_id, 'Journey Time');
 					$passengers = wbbm_get_order_meta($item_id, 'Passengers');
 					$total_price = wbbm_get_order_meta($item_id, 'wbbm_tp');
+					$pickup_point = wbbm_get_order_meta($item_id, '_wbbm_pickup_point');
+					$dropoff_point = wbbm_get_order_meta($item_id, '_wbbm_dropoff_point');
 
 					$check_before_add = wbbm_get_shuttle_order_check($shuttle_id, $order_id);
 					if ($check_before_add == 0) {
@@ -1667,6 +1669,8 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
 							update_post_meta($booking_post_id, '_wbbm_seat', $passengers);
 							update_post_meta($booking_post_id, '_wbbm_status', $status);
 							update_post_meta($booking_post_id, '_wbbm_is_shuttle', 'yes');
+							update_post_meta($booking_post_id, '_wbbm_pickup_point', $pickup_point);
+							update_post_meta($booking_post_id, '_wbbm_dropoff_point', $dropoff_point);
 						}
 					}
 				} else {

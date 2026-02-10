@@ -400,6 +400,8 @@
                 $date       = isset( $post['date'] ) ? sanitize_text_field( $post['date'] ) : '';
                 $time       = isset( $post['time'] ) ? sanitize_text_field( $post['time'] ) : '';
                 $passengers = isset( $post['passengers'] ) ? absint( $post['passengers'] ) : 1;
+                $pickup_point    = isset( $post['pickup_point'] ) ? sanitize_text_field( $post['pickup_point'] ) : '';
+                $dropoff_point    = isset( $post['dropoff_point'] ) ? sanitize_text_field( $post['dropoff_point'] ) : '';
 
                 // Validate required fields
                 if (empty($shuttle_id) || empty($date) || empty($pickup) || empty($dropoff) || $passengers <= 0) {
@@ -439,6 +441,8 @@
 
                 $cart_item_data['wbbm_shuttle_id']   = $shuttle_id;
                 $cart_item_data['wbbm_route_id']     = $route_id;
+                $cart_item_data['wbbm_pickup_point'] = $pickup_point;
+                $cart_item_data['wbbm_dropoff_point'] = $dropoff_point;
                 $cart_item_data['wbbm_start_stops']  = $pickup;
                 $cart_item_data['wbbm_end_stops']    = $dropoff;
                 $cart_item_data['wbbm_journey_date'] = $date;

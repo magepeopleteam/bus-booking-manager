@@ -1,5 +1,8 @@
 <?php
-if (!defined('ABSPATH')) exit;  // if direct access
+
+if (!defined('ABSPATH')) {
+    exit;  // if direct access
+}
 
 class ShuttleBookingAdminClass
 {
@@ -74,7 +77,9 @@ class ShuttleBookingAdminClass
             __('Journey Date', 'bus-booking-manager'),
             __('Journey Time', 'bus-booking-manager'),
             __('Boarding Point', 'bus-booking-manager'),
+            __('Pickup Point', 'bus-booking-manager'),
             __('Droping Point', 'bus-booking-manager'),
+            __('Dropoff Point', 'bus-booking-manager'),
             __('Passengers', 'bus-booking-manager'),
             __('Total Price', 'bus-booking-manager'),
             __('Status', 'bus-booking-manager'),
@@ -97,6 +102,8 @@ class ShuttleBookingAdminClass
                 $journey_time = get_post_meta($post_id, '_wbbm_user_start', true);
                 $boarding = get_post_meta($post_id, '_wbbm_boarding_point', true);
                 $droping = get_post_meta($post_id, '_wbbm_droping_point', true);
+                $pickup_point = get_post_meta($post_id, '_wbbm_pickup_point', true);
+                $dropoff_point = get_post_meta($post_id, '_wbbm_dropoff_point', true);
                 $seats = get_post_meta($post_id, '_wbbm_seat', true);
                 $total_price = get_post_meta($post_id, '_wbbm_total_price', true);
                 $status_code = get_post_meta($post_id, '_wbbm_status', true);
@@ -114,7 +121,9 @@ class ShuttleBookingAdminClass
                     $journey_date,
                     $journey_time,
                     $boarding,
+                    $pickup_point,
                     $droping,
+                    $dropoff_point,
                     $seats,
                     $total_price,
                     ucfirst($status_label),
@@ -224,7 +233,7 @@ class ShuttleBookingAdminClass
         ));
 
         $export_url = add_query_arg(array_merge($_GET, array('export' => 'csv')), admin_url('admin.php'));
-        ?>
+?>
         <div class="wrap">
             <h1 class="wp-heading-inline"><?php esc_html_e('Shuttle Booking List', 'bus-booking-manager'); ?></h1>
             <a href="<?php echo esc_url($export_url); ?>" class="page-title-action"><?php esc_html_e('Export to Excel (CSV)', 'bus-booking-manager'); ?></a>
@@ -308,13 +317,15 @@ class ShuttleBookingAdminClass
                             $journey_time = get_post_meta($post_id, '_wbbm_user_start', true);
                             $boarding = get_post_meta($post_id, '_wbbm_boarding_point', true);
                             $droping = get_post_meta($post_id, '_wbbm_droping_point', true);
+                            $pickup_point = get_post_meta($post_id, '_wbbm_pickup_point', true);
+                            $dropoff_point = get_post_meta($post_id, '_wbbm_dropoff_point', true);
                             $seats = get_post_meta($post_id, '_wbbm_seat', true);
                             $total_price = get_post_meta($post_id, '_wbbm_total_price', true);
                             $status_code = get_post_meta($post_id, '_wbbm_status', true);
 
                             $shuttle_title = $shuttle_id ? get_the_title($shuttle_id) : '—';
                             $status_label = $this->get_status_label($status_code);
-                            ?>
+                    ?>
                             <tr>
                                 <td>
                                     <strong><a href="<?php echo esc_url(get_edit_post_link($post_id)); ?>"><?php echo esc_html($post_id); ?></a></strong>
@@ -343,8 +354,21 @@ class ShuttleBookingAdminClass
                                     <div class="description"><?php echo esc_html($journey_time); ?></div>
                                 </td>
                                 <td>
-                                    <div style="display: flex; align-items: center;gap:6px">
-                                        <?php echo esc_html($boarding); ?> <span class="dashicons dashicons-arrow-right-alt" style="font-size: 14px; width: 14px; height: 14px;"></span> <?php echo esc_html($droping); ?>
+                                    <div style="display: flex;gap:6px">
+                                        <?php if (empty($boarding)) echo 'N/A'; ?>
+                                        <div>
+                                            <?php echo esc_html($boarding); ?>
+                                            <?php if (!empty($pickup_point)) : ?>
+                                                <br><small><?php echo esc_html($pickup_point); ?></small>
+                                            <?php endif; ?>
+                                        </div>
+                                        <span class="dashicons dashicons-arrow-right-alt" style="font-size: 14px; width: 14px; height: 14px;"></span>
+                                        <div>
+                                            <?php echo esc_html($droping); ?>
+                                            <?php if (!empty($dropoff_point)) : ?>
+                                                <br><small><?php echo esc_html($dropoff_point); ?></small>
+                                            <?php endif; ?>
+                                        </div>
                                     </div>
                                 </td>
                                 <td><?php echo esc_html($seats); ?></td>
@@ -369,7 +393,7 @@ class ShuttleBookingAdminClass
                                     </a>
                                 </td>
                             </tr>
-                            <?php
+                        <?php
                         }
                         wp_reset_postdata();
                     } else {
@@ -377,7 +401,7 @@ class ShuttleBookingAdminClass
                         <tr>
                             <td colspan="10"><?php esc_html_e('No shuttle bookings found.', 'bus-booking-manager'); ?></td>
                         </tr>
-                        <?php
+                    <?php
                     }
                     ?>
                 </tbody>
@@ -399,10 +423,22 @@ class ShuttleBookingAdminClass
             </table>
         </div>
         <style>
-            .column-id { width: 80px; }
-            .column-order { width: 80px; }
-            .column-shuttle { width: 150px; }
-            .column-passengers { width: 100px; }
+            .column-id {
+                width: 80px;
+            }
+
+            .column-order {
+                width: 80px;
+            }
+
+            .column-shuttle {
+                width: 150px;
+            }
+
+            .column-passengers {
+                width: 100px;
+            }
+
             .column-status mark {
                 padding: 2px 8px;
                 border-radius: 4px;
@@ -410,12 +446,28 @@ class ShuttleBookingAdminClass
                 color: #333;
                 display: inline-block;
             }
-            .column-status mark.status-completed { background: #c6e1c6; color: #5b841b; }
-            .column-status mark.status-processing { background: #c8d7e1; color: #2e4453; }
-            .column-status mark.status-on-hold { background: #f8dda7; color: #94660c; }
-            .column-status mark.status-pending { background: #e5e5e5; color: #2e4453; }
+
+            .column-status mark.status-completed {
+                background: #c6e1c6;
+                color: #5b841b;
+            }
+
+            .column-status mark.status-processing {
+                background: #c8d7e1;
+                color: #2e4453;
+            }
+
+            .column-status mark.status-on-hold {
+                background: #f8dda7;
+                color: #94660c;
+            }
+
+            .column-status mark.status-pending {
+                background: #e5e5e5;
+                color: #2e4453;
+            }
         </style>
-        <?php
+<?php
     }
 
     /**

@@ -681,6 +681,7 @@ class ShuttleSearchClass {
                         <input type="hidden" name="date" value="<?php echo esc_attr($date); ?>">
                         <input type="hidden" name="time" value="<?php echo esc_attr($time); ?>">
                         <input type="hidden" name="passengers" value="<?php echo esc_attr($passengers); ?>">
+                        <input type="hidden" name="pickup_point" value="<?php echo esc_attr($pickup_point_name); ?>">
                         <input type="hidden" name="dropoff_point" value="<?php echo esc_attr($dropoff_point); ?>">
                         <?php wp_nonce_field('wbbm_shuttle_add_to_cart', 'wbbm_shuttle_nonce'); ?>
 
