@@ -22,12 +22,14 @@ class BusBookingManagerClass
         require_once plugin_dir_path( dirname( __FILE__ ) ) . 'inc/NextDateClass.php';
         require_once plugin_dir_path( dirname( __FILE__ ) ) . 'inc/AdminMetaBoxClass.php';
         require_once plugin_dir_path( dirname( __FILE__ ) ) . 'inc/ActiveDataShowClass.php';
+        require_once plugin_dir_path( dirname( __FILE__ ) ) . 'inc/ShuttleBookingAdminClass.php';
     }
 
     private function define_all_hooks() {
         $NextDateClass = new NextDateClass;
         $AdminMetaBoxClass = new AdminMetaBoxClass;
         $ActiveDataShowClass = new ActiveDataShowClass;
+        $ShuttleBookingAdminClass = new ShuttleBookingAdminClass;
         $WbbmSearchClass = new SearchClass;
 
         add_action('mage_next_date', array($NextDateClass,'mage_next_date_suggestion_single'), 99, 3);

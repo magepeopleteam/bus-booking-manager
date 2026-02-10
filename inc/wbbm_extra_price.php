@@ -5,31 +5,12 @@ if (!defined('ABSPATH')) {
 
 // Add custom price to the cart
 add_action('woocommerce_before_calculate_totals', 'wbbm_add_custom_price');
-function wbbm_add_custom_price($cart_object) {
+function wbbm_add_custom_price($cart_object)
+{
     foreach ($cart_object->cart_contents as $key => $value) {
         $eid = isset($value['wbbm_id']) ? intval($value['wbbm_id']) : 0; // Sanitize ID
-        if (get_post_type($eid) == 'wbbm_bus') {
+        if (get_post_type($eid) == 'wbbm_bus' || get_post_type($eid) == 'wbbm_shuttle') {
             $t_price = isset($value['wbbm_tp']) ? floatval($value['wbbm_tp']) : 0; // Sanitize price
-            $p_info = isset($value['wbbm_passenger_info']) ? $value['wbbm_passenger_info'] : [];
-            $ext_services = isset($value['wbbm_extra_services']) ? $value['wbbm_extra_services'] : [];
-            $ext_bag_price = 0;
-            $ext_service_price = 0;
-
-            // Calculate extra bag price
-            foreach ($p_info as $p_inf) {
-                if (!empty($p_inf['extra_bag_quantity']) && $p_inf['extra_bag_quantity'] > 0) {
-                    $ext_bag_price += floatval($p_inf['wbtm_extra_bag_price']) * intval($p_inf['extra_bag_quantity']);
-                }
-            }
-
-            // Calculate extra service price
-            foreach ($ext_services as $ext_service) {
-                if (!empty($ext_service['wbbm_es_input_qty']) && $ext_service['wbbm_es_input_qty'] > 0) {
-                    $ext_service_price += intval($ext_service['wbbm_es_price']) * intval($ext_service['wbbm_es_input_qty']);
-                }
-            }
-
-            // Set total price
             $total = (float)$t_price;
             $value['data']->set_price($total);
             $value['data']->set_regular_price($total);
@@ -40,7 +21,8 @@ function wbbm_add_custom_price($cart_object) {
 }
 
 // Validate checkout
-function wbbm_after_checkout_validation() {
+function wbbm_after_checkout_validation()
+{
     $cart_items = WC()->cart->get_cart();
     if (sizeof($cart_items) > 0) {
         foreach ($cart_items as $cart_item) {
@@ -50,7 +32,7 @@ function wbbm_after_checkout_validation() {
                 $end_route = isset($cart_item['wbbm_end_stops']) ? sanitize_text_field($cart_item['wbbm_end_stops']) : '';
                 $date = isset($cart_item['wbbm_journey_date']) ? sanitize_text_field($cart_item['wbbm_journey_date']) : '';
                 $available_seat = wbbm_intermidiate_available_seat($start_route, $end_route, wbbm_convert_date_to_php($date), $post_id);
-                
+
                 $adult_qty = isset($cart_item['wbbm_total_adult_qt']) ? intval($cart_item['wbbm_total_adult_qt']) : 0;
                 $child_qty = isset($cart_item['wbbm_total_child_qt']) ? intval($cart_item['wbbm_total_child_qt']) : 0;
                 $infant_qty = isset($cart_item['wbbm_total_infant_qt']) ? intval($cart_item['wbbm_total_infant_qt']) : 0;
@@ -67,7 +49,8 @@ function wbbm_after_checkout_validation() {
 add_action('woocommerce_after_checkout_validation', 'wbbm_after_checkout_validation');
 
 // Add custom fields to order items
-function wbbm_add_custom_fields_text_to_order_items($item, $cart_item_key, $values, $order) {
+function wbbm_add_custom_fields_text_to_order_items($item, $cart_item_key, $values, $order)
+{
     $eid = isset($values['wbbm_id']) ? intval($values['wbbm_id']) : 0; // Sanitize ID
     if (get_post_type($eid) == 'wbbm_bus') {
         // Extract values and sanitize
@@ -92,12 +75,15 @@ function wbbm_add_custom_fields_text_to_order_items($item, $cart_item_key, $valu
         $total_fare = isset($values['wbbm_tp']) ? floatval($values['wbbm_tp']) : 0;
         $pickpoint = (!empty($values['pickpoint']) && $values['pickpoint'] !== 'n_a' && $values['pickpoint'] !== 'N_a') ? ucfirst(sanitize_text_field($values['pickpoint'])) : '';
 
+        $extra_per_bag_price = get_post_meta($eid, 'wbbm_extra_bag_price', true);
+        $extra_per_bag_price = $extra_per_bag_price ? $extra_per_bag_price : 0;
+
         // Add boarding and dropping points
         $boarding_point_label = __('Boarding Point', 'bus-booking-manager');
         $droping_point_label = __('Dropping Point', 'bus-booking-manager');
         $journey_date_label = __('Journey Date', 'bus-booking-manager');
         $journey_time_label = __('Journey Time', 'bus-booking-manager');
-        
+
         $item->add_meta_data($boarding_point_label, $wbbm_start_stops);
         $item->add_meta_data($droping_point_label, $wbbm_end_stops);
         $item->add_meta_data($journey_date_label, wbbm_get_datetime($wbbm_journey_date, 'date'));
@@ -106,7 +92,7 @@ function wbbm_add_custom_fields_text_to_order_items($item, $cart_item_key, $valu
         $item->add_meta_data('_droping_point', $wbbm_end_stops);
         $item->add_meta_data('_journey_date', $wbbm_journey_date);
         $item->add_meta_data('_journey_time', $wbbm_journey_time);
-        
+
         // Build passenger info content
         $p_content = '';
         if ($custom_reg_user == 'no') {
@@ -193,7 +179,7 @@ function wbbm_add_custom_fields_text_to_order_items($item, $cart_item_key, $valu
             }
         }
         $passenger_info_label = 'Passenger info';
-        
+
         // Add metadata
         $item->add_meta_data($passenger_info_label, $p_content);
         $item->add_meta_data('Pickpoint', $pickpoint);
@@ -211,50 +197,76 @@ function wbbm_add_custom_fields_text_to_order_items($item, $cart_item_key, $valu
         $item->add_meta_data('_wbbm_passenger_info', $passenger_info);
         $item->add_meta_data('_wbbm_passenger_info_additional', $passenger_info_additional);
         $item->add_meta_data('_wbbm_extra_services', $wbbm_extra_services);
+    } elseif (get_post_type($eid) == 'wbbm_shuttle') {
+        $shuttle_id = isset($values['wbbm_shuttle_id']) ? intval($values['wbbm_shuttle_id']) : 0;
+        $route_id   = isset($values['wbbm_route_id']) ? sanitize_text_field($values['wbbm_route_id']) : '';
+        $pickup     = isset($values['wbbm_start_stops']) ? sanitize_text_field($values['wbbm_start_stops']) : '';
+        $dropoff    = isset($values['wbbm_end_stops']) ? sanitize_text_field($values['wbbm_end_stops']) : '';
+        $date       = isset($values['wbbm_journey_date']) ? sanitize_text_field($values['wbbm_journey_date']) : '';
+        $time       = isset($values['wbbm_journey_time']) ? sanitize_text_field($values['wbbm_journey_time']) : '';
+        $passengers = isset($values['wbbm_total_seat']) ? intval($values['wbbm_total_seat']) : 1;
+        $total_price = isset($values['wbbm_tp']) ? floatval($values['wbbm_tp']) : 0;
+
+        $item->add_meta_data(__('Shuttle Route', 'bus-booking-manager'), ($pickup . ' to ' . $dropoff), true);
+        $item->add_meta_data(__('Journey Date', 'bus-booking-manager'), $date, true);
+        $item->add_meta_data(__('Journey Time', 'bus-booking-manager'), $time, true);
+        $item->add_meta_data(__('Passengers', 'bus-booking-manager'), $passengers, true);
+        $item->add_meta_data('wbbm_id', $eid, true);
+        $item->add_meta_data('wbbm_shuttle_id', $shuttle_id, true);
+        $item->add_meta_data('wbbm_tp', $total_price, true);
+
+        $pickup_point = isset($values['wbbm_pickup_point']) ? sanitize_text_field($values['wbbm_pickup_point']) : '';
+        $dropoff_point = isset($values['wbbm_dropoff_point']) ? sanitize_text_field($values['wbbm_dropoff_point']) : '';
+        $item->add_meta_data('_wbbm_pickup_point', $pickup_point, true);
+        $item->add_meta_data('_wbbm_dropoff_point', $dropoff_point, true);
     }
     $item->add_meta_data('_wbbm_bus_id', $eid);
 }
 add_action('woocommerce_checkout_create_order_line_item', 'wbbm_add_custom_fields_text_to_order_items', 10, 4);
 
 // Validate added to cart
-function wbbm_add_the_date_validation($passed) {
+function wbbm_add_the_date_validation($passed)
+{
     // Verify nonce: accept either the existing 'add_to_cart_custom_nonce' or the
     // new 'mage_book_now_area_nonce' for the book-now template.
     $nonce_custom = isset($_POST['add_to_cart_custom_nonce']) ? sanitize_text_field(wp_unslash($_POST['add_to_cart_custom_nonce'])) : '';
     $nonce_mage = isset($_POST['mage_book_now_area_nonce']) ? sanitize_text_field(wp_unslash($_POST['mage_book_now_area_nonce'])) : '';
 
+    $nonce_shuttle = isset($_POST['wbbm_shuttle_nonce']) ? sanitize_text_field(wp_unslash($_POST['wbbm_shuttle_nonce'])) : '';
+
     $custom_ok = $nonce_custom && wp_verify_nonce($nonce_custom, 'add_to_cart_custom_action');
     $mage_ok = $nonce_mage && wp_verify_nonce($nonce_mage, 'mage_book_now_area');
+    $shuttle_ok = $nonce_shuttle && wp_verify_nonce($nonce_shuttle, 'wbbm_shuttle_add_to_cart');
 
-    if ( ! $custom_ok && ! $mage_ok ) {
+    if (! $custom_ok && ! $mage_ok && ! $shuttle_ok) {
         // If no valid nonce, we don't return false because we don't want to block
-        // other products. But for wbbm_bus, the next check will handle it.
-        if ( isset($_POST['bus_id']) ) {
+        // other products. But for wbbm_bus or wbbm_shuttle, the next check will handle it.
+        if (isset($_POST['bus_id']) || isset($_POST['shuttle_id'])) {
             wc_add_notice(__('Security check failed. Please try again.', 'bus-booking-manager'), 'error');
             return false;
         }
         return $passed;
     }
-    
-    if (isset($_POST['bus_id'])) {
-        $eid = intval($_POST['bus_id']); // Sanitize ID
+
+    if (isset($_POST['bus_id']) || isset($_POST['shuttle_id'])) {
+        $eid = isset($_POST['bus_id']) ? intval($_POST['bus_id']) : intval($_POST['shuttle_id']);
         if (get_post_type($eid) == 'wbbm_bus') {
             $return = false;
             $boarding_var = $return ? 'bus_end_route' : 'bus_start_route';
             $dropping_var = $return ? 'bus_start_route' : 'bus_end_route';
             $date_var = $return ? 'r_date' : 'j_date';
-            
+
             $boarding_var_get = isset($_POST['start_stops']) ? sanitize_text_field(wp_unslash($_POST['start_stops'])) : (isset($_GET[$boarding_var]) ? sanitize_text_field(wp_unslash($_GET[$boarding_var])) : '');
             $dropping_var_get = isset($_POST['end_stops']) ? sanitize_text_field(wp_unslash($_POST['end_stops'])) : (isset($_GET[$dropping_var]) ? sanitize_text_field(wp_unslash($_GET[$dropping_var])) : '');
             $journey_date = isset($_POST['journey_date']) ? sanitize_text_field(wp_unslash($_POST['journey_date'])) : (isset($_GET[$date_var]) ? sanitize_text_field(wp_unslash($_GET[$date_var])) : '');
 
             if (empty($journey_date)) {
-                 wc_add_notice(__('Journey date is missing.', 'bus-booking-manager'), 'error');
-                 return false;
+                wc_add_notice(__('Journey date is missing.', 'bus-booking-manager'), 'error');
+                return false;
             }
 
             $available_seat = wbbm_intermidiate_available_seat($boarding_var_get, $dropping_var_get, wbbm_convert_date_to_php($journey_date), $eid);
-            
+
             // Subtract quantity already in cart for this bus and date
             $cart_qty = wbbm_get_cart_item($eid, $journey_date);
             $available_seat -= $cart_qty;
@@ -266,13 +278,40 @@ function wbbm_add_the_date_validation($passed) {
 
             // Prevent adding to cart if already exists for the same date
             if ($cart_qty > 0) {
-                 wc_add_notice( sprintf( __( 'You cannot add another "%s" to your cart for the same date.', 'bus-booking-manager' ), get_the_title( $eid ) ), 'error' );
-                 return false;
+                wc_add_notice(sprintf(__('You cannot add another "%s" to your cart for the same date.', 'bus-booking-manager'), get_the_title($eid)), 'error');
+                return false;
             }
 
             if ($available_seat < $total_booking_seat) {
                 wc_add_notice(__('You have booked more than available seats', 'bus-booking-manager'), 'error');
                 $passed = false;
+            }
+        } elseif (get_post_type($eid) == 'wbbm_shuttle') {
+            // Shuttle booking validation at checkout
+            $shuttle_id = $eid;
+            $date       = isset($_POST['date']) ? sanitize_text_field(wp_unslash($_POST['date'])) : '';
+            $route_id   = isset($_POST['route_id']) ? sanitize_text_field(wp_unslash($_POST['route_id'])) : '';
+            $pickup     = isset($_POST['pickup']) ? sanitize_text_field(wp_unslash($_POST['pickup'])) : '';
+            $dropoff    = isset($_POST['dropoff']) ? sanitize_text_field(wp_unslash($_POST['dropoff'])) : '';
+            $passengers = isset($_POST['passengers']) ? absint($_POST['passengers']) : 1;
+
+            if (empty($date) || empty($pickup) || empty($dropoff) || $passengers <= 0) {
+                wc_add_notice(__('Invalid shuttle booking data. Please try again.', 'bus-booking-manager'), 'error');
+                return false;
+            }
+
+            // Recheck seat availability at checkout (race condition protection)
+            $available_seats = wbbm_shuttle_available_seats($shuttle_id, $date, $route_id, $pickup, $dropoff);
+
+            if ($available_seats < $passengers) {
+                wc_add_notice(
+                    sprintf(
+                        __('Sorry, only %d seat(s) available for this shuttle. Please reduce the number of passengers or select a different date.', 'bus-booking-manager'),
+                        $available_seats
+                    ),
+                    'error'
+                );
+                return false;
             }
         }
     }

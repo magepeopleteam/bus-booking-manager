@@ -66,38 +66,38 @@ function wbbm_shuttle_cpt()
     // Register the shuttle custom post type
     register_post_type('wbbm_shuttle', $args);
 
-    // Register Shuttle Booking CPT
-    $booking_labels = array(
-        'name'                  => _x('Shuttle Bookings', 'Post type general name', 'bus-booking-manager'),
-        'singular_name'         => _x('Shuttle Booking', 'Post type singular name', 'bus-booking-manager'),
-        'menu_name'             => _x('Shuttle Bookings', 'Admin Menu text', 'bus-booking-manager'),
-        'name_admin_bar'        => _x('Shuttle Booking', 'Add New on Toolbar', 'bus-booking-manager'),
-        'add_new'               => _x('Add New', 'shuttle booking', 'bus-booking-manager'),
-        'add_new_item'          => __('Add New Shuttle Booking', 'bus-booking-manager'),
-        'new_item'              => __('New Shuttle Booking', 'bus-booking-manager'),
-        'edit_item'             => __('Edit Shuttle Booking', 'bus-booking-manager'),
-        'view_item'             => __('View Shuttle Booking', 'bus-booking-manager'),
-        'all_items'             => __('All Shuttle Bookings', 'bus-booking-manager'),
-        'search_items'          => __('Search Shuttle Bookings', 'bus-booking-manager'),
-        'not_found'             => __('No shuttle bookings found.', 'bus-booking-manager'),
-        'not_found_in_trash'    => __('No shuttle bookings found in Trash.', 'bus-booking-manager'),
-    );
+    // // Register Shuttle Booking CPT
+    // $booking_labels = array(
+    //     'name'                  => _x('Shuttle Bookings', 'Post type general name', 'bus-booking-manager'),
+    //     'singular_name'         => _x('Shuttle Booking', 'Post type singular name', 'bus-booking-manager'),
+    //     'menu_name'             => _x('Shuttle Bookings', 'Admin Menu text', 'bus-booking-manager'),
+    //     'name_admin_bar'        => _x('Shuttle Booking', 'Add New on Toolbar', 'bus-booking-manager'),
+    //     'add_new'               => _x('Add New', 'shuttle booking', 'bus-booking-manager'),
+    //     'add_new_item'          => __('Add New Shuttle Booking', 'bus-booking-manager'),
+    //     'new_item'              => __('New Shuttle Booking', 'bus-booking-manager'),
+    //     'edit_item'             => __('Edit Shuttle Booking', 'bus-booking-manager'),
+    //     'view_item'             => __('View Shuttle Booking', 'bus-booking-manager'),
+    //     'all_items'             => __('All Shuttle Bookings', 'bus-booking-manager'),
+    //     'search_items'          => __('Search Shuttle Bookings', 'bus-booking-manager'),
+    //     'not_found'             => __('No shuttle bookings found.', 'bus-booking-manager'),
+    //     'not_found_in_trash'    => __('No shuttle bookings found in Trash.', 'bus-booking-manager'),
+    // );
 
-    $booking_args = array(
-        'public'             => false,
-        'show_ui'            => true,
-        'show_in_menu'       => 'edit.php?post_type=wbbm_shuttle',
-        'query_var'          => true,
-        'rewrite'            => array('slug' => 'wbbm-shuttle-booking'),
-        'capability_type'    => 'post',
-        'has_archive'        => false,
-        'hierarchical'       => false,
-        'menu_position'      => null,
-        'supports'           => array('title', 'custom-fields'),
-        'labels'             => $booking_labels,
-    );
+    // $booking_args = array(
+    //     'public'             => false,
+    //     'show_ui'            => true,
+    //     'show_in_menu'       => 'edit.php?post_type=wbbm_shuttle',
+    //     'query_var'          => true,
+    //     'rewrite'            => array('slug' => 'wbbm-shuttle-booking'),
+    //     'capability_type'    => 'post',
+    //     'has_archive'        => false,
+    //     'hierarchical'       => false,
+    //     'menu_position'      => null,
+    //     'supports'           => array('title', 'custom-fields'),
+    //     'labels'             => $booking_labels,
+    // );
 
-    register_post_type('wbbm_shuttle_booking', $booking_args);
+    // register_post_type('wbbm_shuttle_booking', $booking_args);
 }
 add_action('init', 'wbbm_shuttle_cpt');
 

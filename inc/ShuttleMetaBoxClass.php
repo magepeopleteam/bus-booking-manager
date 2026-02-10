@@ -25,6 +25,9 @@ class ShuttleMetaBoxClass
 
         // AJAX for real-time pricing matrix
         add_action('wp_ajax_wbbm_update_pricing_matrix', array($this, 'wbbm_ajax_get_updated_pricing_matrix'));
+        
+        // AJAX for real-time schedule layout
+        add_action('wp_ajax_wbbm_update_schedule_layout', array($this, 'wbbm_ajax_get_updated_schedule_layout'));
     }
 
     /**
@@ -566,13 +569,63 @@ class ShuttleMetaBoxClass
     }
 
     /**
+     * AJAX handler for updating schedule layout
+     */
+    public function wbbm_ajax_get_updated_schedule_layout()
+    {
+        check_ajax_referer('wbbm_shuttle_settings_nonce', 'security');
+
+        if (!current_user_can('edit_posts')) {
+            wp_send_json_error('Unauthorized');
+        }
+
+        $post_id = isset($_POST['post_id']) ? absint($_POST['post_id']) : 0;
+        $routes = isset($_POST['routes']) ? $_POST['routes'] : array();
+        
+        // Load existing schedule to preserve values
+        $existing_schedule = maybe_unserialize(get_post_meta($post_id, 'wbbm_shuttle_schedule', true)) ?: array();
+
+        // Sanitize incoming routes
+        $clean_routes = array();
+        if (is_array($routes)) {
+            foreach ($routes as $route) {
+                if (!empty($route['name'])) {
+                    $clean_route = array(
+                        'name' => sanitize_text_field($route['name']),
+                        'type' => isset($route['type']) ? sanitize_text_field($route['type']) : 'one-way',
+                        'id'   => isset($route['id']) ? sanitize_text_field($route['id']) : uniqid('route_'),
+                        'stops' => array()
+                    );
+
+                    if (isset($route['stops']) && is_array($route['stops'])) {
+                        foreach ($route['stops'] as $stop) {
+                            if (!empty($stop['location'])) {
+                                $clean_route['stops'][] = array(
+                                    'location' => sanitize_text_field($stop['location'])
+                                );
+                            }
+                        }
+                    }
+                    $clean_routes[] = $clean_route;
+                }
+            }
+        }
+
+        ob_start();
+        $this->render_schedule_layout($clean_routes, $existing_schedule);
+        $html = ob_get_clean();
+
+        wp_send_json_success(array('html' => $html));
+    }
+
+    /**
      * Schedule Tab
      */
     public function wbbm_shuttle_schedule($post_id)
     {
         $routes = maybe_unserialize(get_post_meta($post_id, 'wbbm_shuttle_routes', true)) ?: array();
         $schedule = maybe_unserialize(get_post_meta($post_id, 'wbbm_shuttle_schedule', true)) ?: array();
-
+        
     ?>
         <div id="wbbm_shuttle_schedule" class="mp_tab_item" data-tab-item="#wbbm_shuttle_schedule">
             <h3 class="wbbm_mp_tab_item_heading">
@@ -581,70 +634,80 @@ class ShuttleMetaBoxClass
             </h3>
 
             <div class="mp_settings_panel">
-                <div class="mp_settings_panel_body">
-                    <?php if (empty($routes)): ?>
-                        <div class="notice notice-warning inline" style="margin: 0;">
-                            <p><?php _e('Please define and save Routes first to configure schedules.', 'bus-booking-manager'); ?></p>
-                        </div>
-                    <?php else: ?>
-                        <p class="description"><?php echo esc_html(__('Define departure times for each route. You can set different times for different days of the week.', 'bus-booking-manager')); ?></p>
-
-                        <?php foreach ($routes as $route):
-                            $route_id = isset($route['id']) ? $route['id'] : '';
-                            if (!$route_id) continue;
-                            $route_schedule = isset($schedule[$route_id]) ? $schedule[$route_id] : array();
-                        ?>
-                            <div class="wbbm_route_schedule_block" data-route-id="<?php echo esc_attr($route_id); ?>" style="margin-bottom: 20px; border: 1px solid #ddd; padding: 15px; background: #fff;">
-                                <h4><?php printf(esc_html__('Schedule for: %s', 'bus-booking-manager'), esc_html($route['name'])); ?></h4>
-
-                                <div class="wbbm_schedule_section_forward">
-                                    <h5 style="margin: 10px 0; border-bottom: 1px solid #eee; padding-bottom: 5px;"><?php _e('Forward Journey', 'bus-booking-manager'); ?></h5>
-                                    <div class="wbbm_schedule_rows" data-direction="forward">
-                                        <?php
-                                        $forward_schedule = (isset($route_schedule['forward']) && is_array($route_schedule['forward'])) ? $route_schedule['forward'] : (isset($route_schedule[0]) ? $route_schedule : array()); // Fallback for legacy
-                                        if (!empty($forward_schedule) && !isset($forward_schedule['time'])) { // Check if it's list of times
-                                            foreach ($forward_schedule as $idx => $time_data) {
-                                                $this->render_schedule_row($route_id, $idx, $time_data, 'forward');
-                                            }
-                                        }
-                                        ?>
-                                    </div>
-                                    <button type="button" class="button button-primary wbbm_add_schedule_time" data-direction="forward">
-                                        <i class="fas fa-plus"></i> <?php echo esc_html(__('Add Departure Time (Forward)', 'bus-booking-manager')); ?>
-                                    </button>
-                                </div>
-
-                                <?php if (isset($route['type']) && $route['type'] === 'round-trip'): ?>
-                                    <div class="wbbm_schedule_section_return" style="margin-top: 20px; border-top: 1px dashed #ccc; padding-top: 10px;">
-                                        <h5 style="margin: 10px 0; border-bottom: 1px solid #eee; padding-bottom: 5px;"><?php _e('Return Journey', 'bus-booking-manager'); ?></h5>
-                                        <div class="wbbm_schedule_rows" data-direction="return">
-                                            <?php
-                                            $return_schedule = (isset($route_schedule['return']) && is_array($route_schedule['return'])) ? $route_schedule['return'] : array();
-                                            if (!empty($return_schedule)) {
-                                                foreach ($return_schedule as $idx => $time_data) {
-                                                    $this->render_schedule_row($route_id, $idx, $time_data, 'return');
-                                                }
-                                            }
-                                            ?>
-                                        </div>
-                                        <button type="button" class="button button-primary wbbm_add_schedule_time" data-direction="return">
-                                            <i class="fas fa-plus"></i> <?php echo esc_html(__('Add Departure Time (Return)', 'bus-booking-manager')); ?>
-                                        </button>
-                                    </div>
-                                <?php endif; ?>
-                            </div>
-                        <?php endforeach; ?>
-
-                        <!-- Hidden Template -->
-                        <script type="text/html" id="wbbm_schedule_row_template">
-                            <?php $this->render_schedule_row('{{route_id}}', '{{time_index}}', array(), '{{direction}}'); ?>
-                        </script>
-                    <?php endif; ?>
+                <div class="mp_settings_panel_body" id="wbbm_schedule_container">
+                    <?php $this->render_schedule_layout($routes, $schedule); ?>
                 </div>
             </div>
         </div>
     <?php
     }
+
+    public function render_schedule_layout($routes, $schedule)
+    {
+        if (empty($routes)): ?>
+            <div class="notice notice-warning inline" style="margin: 0;">
+                <p><?php _e('Please define and save Routes first to configure schedules.', 'bus-booking-manager'); ?></p>
+            </div>
+        <?php else: ?>
+            <p class="description"><?php echo esc_html(__('Define departure times for each route.', 'bus-booking-manager')); ?></p>
+
+            <?php foreach ($routes as $route):
+                $route_id = isset($route['id']) ? $route['id'] : '';
+                if (!$route_id) continue;
+
+                $route_stops = isset($route['stops']) ? $route['stops'] : array();
+                if (count($route_stops) < 2) continue;
+
+                $route_schedule = isset($schedule[$route_id]) ? $schedule[$route_id] : array();
+            ?>
+                <div class="wbbm_route_schedule_block" data-route-id="<?php echo esc_attr($route_id); ?>" style="margin-bottom: 20px; border: 1px solid #ddd; padding: 15px; background: #fff;">
+                    <h4><?php printf(esc_html__('Schedule for: %s', 'bus-booking-manager'), esc_html($route['name'])); ?></h4>
+
+                    <div class="wbbm_schedule_section_forward">
+                        <h5 style="margin: 10px 0; border-bottom: 1px solid #eee; padding-bottom: 5px;"><?php _e('Forward Journey', 'bus-booking-manager'); ?></h5>
+                        <div class="wbbm_schedule_rows" data-direction="forward">
+                            <?php
+                            $forward_schedule = (isset($route_schedule['forward']) && is_array($route_schedule['forward'])) ? $route_schedule['forward'] : (isset($route_schedule[0]) ? $route_schedule : array()); // Fallback for legacy
+                            if (!empty($forward_schedule) && !isset($forward_schedule['time'])) { // Check if it's list of times
+                                foreach ($forward_schedule as $idx => $time_data) {
+                                    $this->render_schedule_row($route_id, $idx, $time_data, 'forward');
+                                }
+                            }
+                            ?>
+                        </div>
+                        <button type="button" class="button button-primary wbbm_add_schedule_time" data-direction="forward" style="<?php echo !empty($forward_schedule) ? 'display:none;' : ''; ?>">
+                            <i class="fas fa-plus"></i> <?php echo esc_html(__('Add Departure Time (Forward)', 'bus-booking-manager')); ?>
+                        </button>
+                    </div>
+
+                    <?php if (isset($route['type']) && $route['type'] === 'round-trip'): ?>
+                        <div class="wbbm_schedule_section_return" style="margin-top: 20px; border-top: 1px dashed #ccc; padding-top: 10px;">
+                            <h5 style="margin: 10px 0; border-bottom: 1px solid #eee; padding-bottom: 5px;"><?php _e('Return Journey', 'bus-booking-manager'); ?></h5>
+                            <div class="wbbm_schedule_rows" data-direction="return">
+                                <?php
+                                $return_schedule = (isset($route_schedule['return']) && is_array($route_schedule['return'])) ? $route_schedule['return'] : array();
+                                if (!empty($return_schedule)) {
+                                    foreach ($return_schedule as $idx => $time_data) {
+                                        $this->render_schedule_row($route_id, $idx, $time_data, 'return');
+                                    }
+                                }
+                                ?>
+                            </div>
+                            <button type="button" class="button button-primary wbbm_add_schedule_time" data-direction="return" style="<?php echo !empty($return_schedule) ? 'display:none;' : ''; ?>">
+                                <i class="fas fa-plus"></i> <?php echo esc_html(__('Add Departure Time (Return)', 'bus-booking-manager')); ?>
+                            </button>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            <?php endforeach; ?>
+
+            <!-- Hidden Template -->
+            <script type="text/html" id="wbbm_schedule_row_template">
+                <?php $this->render_schedule_row('{{route_id}}', '{{time_index}}', array(), '{{direction}}'); ?>
+            </script>
+        <?php endif;
+    }
+
 
     private function render_schedule_row($route_id, $index, $data, $direction = 'forward')
     {
