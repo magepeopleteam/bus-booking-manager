@@ -1,11 +1,11 @@
 :root {
     /* Theme Colors - Change these to change the primary theme */
-    --shuttle-primary: #7c3aed;
-    --shuttle-primary-hover: #6d28d9;
-    --shuttle-primary-light: #f5f3ff;
-    --shuttle-primary-border: #ddd6fe;
-    --shuttle-primary-glow: rgba(124, 58, 237, 0.15);
-    --shuttle-primary-faded: #a78bfa;
+    --shuttle-primary: #f97316;
+    --shuttle-primary-hover: #ea580c;
+    --shuttle-primary-light: #fff7ed;
+    --shuttle-primary-border: #fed7aa;
+    --shuttle-primary-glow: rgba(249, 115, 22, 0.15);
+    --shuttle-primary-faded: #fb923c;
 }
 
 /* Shuttle Edit Page Styles */
