@@ -505,8 +505,8 @@ class ShuttleEditPageClass
                                     ?>
                                 </div>
 
-                                <button type="button" class="btn btn-secondary wbbm_add_route_stop" style="margin-top: 20px;">
-                                    <span class="dashicons dashicons-plus-alt2" style="margin-top: 4px;"></span> <?php _e('Add New Stop', 'bus-booking-manager'); ?>
+                                <button type="button" class="btn btn-secondary wbbm_add_route_stop" style="margin-top: 20px;display:flex;align-items: center;gap: 5px">
+                                    <span class="dashicons dashicons-plus-alt2"></span> <?php _e('Add New Stop', 'bus-booking-manager'); ?>
                                 </button>
                             </div>
                         </div>
