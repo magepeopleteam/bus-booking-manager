@@ -56,9 +56,9 @@ function wbbm_bus_cpt()
 
     $booking_args = array(
         'public'             => false,
-        'show_ui'            => true,
-        'show_in_menu'       => true,
-        'query_var'          => true,
+        'show_ui'            => false,
+        'show_in_menu'       => false,
+        'query_var'          => false,
         'rewrite'            => array('slug' => 'wbbm-booking'),
         'capability_type'    => 'post',
         'has_archive'        => false,

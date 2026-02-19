@@ -73,6 +73,48 @@
     font-size: 20px;
 }
 
+.shuttle-status-badge {
+    padding: 4px 12px;
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+    display: inline-flex;
+    align-items: center;
+}
+
+.status-publish {
+    background: #ecfdf5;
+    color: #059669;
+}
+
+.status-draft {
+    background: #f1f5f9;
+    color: #475569;
+}
+
+.status-pending {
+    background: #fffbeb;
+    color: #d97706;
+}
+
+.status-future {
+    background: #fdf2f8;
+    color: #db2777;
+}
+
+.status-private {
+    background: #f8fafc;
+    color: #1e293b;
+    border: 1px solid #e2e8f0;
+}
+
+.status-new {
+    background: var(--shuttle-primary-light);
+    color: var(--shuttle-primary);
+}
+
 .shuttle-steps-nav {
     display: flex;
     justify-content: space-between;
@@ -188,7 +230,7 @@
     width: 100%;
     padding: 12px 16px;
     border: 1px solid #d1d5db;
-    border-radius: 12px!important;
+    border-radius: 12px !important;
     font-size: 14px;
     background-color: #fff;
     color: #1e293b;
@@ -221,6 +263,22 @@ select.form-control {
     box-shadow: 0 0 0 3px var(--shuttle-primary-glow);
     outline: none;
     background-color: #fff;
+}
+
+.form-control.invalid {
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15) !important;
+}
+
+.error-message {
+    color: #ef4444;
+    font-size: 12px;
+    margin-top: 4px;
+    display: none;
+}
+
+.form-group.has-error .error-message {
+    display: block;
 }
 
 /* Thumbnail Section */
@@ -305,6 +363,21 @@ select.form-control {
 /* Skeleton Preview */
 .skeleton-preview img {
     opacity: 0.3;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.spin {
+    display: inline-block;
+    animation: spin 1s linear infinite;
 }
 
 .shuttle-thumbnail-preview img {
@@ -529,6 +602,235 @@ select.form-control {
     background: var(--shuttle-primary-light);
 }
 
+/* Pricing Step Styles */
+.shuttle-pricing-container {
+    padding: 10px 0;
+    position: relative;
+    min-height: 200px;
+}
+
+.shuttle-saving-progress {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #64748b;
+    margin-right: auto;
+    background: #f1f5f9;
+    padding: 6px 12px;
+    border-radius: 20px;
+    opacity: 0;
+    transform: translateX(-10px);
+    transition: all 0.3s ease;
+    pointer-events: none;
+}
+
+.shuttle-saving-progress.active {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.shuttle-saving-progress .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    color: var(--shuttle-primary);
+}
+
+.shuttle-pricing-loader {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.7);
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    backdrop-filter: blur(2px);
+}
+
+.shuttle-pricing-container.loading .shuttle-pricing-loader {
+    display: flex;
+}
+
+.shuttle-pricing-block {
+    margin-bottom: 40px;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.shuttle-pricing-header {
+    background: #f8fafc;
+    padding: 15px 24px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.shuttle-pricing-header h4 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.shuttle-table-wrapper {
+    overflow-x: auto;
+}
+
+.shuttle-pricing-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.shuttle-pricing-table th {
+    background: #f1f5f9;
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 600;
+    color: #475569;
+    border-bottom: 2px solid #e2e8f0;
+    white-space: nowrap;
+}
+
+.shuttle-pricing-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #f1f5f9;
+    vertical-align: middle;
+}
+
+.stop-origin-cell {
+    background: #f8fafc;
+    font-weight: 600;
+    color: #334155;
+    width: 200px;
+}
+
+.cell-disabled {
+    background: #f1f5f9;
+    opacity: 0.5;
+}
+
+.price-input-group {
+    display: flex;
+    align-items: center;
+    background: #fff;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: all 0.2s;
+    min-width: 120px;
+}
+
+.input-group {
+    display: flex;
+    align-items: center;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background: #fff;
+    overflow: hidden;
+}
+
+.input-group .form-control {
+    flex: 1;
+    border: none !important;
+    box-shadow: none !important;
+    height: 38px !important;
+    padding: 0 12px !important;
+}
+
+.input-group-text {
+    background: #f8fafc;
+    border-left: 1px solid #e2e8f0;
+    padding: 0 12px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    color: #64748b;
+}
+
+.input-group-text .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+}
+
+.price-input-group:focus-within {
+    border-color: var(--shuttle-primary);
+    box-shadow: 0 0 0 3px var(--shuttle-primary-glow);
+}
+
+.price-prefix {
+    padding: 0 10px;
+    background: #f8fafc;
+    border-right: 1px solid #e2e8f0;
+    color: #64748b;
+    font-weight: 600;
+    font-size: 14px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+}
+
+.price-control.form-control {
+    border: none !important;
+    box-shadow: none !important;
+    height: 38px !important;
+    padding: 0 12px !important;
+    font-weight: 500;
+}
+
+.mt-2 {
+    margin-top: 8px;
+}
+
+/* Empty State Styles */
+.shuttle-empty-state {
+    text-align: center;
+    padding: 60px 40px;
+    background: #fff;
+    border-radius: 12px;
+}
+
+.empty-state-icon {
+    width: 64px;
+    height: 64px;
+    background: var(--shuttle-primary-light);
+    color: var(--shuttle-primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 24px;
+}
+
+.empty-state-icon .dashicons {
+    font-size: 32px;
+    width: 32px;
+    height: 32px;
+}
+
+.shuttle-empty-state h3 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 12px;
+}
+
+.shuttle-empty-state p {
+    color: #64748b;
+    margin-bottom: 30px;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.6;
+}
+
+
 .add-new-tag-btn .dashicons {
     font-size: 20px;
     width: 20px;
@@ -543,4 +845,159 @@ select.form-control {
 .btn-sm {
     padding: 6px 12px;
     font-size: 12px;
+}
+
+/* Schedule Step Styles */
+.shuttle-schedule-block {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 24px;
+}
+
+.shuttle-schedule-header {
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 12px;
+    margin-bottom: 20px;
+}
+
+.shuttle-schedule-header h4 {
+    margin: 0;
+    color: #1e293b;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.schedule-section-header h5 {
+    margin: 0 0 15px 0;
+    font-size: 14px;
+    color: #64748b;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.schedule-section-header h5 .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+}
+
+.shuttle-schedule-row {
+    display: flex;
+    gap: 20px;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 12px;
+    align-items: center;
+    transition: all 0.2s ease;
+}
+
+.shuttle-schedule-row:hover {
+    border-color: var(--shuttle-primary);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.schedule-time-col {
+    width: 180px;
+}
+
+.schedule-days-col {
+    flex: 1;
+}
+
+.day-selector {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.day-chip {
+    cursor: pointer;
+}
+
+.day-chip input {
+    display: none;
+}
+
+.day-chip span {
+    display: inline-block;
+    padding: 6px 12px;
+    background: #f1f5f9;
+    color: #64748b;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.day-chip input:checked+span {
+    background: var(--shuttle-primary);
+    color: #fff;
+    border-color: var(--shuttle-primary);
+}
+
+.day-chip:hover span {
+    background: #e2e8f0;
+}
+
+.schedule-actions-col {
+    display: none;
+}
+
+.btn-icon {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.btn-icon .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+}
+
+.btn-outline-danger {
+    color: #ef4444;
+    border-color: #fca5a5;
+    background: transparent;
+}
+
+.btn-outline-danger:hover {
+    background: #fef2f2;
+    border-color: #ef4444;
+    color: #b91c1c;
+}
+
+.mt-4 {
+    margin-top: 1.5rem;
+}
+
+.shuttle-schedule-container {
+    position: relative;
+    min-height: 200px;
+}
+
+.shuttle-schedule-container.loading::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.7);
+    z-index: 10;
+    backdrop-filter: blur(2px);
 }
