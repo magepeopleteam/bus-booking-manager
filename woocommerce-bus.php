@@ -98,6 +98,7 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
 		require_once(dirname(__FILE__) . "/inc/ShuttleMetaBoxClass.php");
 		require_once(dirname(__FILE__) . "/inc/ShuttleSearchClass.php");
 		require_once(dirname(__FILE__) . "/inc/ShuttleEditPageClass.php");
+		require_once(dirname(__FILE__) . "/inc/ShuttleListPageClass.php");
 	}
 	// Language Load
 	add_action('init', 'wbbm_language_load');
