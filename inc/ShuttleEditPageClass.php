@@ -32,7 +32,7 @@ class ShuttleEditPageClass
     {
         $screen = get_current_screen();
         if ($screen && $screen->id === 'wbbm_shuttle' && $screen->action === 'add') {
-            wp_redirect(admin_url('edit.php?post_type=wbbm_shuttle&page=wbbm-shuttle-edit'));
+            wp_redirect(admin_url('admin.php?page=wbbm-shuttle-edit'));
             exit;
         }
     }
@@ -42,11 +42,9 @@ class ShuttleEditPageClass
      */
     public function register_shuttle_edit_page()
     {
-        // Remove default Wordpress Add New menu for shuttle
-        remove_submenu_page('edit.php?post_type=wbbm_shuttle', 'post-new.php?post_type=wbbm_shuttle');
-
+        // Create a hidden page by setting parent slug to null
         add_submenu_page(
-            'edit.php?post_type=wbbm_shuttle',
+            null,
             __('Add New', 'bus-booking-manager'),
             __('Add New', 'bus-booking-manager'),
             'manage_options',
@@ -66,11 +64,10 @@ class ShuttleEditPageClass
 
         $custom_edit_url = add_query_arg(
             array(
-                'post_type' => 'wbbm_shuttle',
                 'page'      => 'wbbm-shuttle-edit',
                 'post_id'   => $post->ID
             ),
-            admin_url('edit.php')
+            admin_url('admin.php')
         );
 
         $actions['custom_edit'] = '<a href="' . esc_url($custom_edit_url) . '" style="color:#7c3aed;font-weight:bold;">' . __('Advanced Edit', 'bus-booking-manager') . '</a>';
@@ -499,7 +496,7 @@ class ShuttleEditPageClass
             <div class="shuttle-container">
                 <div class="shuttle-edit-header">
                     <div style="display: flex; align-items: center; gap: 15px;">
-                        <a href="<?php echo admin_url('edit.php?post_type=wbbm_shuttle'); ?>" class="back-btn skeleton skeleton-btn">
+                        <a href="<?php echo admin_url('edit.php?post_type=wbbm_shuttle&page=wbbm-shuttle-list'); ?>" class="back-btn skeleton skeleton-btn">
                             <span class="dashicons dashicons-arrow-left-alt"></span>
                         </a>
                         <h2 class="skeleton skeleton-text"><?php echo $post_id ? __('Edit Shuttle', 'bus-booking-manager') . ': ' . esc_html($title) : __('Add New Shuttle', 'bus-booking-manager'); ?></h2>

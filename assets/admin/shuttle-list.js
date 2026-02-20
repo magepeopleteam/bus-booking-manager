@@ -14,4 +14,16 @@ jQuery(document).ready(function ($) {
     $('#status-filter').on('change', function () {
         $('#shuttle-list-filter-form').submit();
     });
+
+    // Expand Shuttle Stops
+    $(document).on('click', '.stops-toggle-btn', function (e) {
+        e.preventDefault();
+        $(this).closest('.stops-list-wrapper').addClass('expanded');
+    });
+
+    // Collapse Shuttle Stops
+    $(document).on('click', '.stops-collapse-btn', function (e) {
+        e.preventDefault();
+        $(this).closest('.stops-list-wrapper').removeClass('expanded');
+    });
 });
