@@ -9,9 +9,18 @@ class ShuttleBookingAdminClass
     public function __construct()
     {
         add_action('admin_menu', array($this, 'wbbm_shuttle_booking_menu'));
+        add_action('admin_enqueue_scripts', array($this, 'wbbm_enqueue_assets'));
         add_action('admin_init', array($this, 'wbbm_handle_shuttle_booking_export'));
         add_action('admin_init', array($this, 'wbbm_handle_shuttle_booking_delete'));
         add_action('admin_init', array($this, 'wbbm_handle_shuttle_ticket_pdf'));
+    }
+
+    public function wbbm_enqueue_assets($hook)
+    {
+        if (strpos($hook, 'wbbm-shuttle-bookings') !== false) {
+            wp_enqueue_style('shuttle-list-css', WBTM_PLUGIN_URL . 'assets/admin/shuttle-list.css', array(), time());
+            wp_enqueue_script('shuttle-list-js', WBTM_PLUGIN_URL . 'assets/admin/shuttle-list.js', array('jquery'), time(), true);
+        }
     }
 
     /**
@@ -141,11 +150,12 @@ class ShuttleBookingAdminClass
     /**
      * Get Filtered Query Args
      */
-    private function get_filtered_query_args($posts_per_page = 20)
+    private function get_filtered_query_args($posts_per_page = 20, $paged = 1)
     {
         $args = array(
             'post_type'      => 'wbbm_booking',
             'posts_per_page' => $posts_per_page,
+            'paged'          => $paged,
             'post_status'    => 'publish',
             'meta_query'     => array(
                 'relation' => 'AND',
@@ -227,6 +237,8 @@ class ShuttleBookingAdminClass
      */
     public function render_shuttle_booking_list()
     {
+        global $wbbm;
+
         $shuttles = get_posts(array(
             'post_type'      => 'wbbm_shuttle',
             'posts_per_page' => -1,
@@ -234,259 +246,296 @@ class ShuttleBookingAdminClass
         ));
 
         $export_url = add_query_arg(array_merge($_GET, array('export' => 'csv')), admin_url('admin.php'));
+
+        $paged = isset($_GET['paged']) ? max(1, intval($_GET['paged'])) : 1;
+        $posts_per_page = isset($_GET['per_page']) ? intval($_GET['per_page']) : 20;
+
+        $args = $this->get_filtered_query_args($posts_per_page, $paged);
+        $query = new WP_Query($args);
+        $total_posts = $query->found_posts;
+        $total_pages = $query->max_num_pages;
+
+        $start_num = ($paged - 1) * $posts_per_page + 1;
+        $end_num = min($paged * $posts_per_page, $total_posts);
 ?>
-        <div class="wrap">
-            <h1 class="wp-heading-inline"><?php esc_html_e('Shuttle Booking List', 'bus-booking-manager'); ?></h1>
-            <a href="<?php echo esc_url($export_url); ?>" class="page-title-action"><?php esc_html_e('Export to Excel (CSV)', 'bus-booking-manager'); ?></a>
-            <hr class="wp-header-end">
-
-            <?php if (isset($_GET['deleted']) && $_GET['deleted'] == '1') : ?>
-                <div class="updated notice is-dismissible">
-                    <p><?php esc_html_e('Booking record deleted successfully.', 'bus-booking-manager'); ?></p>
-                </div>
-            <?php endif; ?>
-
-            <!-- Filter Form -->
-            <form method="get" style="margin: 20px 0; display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap;">
-                <input type="hidden" name="post_type" value="wbbm_shuttle">
-                <input type="hidden" name="page" value="wbbm-shuttle-bookings">
-
-                <div>
-                    <label for="shuttle_id"><?php esc_html_e('Shuttle', 'bus-booking-manager'); ?></label><br>
-                    <select name="shuttle_id" id="shuttle_id">
-                        <option value=""><?php esc_html_e('All Shuttles', 'bus-booking-manager'); ?></option>
-                        <?php foreach ($shuttles as $shuttle) : ?>
-                            <option value="<?php echo esc_attr($shuttle->ID); ?>" <?php selected(isset($_GET['shuttle_id']) ? $_GET['shuttle_id'] : '', $shuttle->ID); ?>>
-                                <?php echo esc_html($shuttle->post_title); ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
+        <div class="wrap shuttle-list-wrap">
+            <div class="shuttle-list-container">
+                <!-- Header Section -->
+                <div class="shuttle-list-header">
+                    <div class="header-left">
+                        <div class="brand-logo">
+                            <span class="dashicons dashicons-tickets-alt"></span>
+                        </div>
+                        <div class="header-title-area">
+                            <h2><?php esc_html_e('Shuttle Bookings', 'bus-booking-manager'); ?></h2>
+                        </div>
+                    </div>
+                    <div class="header-right">
+                        <a href="<?php echo esc_url($export_url); ?>" class="btn btn-outline" style="text-decoration: none;">
+                            <span class="dashicons dashicons-download" style="margin-top:2px;"></span> <?php esc_html_e('Export CSV', 'bus-booking-manager'); ?>
+                        </a>
+                    </div>
                 </div>
 
-                <div>
-                    <label for="route"><?php esc_html_e('Route (Point)', 'bus-booking-manager'); ?></label><br>
-                    <input type="text" name="route" id="route" value="<?php echo isset($_GET['route']) ? esc_attr($_GET['route']) : ''; ?>" placeholder="<?php esc_attr_e('e.g. Airport', 'bus-booking-manager'); ?>">
+                <?php if (isset($_GET['deleted']) && $_GET['deleted'] == '1') : ?>
+                    <div class="notice notice-success is-dismissible" style="margin: 20px 20px 0 0;">
+                        <p><?php esc_html_e('Booking record deleted successfully.', 'bus-booking-manager'); ?></p>
+                    </div>
+                <?php endif; ?>
+
+                <!-- Filters Card -->
+                <div class="shuttle-filters-card">
+                    <form method="get" action="" id="shuttle-booking-filter-form">
+                        <input type="hidden" name="post_type" value="wbbm_shuttle">
+                        <input type="hidden" name="page" value="wbbm-shuttle-bookings">
+
+                        <div class="filters-row">
+                            <div class="filter-left" style="flex-wrap: wrap;">
+                                <div class="filter-group">
+                                    <select name="shuttle_id" id="shuttle_id" class="form-control" style="min-width: 150px;">
+                                        <option value=""><?php esc_html_e('All Shuttles', 'bus-booking-manager'); ?></option>
+                                        <?php foreach ($shuttles as $shuttle) : ?>
+                                            <option value="<?php echo esc_attr($shuttle->ID); ?>" <?php selected(isset($_GET['shuttle_id']) ? $_GET['shuttle_id'] : '', $shuttle->ID); ?>>
+                                                <?php echo esc_html($shuttle->post_title); ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                                <div class="filter-group search-group" style="max-width: 250px;">
+                                    <span class="dashicons dashicons-location"></span>
+                                    <input type="text" name="route" id="route" value="<?php echo isset($_GET['route']) ? esc_attr($_GET['route']) : ''; ?>" placeholder="<?php esc_attr_e('Route (e.g. Airport)...', 'bus-booking-manager'); ?>" class="form-control" style="padding-left: 36px !important;">
+                                </div>
+                                <div class="filter-group">
+                                    <input type="date" name="journey_date" id="journey_date" value="<?php echo isset($_GET['journey_date']) ? esc_attr($_GET['journey_date']) : ''; ?>" class="form-control" placeholder="<?php esc_attr_e('Journey Date', 'bus-booking-manager'); ?>">
+                                </div>
+                                <div class="filter-group">
+                                    <input type="date" name="booking_date" id="booking_date" value="<?php echo isset($_GET['booking_date']) ? esc_attr($_GET['booking_date']) : ''; ?>" class="form-control" placeholder="<?php esc_attr_e('Booking Date', 'bus-booking-manager'); ?>">
+                                </div>
+
+                                <button type="submit" class="btn btn-primary btn-sm">
+                                    <?php _e('Filter', 'bus-booking-manager'); ?>
+                                </button>
+                                <?php if (!empty($_GET['shuttle_id']) || !empty($_GET['route']) || !empty($_GET['journey_date']) || !empty($_GET['booking_date'])) : ?>
+                                    <a href="<?php echo admin_url('edit.php?post_type=wbbm_shuttle&page=wbbm-shuttle-bookings'); ?>" class="btn btn-outline btn-sm" style="text-decoration:none;">
+                                        <?php _e('Clear', 'bus-booking-manager'); ?>
+                                    </a>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    </form>
                 </div>
 
-                <div>
-                    <label for="journey_date"><?php esc_html_e('Journey Date', 'bus-booking-manager'); ?></label><br>
-                    <input type="text" name="journey_date" id="journey_date" value="<?php echo isset($_GET['journey_date']) ? esc_attr($_GET['journey_date']) : ''; ?>">
-                </div>
-
-                <div>
-                    <label for="booking_date"><?php esc_html_e('Booking Date', 'bus-booking-manager'); ?></label><br>
-                    <input type="text" name="booking_date" id="booking_date" value="<?php echo isset($_GET['booking_date']) ? esc_attr($_GET['booking_date']) : ''; ?>">
-                </div>
-
-                <div>
-                    <button type="submit" class="button button-primary"><?php esc_html_e('Filter', 'bus-booking-manager'); ?></button>
-                    <a href="<?php echo admin_url('edit.php?post_type=wbbm_shuttle&page=wbbm-shuttle-bookings'); ?>" class="button"><?php esc_html_e('Reset', 'bus-booking-manager'); ?></a>
-                </div>
-            </form>
-
-            <table class="wp-list-table widefat fixed striped posts">
-                <thead>
-                    <tr>
-                        <th scope="col" class="manage-column column-id"><?php esc_html_e('Booking ID', 'bus-booking-manager'); ?></th>
-                        <th scope="col" class="manage-column column-order"><?php esc_html_e('Order ID', 'bus-booking-manager'); ?></th>
-                        <th scope="col" class="manage-column column-shuttle"><?php esc_html_e('Shuttle Name', 'bus-booking-manager'); ?></th>
-                        <th scope="col" class="manage-column column-customer"><?php esc_html_e('Customer', 'bus-booking-manager'); ?></th>
-                        <th scope="col" class="manage-column column-journey"><?php esc_html_e('Journey Details', 'bus-booking-manager'); ?></th>
-                        <th scope="col" class="manage-column column-route"><?php esc_html_e('Route', 'bus-booking-manager'); ?></th>
-                        <th scope="col" class="manage-column column-passengers"><?php esc_html_e('Passengers', 'bus-booking-manager'); ?></th>
-                        <th scope="col" class="manage-column column-price"><?php esc_html_e('Total Price', 'bus-booking-manager'); ?></th>
-                        <th scope="col" class="manage-column column-status"><?php esc_html_e('Status', 'bus-booking-manager'); ?></th>
-                        <th scope="col" class="manage-column column-date"><?php esc_html_e('Booking Date', 'bus-booking-manager'); ?></th>
-                        <th scope="col" class="manage-column column-actions"><?php esc_html_e('Actions', 'bus-booking-manager'); ?></th>
-                    </tr>
-                </thead>
-                <tbody id="the-list">
-                    <?php
-                    $args = $this->get_filtered_query_args(20);
-                    $query = new WP_Query($args);
-
-                    if ($query->have_posts()) {
-                        while ($query->have_posts()) {
-                            $query->the_post();
-                            $post_id = get_the_ID();
-                            $order_id = get_post_meta($post_id, '_wbbm_order_id', true);
-                            $shuttle_id = get_post_meta($post_id, '_wbbm_shuttle_id', true);
-                            $user_name = get_post_meta($post_id, '_wbbm_user_name', true);
-                            $user_email = get_post_meta($post_id, '_wbbm_user_email', true);
-                            $user_phone = get_post_meta($post_id, '_wbbm_user_phone', true);
-                            $journey_date = get_post_meta($post_id, '_wbbm_journey_date', true);
-                            $journey_time = get_post_meta($post_id, '_wbbm_user_start', true);
-                            $boarding = get_post_meta($post_id, '_wbbm_boarding_point', true);
-                            $droping = get_post_meta($post_id, '_wbbm_droping_point', true);
-                            $pickup_point = get_post_meta($post_id, '_wbbm_pickup_point', true);
-                            $dropoff_point = get_post_meta($post_id, '_wbbm_dropoff_point', true);
-                            $seats = get_post_meta($post_id, '_wbbm_seat', true);
-                            $total_price = get_post_meta($post_id, '_wbbm_total_price', true);
-                            $status_code = get_post_meta($post_id, '_wbbm_status', true);
-
-                            $shuttle_title = $shuttle_id ? get_the_title($shuttle_id) : '—';
-                            $status_label = $this->wbbm_get_status_label($status_code);
-                    ?>
+                <!-- Table Content -->
+                <div class="shuttle-list-table-card">
+                    <table class="shuttle-modern-table" style="width: 100%;">
+                        <thead>
                             <tr>
-                                <td>
-                                    <strong><a href="<?php echo esc_url(get_edit_post_link($post_id)); ?>"><?php echo esc_html($post_id); ?></a></strong>
-                                </td>
-                                <td>
-                                    <?php if ($order_id) : ?>
-                                        <a href="<?php echo esc_url(get_edit_post_link($order_id)); ?>"><?php echo esc_html($order_id); ?></a>
-                                    <?php else : ?>
-                                        —
-                                    <?php endif; ?>
-                                </td>
-                                <td>
-                                    <?php if ($shuttle_id) : ?>
-                                        <a href="<?php echo esc_url(get_edit_post_link($shuttle_id)); ?>"><?php echo esc_html($shuttle_title); ?></a>
-                                    <?php else : ?>
-                                        <?php echo esc_html($shuttle_title); ?>
-                                    <?php endif; ?>
-                                </td>
-                                <td>
-                                    <div><strong><?php echo esc_html($user_name); ?></strong></div>
-                                    <div class="description"><?php echo esc_html($user_email); ?></div>
-                                    <div class="description"><?php echo esc_html($user_phone); ?></div>
-                                </td>
-                                <td>
-                                    <div><?php echo esc_html($journey_date); ?></div>
-                                    <div class="description"><?php echo esc_html($journey_time); ?></div>
-                                </td>
-                                <td>
-                                    <div style="display: flex;gap:6px">
-                                        <?php if (empty($boarding)) echo 'N/A'; ?>
-                                        <div>
-                                            <?php echo esc_html($boarding); ?>
-                                            <?php if (!empty($pickup_point)) : ?>
-                                                <br><small><?php echo esc_html($pickup_point); ?></small>
-                                            <?php endif; ?>
-                                        </div>
-                                        <span class="dashicons dashicons-arrow-right-alt" style="font-size: 14px; width: 14px; margin-top: 3px;"></span>
-                                        <div>
-                                            <?php echo esc_html($droping); ?>
-                                            <?php if (!empty($dropoff_point)) : ?>
-                                                <br><small><?php echo esc_html($dropoff_point); ?></small>
-                                            <?php endif; ?>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td style="text-align:center"><?php echo esc_html($seats); ?></td>
-                                <td><?php echo wc_price($total_price); ?></td>
-                                <td>
-                                    <mark class="order-status status-<?php echo sanitize_html_class($status_label); ?>">
-                                        <span><?php echo esc_html(ucfirst($status_label)); ?></span>
-                                    </mark>
-                                </td>
-                                <td><?php echo get_the_date(); ?></td>
-                                <?php
-                                $delete_url = add_query_arg(array(
-                                    'action'     => 'delete',
-                                    'booking_id' => $post_id,
-                                    '_wpnonce'   => wp_create_nonce('wbbm_delete_booking_' . $post_id),
-                                ));
-
-                                $pdf_url = add_query_arg(array(
-                                    'shuttle_ticket_pdf' => '1',
-                                    'booking_id'         => $post_id,
-                                ), admin_url('admin.php'));
-                                ?>
-                                <td>
-                                    <div style="display: flex; gap: 5px; flex-direction: column;">
-                                        <a href="<?php echo esc_url($pdf_url); ?>" class="button button-secondary" target="_blank">
-                                            <span class="dashicons dashicons-media-document" style="font-size: 16px; vertical-align: middle;"></span>
-                                            <?php esc_html_e('Ticket', 'bus-booking-manager'); ?>
-                                        </a>
-                                        <a href="<?php echo esc_url($delete_url); ?>" class="button button-link-delete" onclick="return confirm('<?php esc_attr_e('Are you sure you want to delete this booking record?', 'bus-booking-manager'); ?>');" style="color: #a00;border-color:#a00">
-                                            <span class="dashicons dashicons-trash" style="font-size: 16px; vertical-align: middle;"></span>
-                                            <?php esc_html_e('Delete', 'bus-booking-manager'); ?>
-                                        </a>
-                                    </div>
-                                </td>
-
-
+                                <th class="col-id"><?php esc_html_e('ID & Order', 'bus-booking-manager'); ?></th>
+                                <th class="col-shuttle"><?php esc_html_e('Shuttle', 'bus-booking-manager'); ?></th>
+                                <th class="col-customer"><?php esc_html_e('Customer', 'bus-booking-manager'); ?></th>
+                                <th class="col-journey"><?php esc_html_e('Journey Details', 'bus-booking-manager'); ?></th>
+                                <th class="col-route" style="width: 250px;"><?php esc_html_e('Route', 'bus-booking-manager'); ?></th>
+                                <th class="col-passengers"><?php esc_html_e('Seats & Total', 'bus-booking-manager'); ?></th>
+                                <th class="col-status"><?php esc_html_e('Status', 'bus-booking-manager'); ?></th>
+                                <th class="col-action"><?php esc_html_e('Action', 'bus-booking-manager'); ?></th>
                             </tr>
-                        <?php
-                        }
-                        wp_reset_postdata();
-                    } else {
-                        ?>
-                        <tr>
-                            <td colspan="10"><?php esc_html_e('No shuttle bookings found.', 'bus-booking-manager'); ?></td>
-                        </tr>
-                    <?php
-                    }
-                    ?>
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <th scope="col" class="manage-column column-id"><?php esc_html_e('Booking ID', 'bus-booking-manager'); ?></th>
-                        <th scope="col" class="manage-column column-order"><?php esc_html_e('Order ID', 'bus-booking-manager'); ?></th>
-                        <th scope="col" class="manage-column column-shuttle"><?php esc_html_e('Shuttle Name', 'bus-booking-manager'); ?></th>
-                        <th scope="col" class="manage-column column-customer"><?php esc_html_e('Customer', 'bus-booking-manager'); ?></th>
-                        <th scope="col" class="manage-column column-journey"><?php esc_html_e('Journey Details', 'bus-booking-manager'); ?></th>
-                        <th scope="col" class="manage-column column-route"><?php esc_html_e('Route', 'bus-booking-manager'); ?></th>
-                        <th scope="col" class="manage-column column-passengers"><?php esc_html_e('Passengers', 'bus-booking-manager'); ?></th>
-                        <th scope="col" class="manage-column column-price"><?php esc_html_e('Total Price', 'bus-booking-manager'); ?></th>
-                        <th scope="col" class="manage-column column-status"><?php esc_html_e('Status', 'bus-booking-manager'); ?></th>
-                        <th scope="col" class="manage-column column-date"><?php esc_html_e('Booking Date', 'bus-booking-manager'); ?></th>
-                        <th scope="col" class="manage-column column-actions"><?php esc_html_e('Actions', 'bus-booking-manager'); ?></th>
-                    </tr>
-                </tfoot>
-            </table>
+                        </thead>
+                        <tbody>
+                            <?php if ($query->have_posts()) : ?>
+                                <?php while ($query->have_posts()) : $query->the_post();
+                                    $post_id = get_the_ID();
+                                    $order_id = get_post_meta($post_id, '_wbbm_order_id', true);
+                                    $shuttle_id = get_post_meta($post_id, '_wbbm_shuttle_id', true);
+                                    $user_name = get_post_meta($post_id, '_wbbm_user_name', true);
+                                    $user_email = get_post_meta($post_id, '_wbbm_user_email', true);
+                                    $user_phone = get_post_meta($post_id, '_wbbm_user_phone', true);
+                                    $journey_date = get_post_meta($post_id, '_wbbm_journey_date', true);
+                                    $journey_time = get_post_meta($post_id, '_wbbm_user_start', true);
+                                    $boarding = get_post_meta($post_id, '_wbbm_boarding_point', true);
+                                    $droping = get_post_meta($post_id, '_wbbm_droping_point', true);
+                                    $pickup_point = get_post_meta($post_id, '_wbbm_pickup_point', true);
+                                    $dropoff_point = get_post_meta($post_id, '_wbbm_dropoff_point', true);
+                                    $seats = get_post_meta($post_id, '_wbbm_seat', true);
+                                    $total_price = get_post_meta($post_id, '_wbbm_total_price', true);
+                                    $status_code = get_post_meta($post_id, '_wbbm_status', true);
+
+                                    $shuttle_title = $shuttle_id ? get_the_title($shuttle_id) : '—';
+                                    $status_label = $this->wbbm_get_status_label($status_code);
+
+                                    $status_class = 'status-draft';
+                                    if (strtolower($status_label) === 'completed') {
+                                        $status_class = 'status-publish';
+                                    } elseif (strtolower($status_label) === 'processing' || strtolower($status_label) === 'pending' || strtolower($status_label) === 'on-hold') {
+                                        $status_class = 'status-pending';
+                                    } else {
+                                        $status_class = 'status-draft';
+                                    }
+
+                                    $delete_url = wp_nonce_url(add_query_arg(array('action' => 'delete', 'booking_id' => $post_id)), 'wbbm_delete_booking_' . $post_id);
+                                    $pdf_url = add_query_arg(array(
+                                        'shuttle_ticket_pdf' => '1',
+                                        'booking_id'         => $post_id,
+                                    ), admin_url('admin.php'));
+                                ?>
+                                    <tr>
+                                        <td>
+                                            <div class="shuttle-title"><a href="<?php echo esc_url(get_edit_post_link($post_id)); ?>" style="color:var(--sh-primary);text-decoration:none;">#<?php echo esc_html($post_id); ?></a></div>
+                                            <div class="shuttle-meta"><?php echo $order_id ? '<a href="' . esc_url(get_edit_post_link($order_id)) . '" style="color:var(--sh-text-soft);">Ord #' . esc_html($order_id) . '</a>' : '—'; ?></div>
+                                            <div class="shuttle-sub-meta" style="font-size:11px;"><?php echo get_the_date(); ?></div>
+                                        </td>
+                                        <td>
+                                            <div style="font-weight: 600; color: var(--sh-text-main); font-size:14px;">
+                                                <?php if ($shuttle_id) : ?>
+                                                    <a href="<?php echo esc_url(get_edit_post_link($shuttle_id)); ?>" style="text-decoration: none; color: inherit;"><?php echo esc_html($shuttle_title); ?></a>
+                                                <?php else : ?>
+                                                    <?php echo esc_html($shuttle_title); ?>
+                                                <?php endif; ?>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div style="font-weight: 600; color: var(--sh-text-main); margin-bottom: 2px;"><?php echo esc_html($user_name); ?></div>
+                                            <div class="shuttle-sub-meta" style="font-size:12px;"><?php echo esc_html($user_email); ?></div>
+                                            <div class="shuttle-sub-meta" style="font-size:12px;"><?php echo esc_html($user_phone); ?></div>
+                                        </td>
+                                        <td>
+                                            <div style="font-weight: 500; color: var(--sh-text-main); margin-bottom: 2px;"><?php echo esc_html($journey_date); ?></div>
+                                            <div class="shuttle-sub-meta" style="color: var(--sh-primary); font-weight: 600;"><?php echo esc_html($journey_time); ?></div>
+                                        </td>
+                                        <td>
+                                            <div style="display: flex; flex-direction: column; gap: 4px;">
+                                                <div style="font-size: 13px;">
+                                                    <span style="color: #64748b; font-weight: bold; font-size: 16px; line-height: 1; vertical-align: middle;">○</span>
+                                                    <span style="font-weight: 600; color: var(--sh-text-main);"><?php echo $boarding ? esc_html($boarding) : 'N/A'; ?></span>
+                                                    <?php if (!empty($pickup_point)) : ?>
+                                                        <br><span style="padding-left: 14px; font-size: 12px; color: var(--sh-text-soft);">↳ <?php echo esc_html($pickup_point); ?></span>
+                                                    <?php endif; ?>
+                                                </div>
+                                                <div style="padding-left: 4px; border-left: 1px dashed #cbd5e1; margin-left: 3px; height: 12px;"></div>
+                                                <div style="font-size: 13px;">
+                                                    <span style="color: var(--sh-primary); font-weight: bold; font-size: 16px; line-height: 1; vertical-align: middle;">●</span>
+                                                    <span style="font-weight: 600; color: var(--sh-text-main);"><?php echo $droping ? esc_html($droping) : 'N/A'; ?></span>
+                                                    <?php if (!empty($dropoff_point)) : ?>
+                                                        <br><span style="padding-left: 14px; font-size: 12px; color: var(--sh-text-soft);">↳ <?php echo esc_html($dropoff_point); ?></span>
+                                                    <?php endif; ?>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="capacity-info">
+                                                <span class="count" style="margin-bottom: 4px; font-size: 13px; color: var(--sh-text-soft);"><?php echo esc_html($seats); ?> Seats</span>
+                                                <span class="count" style="color: var(--sh-text-main); font-weight: 700; font-size: 15px;"><?php echo wc_price($total_price); ?></span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="status-badge <?php echo esc_attr($status_class); ?>"><?php echo esc_html(ucfirst($status_label)); ?></span>
+                                        </td>
+                                        <td>
+                                            <div class="action-buttons">
+                                                <?php
+                                                if (is_object($wbbm) && method_exists($wbbm, 'wbbm_pdf')) {
+                                                ?>
+                                                    <a href="<?php echo esc_url($pdf_url); ?>" target="_blank" class="action-btn" title="<?php esc_attr_e('PDF Ticket', 'bus-booking-manager'); ?>">
+                                                        <span class="dashicons dashicons-media-document"></span>
+                                                    </a>
+                                                <?php } ?>
+                                                <a href="<?php echo esc_url($delete_url); ?>" class="action-btn delete-btn" title="Delete" onclick="return confirm('<?php esc_attr_e('Are you sure you want to delete this booking record?', 'bus-booking-manager'); ?>');">
+                                                    <span class="dashicons dashicons-trash"></span>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <?php endwhile;
+                                wp_reset_postdata(); ?>
+                            <?php else : ?>
+                                <tr>
+                                    <td colspan="8" class="no-results"><?php _e('No shuttle bookings found.', 'bus-booking-manager'); ?></td>
+                                </tr>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+
+                    <!-- Pagination -->
+                    <?php if ($total_pages > 0) : ?>
+                        <div class="shuttle-pagination-area">
+                            <div class="pagination-info">
+                                <?php printf(__('Showing %d - %d of %d bookings', 'bus-booking-manager'), max(1, $start_num), $end_num, $total_posts); ?>
+                            </div>
+                            <div class="pagination-controls">
+                                <?php if ($paged > 1) : ?>
+                                    <a href="<?php echo add_query_arg('paged', $paged - 1); ?>" class="page-link prev"><span class="dashicons dashicons-arrow-left-alt2"></span></a>
+                                <?php endif; ?>
+
+                                <?php
+                                for ($i = 1; $i <= $total_pages; $i++) {
+                                    if ($i == $paged) {
+                                        echo '<span class="page-link active">' . $i . '</span>';
+                                    } else if ($i == 1 || $i == $total_pages || ($i >= $paged - 1 && $i <= $paged + 1)) {
+                                        echo '<a href="' . add_query_arg('paged', $i) . '" class="page-link">' . $i . '</a>';
+                                    } else if ($i == 2 || $i == $total_pages - 1) {
+                                        echo '<span class="pager-sep">...</span>';
+                                    }
+                                }
+                                ?>
+
+                                <?php if ($paged < $total_pages) : ?>
+                                    <a href="<?php echo add_query_arg('paged', $paged + 1); ?>" class="page-link next"><span class="dashicons dashicons-arrow-right-alt2"></span></a>
+                                <?php endif; ?>
+
+                                <div class="per-page-selector" style="margin-left: 10px;">
+                                    <select class="form-control" onchange="window.location.href=this.value;" style="width:100%;height: 36px !important; padding: 4px 10px !important;">
+                                        <?php
+                                        $limits = array(10, 20, 50, 100);
+                                        foreach ($limits as $limit) {
+                                            $url = add_query_arg('per_page', $limit);
+                                            $url = add_query_arg('paged', 1, $url);
+                                            $selected = ($limit == $posts_per_page) ? 'selected' : '';
+                                            echo '<option value="' . esc_url($url) . '" ' . $selected . '>' . $limit . ' / page</option>';
+                                        }
+                                        ?>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
         </div>
         <style>
-            .column-id {
-                width: 80px;
-            }
-
-            .column-order {
-                width: 80px;
-            }
-
-            .column-shuttle {
-                width: 150px;
-            }
-
-            .column-passengers {
+            .shuttle-modern-table .col-id {
                 width: 100px;
             }
 
-            .column-status mark {
-                padding: 2px 8px;
-                border-radius: 4px;
-                background: #e5e5e5;
-                color: #333;
-                display: inline-block;
+            .shuttle-modern-table .col-shuttle {
+                width: 200px;
             }
 
-            .column-status mark.status-completed {
-                background: #c6e1c6;
-                color: #5b841b;
+            .shuttle-modern-table .col-customer {
+                width: 220px;
             }
 
-            .column-status mark.status-processing {
-                background: #c8d7e1;
-                color: #2e4453;
+            .shuttle-modern-table .col-journey {
+                width: 180px;
             }
 
-            .column-status mark.status-on-hold {
-                background: #f8dda7;
-                color: #94660c;
+            .shuttle-modern-table .col-route {
+                width: 220px;
             }
 
-            .column-status mark.status-pending {
-                background: #e5e5e5;
-                color: #2e4453;
+            .shuttle-modern-table .col-passengers {
+                width: 140px;
+            }
+
+            .shuttle-modern-table .col-status {
+                width: 120px;
+            }
+
+            .shuttle-modern-table .col-action {
+                width: 100px;
             }
         </style>
     <?php
     }
 
-    /**
-     * Handle Shuttle Ticket PDF Generation
-     */
     public function wbbm_handle_shuttle_ticket_pdf()
     {
         global $wbbm;
@@ -858,7 +907,7 @@ class ShuttleBookingAdminClass
         </body>
 
         </html>
-    <?php
+<?php
         $html = ob_get_clean();
 
         if (method_exists($wbbm, 'wbbm_pdf')) {

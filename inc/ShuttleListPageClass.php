@@ -238,7 +238,7 @@ class ShuttleListPageClass
                                     $status_class = 'status-' . $current_status;
 
                                     $edit_url = add_query_arg(array(
-                                        'page'      => 'wbbm-shuttle-edit',
+                                        'page'      => 'wbbm-`shuttle`-edit',
                                         'post_id'   => $post_id
                                     ), admin_url('admin.php'));
 
