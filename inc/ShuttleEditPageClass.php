@@ -381,11 +381,18 @@ class ShuttleEditPageClass
         }
 
         $next_step = isset($_POST['next_step_val']) ? intval($_POST['next_step_val']) : 0;
+        $current_step = isset($_POST['current_step']) ? intval($_POST['current_step']) : 0;
+
+        if ($current_step == 4 && !$next_step) {
+            wp_redirect(admin_url('edit.php?post_type=wbbm_shuttle&page=wbbm-shuttle-list'));
+            exit;
+        }
+
         $redirect_args = array('page' => 'wbbm-shuttle-edit', 'post_id' => $post_id, 'saved' => '1');
         if ($next_step) {
             $redirect_args['step'] = $next_step;
-        } else if (isset($_POST['current_step'])) {
-            $redirect_args['step'] = intval($_POST['current_step']);
+        } else if ($current_step) {
+            $redirect_args['step'] = $current_step;
         }
 
         // Redirect to avoid resubmission
@@ -968,7 +975,7 @@ class ShuttleEditPageClass
             </div>
         <?php else : ?>
             <p class="description" style="margin-bottom: 20px;">
-                <?php echo esc_html(__('Define departure times and operating days for each route.', 'bus-booking-manager')); ?>
+                <?php echo esc_html(__('Define departure times and operating days for route.', 'bus-booking-manager')); ?>
             </p>
 
             <?php foreach ($routes as $route) :

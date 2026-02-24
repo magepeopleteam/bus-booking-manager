@@ -90,6 +90,7 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
 	require_once(dirname(__FILE__) . "/inc/class-meta-box.php");
 	require_once(dirname(__FILE__) . "/inc/BusBookingManagerClass.php");
 	require_once(dirname(__FILE__) . "/inc/wbbm_dummy_import.php");
+	require_once(dirname(__FILE__) . "/inc/BusListPageClass.php");
 
 	// Shuttle Service Files - Conditional loading
 	if (function_exists('wbbm_get_option') && wbbm_get_option('wbbm_shuttle_module_enable', 'wbbm_general_setting_sec', 'off') === 'on') {
