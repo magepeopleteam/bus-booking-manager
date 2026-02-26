@@ -167,7 +167,7 @@ class BusListPageClass
                         </div>
                     </div>
                     <div class="header-right">
-                        <a href="<?php echo admin_url('post-new.php?post_type=wbbm_bus'); ?>" class="btn btn-primary">
+                        <a href="<?php echo admin_url('admin.php?page=wbbm-bus-edit'); ?>" class="btn btn-primary">
                             <span class="dashicons dashicons-plus"></span> <?php _e('Add New Bus', 'bus-booking-manager'); ?>
                         </a>
                     </div>
@@ -246,7 +246,7 @@ class BusListPageClass
                                     $status_label = ucfirst($current_status);
                                     $status_class = 'status-' . $current_status;
 
-                                    $edit_url = get_edit_post_link($post_id);
+                                    $edit_url = admin_url('admin.php?page=wbbm-bus-edit&post_id=' . $post_id);
                                     $delete_url = wp_nonce_url(add_query_arg(array('action' => 'delete', 'post_id' => $post_id)), 'delete-bus_' . $post_id);
                                 ?>
                                     <tr>
@@ -261,7 +261,12 @@ class BusListPageClass
                                             </div>
                                             <div class="shuttle-details">
                                                 <div class="shuttle-title"><a href="<?php echo esc_url($edit_url); ?>"><?php the_title(); ?></a></div>
-                                                <div class="shuttle-meta" style="font-size:12px; font-weight:normal;">ID: <?php echo esc_html($post_id); ?></div>
+                                                <div class="shuttle-meta" style="font-size:12px; font-weight:normal;">
+                                                    <?php
+                                                    $bus_no = get_post_meta($post_id, 'wbbm_bus_no', true);
+                                                    echo $bus_no ? __('Coach No:', 'bus-booking-manager') . ' ' . esc_html($bus_no) : __('ID:', 'bus-booking-manager') . ' ' . esc_html($post_id);
+                                                    ?>
+                                                </div>
                                             </div>
                                         </td>
                                         <td>
