@@ -315,6 +315,9 @@ class BusEditPageClass
                 set_post_thumbnail($post_id, intval($_POST['bus_thumbnail_id']));
             }
 
+            // Allow pro plugins to save their fields (e.g. Step 6 Passenger Registration)
+            do_action('wbbm_custom_edit_page_save', $post_id);
+
             // Other default meta
             update_post_meta($post_id, '_virtual', 'yes');
             update_post_meta($post_id, '_sold_individually', 'yes');
@@ -481,7 +484,7 @@ class BusEditPageClass
                     </div>
                     <div class="header-actions">
                         <button type="button" id="save-bus-draft" class="btn btn-secondary"><?php _e('Save as Draft', 'bus-booking-manager'); ?></button>
-                        <button type="submit" form="bus-edit-form" class="btn btn-primary"><?php echo ($current_status === 'publish') ? __('Save', 'bus-booking-manager') : __('Publish', 'bus-booking-manager'); ?></button>
+                        <button type="button" id="save-bus-publish" class="btn btn-primary"><?php echo ($current_status === 'publish') ? __('Save', 'bus-booking-manager') : __('Publish', 'bus-booking-manager'); ?></button>
                     </div>
                 </div>
 
@@ -655,10 +658,11 @@ class BusEditPageClass
                     </div>
 
                     <!-- Step 6: Passenger List -->
-                     <div class="bus-step-content <?php echo $current_step === 6 ? 'active' : ''; ?>" id="step-6-content">
+                    <div class="bus-step-content <?php echo $current_step === 6 ? 'active' : ''; ?>" id="step-6-content">
                         <?php $this->render_step_6($post_id); ?>
+
                     </div>
-                    
+
             </div>
 
             <div class="bus-edit-footer">
@@ -828,16 +832,17 @@ class BusEditPageClass
      */
     private function render_step_6($post_id)
     {
-
     ?>
         <div class="bus-edit-content">
             <div class="bus-edit-left" style="width: 100%;">
                 <div class="bus-card">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                        <h3 style="margin: 0; border: none; padding: 0;"><?php _e('Custom Fields', 'bus-booking-manager'); ?></h3>
+                        <h3 style="margin: 0; border: none; padding: 0;"><?php _e('Passenger Registration', 'bus-booking-manager'); ?></h3>
                     </div>
 
-                    
+                    <?php do_action('wbbm_after_meta_box_tab_content', $post_id);
+                    ?>
+
                 </div>
             </div>
         </div>

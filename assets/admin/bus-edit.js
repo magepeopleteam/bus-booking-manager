@@ -5,10 +5,79 @@ jQuery(document).ready(function ($) {
     const savingStatus = $('.saving-status');
     let isSaving = false;
 
+    // --- Required Field Validation ---
+    function validateCurrentStep() {
+        const activeStep = $('.bus-step-content.active');
+        const requiredFields = activeStep.find('[required]');
+        let isValid = true;
+
+        // Clear previous errors
+        activeStep.find('.field-error').removeClass('field-error');
+        activeStep.find('.field-error-msg').remove();
+
+        requiredFields.each(function () {
+            const $field = $(this);
+            const value = $field.val();
+
+            if (!value || (typeof value === 'string' && value.trim() === '')) {
+                isValid = false;
+                $field.addClass('field-error');
+
+                // Add error message below the field
+                const $formGroup = $field.closest('.form-group');
+                if ($formGroup.length && !$formGroup.find('.field-error-msg').length) {
+                    const label = $formGroup.find('label').first().text().replace('*', '').trim();
+                    $formGroup.append('<span class="field-error-msg">' + label + ' is required</span>');
+                }
+            }
+        });
+
+        if (!isValid) {
+            // Show warning toast
+            showValidationWarning('Please fill in all required fields before proceeding.');
+
+            // Scroll to first error
+            const firstError = activeStep.find('.field-error').first();
+            if (firstError.length) {
+                $('html, body').animate({
+                    scrollTop: firstError.offset().top - 150
+                }, 300);
+                firstError.focus();
+            }
+        }
+
+        return isValid;
+    }
+
+    function showValidationWarning(message) {
+        // Remove existing warning
+        $('.bus-validation-toast').remove();
+
+        const toast = $('<div class="bus-validation-toast"><span class="dashicons dashicons-warning"></span> ' + message + '</div>');
+        $('body').append(toast);
+
+        setTimeout(function () { toast.addClass('show'); }, 10);
+        setTimeout(function () {
+            toast.removeClass('show');
+            setTimeout(function () { toast.remove(); }, 300);
+        }, 4000);
+    }
+
+    // Clear error on field input
+    $(document).on('input change', '.field-error', function () {
+        const $field = $(this);
+        if ($field.val() && $field.val().trim() !== '') {
+            $field.removeClass('field-error');
+            $field.closest('.form-group').find('.field-error-msg').remove();
+        }
+    });
+
     // --- Step Transitions ---
     $('.next-step').on('click', function (e) {
         e.preventDefault();
         const nextStep = $(this).data('next');
+
+        if (!validateCurrentStep()) return;
 
         // Save before moving to next step
         saveBusData(false, function () {
@@ -22,6 +91,11 @@ jQuery(document).ready(function ($) {
 
         if (step < currentActive || $(this).hasClass('completed')) {
             goToStep(step);
+        } else if (step > currentActive) {
+            if (!validateCurrentStep()) return;
+            saveBusData(false, function () {
+                goToStep(step);
+            });
         }
     });
 
@@ -297,6 +371,11 @@ jQuery(document).ready(function ($) {
     // --- Save as Draft ---
     $('#save-bus-draft').on('click', function () {
         saveBusData(true);
+    });
+
+    // --- Top Save/Publish Button (save without step change) ---
+    $('#save-bus-publish').on('click', function () {
+        saveBusData(false);
     });
 
     // --- Media Uploader ---

@@ -327,7 +327,7 @@ select.form-control {
     gap: 20px;
 }
 
-/* Switches */
+/* Switches — Unified for Step 1 (.bus-switch) and Step 6 (label.switch) */
 .switch-group {
     display: flex;
     justify-content: space-between;
@@ -351,20 +351,27 @@ select.form-control {
     color: var(--bus-text-light);
 }
 
-.bus-switch {
+.bus-edit-wrap .bus-switch,
+.bus-edit-wrap label.switch {
     position: relative;
     display: inline-block;
     width: 48px;
     height: 24px;
+    margin: 0;
+    padding: 0;
+    cursor: pointer;
 }
 
-.bus-switch input {
+.bus-edit-wrap .bus-switch input,
+.bus-edit-wrap label.switch input {
     opacity: 0;
     width: 0;
     height: 0;
+    position: absolute;
 }
 
-label .slider {
+.bus-edit-wrap .bus-switch .slider,
+.bus-edit-wrap label.switch .slider {
     position: absolute;
     cursor: pointer;
     top: 0;
@@ -373,35 +380,36 @@ label .slider {
     bottom: 0;
     background-color: #e2e8f0;
     transition: .4s;
+    border-radius: 24px;
 }
 
-label .slider:before {
+.bus-edit-wrap .bus-switch .slider:before,
+.bus-edit-wrap label.switch .slider:before {
     position: absolute;
     content: "";
     height: 18px;
     width: 18px;
     left: 3px;
+    top: 3px;
     bottom: 3px;
     background-color: white;
     transition: .4s;
+    border-radius: 50%;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    top: 3px;
 }
 
-label input:checked+.slider:before {
-    left: -6px;
-    background-color: #fff;
-}
-
-input:checked+.slider {
+.bus-edit-wrap .bus-switch input:checked+.slider,
+.bus-edit-wrap label.switch input:checked+.slider {
     background-color: var(--bus-primary);
 }
 
-input:focus+.slider {
+.bus-edit-wrap .bus-switch input:focus+.slider,
+.bus-edit-wrap label.switch input:focus+.slider {
     box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.15);
 }
 
-input:checked+.slider:before {
+.bus-edit-wrap .bus-switch input:checked+.slider:before,
+.bus-edit-wrap label.switch input:checked+.slider:before {
     transform: translateX(24px);
 }
 
@@ -801,6 +809,84 @@ input:checked+.slider:before {
     to {
         transform: rotate(360deg);
     }
+}
+
+/* Field Validation Errors */
+.field-error {
+    border-color: #ef4444 !important;
+    background-color: #fef2f2 !important;
+    animation: fieldShake 0.4s ease;
+}
+
+.field-error:focus {
+    box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.15) !important;
+    border-color: #ef4444 !important;
+}
+
+.field-error-msg {
+    display: block;
+    color: #ef4444;
+    font-size: 12px;
+    font-weight: 500;
+    margin-top: 6px;
+}
+
+@keyframes fieldShake {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    20% {
+        transform: translateX(-4px);
+    }
+
+    40% {
+        transform: translateX(4px);
+    }
+
+    60% {
+        transform: translateX(-3px);
+    }
+
+    80% {
+        transform: translateX(3px);
+    }
+}
+
+/* Validation Toast */
+.bus-validation-toast {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-20px);
+    background: #fef2f2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    z-index: 999999;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 10px 25px rgba(239, 68, 68, 0.15);
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.bus-validation-toast .dashicons {
+    color: #ef4444;
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+}
+
+.bus-validation-toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
 }
 
 @keyframes fadeIn {
