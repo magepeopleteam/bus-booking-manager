@@ -2,40 +2,40 @@
 if (!defined('ABSPATH')) exit;
 
 /**
- * Bus Type Edit Page Class
+ * Bus Stop Edit Page Class
  * 
- * Handles the custom modern edit/add page for bus types (taxonomy wbbm_bus_cat).
+ * Handles the modern custom edit/add page for bus stops (wbbm_bus_stops taxonomy).
  */
-class BusTypeEditPageClass
+class BusStopEditPageClass
 {
     public function __construct()
     {
-        add_action('admin_menu', array($this, 'register_bus_type_edit_page'));
+        add_action('admin_menu', array($this, 'register_bus_stop_edit_page'));
         add_action('admin_enqueue_scripts', array($this, 'enqueue_assets'), 20);
-        add_action('admin_init', array($this, 'handle_bus_type_save'));
+        add_action('admin_init', array($this, 'handle_bus_stop_save'));
         add_action('admin_init', array($this, 'handle_redirects'));
         add_filter('parent_file', array($this, 'set_parent_menu'), 999);
         add_filter('submenu_file', array($this, 'set_submenu_active'), 999);
         add_action('admin_menu', function () {
             remove_submenu_page(
                 'admin.php?post_type=wbbm_bus',
-                'wbbm-bus-type-edit'
+                'wbbm-bus-stop-edit'
             );
         }, 999);
     }
 
     /**
-     * Register the hidden custom edit page
+     * Register the custom edit/add page
      */
-    public function register_bus_type_edit_page()
+    public function register_bus_stop_edit_page()
     {
         add_submenu_page(
             'admin.php?post_type=wbbm_bus',
-            __('Edit Bus Type', 'bus-booking-manager'),
-            __('Edit Bus Type', 'bus-booking-manager'),
+            __('Edit Bus Stop', 'bus-booking-manager'),
+            __('Edit Bus Stop', 'bus-booking-manager'),
             'manage_options',
-            'wbbm-bus-type-edit',
-            array($this, 'render_bus_type_edit_page')
+            'wbbm-bus-stop-edit',
+            array($this, 'render_bus_stop_edit_page')
         );
     }
 
@@ -45,9 +45,9 @@ class BusTypeEditPageClass
     public function handle_redirects()
     {
         global $pagenow;
-        if ($pagenow === 'term.php' && isset($_GET['taxonomy']) && $_GET['taxonomy'] === 'wbbm_bus_cat') {
+        if ($pagenow === 'term.php' && isset($_GET['taxonomy']) && $_GET['taxonomy'] === 'wbbm_bus_stops') {
             $tag_id = isset($_GET['tag_ID']) ? intval($_GET['tag_ID']) : 0;
-            wp_safe_redirect(admin_url('edit.php?post_type=wbbm_bus&page=wbbm-bus-type-edit&term_id=' . $tag_id));
+            wp_safe_redirect(admin_url('edit.php?post_type=wbbm_bus&page=wbbm-bus-stop-edit&term_id=' . $tag_id));
             exit;
         }
     }
@@ -57,7 +57,7 @@ class BusTypeEditPageClass
      */
     public function set_parent_menu($parent_file)
     {
-        if (isset($_GET['page']) && $_GET['page'] === 'wbbm-bus-type-edit') {
+        if (isset($_GET['page']) && $_GET['page'] === 'wbbm-bus-stop-edit') {
             return 'edit.php?post_type=wbbm_bus';
         }
         return $parent_file;
@@ -68,9 +68,16 @@ class BusTypeEditPageClass
      */
     public function set_submenu_active($submenu_file)
     {
-        if (isset($_GET['page']) && $_GET['page'] === 'wbbm-bus-type-edit') {
-            $submenu_file = 'wbbm-bus-type-list';
+        global $pagenow;
+
+        if (
+            $pagenow === 'admin.php'
+            && isset($_GET['page'])
+            && $_GET['page'] === 'wbbm-bus-stop-edit'
+        ) {
+            $submenu_file = 'wbbm-bus-stop-list';
         }
+
         return $submenu_file;
     }
 
@@ -79,7 +86,7 @@ class BusTypeEditPageClass
      */
     public function enqueue_assets($hook)
     {
-        if (strpos($hook, 'wbbm-bus-type-edit') === false && (!isset($_GET['page']) || $_GET['page'] !== 'wbbm-bus-type-edit')) {
+        if (!isset($_GET['page']) || $_GET['page'] !== 'wbbm-bus-stop-edit') {
             return;
         }
 
@@ -89,9 +96,9 @@ class BusTypeEditPageClass
     /**
      * Handle saving/updating the term
      */
-    public function handle_bus_type_save()
+    public function handle_bus_stop_save()
     {
-        if (isset($_POST['wbbm_bus_type_nonce']) && wp_verify_nonce($_POST['wbbm_bus_type_nonce'], 'wbbm_bus_type_save')) {
+        if (isset($_POST['wbbm_bus_stop_save_nonce']) && wp_verify_nonce($_POST['wbbm_bus_stop_save_nonce'], 'wbbm_bus_stop_nonce')) {
             if (!current_user_can('manage_options')) {
                 return;
             }
@@ -108,10 +115,10 @@ class BusTypeEditPageClass
             );
 
             if ($term_id) {
-                wp_update_term($term_id, 'wbbm_bus_cat', $args);
+                wp_update_term($term_id, 'wbbm_bus_stops', $args);
                 $message = 'updated';
             } else {
-                $term = wp_insert_term($name, 'wbbm_bus_cat', $args);
+                $term = wp_insert_term($name, 'wbbm_bus_stops', $args);
                 if (!is_wp_error($term)) {
                     $term_id = $term['term_id'];
                     $message = 'created';
@@ -123,7 +130,7 @@ class BusTypeEditPageClass
             $redirect_url = add_query_arg(
                 array(
                     'post_type' => 'wbbm_bus',
-                    'page'      => 'wbbm-bus-type-edit',
+                    'page'      => 'wbbm-bus-stop-edit',
                     'term_id'   => $term_id,
                     'message'   => $message
                 ),
@@ -137,10 +144,10 @@ class BusTypeEditPageClass
     /**
      * Render the custom edit/add page
      */
-    public function render_bus_type_edit_page()
+    public function render_bus_stop_edit_page()
     {
         $term_id = isset($_GET['term_id']) ? intval($_GET['term_id']) : 0;
-        $term = $term_id ? get_term($term_id, 'wbbm_bus_cat') : null;
+        $term = $term_id ? get_term($term_id, 'wbbm_bus_stops') : null;
 
         $name = $term ? $term->name : '';
         $slug = $term ? $term->slug : '';
@@ -150,25 +157,25 @@ class BusTypeEditPageClass
         <div class="wrap bus-edit-wrap">
             <div class="bus-edit-header">
                 <div style="display: flex; align-items: center; gap: 15px;">
-                    <a href="<?php echo admin_url('edit.php?post_type=wbbm_bus&page=wbbm-bus-type-list'); ?>" class="back-btn">
+                    <a href="<?php echo admin_url('edit.php?post_type=wbbm_bus&page=wbbm-bus-stop-list'); ?>" class="back-btn">
                         <span class="dashicons dashicons-arrow-left-alt"></span>
                         <?php _e('Back to List', 'bus-booking-manager'); ?>
                     </a>
-                    <h2><?php echo $term_id ? __('Edit Bus Type', 'bus-booking-manager') . ': ' . esc_html($name) : __('Add New Bus Type', 'bus-booking-manager'); ?></h2>
+                    <h2><?php echo $term_id ? __('Edit Bus Stop', 'bus-booking-manager') . ': ' . esc_html($name) : __('Add New Bus Stop', 'bus-booking-manager'); ?></h2>
                 </div>
                 <?php if ($term_id) : ?>
                     <div class="header-actions">
-                        <a href="<?php echo admin_url('edit.php?post_type=wbbm_bus&page=wbbm-bus-type-edit'); ?>" class="btn btn-primary">
+                        <a href="<?php echo admin_url('admin.php?post_type=wbbm_bus&page=wbbm-bus-stop-edit'); ?>" class="btn btn-primary">
                             <span class="dashicons dashicons-plus-alt2"></span>
-                            <?php _e('Add New Type', 'bus-booking-manager'); ?>
+                            <?php _e('Add New Stop', 'bus-booking-manager'); ?>
                         </a>
                     </div>
                 <?php endif; ?>
             </div>
 
             <div class="bus-container">
-                <form id="bus-type-edit-form" method="post" action="">
-                    <?php wp_nonce_field('wbbm_bus_type_save', 'wbbm_bus_type_nonce'); ?>
+                <form id="bus-stop-edit-form" method="post" action="">
+                    <?php wp_nonce_field('wbbm_bus_stop_nonce', 'wbbm_bus_stop_save_nonce'); ?>
                     <input type="hidden" name="term_id" value="<?php echo esc_attr($term_id); ?>">
 
                     <div class="bus-edit-content">
@@ -177,7 +184,7 @@ class BusTypeEditPageClass
                                 <div class="form-group">
                                     <label for="term_name"><?php _e('Name', 'bus-booking-manager'); ?> <span class="required">*</span></label>
                                     <input type="text" name="term_name" id="term_name" class="form-control" value="<?php echo esc_attr($name); ?>" required>
-                                    <p class="description"><?php _e('The name is how it appears on your site.', 'bus-booking-manager'); ?></p>
+                                    <p class="description"><?php _e('The name of the bus stop.', 'bus-booking-manager'); ?></p>
                                 </div>
 
                                 <div class="form-group">
@@ -198,8 +205,8 @@ class BusTypeEditPageClass
                             <div class="bus-card">
                                 <h3><?php _e('Publish', 'bus-booking-manager'); ?></h3>
                                 <div class="form-group" style="margin-top: 20px;">
-                                    <button type="submit" id="bus-type-submit" class="btn btn-primary btn-block" style="width: 100%; justify-content: center;">
-                                        <?php echo $term_id ? __('Update Bus Type', 'bus-booking-manager') : __('Add New Bus Type', 'bus-booking-manager'); ?>
+                                    <button type="submit" id="bus-stop-submit" class="btn btn-primary btn-block" style="width: 100%; justify-content: center;" data-wbbm-persist-toast="<?php echo $term_id ? 'Bus stop updated successfully!' : 'Bus stop created successfully!'; ?>">
+                                        <?php echo $term_id ? __('Update Bus Stop', 'bus-booking-manager') : __('Add New Bus Stop', 'bus-booking-manager'); ?>
                                     </button>
                                 </div>
                             </div>
@@ -212,4 +219,4 @@ class BusTypeEditPageClass
     }
 }
 
-new BusTypeEditPageClass();
+new BusStopEditPageClass();
