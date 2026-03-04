@@ -113,7 +113,8 @@ class BusListPageClass
     {
         // Filters
         $category = isset($_GET['wbbm_bus_cat']) ? sanitize_text_field($_GET['wbbm_bus_cat']) : '';
-        $s = isset($_GET['s']) ? sanitize_text_field($_GET['s']) : '';
+        $stop     = isset($_GET['wbbm_bus_stops']) ? sanitize_text_field($_GET['wbbm_bus_stops']) : '';
+        $s        = isset($_GET['s']) ? sanitize_text_field($_GET['s']) : '';
 
         $paged = isset($_GET['paged']) ? max(1, intval($_GET['paged'])) : 1;
         $posts_per_page = 20;
@@ -126,14 +127,22 @@ class BusListPageClass
             'paged'          => $paged,
         );
 
-        if ($category) {
-            $args['tax_query'] = array(
-                array(
+        if ($category || $stop) {
+            $args['tax_query'] = array('relation' => 'AND');
+            if ($category) {
+                $args['tax_query'][] = array(
                     'taxonomy' => 'wbbm_bus_cat',
                     'field'    => 'slug',
                     'terms'    => $category,
-                ),
-            );
+                );
+            }
+            if ($stop) {
+                $args['tax_query'][] = array(
+                    'taxonomy' => 'wbbm_bus_stops',
+                    'field'    => 'slug',
+                    'terms'    => $stop,
+                );
+            }
         }
 
         $query = new WP_Query($args);
@@ -196,7 +205,7 @@ class BusListPageClass
                                 <button type="submit" class="btn btn-primary btn-sm">
                                     <?php _e('Filter', 'bus-booking-manager'); ?>
                                 </button>
-                                <?php if ($s || $category) : ?>
+                                <?php if ($s || $category || $stop) : ?>
                                     <a href="<?php echo admin_url('edit.php?post_type=wbbm_bus&page=wbbm-bus-list'); ?>" class="btn btn-outline btn-sm" style="text-decoration:none;">
                                         <?php _e('Clear', 'bus-booking-manager'); ?>
                                     </a>

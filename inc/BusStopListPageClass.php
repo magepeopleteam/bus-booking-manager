@@ -202,6 +202,7 @@ class BusStopListPageClass
                                 <?php foreach ($terms as $term) :
                                     $edit_url = admin_url('admin.php?post_type=wbbm_bus&page=wbbm-bus-stop-edit&term_id=' . $term->term_id);
                                     $delete_url = wp_nonce_url(add_query_arg(array('action' => 'delete', 'term_id' => $term->term_id)), 'delete-bus-stop_' . $term->term_id);
+                                    $filter_url = admin_url('edit.php?post_type=wbbm_bus&page=wbbm-bus-list&wbbm_bus_stops=' . $term->slug);
                                 ?>
                                     <tr>
                                         <td><input type="checkbox" name="term_ids[]" value="<?php echo esc_attr($term->term_id); ?>"></td>
@@ -225,7 +226,7 @@ class BusStopListPageClass
                                         </td>
                                         <td>
                                             <div class="capacity-info">
-                                                <span class="count"><?php echo esc_html($term->count); ?></span>
+                                                <a href="<?php echo esc_url($filter_url); ?>" class="count" title="<?php esc_attr_e('View buses with this stop', 'bus-booking-manager'); ?>"><?php echo esc_html($term->count); ?></a>
                                             </div>
                                         </td>
                                         <td>
