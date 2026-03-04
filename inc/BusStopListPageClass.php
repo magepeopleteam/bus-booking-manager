@@ -62,8 +62,8 @@ class BusStopListPageClass
 
         if ($stop_item) {
             $bus_menu = array_values($bus_menu);
-            // Insert at index 3 (4th position)
-            array_splice($bus_menu, 3, 0, array($stop_item));
+            // Insert at index 2 (3rd position)
+            array_splice($bus_menu, 2, 0, array($stop_item));
             $submenu[$parent_slug] = $bus_menu;
         }
     }
