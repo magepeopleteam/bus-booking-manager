@@ -92,6 +92,8 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
 	require_once(dirname(__FILE__) . "/inc/wbbm_dummy_import.php");
 	require_once(dirname(__FILE__) . "/inc/BusListPageClass.php");
 	require_once(dirname(__FILE__) . "/inc/BusEditPageClass.php");
+	require_once(dirname(__FILE__) . "/inc/BusTypeListPageClass.php");
+	require_once(dirname(__FILE__) . "/inc/BusTypeEditPageClass.php");
 
 	// Shuttle Service Files - Conditional loading
 	if (function_exists('wbbm_get_option') && wbbm_get_option('wbbm_shuttle_module_enable', 'wbbm_general_setting_sec', 'off') === 'on') {

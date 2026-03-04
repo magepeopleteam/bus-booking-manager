@@ -639,7 +639,7 @@ select.form-control {
 /* Adjust margin for non-full screen if needed, but for now let's keep it consistent */
 .bus-container {
     padding: 30px;
-    max-width: 1200px;
+    max-width: 100%;
     margin: 0 auto;
     background: #fff;
     border-radius: 12px;
@@ -888,6 +888,8 @@ select.form-control {
     opacity: 1;
     transform: translateX(-50%) translateY(0);
 }
+
+
 
 @keyframes fadeIn {
     from {

@@ -155,7 +155,7 @@ class BusListPageClass
 
 ?>
         <div class="wrap shuttle-list-wrap">
-            <div class="shuttle-list-container">
+            <div class="shuttle-list-container-fullwidth">
                 <!-- Header Section -->
                 <div class="shuttle-list-header">
                     <div class="header-left">
@@ -175,18 +175,18 @@ class BusListPageClass
 
                 <!-- Filters Card -->
                 <div class="shuttle-filters-card">
-                    <form method="get" action="" id="shuttle-list-filter-form">
+                    <form method="get" action="<?php echo admin_url('edit.php'); ?>" id="shuttle-list-filter-form">
                         <input type="hidden" name="post_type" value="wbbm_bus">
                         <input type="hidden" name="page" value="wbbm-bus-list">
 
                         <div class="filters-row">
-                            <div class="filter-left">
+                            <div class="filter-left" style="flex-grow:initial">
                                 <div class="filter-group search-group">
                                     <span class="dashicons dashicons-search"></span>
                                     <input type="text" name="s" value="<?php echo esc_attr($s); ?>" placeholder="<?php _e('Search bus...', 'bus-booking-manager'); ?>" class="form-control">
                                 </div>
                                 <div class="filter-group status-filter-group">
-                                    <select name="wbbm_bus_cat" id="category-filter" class="form-control">
+                                    <select name="wbbm_bus_cat" id="status-filter" class="form-control">
                                         <option value=""><?php _e('All Categories', 'bus-booking-manager'); ?></option>
                                         <?php foreach ($categories as $cat) : ?>
                                             <option value="<?php echo esc_attr($cat->slug); ?>" <?php selected($category, $cat->slug); ?>><?php echo esc_html($cat->name); ?></option>

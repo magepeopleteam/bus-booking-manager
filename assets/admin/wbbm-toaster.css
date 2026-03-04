@@ -1,0 +1,55 @@
+/* 
+ * Global Toaster Notifications for Bus Booking Manager 
+ */
+
+.bus-toast {
+    position: fixed;
+    top: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-20px);
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    z-index: 999999;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    pointer-events: none;
+    min-width: 300px;
+    justify-content: center;
+}
+
+.bus-toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+.bus-toast-success {
+    background: #ecfdf5;
+    color: #065f46;
+    border: 1px solid #6ee7b7;
+}
+
+.bus-toast-success .dashicons {
+    color: #10b981;
+}
+
+.bus-toast-delete {
+    background: #fef2f2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+}
+
+.bus-toast-delete .dashicons {
+    color: #ef4444;
+}
+
+.bus-toast .dashicons {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+}
