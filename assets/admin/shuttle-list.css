@@ -23,7 +23,7 @@
 }
 
 .shuttle-list-container {
-    max-width: 1400px;
+    max-width: 100%;
     margin: 0 auto;
 }
 
@@ -112,6 +112,7 @@
 
 .filter-left {
     flex-grow: 1;
+    flex-wrap: wrap;
 }
 
 .filter-group {
@@ -121,12 +122,13 @@
 }
 
 .status-filter-group {
-    min-width: 160px;
+    width: 200px;
 }
 
 .filter-group.search-group {
-    flex-grow: 1;
-    max-width: 400px;
+    flex-grow: 0;
+    width: 400px;
+    max-width: 100%;
 }
 
 .filter-group.search-group .dashicons {
