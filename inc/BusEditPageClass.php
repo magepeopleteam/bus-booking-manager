@@ -412,6 +412,43 @@ class BusEditPageClass
     }
 
     /**
+     * Handle Add Inline Feature via AJAX
+     */
+    public function handle_add_inline_feature_ajax()
+    {
+        check_ajax_referer('wbbm_bus_save', 'security');
+
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(__('Unauthorized', 'bus-booking-manager'));
+        }
+
+        $term_name = isset($_POST['term_name']) ? sanitize_text_field(wp_unslash($_POST['term_name'])) : '';
+
+        if (empty($term_name)) {
+            wp_send_json_error(__('Feature name is required', 'bus-booking-manager'));
+        }
+
+        $term = wp_insert_term($term_name, 'wbbm_bus_feature');
+
+        if (is_wp_error($term)) {
+            if ($term->get_error_code() === 'term_exists') {
+                $existing_term = get_term_by('name', $term_name, 'wbbm_bus_feature');
+                wp_send_json_success(array(
+                    'term_id' => $existing_term->term_id,
+                    'name'    => $existing_term->name,
+                    'message' => __('Feature already exists. Added to list.', 'bus-booking-manager')
+                ));
+            }
+            wp_send_json_error($term->get_error_message());
+        }
+
+        wp_send_json_success(array(
+            'term_id' => $term['term_id'],
+            'name'    => $term_name
+        ));
+    }
+
+    /**
      * Handle Reload Pricing Matrix via AJAX
      */
     public function handle_reload_pricing_ajax()

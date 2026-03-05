@@ -536,6 +536,69 @@ jQuery(document).ready(function ($) {
         });
     });
 
+    // --- Step 4: Sidebar Feature Addition ---
+    $(document).on('click', '#add-inline-feature-btn', function () {
+        const nameInput = $('#new-feature-name');
+        const name = nameInput.val().trim();
+        const btn = $(this);
+
+        if (!name) {
+            window.wbbm_show_toast('Please enter a feature name', 'delete');
+            return;
+        }
+
+        btn.prop('disabled', true).html('<span class="spinner is-active" style="float:none; margin:0 5px 0 0;"></span> Adding...');
+
+        $.ajax({
+            url: wbbm_bus_edit.ajax_url,
+            type: 'POST',
+            data: {
+                action: 'wbbm_add_inline_feature',
+                security: wbbm_bus_edit.nonce,
+                term_name: name
+            },
+            success: function (response) {
+                btn.prop('disabled', false).html('<span class="dashicons dashicons-plus"></span> Add Feature');
+                if (response.success) {
+                    nameInput.val('');
+                    window.wbbm_show_toast(response.data.message || 'Feature added successfully!');
+
+                    // Update Sidebar list
+                    const featuresSidebarList = $('#sidebar-features-list');
+                    featuresSidebarList.find('.no-features').remove();
+                    featuresSidebarList.append(`
+                        <li data-id="${response.data.term_id}">
+                            <span class="dashicons dashicons-star-filled"></span>
+                            <span class="feature-name">${response.data.name}</span>
+                        </li>
+                    `);
+
+                    // Update Step 4 Grid (Checkboxes)
+                    const featuresGrid = $('.features-grid');
+                    if (featuresGrid.length) {
+                        const newGridItem = `
+                            <label class="feature-item active">
+                                <input type="checkbox" name="wbbm_features[]" value="${response.data.term_id}" checked>
+                                <div class="feature-content">
+                                    <span class="fas fa-star"></span>
+                                    <span>${response.data.name}</span>
+                                </div>
+                            </label>
+                        `;
+                        featuresGrid.append(newGridItem);
+                    }
+
+                } else {
+                    window.wbbm_show_toast('Error: ' + (response.data || 'Unknown error'), 'delete');
+                }
+            },
+            error: function () {
+                btn.prop('disabled', false).html('<span class="dashicons dashicons-plus"></span> Add Feature');
+                window.wbbm_show_toast('Server error occurred', 'delete');
+            }
+        });
+    });
+
     // Initialize on load
     const initialStep = new URLSearchParams(window.location.search).get('step') || 1;
     goToStep(initialStep);
