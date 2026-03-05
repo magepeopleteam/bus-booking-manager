@@ -474,6 +474,68 @@ jQuery(document).ready(function ($) {
             }
         });
     });
+    // --- Step 2: Sidebar Pickup Point Addition ---
+    $(document).on('click', '#add-inline-pickpoint-btn', function () {
+        const nameInput = $('#new-pickpoint-name');
+        const name = nameInput.val().trim();
+        const btn = $(this);
+
+        if (!name) {
+            window.wbbm_show_toast('Please enter a pickup point name', 'delete');
+            return;
+        }
+
+        btn.prop('disabled', true).html('<span class="spinner is-active" style="float:none; margin:0 5px 0 0;"></span> Adding...');
+
+        $.ajax({
+            url: wbbm_bus_edit.ajax_url,
+            type: 'POST',
+            data: {
+                action: 'wbbm_add_inline_pickpoint',
+                security: wbbm_bus_edit.nonce,
+                term_name: name
+            },
+            success: function (response) {
+                btn.prop('disabled', false).html('<span class="dashicons dashicons-plus"></span> Add Pickup Point');
+                if (response.success) {
+                    nameInput.val('');
+                    window.wbbm_show_toast(response.data.message || 'Pickup point added successfully!');
+
+                    // Update Sidebar list
+                    const pointsList = $('#sidebar-pickpoints-list');
+                    pointsList.find('.no-points').remove();
+                    pointsList.append(`
+                        <li data-id="${response.data.term_id}">
+                            <span class="dashicons dashicons-location-alt"></span>
+                            <span class="point-name">${response.data.name}</span>
+                        </li>
+                    `);
+
+                    // Update Route Item dropdowns (across all steps if applicable)
+                    const newOption = `<option value="${response.data.name}">${response.data.name}</option>`;
+                    
+                    // 1. Update all existing selects in route items
+                    $('.route-pickup-points-wrap select').append(newOption);
+
+                    // 2. Update the hidden options data in the .bus-card for future-added route items
+                    const routeCard = $('.bus-card[data-pickpoints-options]');
+                    if (routeCard.length) {
+                        let optionsData = routeCard.data('pickpoints-options') || [];
+                        optionsData.push({ term_id: response.data.term_id, name: response.data.name });
+                        routeCard.data('pickpoints-options', optionsData);
+                    }
+
+                } else {
+                    window.wbbm_show_toast('Error: ' + (response.data || 'Unknown error'), 'delete');
+                }
+            },
+            error: function () {
+                btn.prop('disabled', false).html('<span class="dashicons dashicons-plus"></span> Add Pickup Point');
+                window.wbbm_show_toast('Server error occurred', 'delete');
+            }
+        });
+    });
+
     // Initialize on load
     const initialStep = new URLSearchParams(window.location.search).get('step') || 1;
     goToStep(initialStep);

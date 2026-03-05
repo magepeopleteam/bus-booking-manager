@@ -477,7 +477,8 @@ select.form-control {
     color: var(--bus-primary);
 }
 
-.inline-taxonomy-list li.no-stops {
+.inline-taxonomy-list li.no-stops,
+.inline-taxonomy-list li.no-points {
     justify-content: center;
     background: transparent;
     color: var(--bus-text-light);
