@@ -27,6 +27,8 @@ class BusEditPageClass
 
         // Inline Stop AJAX
         add_action('wp_ajax_wbbm_add_inline_stop', array($this, 'handle_add_inline_stop_ajax'));
+        add_action('wp_ajax_wbbm_add_inline_pickpoint', array($this, 'handle_add_inline_pickpoint_ajax'));
+        add_action('wp_ajax_wbbm_add_inline_feature', array($this, 'handle_add_inline_feature_ajax'));
     }
 
     /**
@@ -326,7 +328,14 @@ class BusEditPageClass
         }
 
         if ($is_ajax) {
-            wp_send_json_success(array('post_id' => $post_id));
+            $post = get_post($post_id);
+            $status_data = $this->get_status_metadata($post->post_status);
+            wp_send_json_success(array(
+                'post_id'        => $post_id,
+                'status_label'   => $status_data['label'],
+                'status_class'   => $status_data['class'],
+                'current_status' => $post->post_status
+            ));
         }
 
         // Standard redirect if not AJAX
@@ -361,6 +370,80 @@ class BusEditPageClass
                     'term_id' => $existing_term->term_id,
                     'name'    => $existing_term->name,
                     'message' => __('Stop already exists. Added to list.', 'bus-booking-manager')
+                ));
+            }
+            wp_send_json_error($term->get_error_message());
+        }
+
+        wp_send_json_success(array(
+            'term_id' => $term['term_id'],
+            'name'    => $term_name
+        ));
+    }
+
+    /**
+     * Handle Add Inline Pickup Point via AJAX
+     */
+    public function handle_add_inline_pickpoint_ajax()
+    {
+        check_ajax_referer('wbbm_bus_save', 'security');
+
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(__('Unauthorized', 'bus-booking-manager'));
+        }
+
+        $term_name = isset($_POST['term_name']) ? sanitize_text_field(wp_unslash($_POST['term_name'])) : '';
+
+        if (empty($term_name)) {
+            wp_send_json_error(__('Pickup point name is required', 'bus-booking-manager'));
+        }
+
+        $term = wp_insert_term($term_name, 'wbbm_bus_pickpoint');
+
+        if (is_wp_error($term)) {
+            if ($term->get_error_code() === 'term_exists') {
+                $existing_term = get_term_by('name', $term_name, 'wbbm_bus_pickpoint');
+                wp_send_json_success(array(
+                    'term_id' => $existing_term->term_id,
+                    'name'    => $existing_term->name,
+                    'message' => __('Pickup point already exists. Added to list.', 'bus-booking-manager')
+                ));
+            }
+            wp_send_json_error($term->get_error_message());
+        }
+
+        wp_send_json_success(array(
+            'term_id' => $term['term_id'],
+            'name'    => $term_name
+        ));
+    }
+
+    /**
+     * Handle Add Inline Feature via AJAX
+     */
+    public function handle_add_inline_feature_ajax()
+    {
+        check_ajax_referer('wbbm_bus_save', 'security');
+
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(__('Unauthorized', 'bus-booking-manager'));
+        }
+
+        $term_name = isset($_POST['term_name']) ? sanitize_text_field(wp_unslash($_POST['term_name'])) : '';
+
+        if (empty($term_name)) {
+            wp_send_json_error(__('Feature name is required', 'bus-booking-manager'));
+        }
+
+        $term = wp_insert_term($term_name, 'wbbm_bus_feature');
+
+        if (is_wp_error($term)) {
+            if ($term->get_error_code() === 'term_exists') {
+                $existing_term = get_term_by('name', $term_name, 'wbbm_bus_feature');
+                wp_send_json_success(array(
+                    'term_id' => $existing_term->term_id,
+                    'name'    => $existing_term->name,
+                    'message' => __('Feature already exists. Added to list.', 'bus-booking-manager')
                 ));
             }
             wp_send_json_error($term->get_error_message());
@@ -412,8 +495,10 @@ class BusEditPageClass
         }
 
         wp_enqueue_media();
+        wp_enqueue_style('wbbm-toaster-css', WBTM_PLUGIN_URL . 'assets/admin/wbbm-toaster.css', array(), time());
         wp_enqueue_style('bus-edit-css', WBTM_PLUGIN_URL . 'assets/admin/bus-edit.css', array(), time());
-        wp_enqueue_script('bus-edit-js', WBTM_PLUGIN_URL . 'assets/admin/bus-edit.js', array('jquery'), time(), true);
+        wp_enqueue_script('bus-toaster-js', WBTM_PLUGIN_URL . 'assets/admin/bus-toaster.js', array('jquery'), time(), true);
+        wp_enqueue_script('bus-edit-js', WBTM_PLUGIN_URL . 'assets/admin/bus-edit.js', array('jquery', 'bus-toaster-js'), time(), true);
 
         wp_localize_script('bus-edit-js', 'wbbm_bus_edit', array(
             'ajax_url' => admin_url('admin-ajax.php'),
@@ -433,27 +518,9 @@ class BusEditPageClass
         $post = $post_id ? get_post($post_id) : null;
 
         $current_status = $post ? $post->post_status : 'new';
-        $status_label = '';
-        $status_class = '';
-
-        switch ($current_status) {
-            case 'publish':
-                $status_label = __('Published', 'bus-booking-manager');
-                $status_class = 'status-publish';
-                break;
-            case 'draft':
-                $status_label = __('Draft', 'bus-booking-manager');
-                $status_class = 'status-draft';
-                break;
-            case 'new':
-                $status_label = __('New', 'bus-booking-manager');
-                $status_class = 'status-new';
-                break;
-            default:
-                $status_label = ucfirst($current_status);
-                $status_class = 'status-' . $current_status;
-                break;
-        }
+        $status_data = $this->get_status_metadata($current_status);
+        $status_label = $status_data['label'];
+        $status_class = $status_data['class'];
 
         $title = $post ? $post->post_title : '';
         $content = $post ? $post->post_content : '';
@@ -503,7 +570,12 @@ class BusEditPageClass
                         foreach ($steps as $step_id => $label): ?>
                             <div class="step-item <?php echo $current_step === $step_id ? 'active' : ($current_step > $step_id ? 'completed' : ''); ?>" data-step="<?php echo $step_id; ?>">
                                 <div class="step-number"><?php echo $current_step > $step_id ? '✓' : $step_id; ?></div>
-                                <div class="step-label"><?php echo $label; ?></div>
+                                <div class="step-label">
+                                    <?php echo $label; ?>
+                                    <?php if ($step_id === 6): ?>
+                                        <span class="pro-badge-nav">PRO</span>
+                                    <?php endif; ?>
+                                </div>
                             </div>
                         <?php endforeach; ?>
                     </div>
@@ -724,6 +796,33 @@ class BusEditPageClass
 
             <div class="bus-edit-right">
                 <div class="bus-card">
+                    <h3><?php _e('Pickup Points', 'bus-booking-manager'); ?></h3>
+                    <div class="inline-taxonomy-list-wrap">
+                        <ul class="inline-taxonomy-list" id="sidebar-pickpoints-list">
+                            <?php
+                            if (!is_wp_error($pickpoints) && !empty($pickpoints)) :
+                                foreach ($pickpoints as $point) : ?>
+                                    <li data-id="<?php echo esc_attr($point->term_id); ?>">
+                                        <span class="dashicons dashicons-location-alt"></span>
+                                        <span class="point-name"><?php echo esc_html($point->name); ?></span>
+                                    </li>
+                                <?php endforeach;
+                            else : ?>
+                                <li class="no-points"><?php _e('No pickup points yet.', 'bus-booking-manager'); ?></li>
+                            <?php endif; ?>
+                        </ul>
+                    </div>
+                    <div class="inline-taxonomy-add">
+                        <div class="form-group" style="margin-bottom: 10px;">
+                            <input type="text" id="new-pickpoint-name" class="form-control" placeholder="<?php _e('Enter pickup point', 'bus-booking-manager'); ?>">
+                        </div>
+                        <button type="button" id="add-inline-pickpoint-btn" class="btn btn-secondary btn-block" style="width: 100%; justify-content: center;">
+                            <span class="dashicons dashicons-plus"></span> <?php _e('Add Pickup Point', 'bus-booking-manager'); ?>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bus-card">
                     <h3><?php _e('Quick Help', 'bus-booking-manager'); ?></h3>
                     <p style="font-size: 13px; color: var(--bus-text-light);">
                         <?php _e('Add stops in chronological order. Mark each stop as Boarding, Dropping, or Both. The pricing matrix will automatically update based on your selected stops.', 'bus-booking-manager'); ?>
@@ -817,6 +916,33 @@ class BusEditPageClass
 
             <div class="bus-edit-right">
                 <div class="bus-card">
+                    <h3><?php _e('Bus Features', 'bus-booking-manager'); ?></h3>
+                    <div class="inline-taxonomy-list-wrap">
+                        <ul class="inline-taxonomy-list" id="sidebar-features-list">
+                            <?php
+                            if (!is_wp_error($available_features) && !empty($available_features)) :
+                                foreach ($available_features as $term) : ?>
+                                    <li data-id="<?php echo esc_attr($term->term_id); ?>">
+                                        <span class="dashicons dashicons-star-filled"></span>
+                                        <span class="feature-name"><?php echo esc_html($term->name); ?></span>
+                                    </li>
+                                <?php endforeach;
+                            else : ?>
+                                <li class="no-features"><?php _e('No features yet.', 'bus-booking-manager'); ?></li>
+                            <?php endif; ?>
+                        </ul>
+                    </div>
+                    <div class="inline-taxonomy-add">
+                        <div class="form-group" style="margin-bottom: 10px;">
+                            <input type="text" id="new-feature-name" class="form-control" placeholder="<?php _e('Enter feature name', 'bus-booking-manager'); ?>">
+                        </div>
+                        <button type="button" id="add-inline-feature-btn" class="btn btn-secondary btn-block" style="width: 100%; justify-content: center;">
+                            <span class="dashicons dashicons-plus"></span> <?php _e('Add Feature', 'bus-booking-manager'); ?>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bus-card">
                     <h3><?php _e('Aesthetics', 'bus-booking-manager'); ?></h3>
                     <p style="font-size: 13px; color: var(--bus-text-light);">
                         <?php _e('Features are displayed as icons on the bus details page. Extra services can be selected by passengers during booking.', 'bus-booking-manager'); ?>
@@ -840,7 +966,27 @@ class BusEditPageClass
                         <h3 style="margin: 0; border: none; padding: 0;"><?php _e('Passenger Registration', 'bus-booking-manager'); ?></h3>
                     </div>
 
-                    <?php do_action('wbbm_after_meta_box_tab_content', $post_id);
+                    <?php 
+                    if (has_action('wbbm_after_meta_box_tab_content')) {
+                        do_action('wbbm_after_meta_box_tab_content', $post_id);
+                    } else {
+                        ?>
+                        <div class="pro-placeholder-content">
+                            <div class="pro-placeholder-inner">
+                                <div class="pro-icon-wrap">
+                                    <span class="dashicons dashicons-lock"></span>
+                                    <span class="pro-tag"><?php _e('PRO', 'bus-booking-manager'); ?></span>
+                                </div>
+                                <h2><?php _e('Passenger Registration & Custom Fields', 'bus-booking-manager'); ?></h2>
+                                <p><?php _e('This feature requires the Bus Booking Manager PRO version. Unlock advanced passenger registration, custom fields, and more.', 'bus-booking-manager'); ?></p>
+                                <a href="#" target="_blank" class="btn btn-primary btn-pro-upgrade">
+                                    <span class="dashicons dashicons-external"></span>
+                                    <?php _e('Upgrade to PRO', 'bus-booking-manager'); ?>
+                                </a>
+                            </div>
+                        </div>
+                        <?php
+                    }
                     ?>
 
                 </div>
@@ -1250,6 +1396,35 @@ class BusEditPageClass
             </table>
         </div>
 <?php
+    }
+    /**
+     * Get status metadata (label and class)
+     */
+    private function get_status_metadata($status)
+    {
+        $label = '';
+        $class = '';
+
+        switch ($status) {
+            case 'publish':
+                $label = __('Published', 'bus-booking-manager');
+                $class = 'status-publish';
+                break;
+            case 'draft':
+                $label = __('Draft', 'bus-booking-manager');
+                $class = 'status-draft';
+                break;
+            case 'new':
+                $label = __('New', 'bus-booking-manager');
+                $class = 'status-new';
+                break;
+            default:
+                $label = ucfirst($status);
+                $class = 'status-' . $status;
+                break;
+        }
+
+        return array('label' => $label, 'class' => $class);
     }
 }
 

@@ -113,7 +113,8 @@ class BusListPageClass
     {
         // Filters
         $category = isset($_GET['wbbm_bus_cat']) ? sanitize_text_field($_GET['wbbm_bus_cat']) : '';
-        $s = isset($_GET['s']) ? sanitize_text_field($_GET['s']) : '';
+        $stop     = isset($_GET['wbbm_bus_stops']) ? sanitize_text_field($_GET['wbbm_bus_stops']) : '';
+        $s        = isset($_GET['s']) ? sanitize_text_field($_GET['s']) : '';
 
         $paged = isset($_GET['paged']) ? max(1, intval($_GET['paged'])) : 1;
         $posts_per_page = 20;
@@ -126,14 +127,22 @@ class BusListPageClass
             'paged'          => $paged,
         );
 
-        if ($category) {
-            $args['tax_query'] = array(
-                array(
+        if ($category || $stop) {
+            $args['tax_query'] = array('relation' => 'AND');
+            if ($category) {
+                $args['tax_query'][] = array(
                     'taxonomy' => 'wbbm_bus_cat',
                     'field'    => 'slug',
                     'terms'    => $category,
-                ),
-            );
+                );
+            }
+            if ($stop) {
+                $args['tax_query'][] = array(
+                    'taxonomy' => 'wbbm_bus_stops',
+                    'field'    => 'slug',
+                    'terms'    => $stop,
+                );
+            }
         }
 
         $query = new WP_Query($args);
@@ -155,7 +164,7 @@ class BusListPageClass
 
 ?>
         <div class="wrap shuttle-list-wrap">
-            <div class="shuttle-list-container">
+            <div class="shuttle-list-container-fullwidth">
                 <!-- Header Section -->
                 <div class="shuttle-list-header">
                     <div class="header-left">
@@ -175,18 +184,18 @@ class BusListPageClass
 
                 <!-- Filters Card -->
                 <div class="shuttle-filters-card">
-                    <form method="get" action="" id="shuttle-list-filter-form">
+                    <form method="get" action="<?php echo admin_url('edit.php'); ?>" id="shuttle-list-filter-form">
                         <input type="hidden" name="post_type" value="wbbm_bus">
                         <input type="hidden" name="page" value="wbbm-bus-list">
 
                         <div class="filters-row">
-                            <div class="filter-left">
+                            <div class="filter-left" style="flex-grow:initial">
                                 <div class="filter-group search-group">
                                     <span class="dashicons dashicons-search"></span>
                                     <input type="text" name="s" value="<?php echo esc_attr($s); ?>" placeholder="<?php _e('Search bus...', 'bus-booking-manager'); ?>" class="form-control">
                                 </div>
                                 <div class="filter-group status-filter-group">
-                                    <select name="wbbm_bus_cat" id="category-filter" class="form-control">
+                                    <select name="wbbm_bus_cat" id="status-filter" class="form-control">
                                         <option value=""><?php _e('All Categories', 'bus-booking-manager'); ?></option>
                                         <?php foreach ($categories as $cat) : ?>
                                             <option value="<?php echo esc_attr($cat->slug); ?>" <?php selected($category, $cat->slug); ?>><?php echo esc_html($cat->name); ?></option>
@@ -196,7 +205,7 @@ class BusListPageClass
                                 <button type="submit" class="btn btn-primary btn-sm">
                                     <?php _e('Filter', 'bus-booking-manager'); ?>
                                 </button>
-                                <?php if ($s || $category) : ?>
+                                <?php if ($s || $category || $stop) : ?>
                                     <a href="<?php echo admin_url('edit.php?post_type=wbbm_bus&page=wbbm-bus-list'); ?>" class="btn btn-outline btn-sm" style="text-decoration:none;">
                                         <?php _e('Clear', 'bus-booking-manager'); ?>
                                     </a>

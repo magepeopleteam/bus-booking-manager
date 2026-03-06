@@ -51,6 +51,10 @@ function wbbm_bus_admin_scripts() {
         'ajax_url' => admin_url('admin-ajax.php'),
         'nonce'    => wp_create_nonce('wbbm_admin_ajax_nonce'),
     ]);
+
+    // Global Toaster Notifications
+    wp_enqueue_style('wbbm-toaster-css', plugin_dir_url(__DIR__) . 'assets/admin/wbbm-toaster.css', array(), time());
+    wp_enqueue_script('wbbm-toaster-js', plugin_dir_url(__DIR__) . 'assets/admin/bus-toaster.js', array('jquery'), time(), true);
 }
 
 

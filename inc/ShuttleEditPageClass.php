@@ -23,6 +23,20 @@ class ShuttleEditPageClass
 
         // Redirection for default Add New page
         add_action('current_screen', array($this, 'redirect_to_custom_edit'));
+
+        add_filter('admin_body_class', array($this, 'add_admin_body_class'));
+    }
+
+    /**
+     * Add full screen mode class to body
+     */
+    public function add_admin_body_class($classes)
+    {
+        $screen = get_current_screen();
+        if ($screen && strpos($screen->id, 'wbbm-shuttle-edit') !== false) {
+            $classes .= ' wbbm-full-screen-mode ';
+        }
+        return $classes;
     }
 
     /**
@@ -505,6 +519,7 @@ class ShuttleEditPageClass
                     <div style="display: flex; align-items: center; gap: 15px;">
                         <a href="<?php echo admin_url('edit.php?post_type=wbbm_shuttle&page=wbbm-shuttle-list'); ?>" class="back-btn skeleton skeleton-btn">
                             <span class="dashicons dashicons-arrow-left-alt"></span>
+                            Back to list
                         </a>
                         <h2 class="skeleton skeleton-text"><?php echo $post_id ? __('Edit Shuttle', 'bus-booking-manager') . ': ' . esc_html($title) : __('Add New Shuttle', 'bus-booking-manager'); ?></h2>
                         <span class="shuttle-status-badge <?php echo esc_attr($status_class); ?>"><?php echo esc_html($status_label); ?></span>

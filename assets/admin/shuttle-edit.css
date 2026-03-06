@@ -10,7 +10,7 @@
 
 /* Shuttle Edit Page Styles */
 .shuttle-edit-wrap {
-    margin: 0;
+    margin: 20px 20px 0 0;
     padding: 0;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
     background: #f8fafc;
@@ -18,34 +18,39 @@
 }
 
 /* Hide WP Sidebar on this page */
-#adminmenumain,
-#wpadminbar,
-#wpfooter {
+body.wbbm-full-screen-mode #adminmenumain,
+body.wbbm-full-screen-mode #wpadminbar,
+body.wbbm-full-screen-mode #wpfooter {
     display: none !important;
 }
 
-#wpcontent,
-#wpbody-content {
+body.wbbm-full-screen-mode #wpcontent,
+body.wbbm-full-screen-mode #wpbody-content {
     margin-left: 0 !important;
     padding: 0 !important;
 }
 
 .shuttle-container {
-    max-width: 1400px;
+    max-width: 100%;
     margin: 0 auto;
-    padding: 40px 20px;
+    padding: 30px;
 }
 
 .shuttle-edit-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 30px;
+    background: #fff;
+    padding: 15px 25px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    margin-bottom: 25px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
 .shuttle-edit-header h2 {
     font-size: 24px;
-    font-weight: 600;
+    font-weight: 700;
     margin: 0;
 }
 
@@ -53,14 +58,15 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 40px;
-    height: 40px;
-    background: #fff;
-    border: 1px solid #e2e8f0;
+    background: #f1f5f9;
     border-radius: 8px;
-    color: #475569;
+    color: var(--bus-text);
     text-decoration: none;
     transition: all 0.2s;
+    padding: 8px 12px;
+    font-size: 13px;
+    font-weight: 600;
+    gap: 5px;
 }
 
 .back-btn:hover {
@@ -70,7 +76,8 @@
 }
 
 .back-btn .dashicons {
-    font-size: 20px;
+    font-size: 14px;
+    height: initial;
 }
 
 .shuttle-status-badge {
@@ -178,7 +185,7 @@
 
 .shuttle-edit-content {
     display: grid;
-    grid-template-columns: 2fr 1fr;
+    grid-template-columns: 1fr 300px;
     gap: 30px;
 }
 

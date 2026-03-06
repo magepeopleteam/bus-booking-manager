@@ -71,3 +71,10 @@ function wbbm_bus_cpt()
     register_post_type('wbbm_booking', $booking_args);
 }
 add_action('init', 'wbbm_bus_cpt');
+
+/**
+ * Remove "Add New" submenu from the "Bus" menu
+ */
+add_action('admin_menu', function () {
+    remove_submenu_page('edit.php?post_type=wbbm_bus', 'post-new.php?post_type=wbbm_bus');
+}, 999);
