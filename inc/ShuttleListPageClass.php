@@ -34,6 +34,7 @@ class ShuttleListPageClass
         // Adjust order: Add New, Shuttle List (custom), etc.
         // We might want to remove the default "All Shuttle Services"
         remove_submenu_page('edit.php?post_type=wbbm_shuttle', 'edit.php?post_type=wbbm_shuttle');
+        remove_submenu_page('edit.php?post_type=wbbm_shuttle', 'post-new.php?post_type=wbbm_shuttle');
     }
 
     /**

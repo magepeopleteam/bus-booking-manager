@@ -109,6 +109,12 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
 		require_once(dirname(__FILE__) . "/inc/ShuttleSearchClass.php");
 		require_once(dirname(__FILE__) . "/inc/ShuttleEditPageClass.php");
 		require_once(dirname(__FILE__) . "/inc/ShuttleListPageClass.php");
+		require_once(dirname(__FILE__) . "/inc/ShuttleTypeListPageClass.php");
+		require_once(dirname(__FILE__) . "/inc/ShuttleTypeEditPageClass.php");
+		require_once(dirname(__FILE__) . "/inc/ShuttleCatListPageClass.php");
+		require_once(dirname(__FILE__) . "/inc/ShuttleCatEditPageClass.php");
+		require_once(dirname(__FILE__) . "/inc/ShuttleStopListPageClass.php");
+		require_once(dirname(__FILE__) . "/inc/ShuttleStopEditPageClass.php");
 	}
 	// Language Load
 	add_action('init', 'wbbm_language_load');

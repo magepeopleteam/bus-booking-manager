@@ -328,7 +328,14 @@ class BusEditPageClass
         }
 
         if ($is_ajax) {
-            wp_send_json_success(array('post_id' => $post_id));
+            $post = get_post($post_id);
+            $status_data = $this->get_status_metadata($post->post_status);
+            wp_send_json_success(array(
+                'post_id'        => $post_id,
+                'status_label'   => $status_data['label'],
+                'status_class'   => $status_data['class'],
+                'current_status' => $post->post_status
+            ));
         }
 
         // Standard redirect if not AJAX
@@ -511,27 +518,9 @@ class BusEditPageClass
         $post = $post_id ? get_post($post_id) : null;
 
         $current_status = $post ? $post->post_status : 'new';
-        $status_label = '';
-        $status_class = '';
-
-        switch ($current_status) {
-            case 'publish':
-                $status_label = __('Published', 'bus-booking-manager');
-                $status_class = 'status-publish';
-                break;
-            case 'draft':
-                $status_label = __('Draft', 'bus-booking-manager');
-                $status_class = 'status-draft';
-                break;
-            case 'new':
-                $status_label = __('New', 'bus-booking-manager');
-                $status_class = 'status-new';
-                break;
-            default:
-                $status_label = ucfirst($current_status);
-                $status_class = 'status-' . $current_status;
-                break;
-        }
+        $status_data = $this->get_status_metadata($current_status);
+        $status_label = $status_data['label'];
+        $status_class = $status_data['class'];
 
         $title = $post ? $post->post_title : '';
         $content = $post ? $post->post_content : '';
@@ -581,7 +570,12 @@ class BusEditPageClass
                         foreach ($steps as $step_id => $label): ?>
                             <div class="step-item <?php echo $current_step === $step_id ? 'active' : ($current_step > $step_id ? 'completed' : ''); ?>" data-step="<?php echo $step_id; ?>">
                                 <div class="step-number"><?php echo $current_step > $step_id ? '✓' : $step_id; ?></div>
-                                <div class="step-label"><?php echo $label; ?></div>
+                                <div class="step-label">
+                                    <?php echo $label; ?>
+                                    <?php if ($step_id === 6): ?>
+                                        <span class="pro-badge-nav">PRO</span>
+                                    <?php endif; ?>
+                                </div>
                             </div>
                         <?php endforeach; ?>
                     </div>
@@ -972,7 +966,27 @@ class BusEditPageClass
                         <h3 style="margin: 0; border: none; padding: 0;"><?php _e('Passenger Registration', 'bus-booking-manager'); ?></h3>
                     </div>
 
-                    <?php do_action('wbbm_after_meta_box_tab_content', $post_id);
+                    <?php 
+                    if (has_action('wbbm_after_meta_box_tab_content')) {
+                        do_action('wbbm_after_meta_box_tab_content', $post_id);
+                    } else {
+                        ?>
+                        <div class="pro-placeholder-content">
+                            <div class="pro-placeholder-inner">
+                                <div class="pro-icon-wrap">
+                                    <span class="dashicons dashicons-lock"></span>
+                                    <span class="pro-tag"><?php _e('PRO', 'bus-booking-manager'); ?></span>
+                                </div>
+                                <h2><?php _e('Passenger Registration & Custom Fields', 'bus-booking-manager'); ?></h2>
+                                <p><?php _e('This feature requires the Bus Booking Manager PRO version. Unlock advanced passenger registration, custom fields, and more.', 'bus-booking-manager'); ?></p>
+                                <a href="#" target="_blank" class="btn btn-primary btn-pro-upgrade">
+                                    <span class="dashicons dashicons-external"></span>
+                                    <?php _e('Upgrade to PRO', 'bus-booking-manager'); ?>
+                                </a>
+                            </div>
+                        </div>
+                        <?php
+                    }
                     ?>
 
                 </div>
@@ -1382,6 +1396,35 @@ class BusEditPageClass
             </table>
         </div>
 <?php
+    }
+    /**
+     * Get status metadata (label and class)
+     */
+    private function get_status_metadata($status)
+    {
+        $label = '';
+        $class = '';
+
+        switch ($status) {
+            case 'publish':
+                $label = __('Published', 'bus-booking-manager');
+                $class = 'status-publish';
+                break;
+            case 'draft':
+                $label = __('Draft', 'bus-booking-manager');
+                $class = 'status-draft';
+                break;
+            case 'new':
+                $label = __('New', 'bus-booking-manager');
+                $class = 'status-new';
+                break;
+            default:
+                $label = ucfirst($status);
+                $class = 'status-' . $status;
+                break;
+        }
+
+        return array('label' => $label, 'class' => $class);
     }
 }
 

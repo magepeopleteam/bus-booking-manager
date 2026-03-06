@@ -183,6 +183,22 @@ jQuery(document).ready(function ($) {
                         }
                     }
 
+                    // Update status UI
+                    if (response.data.status_label) {
+                        const badge = $('.bus-status-badge');
+                        badge.text(response.data.status_label);
+                        badge.attr('class', 'bus-status-badge ' + response.data.status_class);
+                        $('#post_status').val(response.data.current_status);
+
+                        // Update Publish button text
+                        const pubBtn = $('#save-bus-publish');
+                        if (response.data.current_status === 'publish') {
+                            pubBtn.text('Save');
+                        } else {
+                            pubBtn.text('Publish');
+                        }
+                    }
+
                     if (callback) callback();
 
                     setTimeout(() => {
@@ -375,6 +391,7 @@ jQuery(document).ready(function ($) {
 
     // --- Top Save/Publish Button (save without step change) ---
     $('#save-bus-publish').on('click', function () {
+        $('#post_status').val('publish');
         saveBusData(false);
     });
 

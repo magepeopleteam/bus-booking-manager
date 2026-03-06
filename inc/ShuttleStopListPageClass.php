@@ -2,70 +2,70 @@
 if (!defined('ABSPATH')) exit;
 
 /**
- * Bus Type List Page Class
+ * Shuttle Stop List Page Class
  * 
- * Handles the modern custom list page for bus types (taxonomy wbbm_bus_cat).
+ * Handles the modern custom list page for shuttle stops (taxonomy wbbm_shuttle_stops).
  */
-class BusTypeListPageClass
+class ShuttleStopListPageClass
 {
     public function __construct()
     {
-        add_action('admin_menu', array($this, 'register_bus_type_list_page'), 20);
+        add_action('admin_menu', array($this, 'register_shuttle_stop_list_page'), 20);
         add_action('admin_enqueue_scripts', array($this, 'enqueue_assets'), 20);
-        add_action('admin_init', array($this, 'handle_bus_type_actions'));
+        add_action('admin_init', array($this, 'handle_shuttle_stop_actions'));
         add_action('admin_init', array($this, 'handle_redirects'));
-        add_action('admin_menu', array($this, 'reorder_bus_submenu'), 1000);
+        add_action('admin_menu', array($this, 'reorder_shuttle_submenu'), 1002);
     }
 
     /**
-     * Register the custom list page and replace default taxonomy entry
+     * Reorder shuttle submenu to keep "Shuttle Stops" in 4th position
      */
-    public function register_bus_type_list_page()
-    {
-        add_submenu_page(
-            'edit.php?post_type=wbbm_bus',
-            __('Bus Types', 'bus-booking-manager'),
-            __('Bus Types', 'bus-booking-manager'),
-            'manage_options',
-            'wbbm-bus-type-list',
-            array($this, 'render_bus_type_list_page')
-        );
-
-        // Remove default taxonomy submenu
-        remove_submenu_page('edit.php?post_type=wbbm_bus', 'edit-tags.php?taxonomy=wbbm_bus_cat&amp;post_type=wbbm_bus');
-        remove_submenu_page('edit.php?post_type=wbbm_bus', 'edit-tags.php?taxonomy=wbbm_bus_cat&post_type=wbbm_bus');
-    }
-
-    /**
-     * Reorder bus submenu to keep "Bus Types" as 2nd item (index 2)
-     */
-    public function reorder_bus_submenu()
+    public function reorder_shuttle_submenu()
     {
         global $submenu;
-        $parent_slug = 'edit.php?post_type=wbbm_bus';
+        $parent_slug = 'edit.php?post_type=wbbm_shuttle';
 
         if (!isset($submenu[$parent_slug])) {
             return;
         }
 
-        $bus_menu = $submenu[$parent_slug];
-        $type_page_slug = 'wbbm-bus-type-list';
+        $shuttle_menu = $submenu[$parent_slug];
+        $stop_page_slug = 'wbbm-shuttle-stop-list';
 
-        $type_item = false;
-        foreach ($bus_menu as $key => $item) {
-            if (isset($item[2]) && $item[2] === $type_page_slug) {
-                $type_item = $item;
-                unset($bus_menu[$key]);
+        $stop_item = false;
+        foreach ($shuttle_menu as $key => $item) {
+            if (isset($item[2]) && $item[2] === $stop_page_slug) {
+                $stop_item = $item;
+                unset($shuttle_menu[$key]);
                 break;
             }
         }
 
-        if ($type_item) {
-            $bus_menu = array_values($bus_menu);
-            // Insert at index 1 (2nd position)
-            array_splice($bus_menu, 1, 0, array($type_item));
-            $submenu[$parent_slug] = $bus_menu;
+        if ($stop_item) {
+            $shuttle_menu = array_values($shuttle_menu);
+            // Insert at index 3 (4th position)
+            array_splice($shuttle_menu, 3, 0, array($stop_item));
+            $submenu[$parent_slug] = $shuttle_menu;
         }
+    }
+
+    /**
+     * Register the custom list page and replace default taxonomy entry
+     */
+    public function register_shuttle_stop_list_page()
+    {
+        add_submenu_page(
+            'edit.php?post_type=wbbm_shuttle',
+            __('Shuttle Stops', 'bus-booking-manager'),
+            __('Shuttle Stops', 'bus-booking-manager'),
+            'manage_options',
+            'wbbm-shuttle-stop-list',
+            array($this, 'render_shuttle_stop_list_page')
+        );
+
+        // Remove default taxonomy submenu
+        remove_submenu_page('edit.php?post_type=wbbm_shuttle', 'edit-tags.php?taxonomy=wbbm_shuttle_stops&amp;post_type=wbbm_shuttle');
+        remove_submenu_page('edit.php?post_type=wbbm_shuttle', 'edit-tags.php?taxonomy=wbbm_shuttle_stops&post_type=wbbm_shuttle');
     }
 
     /**
@@ -74,8 +74,8 @@ class BusTypeListPageClass
     public function handle_redirects()
     {
         global $pagenow;
-        if ($pagenow === 'edit-tags.php' && isset($_GET['taxonomy']) && $_GET['taxonomy'] === 'wbbm_bus_cat' && !isset($_GET['action'])) {
-            wp_safe_redirect(admin_url('edit.php?post_type=wbbm_bus&page=wbbm-bus-type-list'));
+        if ($pagenow === 'edit-tags.php' && isset($_GET['taxonomy']) && $_GET['taxonomy'] === 'wbbm_shuttle_stops' && !isset($_GET['action'])) {
+            wp_safe_redirect(admin_url('edit.php?post_type=wbbm_shuttle&page=wbbm-shuttle-stop-list'));
             exit;
         }
     }
@@ -85,7 +85,7 @@ class BusTypeListPageClass
      */
     public function enqueue_assets($hook)
     {
-        if (strpos($hook, 'wbbm-bus-type-list') === false && (!isset($_GET['page']) || $_GET['page'] !== 'wbbm-bus-type-list')) {
+        if (strpos($hook, 'wbbm-shuttle-stop-list') === false && (!isset($_GET['page']) || $_GET['page'] !== 'wbbm-shuttle-stop-list')) {
             return;
         }
 
@@ -96,20 +96,20 @@ class BusTypeListPageClass
     /**
      * Handle custom actions like delete
      */
-    public function handle_bus_type_actions()
+    public function handle_shuttle_stop_actions()
     {
-        if (isset($_GET['page']) && $_GET['page'] === 'wbbm-bus-type-list' && isset($_GET['action']) && $_GET['action'] === 'delete' && isset($_GET['term_id'])) {
+        if (isset($_GET['page']) && $_GET['page'] === 'wbbm-shuttle-stop-list' && isset($_GET['action']) && $_GET['action'] === 'delete' && isset($_GET['term_id'])) {
             $term_id = intval($_GET['term_id']);
 
             if (!current_user_can('manage_options')) {
                 wp_die(__('You do not have permission to delete this.', 'bus-booking-manager'));
             }
 
-            check_admin_referer('delete-bus-type_' . $term_id);
+            check_admin_referer('delete-shuttle-stop_' . $term_id);
 
-            wp_delete_term($term_id, 'wbbm_bus_cat');
+            wp_delete_term($term_id, 'wbbm_shuttle_stops');
 
-            wp_safe_redirect(admin_url('edit.php?post_type=wbbm_bus&page=wbbm-bus-type-list&deleted=1'));
+            wp_safe_redirect(admin_url('edit.php?post_type=wbbm_shuttle&page=wbbm-shuttle-stop-list&deleted=1'));
             exit;
         }
     }
@@ -117,7 +117,7 @@ class BusTypeListPageClass
     /**
      * Render the custom list page
      */
-    public function render_bus_type_list_page()
+    public function render_shuttle_stop_list_page()
     {
         $s = isset($_GET['s']) ? sanitize_text_field($_GET['s']) : '';
         $paged = isset($_GET['paged']) ? max(1, intval($_GET['paged'])) : 1;
@@ -125,7 +125,7 @@ class BusTypeListPageClass
         $offset = ($paged - 1) * $number;
 
         $args = array(
-            'taxonomy'   => 'wbbm_bus_cat',
+            'taxonomy'   => 'wbbm_shuttle_stops',
             'hide_empty' => false,
             'number'     => $number,
             'offset'     => $offset,
@@ -133,7 +133,7 @@ class BusTypeListPageClass
         );
 
         $terms = get_terms($args);
-        $total_terms = wp_count_terms(array('taxonomy' => 'wbbm_bus_cat', 'hide_empty' => false, 'search' => $s));
+        $total_terms = wp_count_terms(array('taxonomy' => 'wbbm_shuttle_stops', 'hide_empty' => false, 'search' => $s));
         $total_pages = ceil($total_terms / $number);
 
         $start_num = $offset + 1;
@@ -141,20 +141,20 @@ class BusTypeListPageClass
 
 ?>
         <div class="wrap shuttle-list-wrap">
-            <div class="shuttle-list-container-fullwidth">
+            <div class="shuttle-list-container">
                 <!-- Header Section -->
                 <div class="shuttle-list-header">
                     <div class="header-left">
                         <div class="brand-logo">
-                            <span class="dashicons fas fa-tags"></span>
+                            <span class="dashicons dashicons-location-alt"></span>
                         </div>
                         <div class="header-title-area">
-                            <h2><?php _e('Bus Types', 'bus-booking-manager'); ?></h2>
+                            <h2><?php _e('Shuttle Stops', 'bus-booking-manager'); ?></h2>
                         </div>
                     </div>
                     <div class="header-right">
-                        <a href="<?php echo admin_url('admin.php?post_type=wbbm_bus&page=wbbm-bus-type-edit'); ?>" class="btn btn-primary">
-                            <span class="dashicons dashicons-plus"></span> <?php _e('Add New Bus Type', 'bus-booking-manager'); ?>
+                        <a href="<?php echo admin_url('admin.php?post_type=wbbm_shuttle&page=wbbm-shuttle-stop-edit'); ?>" class="btn btn-primary">
+                            <span class="dashicons dashicons-plus"></span> <?php _e('Add New Stop', 'bus-booking-manager'); ?>
                         </a>
                     </div>
                 </div>
@@ -162,20 +162,20 @@ class BusTypeListPageClass
                 <!-- Filters Card -->
                 <div class="shuttle-filters-card">
                     <form method="get" action="<?php echo admin_url('admin.php'); ?>" id="shuttle-list-filter-form">
-                        <input type="hidden" name="post_type" value="wbbm_bus">
-                        <input type="hidden" name="page" value="wbbm-bus-type-list">
+                        <input type="hidden" name="post_type" value="wbbm_shuttle">
+                        <input type="hidden" name="page" value="wbbm-shuttle-stop-list">
 
                         <div class="filters-row">
                             <div class="filter-left" style="flex-grow:initial">
                                 <div class="filter-group search-group">
                                     <span class="dashicons dashicons-search"></span>
-                                    <input type="text" name="s" value="<?php echo esc_attr($s); ?>" placeholder="<?php _e('Search bus types...', 'bus-booking-manager'); ?>" class="form-control">
+                                    <input type="text" name="s" value="<?php echo esc_attr($s); ?>" placeholder="<?php _e('Search stops...', 'bus-booking-manager'); ?>" class="form-control">
                                 </div>
                                 <button type="submit" class="btn btn-primary btn-sm">
                                     <?php _e('Search', 'bus-booking-manager'); ?>
                                 </button>
                                 <?php if ($s) : ?>
-                                    <a href="<?php echo admin_url('admin.php?post_type=wbbm_bus&page=wbbm-bus-type-list'); ?>" class="btn btn-outline btn-sm" style="text-decoration:none;">
+                                    <a href="<?php echo admin_url('admin.php?post_type=wbbm_shuttle&page=wbbm-shuttle-stop-list'); ?>" class="btn btn-outline btn-sm" style="text-decoration:none;">
                                         <?php _e('Clear', 'bus-booking-manager'); ?>
                                     </a>
                                 <?php endif; ?>
@@ -200,9 +200,9 @@ class BusTypeListPageClass
                         <tbody>
                             <?php if (!empty($terms) && !is_wp_error($terms)) : ?>
                                 <?php foreach ($terms as $term) :
-                                    $edit_url = admin_url('admin.php?post_type=wbbm_bus&page=wbbm-bus-type-edit&term_id=' . $term->term_id);
-                                    $delete_url = wp_nonce_url(add_query_arg(array('action' => 'delete', 'term_id' => $term->term_id)), 'delete-bus-type_' . $term->term_id);
-                                    $filter_url = admin_url('edit.php?post_type=wbbm_bus&page=wbbm-bus-list&wbbm_bus_cat=' . $term->slug);
+                                    $edit_url = admin_url('admin.php?post_type=wbbm_shuttle&page=wbbm-shuttle-stop-edit&term_id=' . $term->term_id);
+                                    $delete_url = wp_nonce_url(add_query_arg(array('action' => 'delete', 'term_id' => $term->term_id)), 'delete-shuttle-stop_' . $term->term_id);
+                                    $filter_url = admin_url('edit.php?post_type=wbbm_shuttle&page=wbbm-shuttle-list&wbbm_shuttle_stops=' . $term->slug);
                                 ?>
                                     <tr>
                                         <td><input type="checkbox" name="term_ids[]" value="<?php echo esc_attr($term->term_id); ?>"></td>
@@ -226,20 +226,20 @@ class BusTypeListPageClass
                                         </td>
                                         <td>
                                             <div class="capacity-info">
-                                                <a href="<?php echo esc_url($filter_url); ?>" class="count" title="<?php esc_attr_e('View buses with this type', 'bus-booking-manager'); ?>"><?php echo esc_html($term->count); ?></a>
+                                                <a href="<?php echo esc_url($filter_url); ?>" class="count" title="<?php esc_attr_e('View shuttles with this stop', 'bus-booking-manager'); ?>"><?php echo esc_html($term->count); ?></a>
                                             </div>
                                         </td>
                                         <td>
                                             <div class="action-buttons">
                                                 <a href="<?php echo esc_url($edit_url); ?>" class="action-btn" title="Edit"><span class="dashicons dashicons-edit"></span></a>
-                                                <a href="<?php echo esc_url($delete_url); ?>" class="action-btn delete-btn wbbm-delete-bus-type" title="Delete" onclick="return confirm('<?php esc_attr_e('Are you sure you want to delete this bus type?', 'bus-booking-manager'); ?>');"><span class="dashicons dashicons-trash"></span></a>
+                                                <a href="<?php echo esc_url($delete_url); ?>" class="action-btn delete-btn wbbm-delete-shuttle-stop" title="Delete" onclick="return confirm('<?php esc_attr_e('Are you sure you want to delete this stop?', 'bus-booking-manager'); ?>');"><span class="dashicons dashicons-trash"></span></a>
                                             </div>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
                             <?php else : ?>
                                 <tr>
-                                    <td colspan="6" class="no-results"><?php _e('No bus types found.', 'bus-booking-manager'); ?></td>
+                                    <td colspan="6" class="no-results"><?php _e('No shuttle stops found.', 'bus-booking-manager'); ?></td>
                                 </tr>
                             <?php endif; ?>
                         </tbody>
@@ -281,4 +281,4 @@ class BusTypeListPageClass
     }
 }
 
-new BusTypeListPageClass();
+new ShuttleStopListPageClass();
