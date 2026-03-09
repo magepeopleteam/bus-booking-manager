@@ -61,9 +61,8 @@ $Wbbm_seat_price_entire = mage_seat_price( $id, $Wbbm_boarding, $Wbbm_dropping, 
 $Wbbm_boarding_time     = wbbm_get_datetime( wbbm_boarding_dropping_time( false, $WbbmReturn ), 'time' );
 $Wbbm_dropping_time     = wbbm_get_datetime( wbbm_boarding_dropping_time( true, $WbbmReturn ), 'time' );
 
-$Wbbm_show_off_day            = get_post_meta( get_the_ID(), 'show_off_day', true ) ?: 'no';
-$Wbbm_odd_list                = $Wbbm_show_off_day === 'yes' ? mage_odd_list_check( false ) : true;
-$Wbbm_off_day                 = $Wbbm_show_off_day === 'yes' ? mage_off_day_check( false ) : false;
+$Wbbm_odd_list                = ! mage_odd_list_check( false );
+$Wbbm_off_day                 = mage_off_day_check( false );
 $wbbm_is_sell_off             = get_post_meta( $id, 'wbbm_sell_off', true );
 $wbbm_seat_available          = get_post_meta( $id, 'wbbm_seat_available', true );
 $wbbm_total_seat              = get_post_meta( get_the_ID(), 'wbbm_total_seat', true );
@@ -81,26 +80,7 @@ if ( $wbbm_bus_on_date != null && $wbbm_show_operational_on_day === 'yes' ) {
 $wbbm_is_price_zero_allow = get_post_meta( $id, 'wbbm_price_zero_allow', true );
 $wbbm_entire_bus_booking  = wbbm_get_option( 'wbbm_entire_bus_booking_switch', 'wbbm_general_setting_sec' );
 
-// Off dates
-$wbbm_off_day_sche    = get_post_meta( $id, 'wbtm_offday_schedule', true );
-$wbbm_all_off_dates   = [];
 $wbbm_off_date_status = false;
-
-if ( ! empty( $wbbm_off_day_sche ) && $Wbbm_show_off_day === 'yes' ) {
-    foreach ( $wbbm_off_day_sche as $wbbm_off_day_sch ) {
-        $wbbm_begin     = new DateTime( $wbbm_off_day_sch['from_date'] );
-        $wbbm_end       = new DateTime( $wbbm_off_day_sch['to_date'] );
-        $wbbm_end       = $wbbm_end->modify( '+1 day' );
-        $wbbm_interval  = new DateInterval( 'P1D' );
-        $wbbm_daterange = new DatePeriod( $wbbm_begin, $wbbm_interval, $wbbm_end );
-        foreach ( $wbbm_daterange as $wbbm_date ) {
-            $wbbm_all_off_dates[] = $wbbm_date->format( 'Y-m-d' );
-        }
-    }
-    if ( in_array( $WbbmJ_date, $wbbm_all_off_dates ) ) {
-        $wbbm_off_date_status = true;
-    }
-}
 ?>
     <div class="mage_container bus_detail">
         <div class="mage_container bus_detail_page_wrapper"> <!-- Added Wrapper -->
@@ -143,17 +123,18 @@ if ( ! empty( $wbbm_off_day_sche ) && $Wbbm_show_off_day === 'yes' ) {
                                         <strong><?php echo esc_html( wbbm_get_option( 'wbbm_boarding_points_text', 'wbbm_label_setting_sec' ) ? wbbm_get_option( 'wbbm_boarding_points_text', 'wbbm_label_setting_sec' ) : __( 'Boarding', 'bus-booking-manager' ) ) . ':'; ?></strong>
                                         <?php echo esc_html( $Wbbm_boarding ); ?>
                                         <strong>(<?php echo esc_html( $Wbbm_boarding_time ); ?>)</strong>
-                                    </p>
-                                    <p>
-                                        <strong><?php echo esc_html( wbbm_get_option( 'wbbm_dropping_points_text', 'wbbm_label_setting_sec' ) ? wbbm_get_option( 'wbbm_dropping_points_text', 'wbbm_label_setting_sec' ) : __( 'Dropping', 'bus-booking-manager' ) ) . ':'; ?></strong>
-                                        <?php echo esc_html( $Wbbm_boarding ); ?>
-                                        <strong>(<?php echo esc_html( $Wbbm_dropping_time ); ?>)</strong>
                                         <?php
                                         $wbbm_dropoff_desc = ( get_term_by( 'name', $Wbbm_boarding, 'wbbm_bus_stops' ) ? get_term_by( 'name', $Wbbm_boarding, 'wbbm_bus_stops' )->description : '' );
                                         if ( $wbbm_dropoff_desc ) {
                                             echo '<span class="wbbm_dropoff-desc wbbm_dropoff-desc-single">' . esc_html( $wbbm_dropoff_desc ) . '</span>';
                                         }
                                         ?>
+                                    </p>
+                                    <p>
+                                        <strong><?php echo esc_html( wbbm_get_option( 'wbbm_dropping_points_text', 'wbbm_label_setting_sec' ) ? wbbm_get_option( 'wbbm_dropping_points_text', 'wbbm_label_setting_sec' ) : __( 'Dropping', 'bus-booking-manager' ) ) . ':'; ?></strong>
+                                        <?php echo esc_html( $Wbbm_dropping ); ?>
+                                        <strong>(<?php echo esc_html( $Wbbm_dropping_time ); ?>)</strong>
+
                                     </p>
                                 <?php } ?>
                                 <p>
@@ -280,7 +261,7 @@ if ( ! empty( $wbbm_off_day_sche ) && $Wbbm_show_off_day === 'yes' ) {
                                     <?php
                                     $wbbm_date  = $WbbmJ_date ? mage_wp_date( $WbbmJ_date, 'Y-m-d' ) : gmdate( 'Y-m-d' );
                                     $wbbm_start = $Wbbm_boarding;
-                                    $wbbm_end   = $Wbbm_boarding;
+                                    $wbbm_end   = $Wbbm_dropping;
                                     wbbm_hidden_input_field( 'bus_id', $id );
                                     wbbm_hidden_input_field( 'journey_date', $wbbm_date );
                                     wbbm_hidden_input_field( 'start_stops', $wbbm_start );
@@ -298,38 +279,16 @@ if ( ! empty( $wbbm_off_day_sche ) && $Wbbm_show_off_day === 'yes' ) {
                                 if ( $Wbbm_available_seat > 0 ) {
                                     wbbm_extra_services_section( $id );
                                 }
-                                // Operational on day off day check
-                                $wbbm_bus_offday_schedules = get_post_meta( get_the_ID(), 'wbtm_offday_schedule', true );
-                                $wbbm_start_time           = MP_Global_Function::wbbm_get_route_time_by_place( get_the_ID(), $Wbbm_boarding, 'bp' );
-                                $wbbm_start_time           = wbbm_time_24_to_12( $wbbm_start_time );
+                                // Operational on day / off day check
+                                $wbbm_start_time_raw = MP_Global_Function::wbbm_get_route_time_by_place( get_the_ID(), $Wbbm_boarding, 'bp' );
+                                $wbbm_start_time     = wbbm_time_24_to_12( $wbbm_start_time_raw );
                                 if ( wbbm_buffer_time_calculation( $wbbm_start_time, $WbbmJ_date ) ) {
-                                    if ( $WbbmJ_date != '' && $Wbbm_boarding != '' && $Wbbm_boarding != '' ) {
-                                        if ( $wbbm_is_on_date ) {
-                                            $WbbmJ_date_c = mage_wp_date( $WbbmJ_date, 'Y-m-d' );
-                                            if ( in_array( $WbbmJ_date_c, $wbbm_bus_on_dates ) ) {
-                                                mage_book_now_area( $Wbbm_available_seat );
-                                            } else {
-                                                echo '<span class="mage_error" style="display: block;text-align: center;padding: 5px;margin: 10px 0 0 0;">' . esc_html( gmdate( $WbbmDate_format, strtotime( mage_get_isset( $WbbmDate_var ) ) ) ) . ' Operational Off day!' . '</span>';
-                                            }
+                                    if ( $WbbmJ_date != '' && $Wbbm_boarding != '' && $Wbbm_dropping != '' ) {
+                                        $is_operational = wbbm_is_bus_operational_on_date( get_the_ID(), mage_wp_date( $WbbmJ_date, 'Y-m-d' ), $wbbm_start_time_raw );
+                                        if ( $is_operational ) {
+                                            mage_book_now_area( $Wbbm_available_seat );
                                         } else {
-                                            $wbbm_offday_current_bus = false;
-                                            if ( ! empty( $wbbm_bus_offday_schedules ) ) {
-                                                $wbbm_s_datetime = new DateTime( mage_wp_date( $WbbmJ_date, 'Y-m-d' ) . ' ' . $wbbm_start_time );
-                                                foreach ( $wbbm_bus_offday_schedules as $wbbm_item ) {
-                                                    $wbbm_c_iterate_date_from     = mage_wp_date( $wbbm_item['from_date'], 'Y-m-d' );
-                                                    $wbbm_c_iterate_datetime_from = new DateTime( $wbbm_c_iterate_date_from . ' ' . $wbbm_item['from_time'] );
-                                                    $wbbm_c_iterate_date_to       = mage_wp_date( $wbbm_item['to_date'], 'Y-m-d' );
-                                                    $wbbm_c_iterate_datetime_to   = new DateTime( $wbbm_c_iterate_date_to . ' ' . $wbbm_item['to_time'] );
-                                                    if ( $wbbm_s_datetime >= $wbbm_c_iterate_datetime_from && $wbbm_s_datetime <= $wbbm_c_iterate_datetime_to ) {
-                                                        $wbbm_offday_current_bus = true;
-                                                        break;
-                                                    }
-                                                }
-                                            }
-                                            // Check Offday and date
-                                            if ( ! $wbbm_offday_current_bus && ! mage_off_day_check( $WbbmReturn ) ) {
-                                                mage_book_now_area( $Wbbm_available_seat );
-                                            }
+                                            echo '<span class="mage_error" style="display: block;text-align: center;padding: 5px;margin: 10px 0 0 0;">' . esc_html( gmdate( $WbbmDate_format, strtotime( mage_get_isset( $WbbmDate_var ) ) ) ) . ' Operational Off day!' . '</span>';
                                         }
                                     }
                                 }

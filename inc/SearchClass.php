@@ -12,7 +12,7 @@
 			$target = sanitize_title($the_page->post_name);
 			$this->mage_search_form_horizontal(false, $target);
 
-            
+
 			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			if (isset($_GET['bus_start_route'], $_GET['bus_end_route'], $_GET['j_date'])) {
                 // Safely get the nonce from the request (accept GET or POST)
@@ -23,7 +23,7 @@
                     wc_add_notice(__('Security check failed. Please try again. 111', 'bus-booking-manager'), 'error');
                     return false;
                 }
-               
+
 				?>
 				<div class="mage_container">
 					<div class="mage_row">
@@ -59,7 +59,7 @@ function mage_search_list() {
     }
 
     $general_setting = get_option('wbbm_general_setting_sec') ? maybe_unserialize(get_option('wbbm_general_setting_sec')) : array();
-    
+
     // Show WooCommerce notices (e.g., added to cart message)
     if ( function_exists( 'wc_print_notices' ) ) {
         wc_print_notices();
@@ -80,7 +80,7 @@ function mage_search_list() {
 
             </strong>
             <?php echo esc_html(mage_get_isset('bus_start_route')); ?>
-            <span class="fa fa-long-arrow-right"></span>
+            <i class="fas fa-long-arrow-alt-right"></i>
             <?php echo esc_html(mage_get_isset('bus_end_route')); ?>
             <strong><?php echo ' | '; echo esc_html(wbbm_get_option('wbbm_date_text', 'wbbm_label_setting_sec', __('Date', 'bus-booking-manager'))); echo ':'; ?></strong>
             <?php echo esc_html(mage_wp_date(mage_get_isset('j_date'))); ?>
@@ -179,7 +179,7 @@ function mage_search_bus_list($return) {
         $c_time = current_time('timestamp');
         $start = $return ? 'bus_end_route' : 'bus_start_route';
         $end = $return ? 'bus_start_route' : 'bus_end_route';
-        
+
         // Sanitize input
         // phpcs:ignore WordPress.Security.NonceVerification.Recommended
         $start_route = isset($_GET[$start]) ? sanitize_text_field((wp_unslash($_GET[$start]))) : '';
@@ -201,14 +201,8 @@ function mage_search_bus_list($return) {
         } else {
             while ($loop->have_posts()) {
                 $loop->the_post();
-                $bus_stops_times = get_post_meta(get_the_ID(), 'wbbm_bus_bp_stops', true);
-                $start_time = '';
-
-                foreach ($bus_stops_times as $stop) {
-                    if (isset($stop['wbbm_bus_bp_stops_name']) && $stop['wbbm_bus_bp_stops_name'] === $start_route) {
-                        $start_time = isset($stop['wbbm_bus_bp_start_time']) ? $stop['wbbm_bus_bp_start_time'] : '';
-                    }
-                }
+                $start_time = MP_Global_Function::wbbm_get_route_time_by_place(get_the_ID(), $start_route, 'bp');
+                $start_time_for_compare = $start_time;
 
                 // Buffer time
                 if (!wbbm_buffer_time_calculation($start_time, $j_date)) {
@@ -217,47 +211,9 @@ function mage_search_bus_list($return) {
 
                 // Convert time to 12-hour format
                 $start_time = wbbm_time_24_to_12($start_time);
-                $show_operational_on_day = get_post_meta(get_the_ID(), 'show_operational_on_day', true) ?: 'no';
-                $bus_on_date = get_post_meta(get_the_ID(), 'wbtm_bus_on_date', true);
-                $bus_on_dates = [];
-
-                if ($show_operational_on_day === 'yes' && $bus_on_date) {
-                    $bus_on_dates = is_array($bus_on_date) ? $bus_on_date : explode(', ', $bus_on_date);
-                    if (in_array($j_date, $bus_on_dates)) {
-                        $has_bus = true;
-                        $this->mage_search_item($return);
-                    }
-                } else {
-                    // Offday schedule check
-                    $bus_offday_schedules = get_post_meta(get_the_ID(), 'wbtm_offday_schedule', true);
-                    $offday_current_bus = false;
-
-                    if (!empty($bus_offday_schedules)) {
-                        $s_datetime = new DateTime($j_date . ' ' . $start_time);
-                        foreach ($bus_offday_schedules as $item) {
-                            $c_iterate_date_from = wbbm_convert_date_to_php($item['from_date']);
-                            $c_iterate_datetime_from = new DateTime($c_iterate_date_from . ' ' . $item['from_time']);
-                            $c_iterate_date_to = wbbm_convert_date_to_php($item['to_date']);
-                            $c_iterate_datetime_to = new DateTime($c_iterate_date_to . ' ' . $item['to_time']);
-
-                            if ($s_datetime >= $c_iterate_datetime_from && $s_datetime <= $c_iterate_datetime_to) {
-                                $offday_current_bus = true;
-                                break;
-                            }
-                        }
-                    }
-
-                    // Check Offday and date
-                    $show_off_day = get_post_meta(get_the_ID(), 'show_off_day', true) ?: 'no';
-                    if ($show_off_day === 'yes') {
-                        if ((!$offday_current_bus && !mage_off_day_check($return))) {
-                            $has_bus = true;
-                            $this->mage_search_item($return);
-                        }
-                    } else {
-                        $has_bus = true;
-                        $this->mage_search_item($return);
-                    }
+                if (wbbm_is_bus_operational_on_date(get_the_ID(), $j_date, $start_time_for_compare)) {
+                    $has_bus = true;
+                    $this->mage_search_item($return);
                 }
             }
 
@@ -327,7 +283,7 @@ function mage_search_item($return) {
     $seat_price_adult = mage_seat_price($id, $boarding, $dropping, 'adult');
     $seat_price_child = mage_seat_price($id, $boarding, $dropping, 'child');
     $seat_price_infant = mage_seat_price($id, $boarding, $dropping, 'infant');
-    $seat_price_entire = mage_seat_price($id, $boarding, $dropping, 'entire'); 
+    $seat_price_entire = mage_seat_price($id, $boarding, $dropping, 'entire');
     $boarding_point = $input_boarding_var;
     $boarding_point_slug = strtolower(preg_replace('/[^A-Za-z0-9-]/', '_', $boarding_point));
     $coach_no = get_post_meta($id, 'wbbm_bus_no', true);
@@ -364,8 +320,18 @@ function mage_search_item($return) {
                             <span><?php echo esc_html($coach_no); ?></span>
                             <?php if ($wbbm_features) { ?>
                                 <p class="wbbm-feature-icon">
-                                    <?php foreach ($wbbm_features as $feature_id) { ?>
-                                        <span class="customCheckbox"><span title="<?php echo esc_attr(get_term($feature_id)->name); ?>" class="mR_xs <?php echo esc_attr(get_term_meta($feature_id, 'feature_icon', true)); ?>"></span></span>
+                                    <?php foreach ((array)$wbbm_features as $feature_id) {
+                                        $feature_id = absint($feature_id);
+                                        if (!$feature_id) {
+                                            continue;
+                                        }
+                                        $feature_term = get_term($feature_id, 'wbbm_bus_feature');
+                                        if (!$feature_term || is_wp_error($feature_term)) {
+                                            continue;
+                                        }
+                                        $feature_icon = MP_Global_Function::wbbm_get_feature_icon_class($feature_id, $feature_term->name);
+                                        ?>
+                                        <span class="customCheckbox"><span title="<?php echo esc_attr($feature_term->name); ?>" class="mR_xs <?php echo esc_attr($feature_icon); ?>"></span></span>
                                     <?php } ?>
                                 </p>
                             <?php } ?>
@@ -711,14 +677,14 @@ function mage_search_form_vertical($target = '') {
     <div class="mage_container">
         <div class="mage_search_box_small">
             <h2>
-                <?php 
+                <?php
                 // Get the ticket text option, defaulting to a safe translation
-                echo esc_html(wbbm_get_option('wbbm_buy_ticket_text', 'wbbm_label_setting_sec', __('BUY TICKET', 'bus-booking-manager'))); 
+                echo esc_html(wbbm_get_option('wbbm_buy_ticket_text', 'wbbm_label_setting_sec', __('BUY TICKET', 'bus-booking-manager')));
                 ?>
             </h2>
-            <?php 
+            <?php
             // Call the action with sanitized parameters
-            do_action('mage_search_from_only', false, sanitize_text_field($target)); 
+            do_action('mage_search_from_only', false, sanitize_text_field($target));
             ?>
         </div>
     </div>
@@ -728,7 +694,7 @@ function mage_search_form_vertical($target = '') {
 function mage_search_form_horizontal($single_bus, $target = '') {
     // Sanitize background color
     $search_form_b_color = sanitize_hex_color(wbbm_get_option('wbbm_search_form_b_color', 'wbbm_style_setting_sec'));
-    
+
     // Get and escape the buy ticket text option
     $wbbm_buy_ticket_text = esc_html(wbbm_get_option('wbbm_buy_ticket_text', 'wbbm_label_setting_sec', __('Buy Ticket', 'bus-booking-manager')));
     ?>

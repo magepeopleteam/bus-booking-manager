@@ -440,6 +440,12 @@ class BusEditPageClass
         if (is_wp_error($term)) {
             if ($term->get_error_code() === 'term_exists') {
                 $existing_term = get_term_by('name', $term_name, 'wbbm_bus_feature');
+                if ($existing_term && !is_wp_error($existing_term)) {
+                    $existing_icon = (string) get_term_meta($existing_term->term_id, 'feature_icon', true);
+                    if (trim($existing_icon) === '') {
+                        update_term_meta($existing_term->term_id, 'feature_icon', MP_Global_Function::wbbm_get_feature_default_icon($existing_term->name));
+                    }
+                }
                 wp_send_json_success(array(
                     'term_id' => $existing_term->term_id,
                     'name'    => $existing_term->name,
@@ -449,9 +455,13 @@ class BusEditPageClass
             wp_send_json_error($term->get_error_message());
         }
 
+        $feature_icon = MP_Global_Function::wbbm_get_feature_default_icon($term_name);
+        update_term_meta($term['term_id'], 'feature_icon', $feature_icon);
+
         wp_send_json_success(array(
             'term_id' => $term['term_id'],
-            'name'    => $term_name
+            'name'    => $term_name,
+            'icon'    => $feature_icon
         ));
     }
 
@@ -860,7 +870,7 @@ class BusEditPageClass
                     <div class="features-grid">
                         <?php if (!is_wp_error($available_features) && !empty($available_features)) : ?>
                             <?php foreach ($available_features as $term) :
-                                $icon = get_term_meta($term->term_id, 'feature_icon', true) ?: 'fas fa-star';
+                                $icon = MP_Global_Function::wbbm_get_feature_icon_class($term->term_id, $term->name);
                                 $is_active = in_array($term->term_id, $selected_features);
                             ?>
                                 <label class="feature-item <?php echo $is_active ? 'active' : ''; ?>">
@@ -1126,8 +1136,8 @@ class BusEditPageClass
         <div class="bus-edit-content">
             <div class="bus-edit-left">
                 <div class="bus-card">
-                    <h3><?php _e('Operating Days', 'bus-booking-manager'); ?></h3>
-                    <p style="margin-bottom: 20px; color: var(--bus-text-light);"><?php _e('Select the days of the week when this bus service is active.', 'bus-booking-manager'); ?></p>
+                    <h3><?php _e('Weekly Off Days', 'bus-booking-manager'); ?></h3>
+                    <p style="margin-bottom: 20px; color: var(--bus-text-light);"><?php _e('Select the days of the week when this bus service is off.', 'bus-booking-manager'); ?></p>
                     <div class="days-selector">
                         <?php foreach ($days as $value => $label) : ?>
                             <label class="day-checkbox">
@@ -1181,7 +1191,7 @@ class BusEditPageClass
                 <div class="bus-card">
                     <h3><?php _e('Schedule Info', 'bus-booking-manager'); ?></h3>
                     <ul style="font-size: 13px; color: var(--bus-text-light); padding-left: 15px;">
-                        <li><?php _e('Operating Days define the weekly routine.', 'bus-booking-manager'); ?></li>
+                        <li><?php _e('Weekly Off Days define recurring weekly non-operational days.', 'bus-booking-manager'); ?></li>
                         <li><?php _e('Date Range defines the long-term availability.', 'bus-booking-manager'); ?></li>
                         <li><?php _e('Off-day Schedule is for specific dates/times like holidays.', 'bus-booking-manager'); ?></li>
                     </ul>

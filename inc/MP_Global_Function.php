@@ -68,7 +68,7 @@ if (! class_exists('MP_Global_Function')) {
         public static function get_submit_info($key, $default = '')
         {
             // phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
-            if (!isset(($_POST[sanitize_key($key)]))) {
+            if (!($_POST[sanitize_key($key)]) !== null) {
                 return;
             }
             // phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
@@ -635,6 +635,231 @@ if (! class_exists('MP_Global_Function')) {
             return $message;
         }
 
+        public static function wbbm_get_route_info($post_id): array
+        {
+            $post_id = absint($post_id);
+            if (!$post_id) {
+                return [];
+            }
+
+            $route_info = get_post_meta($post_id, 'wbbm_route_info', true);
+            if (is_array($route_info) && !empty($route_info)) {
+                $normalized = [];
+                foreach ($route_info as $route) {
+                    if (!is_array($route) || empty($route['place'])) {
+                        continue;
+                    }
+                    $normalized[] = [
+                        'place' => sanitize_text_field($route['place']),
+                        'time' => isset($route['time']) ? sanitize_text_field($route['time']) : '',
+                        'type' => self::wbbm_normalize_route_type($route['type'] ?? 'both'),
+                        'next_day' => isset($route['next_day']) ? absint($route['next_day']) : 0,
+                    ];
+                }
+                if (!empty($normalized)) {
+                    return $normalized;
+                }
+            }
+
+            return self::wbbm_build_route_info_from_legacy_meta($post_id);
+        }
+
+        public static function wbbm_get_boarding_points($post_id): array
+        {
+            $route_info = self::wbbm_get_route_info($post_id);
+            $boarding_points = [];
+            foreach ($route_info as $route) {
+                if ($route['type'] === 'bp' || $route['type'] === 'both') {
+                    $boarding_points[] = [
+                        'wbbm_bus_bp_stops_name' => $route['place'],
+                        'wbbm_bus_bp_start_time' => $route['time'],
+                    ];
+                }
+            }
+            return $boarding_points;
+        }
+
+        public static function wbbm_get_dropping_points($post_id): array
+        {
+            $route_info = self::wbbm_get_route_info($post_id);
+            $dropping_points = [];
+            foreach ($route_info as $route) {
+                if ($route['type'] === 'dp' || $route['type'] === 'both') {
+                    $dropping_points[] = [
+                        'wbbm_bus_next_stops_name' => $route['place'],
+                        'wbbm_bus_next_end_time' => $route['time'],
+                    ];
+                }
+            }
+            return $dropping_points;
+        }
+
+        public static function wbbm_get_route_time_by_place($post_id, $place, $type = 'bp'): string
+        {
+            $place = sanitize_text_field($place);
+            if ($place === '') {
+                return '';
+            }
+
+            $type = self::wbbm_normalize_route_type($type);
+            foreach (self::wbbm_get_route_info($post_id) as $route) {
+                if ($route['place'] !== $place) {
+                    continue;
+                }
+                if ($type === 'bp' && ($route['type'] === 'bp' || $route['type'] === 'both')) {
+                    return $route['time'];
+                }
+                if ($type === 'dp' && ($route['type'] === 'dp' || $route['type'] === 'both')) {
+                    return $route['time'];
+                }
+                if ($type === 'both') {
+                    return $route['time'];
+                }
+            }
+            return '';
+        }
+
+        public static function wbbm_get_all_route_places($post_id): array
+        {
+            $places = array_map(static function ($route) {
+                return $route['place'];
+            }, self::wbbm_get_route_info($post_id));
+            return array_values(array_unique(array_filter($places)));
+        }
+
+        private static function wbbm_build_route_info_from_legacy_meta($post_id): array
+        {
+            $boarding_points = get_post_meta($post_id, 'wbbm_bus_bp_stops', true);
+            $dropping_points = get_post_meta($post_id, 'wbbm_bus_next_stops', true);
+            $boarding_points = is_array($boarding_points) ? $boarding_points : [];
+            $dropping_points = is_array($dropping_points) ? $dropping_points : [];
+
+            $route_map = [];
+
+            foreach ($boarding_points as $bp) {
+                if (empty($bp['wbbm_bus_bp_stops_name'])) {
+                    continue;
+                }
+                $place = sanitize_text_field($bp['wbbm_bus_bp_stops_name']);
+                $time = isset($bp['wbbm_bus_bp_start_time']) ? sanitize_text_field($bp['wbbm_bus_bp_start_time']) : '';
+                if (!isset($route_map[$place])) {
+                    $route_map[$place] = [
+                        'place' => $place,
+                        'time' => $time,
+                        'type' => 'bp',
+                        'next_day' => 0,
+                    ];
+                }
+            }
+
+            foreach ($dropping_points as $dp) {
+                if (empty($dp['wbbm_bus_next_stops_name'])) {
+                    continue;
+                }
+                $place = sanitize_text_field($dp['wbbm_bus_next_stops_name']);
+                $time = isset($dp['wbbm_bus_next_end_time']) ? sanitize_text_field($dp['wbbm_bus_next_end_time']) : '';
+                if (isset($route_map[$place])) {
+                    $route_map[$place]['type'] = 'both';
+                    if (empty($route_map[$place]['time'])) {
+                        $route_map[$place]['time'] = $time;
+                    }
+                } else {
+                    $route_map[$place] = [
+                        'place' => $place,
+                        'time' => $time,
+                        'type' => 'dp',
+                        'next_day' => 0,
+                    ];
+                }
+            }
+
+            return array_values($route_map);
+        }
+
+        private static function wbbm_normalize_route_type($type): string
+        {
+            $type = sanitize_text_field($type);
+            if (!in_array($type, ['bp', 'dp', 'both'], true)) {
+                return 'both';
+            }
+            return $type;
+        }
+
+        public static function wbbm_get_feature_icon_class($term_id = 0, $feature_name = ''): string
+        {
+            $term_id = absint($term_id);
+            $icon = '';
+
+            if ($term_id > 0) {
+                $icon = sanitize_text_field((string) get_term_meta($term_id, 'feature_icon', true));
+            }
+
+            if (self::wbbm_is_valid_icon_class($icon)) {
+                return $icon;
+            }
+
+            if ($feature_name === '' && $term_id > 0) {
+                $term = get_term($term_id, 'wbbm_bus_feature');
+                if ($term && !is_wp_error($term)) {
+                    $feature_name = (string) $term->name;
+                }
+            }
+
+            return self::wbbm_get_feature_default_icon($feature_name);
+        }
+
+        public static function wbbm_get_feature_default_icon($feature_name = ''): string
+        {
+            $name = strtolower(sanitize_text_field((string) $feature_name));
+
+            if ($name !== '') {
+                $icon_map = [
+                    ['keywords' => ['wifi', 'wi-fi', 'internet'], 'icon' => 'fas fa-wifi'],
+                    ['keywords' => ['ac', 'air condition', 'air-conditioning', 'cooling'], 'icon' => 'fas fa-snowflake'],
+                    ['keywords' => ['seat', 'seater', 'recliner'], 'icon' => 'fas fa-couch'],
+                    ['keywords' => ['usb', 'charge', 'charging', 'power', 'socket'], 'icon' => 'fas fa-plug'],
+                    ['keywords' => ['meal', 'food', 'snack'], 'icon' => 'fas fa-utensils'],
+                    ['keywords' => ['water', 'drink', 'beverage'], 'icon' => 'fas fa-tint'],
+                    ['keywords' => ['toilet', 'washroom', 'restroom'], 'icon' => 'fas fa-toilet'],
+                    ['keywords' => ['luggage', 'bag', 'baggage'], 'icon' => 'fas fa-suitcase-rolling'],
+                    ['keywords' => ['tv', 'screen', 'entertainment'], 'icon' => 'fas fa-tv'],
+                    ['keywords' => ['music', 'audio'], 'icon' => 'fas fa-music'],
+                    ['keywords' => ['blanket', 'sleep'], 'icon' => 'fas fa-bed'],
+                    ['keywords' => ['wheelchair', 'accessible', 'accessibility'], 'icon' => 'fas fa-wheelchair'],
+                    ['keywords' => ['safety', 'security', 'cctv'], 'icon' => 'fas fa-shield-alt'],
+                    ['keywords' => ['gps', 'tracking', 'navigation'], 'icon' => 'fas fa-map-marked-alt'],
+                ];
+
+                foreach ($icon_map as $item) {
+                    foreach ($item['keywords'] as $keyword) {
+                        if (strpos($name, $keyword) !== false) {
+                            return $item['icon'];
+                        }
+                    }
+                }
+            }
+
+            return 'fas fa-star';
+        }
+
+        private static function wbbm_is_valid_icon_class($icon_class): bool
+        {
+            if (!is_string($icon_class)) {
+                return false;
+            }
+
+            $icon_class = trim($icon_class);
+            if ($icon_class === '') {
+                return false;
+            }
+
+            if (!preg_match('/^[a-zA-Z0-9\\-\\s_]+$/', $icon_class)) {
+                return false;
+            }
+
+            return (strpos($icon_class, 'fa') !== false);
+        }
+
         public static function wbbm_recursive_sanitize($data)
         {
             if (is_array($data)) {
@@ -906,4 +1131,15 @@ if (! class_exists('MP_Global_Function')) {
         }
     }
     new MP_Global_Function();
+}
+
+if (!function_exists('dd_array')) {
+    function dd_array($data, $label = 'DEBUG')
+    {
+        echo '<pre style="background:#111;color:#0f0;padding:12px;">';
+        echo esc_html($label) . ":\n";
+        print_r($data);
+        echo '</pre>';
+        die('Execution stopped');
+    }
 }

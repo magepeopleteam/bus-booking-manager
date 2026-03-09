@@ -225,7 +225,7 @@ class NextDateClass extends CommonClass
                 </ul>
             </div>
         <?php
-        } elseif (($wbtm_offday_schedules || $weekly_offday) && $show_off_day === 'yes') {
+        } elseif (($wbtm_offday_schedules || $weekly_offday)) {
             $alloffdays = [];
             foreach ($wbtm_offday_schedules as $wbtm_offday_schedule) {
                 $alloffdays = array_unique(array_merge($alloffdays, WbbmdisplayDates($wbtm_offday_schedule['from_date'], $wbtm_offday_schedule['to_date'])));
@@ -271,8 +271,8 @@ class NextDateClass extends CommonClass
 
                         // skip off-days
                         if (
-                            ! in_array( $next_date, $offday, true ) &&
-                            ! in_array( gmdate( 'w', strtotime( $next_date ) ), $weekly_offday, true )
+                            ! wbbm_is_bus_offday( get_the_ID(), $next_date ) &&
+                            wbbm_is_date_in_operational_range( get_the_ID(), $next_date )
                         ) {
 
                             $query_args = array(

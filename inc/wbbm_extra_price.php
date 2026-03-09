@@ -265,6 +265,17 @@ function wbbm_add_the_date_validation($passed)
                 return false;
             }
 
+            $journey_date_ymd = mage_wp_date($journey_date, 'Y-m-d');
+            $start_time_for_compare = '';
+            if (class_exists('MP_Global_Function')) {
+                $start_time_for_compare = MP_Global_Function::wbbm_get_route_time_by_place($eid, $boarding_var_get, 'bp');
+            }
+
+            if (!wbbm_is_bus_operational_on_date($eid, $journey_date_ymd, $start_time_for_compare)) {
+                wc_add_notice(__('This bus is not operational on the selected date.', 'bus-booking-manager'), 'error');
+                return false;
+            }
+
             $available_seat = wbbm_intermidiate_available_seat($boarding_var_get, $dropping_var_get, wbbm_convert_date_to_php($journey_date), $eid);
 
             // Subtract quantity already in cart for this bus and date

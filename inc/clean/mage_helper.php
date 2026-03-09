@@ -171,12 +171,12 @@ function mage_bus_list_query($start, $end)
         'meta_query' => array(
             'relation' => 'AND',
             array(
-                'key' => 'wbbm_bus_bp_stops',
+                'key' => 'wbbm_route_info',
                 'value' => $start,
                 'compare' => 'LIKE',
             ),
             array(
-                'key' => 'wbbm_bus_next_stops',
+                'key' => 'wbbm_route_info',
                 'value' => $end,
                 'compare' => 'LIKE',
             ),
@@ -186,34 +186,171 @@ function mage_bus_list_query($start, $end)
 
 
 
+function wbbm_normalize_weekly_offday($weekly_offday): array
+{
+    $map = [
+        'sun' => '7',
+        'sunday' => '7',
+        'mon' => '1',
+        'monday' => '1',
+        'tue' => '2',
+        'tuesday' => '2',
+        'wed' => '3',
+        'wednesday' => '3',
+        'thu' => '4',
+        'thursday' => '4',
+        'fri' => '5',
+        'friday' => '5',
+        'sat' => '6',
+        'saturday' => '6',
+    ];
+
+    if (is_string($weekly_offday)) {
+        $weekly_offday = strpos($weekly_offday, ',') !== false ? explode(',', $weekly_offday) : [$weekly_offday];
+    }
+
+    $weekly_offday = is_array($weekly_offday) ? $weekly_offday : [];
+    $normalized = [];
+
+    foreach ($weekly_offday as $day) {
+        $day = strtolower(trim(sanitize_text_field((string) $day)));
+        if ($day === '') {
+            continue;
+        }
+        if (isset($map[$day])) {
+            $normalized[] = $map[$day];
+            continue;
+        }
+        if (ctype_digit($day)) {
+            $day_num = (int) $day;
+            // Backward compatibility: some logic used 0 for Sunday.
+            if ($day_num === 0) {
+                $day_num = 7;
+            }
+            if ($day_num >= 1 && $day_num <= 7) {
+                $normalized[] = (string) $day_num;
+            }
+        }
+    }
+
+    return array_values(array_unique($normalized));
+}
+
+function wbbm_is_date_in_operational_range($bus_id, $date): bool
+{
+    $bus_id = absint($bus_id);
+    $date = $date ? mage_wp_date($date, 'Y-m-d') : '';
+
+    if (!$bus_id || $date === '') {
+        return true;
+    }
+
+    $start_date = sanitize_text_field((string) get_post_meta($bus_id, 'wbtm_od_start', true));
+    $end_date = sanitize_text_field((string) get_post_meta($bus_id, 'wbtm_od_end', true));
+
+    if ($start_date !== '' && strtotime($date) < strtotime($start_date)) {
+        return false;
+    }
+    if ($end_date !== '' && strtotime($date) > strtotime($end_date)) {
+        return false;
+    }
+
+    return true;
+}
+
+function wbbm_is_bus_offday($bus_id, $date, $start_time = ''): bool
+{
+    $bus_id = absint($bus_id);
+    $date = $date ? mage_wp_date($date, 'Y-m-d') : '';
+
+    if (!$bus_id || $date === '') {
+        return false;
+    }
+
+    $weekly_offday = wbbm_normalize_weekly_offday(get_post_meta($bus_id, 'weekly_offday', true));
+    $day_of_week = gmdate('N', strtotime($date)); // 1 (Mon) to 7 (Sun)
+    if (in_array($day_of_week, $weekly_offday, true)) {
+        return true;
+    }
+
+    $offday_schedule = get_post_meta($bus_id, 'wbtm_offday_schedule', true);
+    if (!is_array($offday_schedule) || empty($offday_schedule)) {
+        return false;
+    }
+
+    $search_dt = false;
+    if ($start_time !== '') {
+        $search_dt = strtotime($date . ' ' . sanitize_text_field($start_time));
+    }
+
+    foreach ($offday_schedule as $item) {
+        $from_date = !empty($item['from_date']) ? mage_wp_date($item['from_date'], 'Y-m-d') : '';
+        $to_date = !empty($item['to_date']) ? mage_wp_date($item['to_date'], 'Y-m-d') : '';
+
+        if ($from_date === '' || $to_date === '') {
+            continue;
+        }
+
+        $from_time = isset($item['from_time']) ? sanitize_text_field((string) $item['from_time']) : '';
+        $to_time = isset($item['to_time']) ? sanitize_text_field((string) $item['to_time']) : '';
+
+        if ($search_dt !== false && $from_time !== '' && $to_time !== '') {
+            $from_dt = strtotime($from_date . ' ' . $from_time);
+            $to_dt = strtotime($to_date . ' ' . $to_time);
+            if ($from_dt !== false && $to_dt !== false && $search_dt >= $from_dt && $search_dt <= $to_dt) {
+                return true;
+            }
+        } else {
+            if (strtotime($date) >= strtotime($from_date) && strtotime($date) <= strtotime($to_date)) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+function wbbm_is_bus_operational_on_date($bus_id, $date, $start_time = ''): bool
+{
+    $bus_id = absint($bus_id);
+    $date = $date ? mage_wp_date($date, 'Y-m-d') : '';
+
+    if (!$bus_id || $date === '') {
+        return true;
+    }
+
+    if (!wbbm_is_date_in_operational_range($bus_id, $date)) {
+        return false;
+    }
+
+    $show_operational_on_day = sanitize_text_field((string) get_post_meta($bus_id, 'show_operational_on_day', true));
+    $bus_on_date = get_post_meta($bus_id, 'wbtm_bus_on_date', true);
+    $bus_on_dates = is_array($bus_on_date) ? $bus_on_date : (is_string($bus_on_date) ? array_map('trim', explode(',', $bus_on_date)) : []);
+
+    if ($show_operational_on_day === 'yes' && !empty($bus_on_dates)) {
+        $bus_on_dates = array_map(static function ($item) {
+            return mage_wp_date($item, 'Y-m-d');
+        }, $bus_on_dates);
+        return in_array($date, $bus_on_dates, true);
+    }
+
+    return !wbbm_is_bus_offday($bus_id, $date, $start_time);
+}
+
 // Odd range check
 function mage_odd_list_check($return)
 {
-    $start_date = strtotime(get_post_meta(get_the_ID(), 'wbtm_od_start', true));
-    $end_date = strtotime(get_post_meta(get_the_ID(), 'wbtm_od_end', true));
-    $date = mage_get_isset($return ? 'r_date' : 'j_date');
+    $date = $return ? mage_get_isset('r_date') : mage_get_isset('j_date');
     $date = mage_wp_date($date, 'Y-m-d');
-
-    return (($start_date <= $date) && ($end_date >= $date)) ? false : true;
+    return !wbbm_is_date_in_operational_range(get_the_ID(), $date);
 }
 
 // Off day check
 function mage_off_day_check($return)
 {
-    $get_day = null;
-    $id = get_the_ID();
-    $j_date = $return ? mage_wp_date(mage_get_isset('r_date'), 'Y-m-d') : mage_wp_date(mage_get_isset('j_date'), 'Y-m-d');
-
-    $weekly_offday = get_post_meta($id, 'weekly_offday', true) ?: array();
-    if ($j_date) {
-        $j_date_day = strtolower(gmdate('N', strtotime($j_date)));
-        if (in_array($j_date_day, $weekly_offday)) {
-            $get_day = 'yes';
-        }
-
-        return $get_day === 'yes';
-    }
-    return false;
+    $date = $return ? mage_get_isset('r_date') : mage_get_isset('j_date');
+    $date = mage_wp_date($date, 'Y-m-d');
+    return wbbm_is_bus_offday(get_the_ID(), $date);
 }
 
 // Check if product is already in cart
@@ -279,16 +416,10 @@ function wbbm_get_available_seat_cpt($bus_id, $start, $end, $date)
     $total_seats = (int) get_post_meta($bus_id, 'wbbm_total_seat', true);
 
     // Get all stops to calculate route overlap
-    $bus_start_stops_arr = maybe_unserialize(get_post_meta($bus_id, 'wbbm_bus_bp_stops', true));
-    $bus_end_stops_arr   = maybe_unserialize(get_post_meta($bus_id, 'wbbm_bus_next_stops', true));
-
-    if (empty($bus_start_stops_arr) || empty($bus_end_stops_arr)) {
+    $all_stops = MP_Global_Function::wbbm_get_all_route_places($bus_id);
+    if (empty($all_stops)) {
         return 0;
     }
-
-    $bus_stops = array_column($bus_start_stops_arr, 'wbbm_bus_bp_stops_name');
-    $bus_ends  = array_column($bus_end_stops_arr, 'wbbm_bus_next_stops_name');
-    $all_stops = array_values(array_unique(array_merge($bus_stops, $bus_ends)));
 
     $sp = array_search($start, $all_stops);
     $ep = array_search($end, $all_stops);
@@ -470,23 +601,13 @@ function wbbm_boarding_dropping_time($drop_time = '', $return = '')
 {
     $boarding = mage_get_isset('bus_start_route');
     $dropping = mage_get_isset('bus_end_route');
-    $boarding_time = get_post_meta(get_the_ID(), 'wbbm_bus_bp_stops', true);
-    $dropping_time = get_post_meta(get_the_ID(), 'wbbm_bus_next_stops', true);
     $start = $return ? $dropping : $boarding;
     $end = $return ? $boarding : $dropping;
-
-    if (is_array($boarding_time) && is_array($dropping_time)) {
-        foreach ($boarding_time as $boarding_stop) {
-            if ($boarding_stop['wbbm_bus_bp_stops_name'] === $start) {
-                foreach ($dropping_time as $dropping_stop) {
-                    if ($dropping_stop['wbbm_bus_next_stops_name'] === $end) {
-                        $start_time = $boarding_stop['wbbm_bus_bp_start_time'];
-                        $end_time = $dropping_stop['wbbm_bus_next_end_time'];
-                        return $drop_time ? $end_time : $start_time;
-                    }
-                }
-            }
-        }
+    $post_id = get_the_ID();
+    $start_time = MP_Global_Function::wbbm_get_route_time_by_place($post_id, $start, 'bp');
+    $end_time = MP_Global_Function::wbbm_get_route_time_by_place($post_id, $end, 'dp');
+    if ($start_time !== '' && $end_time !== '') {
+        return $drop_time ? $end_time : $start_time;
     }
     return false;
 }

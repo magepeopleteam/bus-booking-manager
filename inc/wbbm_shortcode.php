@@ -36,10 +36,10 @@ function wbbm_bus_list($atts, $content=null) {
     <?php 
     while ($loop->have_posts()) {
         $loop->the_post(); 
-        $bp_arr = get_post_meta(get_the_id(), 'wbbm_bus_bp_stops', true); 
-        $dp_arr = get_post_meta(get_the_id(), 'wbbm_bus_next_stops', true);
+        $bp_arr = MP_Global_Function::wbbm_get_boarding_points(get_the_ID());
+        $dp_arr = MP_Global_Function::wbbm_get_dropping_points(get_the_ID());
         $price_arr = get_post_meta(get_the_id(), 'wbbm_bus_prices', true);
-        $total_dp = count($dp_arr) - 1;
+        $total_dp = max(count($dp_arr) - 1, 0);
 
         $start = !empty($bp_arr[0]['wbbm_bus_bp_stops_name']) ? sanitize_text_field($bp_arr[0]['wbbm_bus_bp_stops_name']) : '';
         $end = !empty($dp_arr[$total_dp]['wbbm_bus_next_stops_name']) ? sanitize_text_field($dp_arr[$total_dp]['wbbm_bus_next_stops_name']) : '';

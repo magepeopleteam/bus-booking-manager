@@ -1118,18 +1118,11 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
 		}
 		$table_name = esc_sql($raw_table_name);
 
-		$bus_start_stops_arr = maybe_unserialize(get_post_meta($bus_id, 'wbbm_bus_bp_stops', true));
-		$bus_end_stops_arr   = maybe_unserialize(get_post_meta($bus_id, 'wbbm_bus_next_stops', true));
-
 		$seat_booked_status = array_map('absint', (array) wbbm_seat_booked_on_status());
-
-		if (empty($bus_start_stops_arr) || empty($bus_end_stops_arr)) {
+		$bus_stops_unique = MP_Global_Function::wbbm_get_all_route_places($bus_id);
+		if (empty($bus_stops_unique)) {
 			return 0;
 		}
-
-		$bus_stops = array_column($bus_start_stops_arr, 'wbbm_bus_bp_stops_name');
-		$bus_ends  = array_column($bus_end_stops_arr, 'wbbm_bus_next_stops_name');
-		$bus_stops_unique = array_values(array_unique(array_merge($bus_stops, $bus_ends)));
 
 		// -------------------------
 		// Build WHERE condition safely
@@ -1322,11 +1315,7 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
 	}
 	function wbbm_get_all_stops_after_this($bus_id, $val, $end)
 	{
-		$start_stops = get_post_meta($bus_id, 'wbbm_bus_bp_stops', true);
-		$all_stops = array();
-		foreach ($start_stops as $_start_stops) {
-			$all_stops[] = $_start_stops['wbbm_bus_bp_stops_name'];
-		}
+		$all_stops = MP_Global_Function::wbbm_get_all_route_places($bus_id);
 		$pos = array_search($val, $all_stops);
 		$pos2 = array_search($end, $all_stops);
 		unset($all_stops[$pos]);
