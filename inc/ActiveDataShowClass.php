@@ -1,14 +1,18 @@
 <?php
+
 if (!defined('ABSPATH')) {
     exit;  // Exit if accessed directly
 }
 
-class ActiveDataShowClass extends CommonClass {
-    public function __construct() {
+class ActiveDataShowClass extends CommonClass
+{
+    public function __construct()
+    {
     }
 
     // Next 6 date suggestion
-    public function active_date_picker($singleBus, $post_id) {
+    public function active_date_picker($singleBus, $post_id)
+    {
         if ($singleBus) {
             $wbtm_bus_on_dates = get_post_meta($post_id, 'wbtm_bus_on_date', true) ? maybe_unserialize(get_post_meta($post_id, 'wbtm_bus_on_date', true)) : [];
             $wbtm_offday_schedules = get_post_meta($post_id, 'wbtm_offday_schedule', true) ? get_post_meta($post_id, 'wbtm_offday_schedule', true) : [];
@@ -80,4 +84,3 @@ class ActiveDataShowClass extends CommonClass {
         }
     }
 }
-?>

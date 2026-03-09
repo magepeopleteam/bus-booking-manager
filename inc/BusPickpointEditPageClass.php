@@ -1,9 +1,12 @@
 <?php
-if (!defined('ABSPATH')) exit;
+
+if (!defined('ABSPATH')) {
+    exit;
+}
 
 /**
  * Bus Pickpoint Edit Page Class
- * 
+ *
  * Handles the custom modern edit/add page for bus pickup points (taxonomy wbbm_bus_pickpoint).
  */
 class BusPickpointEditPageClass
@@ -146,7 +149,7 @@ class BusPickpointEditPageClass
         $slug = $term ? $term->slug : '';
         $description = $term ? $term->description : '';
 
-?>
+        ?>
         <div class="wrap bus-edit-wrap">
             <div class="bus-edit-header">
                 <div style="display: flex; align-items: center; gap: 15px;">
@@ -208,7 +211,7 @@ class BusPickpointEditPageClass
                 </form>
             </div>
         </div>
-<?php
+        <?php
     }
 }
 

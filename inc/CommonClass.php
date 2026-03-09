@@ -1,5 +1,8 @@
 <?php
-if (!defined('ABSPATH')) exit; // if direct access
+
+if (!defined('ABSPATH')) {
+    exit; // if direct access
+}
 
 class CommonClass
 {
@@ -77,7 +80,9 @@ class CommonClass
         $slug = sanitize_text_field($slug); // Sanitize slug input
         if ($pages = get_pages()) {
             foreach ($pages as $page) {
-                if ($slug === $page->post_name) return $page;
+                if ($slug === $page->post_name) {
+                    return $page;
+                }
             }
         }
         return false;

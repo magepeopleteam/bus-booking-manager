@@ -1,9 +1,12 @@
 <?php
-if (!defined('ABSPATH')) exit;
+
+if (!defined('ABSPATH')) {
+    exit;
+}
 
 /**
  * Shuttle List Page Class
- * 
+ *
  * Handles the modern custom list page for shuttles.
  */
 class ShuttleListPageClass
@@ -139,7 +142,7 @@ class ShuttleListPageClass
         $start_num = ($paged - 1) * $posts_per_page + 1;
         $end_num = min($paged * $posts_per_page, $total_posts);
 
-?>
+        ?>
         <div class="wrap shuttle-list-wrap">
             <div class="shuttle-list-container">
                 <!-- Header Section -->
@@ -223,7 +226,8 @@ class ShuttleListPageClass
                         </thead>
                         <tbody>
                             <?php if ($query->have_posts()) : ?>
-                                <?php while ($query->have_posts()) : $query->the_post();
+                                <?php while ($query->have_posts()) :
+                                    $query->the_post();
                                     $post_id = get_the_ID();
                                     $thumb_id = get_post_thumbnail_id($post_id);
                                     $thumb_url = $thumb_id ? wp_get_attachment_image_url($thumb_id, 'thumbnail') : '';
@@ -245,7 +249,7 @@ class ShuttleListPageClass
 
                                     $view_url = get_permalink($post_id);
                                     $delete_url = wp_nonce_url(add_query_arg(array('action' => 'delete', 'post_id' => $post_id)), 'delete-shuttle_' . $post_id);
-                                ?>
+                                    ?>
                                     <tr>
                                         <td><input type="checkbox" name="shuttle_ids[]" value="<?php echo esc_attr($post_id); ?>"></td>
                                         <td class="shuttle-info-cell" style="width: 250px;">
@@ -259,8 +263,8 @@ class ShuttleListPageClass
                                             <div class="shuttle-details">
                                                 <div class="shuttle-title"><a href="<?php echo esc_url($edit_url); ?>"><?php the_title(); ?></a></div>
                                                 <div class="shuttle-meta"><?php echo esc_html($route_name); ?></div>
-                                                <!-- <div class="shuttle-sub-meta"><?php //the_date('F d, Y, g:i a'); 
-                                                                                    ?></div> -->
+                                                <!-- <div class="shuttle-sub-meta"><?php //the_date('F d, Y, g:i a');
+                                                ?></div> -->
                                             </div>
                                         </td>
                                         <td><?php echo !empty($categories) ? esc_html(implode(', ', $categories)) : '-'; ?></td>
@@ -271,7 +275,9 @@ class ShuttleListPageClass
                                                 $stop_names = array();
                                                 foreach ($route_stops as $s) {
                                                     $loc = isset($s['location']) ? $s['location'] : '';
-                                                    if (empty($loc)) continue;
+                                                    if (empty($loc)) {
+                                                        continue;
+                                                    }
 
                                                     if (is_numeric($loc)) {
                                                         $term = get_term($loc, 'wbbm_shuttle_stops');
@@ -286,7 +292,7 @@ class ShuttleListPageClass
 
                                                 if (!empty($stop_names)) :
                                                     $count = count($stop_names);
-                                                ?>
+                                                    ?>
                                                     <div class="stops-list-wrapper">
                                                         <div class="stops-visible">
                                                             <?php echo esc_html(implode(', ', array_slice($stop_names, 0, 2))); ?>
@@ -303,7 +309,8 @@ class ShuttleListPageClass
                                                             </div>
                                                         <?php endif; ?>
                                                     </div>
-                                                <?php else : echo '--';
+                                                <?php else :
+                                                    echo '--';
                                                 endif; ?>
                                             </div>
                                         </td>
@@ -346,9 +353,9 @@ class ShuttleListPageClass
                             for ($i = 1; $i <= $total_pages; $i++) {
                                 if ($i == $paged) {
                                     echo '<span class="page-link active">' . $i . '</span>';
-                                } else if ($i == 1 || $i == $total_pages || ($i >= $paged - 1 && $i <= $paged + 1)) {
+                                } elseif ($i == 1 || $i == $total_pages || ($i >= $paged - 1 && $i <= $paged + 1)) {
                                     echo '<a href="' . add_query_arg('paged', $i) . '" class="page-link">' . $i . '</a>';
-                                } else if ($i == 2 || $i == $total_pages - 1) {
+                                } elseif ($i == 2 || $i == $total_pages - 1) {
                                     echo '<span class="pager-sep">...</span>';
                                 }
                             }
@@ -370,7 +377,7 @@ class ShuttleListPageClass
                 </div>
             </div>
         </div>
-<?php
+        <?php
     }
 }
 

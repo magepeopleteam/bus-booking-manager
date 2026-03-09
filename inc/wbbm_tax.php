@@ -125,10 +125,11 @@ function wbbm_bus_cpt_tax()
     register_taxonomy('wbbm_bus_feature', 'wbbm_bus', $bus_feature_args);
 }
 
-add_action( 'wbbm_bus_feature_add_form_fields', 'wbbm_bus_feature_add_nonce' );
-add_action( 'wbbm_bus_feature_edit_form_fields', 'wbbm_bus_feature_add_nonce' );
+add_action('wbbm_bus_feature_add_form_fields', 'wbbm_bus_feature_add_nonce');
+add_action('wbbm_bus_feature_edit_form_fields', 'wbbm_bus_feature_add_nonce');
 
-function wbbm_bus_feature_add_nonce() {
+function wbbm_bus_feature_add_nonce()
+{
     wp_nonce_field(
         'wbbm_save_bus_feature',
         'wbbm_bus_feature_nonce'
@@ -144,9 +145,9 @@ function wbbm_save_wbbm_bus_feature($term_id)
 {
     // Nonce check
     if (
-        ! isset( $_POST['wbbm_bus_feature_nonce'] ) ||
+        ! isset($_POST['wbbm_bus_feature_nonce']) ||
         ! wp_verify_nonce(
-            sanitize_text_field( wp_unslash( $_POST['wbbm_bus_feature_nonce'] ) ),
+            sanitize_text_field(wp_unslash($_POST['wbbm_bus_feature_nonce'])),
             'wbbm_save_bus_feature'
         )
     ) {
@@ -168,7 +169,7 @@ function wbbm_bus_feature_add_term_fields($taxonomy)
 {
 
 
-?>
+    ?>
 
     <label for="wbbm_feature_icon">Feature Icon</label>
     <div id="field-wrapper-wbbm_feature_icon" class="wbtm_feature field-wrapper field-icon-wrapper field-icon-wrapper-wbbm_feature_icon">
@@ -183,7 +184,7 @@ function wbbm_bus_feature_add_term_fields($taxonomy)
     <p class="description">Please select a suitable icon for this feature</p>
 
 
-<?php
+    <?php
 
     wbbm_all_font_awesome();
 }
@@ -196,7 +197,7 @@ function wbbm_add_bus_feature()
     // phpcs:ignore WordPress.Security.NonceVerification.Recommended
     $tagId = isset($_GET['tag_ID']) ? sanitize_text_field(wp_unslash($_GET['tag_ID'])) : '';
     $cat_title = $tagId ? get_term_meta($tagId, 'feature_icon', true) : '';
-?>
+    ?>
 
     <tr class="form-field">
         <th scope="row" valign="top"><label for="wbbm_feature_icon">Feature Icon</label></th>
@@ -224,14 +225,14 @@ function wbbm_add_bus_feature()
 
 
 
-<?php
+    <?php
 
     wbbm_all_font_awesome();
 }
 
 function wbbm_all_font_awesome()
 {
-?>
+    ?>
     <div class="add_icon_list_popup">
         <span class="fas fa-times popupCloseIcon"></span>
         <div class="add_icon_list">
@@ -432,7 +433,7 @@ function wbbm_all_font_awesome()
                             <div class="iconItem" data-icon-class="fas fa-exclamation-circle" data-icon-name="Exclamation Circle" title="Exclamation Circle">
                                 <span class="fas fa-exclamation-circle"></span>
                             </div>
-                            <div class="iconItem" data-icon-class="fas fa-exclamation-triangle" data-icon-name="Exclamation Triangle	" title="Exclamation Triangle	">
+                            <div class="iconItem" data-icon-class="fas fa-exclamation-triangle" data-icon-name="Exclamation Triangle    " title="Exclamation Triangle   ">
                                 <span class="fas fa-exclamation-triangle"></span>
                             </div>
                             <div class="iconItem" data-icon-class="fas fa-radiation" data-icon-name="Radiation" title="Radiation">
@@ -3445,7 +3446,7 @@ function wbbm_all_font_awesome()
                             <div class="iconItem" data-icon-class="fas fa-boxes" data-icon-name="Boxes" title="Boxes">
                                 <span class="fas fa-boxes"></span>
                             </div>
-                            <div class="iconItem" data-icon-class="fas fa-clipboard-check" data-icon-name="Clipboard Check	" title="Clipboard Check	">
+                            <div class="iconItem" data-icon-class="fas fa-clipboard-check" data-icon-name="Clipboard Check  " title="Clipboard Check    ">
                                 <span class="fas fa-clipboard-check"></span>
                             </div>
                             <div class="iconItem" data-icon-class="fas fa-clipboard-list" data-icon-name="Clipboard List" title="Clipboard List">
@@ -4396,7 +4397,7 @@ function wbbm_all_font_awesome()
                     </div>
                     <div class="popupTabItem" data-icon-list="51">
                         <div class="itemIconArea">
-                            <div class="iconItem" data-icon-class="fas fa-glass-whiskey" data-icon-name="Glass Whiskey	" title="Glass Whiskey	">
+                            <div class="iconItem" data-icon-class="fas fa-glass-whiskey" data-icon-name="Glass Whiskey  " title="Glass Whiskey  ">
                                 <span class="fas fa-glass-whiskey"></span>
                             </div>
                             <div class="iconItem" data-icon-class="fas fa-icicles" data-icon-name="Icicles" title="Icicles">
@@ -4949,7 +4950,7 @@ function wbbm_all_font_awesome()
         </div>
     </div>
 
-<?php
+    <?php
 }
 
 

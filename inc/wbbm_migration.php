@@ -1,4 +1,5 @@
 <?php
+
 if (! defined('ABSPATH')) {
     die;
 }
@@ -76,16 +77,36 @@ function wbbm_run_booking_migration_once()
                 update_post_meta($post_id, '_wbbm_status', $row->status);
 
                 // Extra fields
-                if (isset($row->pickpoint)) update_post_meta($post_id, '_wbbm_pickpoint', $row->pickpoint);
-                if (isset($row->user_dob)) update_post_meta($post_id, '_wbbm_user_dob', $row->user_dob);
-                if (isset($row->nationality)) update_post_meta($post_id, '_wbbm_nationality', $row->nationality);
-                if (isset($row->flight_arrial_no)) update_post_meta($post_id, '_wbbm_flight_arrial_no', $row->flight_arrial_no);
-                if (isset($row->flight_departure_no)) update_post_meta($post_id, '_wbbm_flight_departure_no', $row->flight_departure_no);
-                if (isset($row->extra_bag_quantity)) update_post_meta($post_id, '_wbbm_extra_bag_quantity', $row->extra_bag_quantity);
-                if (isset($row->total_infant)) update_post_meta($post_id, '_wbbm_total_infant', $row->total_infant);
-                if (isset($row->per_infant_price)) update_post_meta($post_id, '_wbbm_per_infant_price', $row->per_infant_price);
-                if (isset($row->total_entire)) update_post_meta($post_id, '_wbbm_total_entire', $row->total_entire);
-                if (isset($row->per_entire_price)) update_post_meta($post_id, '_wbbm_per_entire_price', $row->per_entire_price);
+                if (isset($row->pickpoint)) {
+                    update_post_meta($post_id, '_wbbm_pickpoint', $row->pickpoint);
+                }
+                if (isset($row->user_dob)) {
+                    update_post_meta($post_id, '_wbbm_user_dob', $row->user_dob);
+                }
+                if (isset($row->nationality)) {
+                    update_post_meta($post_id, '_wbbm_nationality', $row->nationality);
+                }
+                if (isset($row->flight_arrial_no)) {
+                    update_post_meta($post_id, '_wbbm_flight_arrial_no', $row->flight_arrial_no);
+                }
+                if (isset($row->flight_departure_no)) {
+                    update_post_meta($post_id, '_wbbm_flight_departure_no', $row->flight_departure_no);
+                }
+                if (isset($row->extra_bag_quantity)) {
+                    update_post_meta($post_id, '_wbbm_extra_bag_quantity', $row->extra_bag_quantity);
+                }
+                if (isset($row->total_infant)) {
+                    update_post_meta($post_id, '_wbbm_total_infant', $row->total_infant);
+                }
+                if (isset($row->per_infant_price)) {
+                    update_post_meta($post_id, '_wbbm_per_infant_price', $row->per_infant_price);
+                }
+                if (isset($row->total_entire)) {
+                    update_post_meta($post_id, '_wbbm_total_entire', $row->total_entire);
+                }
+                if (isset($row->per_entire_price)) {
+                    update_post_meta($post_id, '_wbbm_per_entire_price', $row->per_entire_price);
+                }
             }
         }
     }

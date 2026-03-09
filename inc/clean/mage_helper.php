@@ -19,7 +19,6 @@ function mage_qty_box($price, $name, $return)
         wbbm_convert_date_to_php($date)
     );
     if ($available_seat > 0) {
-
         if ($name == 'child_quantity') {
             $ticket_title = wbbm_get_option('wbbm_child_text', 'wbbm_label_setting_sec', __('Child', 'bus-booking-manager'));
             $ticket_type = 'child';
@@ -30,7 +29,7 @@ function mage_qty_box($price, $name, $return)
             $ticket_title = wbbm_get_option('wbbm_adult_text', 'wbbm_label_setting_sec', __('Adult', 'bus-booking-manager'));
             $ticket_type = 'adult';
         }
-?>
+        ?>
         <div class="mage_form_group">
             <div class="mage_flex mage_qty_dec"><span class="fa fa-minus"></span></div>
             <input type="text"
@@ -45,7 +44,7 @@ function mage_qty_box($price, $name, $return)
                 <?php echo ($ticket_type === 'adult' ? 'required' : ''); ?> />
             <div class="mage_flex mage_qty_inc"><span class="fa fa-plus"></span></div>
         </div>
-    <?php
+        <?php
     }
 }
 
@@ -494,7 +493,7 @@ function wbbm_get_available_seat_cpt($bus_id, $start, $end, $date)
 
 /**
  * Get available seats for a shuttle on a specific date and route
- * 
+ *
  * @param int $shuttle_id The shuttle post ID
  * @param string $date Journey date in Y-m-d format
  * @param string $route_id Route identifier
@@ -505,11 +504,11 @@ function wbbm_get_available_seat_cpt($bus_id, $start, $end, $date)
 function wbbm_shuttle_available_seats($shuttle_id, $date, $route_id = '', $pickup = '', $dropoff = '')
 {
     $capacity = (int) get_post_meta($shuttle_id, 'wbbm_shuttle_capacity', true);
-    
+
     if ($capacity <= 0) {
         return 0;
     }
-    
+
     $booked = wbbm_get_shuttle_booked_seats($shuttle_id, $date, $route_id, $pickup, $dropoff);
     return max(0, $capacity - $booked);
 }
@@ -517,7 +516,7 @@ function wbbm_shuttle_available_seats($shuttle_id, $date, $route_id = '', $picku
 /**
  * Get number of booked seats for a shuttle
  * Queries wbbm_booking CPT for confirmed bookings AND checks current cart items
- * 
+ *
  * @param int $shuttle_id The shuttle post ID
  * @param string $date Journey date
  * @param string $route_id Route identifier
@@ -529,7 +528,7 @@ function wbbm_get_shuttle_booked_seats($shuttle_id, $date, $route_id = '', $pick
 {
     $seat_status = wbbm_seat_booked_on_status();
     $status_arr = $seat_status ? explode(',', $seat_status) : array(1, 2);
-    
+
     $meta_query = array(
         'relation' => 'AND',
         array(
@@ -553,7 +552,7 @@ function wbbm_get_shuttle_booked_seats($shuttle_id, $date, $route_id = '', $pick
             'compare' => '=',
         ),
     );
-    
+
     $args = array(
         'post_type'      => 'wbbm_booking',
         'posts_per_page' => -1,
@@ -561,35 +560,36 @@ function wbbm_get_shuttle_booked_seats($shuttle_id, $date, $route_id = '', $pick
         'fields'         => 'ids',
         'meta_query'     => $meta_query,
     );
-    
+
     $query = new WP_Query($args);
     $booked_seats = 0;
-    
+
     if ($query->have_posts()) {
         foreach ($query->posts as $booking_id) {
             $seats = (int) get_post_meta($booking_id, '_wbbm_seat', true);
             $booked_seats += max(1, $seats); // At least 1 seat per booking
         }
     }
-    
+
     wp_reset_postdata();
-    
+
     // Also check cart items to prevent overbooking
     if (function_exists('WC') && WC()->cart) {
         $cart_items = WC()->cart->get_cart();
         foreach ($cart_items as $cart_item) {
             // Check if this cart item is for the same shuttle and date
-            if (isset($cart_item['wbbm_shuttle_id']) && 
+            if (
+                isset($cart_item['wbbm_shuttle_id']) &&
                 $cart_item['wbbm_shuttle_id'] == $shuttle_id &&
                 isset($cart_item['wbbm_journey_date']) &&
-                $cart_item['wbbm_journey_date'] == $date) {
-                
+                $cart_item['wbbm_journey_date'] == $date
+            ) {
                 $cart_seats = isset($cart_item['wbbm_total_seat']) ? (int) $cart_item['wbbm_total_seat'] : 1;
                 $booked_seats += $cart_seats;
             }
         }
     }
-    
+
     return (int) $booked_seats;
 }
 
@@ -932,7 +932,7 @@ function wbbm_extra_services_section($bus_id)
     $extra_services = get_post_meta($bus_id, 'mep_events_extra_prices', true);
 
     if ($extra_services && $is_enable_extra_services === 'yes') :
-    ?>
+        ?>
         <div class="wbbm_extra_service_wrap">
             <h4 class="mar_b bor_tb"><?php echo esc_html(__('Extra Service', 'bus-booking-manager')); ?></h4>
             <table class='wbbm_extra_service_table'>
@@ -956,7 +956,7 @@ function wbbm_extra_services_section($bus_id)
                             continue;
                         }
                         $data_price = floatval($field['option_price']);
-                    ?>
+                        ?>
 
                         <tr data-total="0">
                             <td align="left"><?php echo esc_html($field['option_name']); ?>
@@ -979,7 +979,7 @@ function wbbm_extra_services_section($bus_id)
                                             <input size="4" inputmode="numeric" type="number" class='extra-qty-box mage_form_full' step='1' name='extra_service_qty[]' data-price='<?php echo wp_kses_post(wbbm_get_price_including_tax($bus_id, $data_price)); ?>' value='0' min="0" max="<?php echo esc_html($ext_left); ?>">
                                             <div class="mage_flex mage_es_qty_plus"><i class="fa fa-plus"></i></div>
                                         </div>
-                                <?php }
+                                    <?php }
                                 } else {
                                     echo esc_html(__('Not Available', 'bus-booking-manager'));
                                 } ?>
@@ -1003,19 +1003,19 @@ function wbbm_extra_services_section($bus_id)
                                         <p style="display: none;" class="price_jq"><?php echo esc_html($data_price > 0 ? $data_price : 0); ?></p>
                                         <input type="hidden" name='extra_service_name[]' value='<?php echo esc_attr($field['option_name']); ?>'>
                                         <input type="hidden" name='extra_service_price[]' value='<?php echo esc_attr($field['option_price']); ?>'>
-                                <?php }
+                                    <?php }
                                 }
                                 ?>
                             </td>
                         </tr>
-                    <?php
+                        <?php
                         $count_extra++;
                     }
                     ?>
                 </tbody>
             </table>
         </div>
-<?php
+        <?php
     endif;
 }
 

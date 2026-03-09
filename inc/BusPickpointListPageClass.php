@@ -1,9 +1,12 @@
 <?php
-if (!defined('ABSPATH')) exit;
+
+if (!defined('ABSPATH')) {
+    exit;
+}
 
 /**
  * Bus Pickpoint List Page Class
- * 
+ *
  * Handles the modern custom list page for bus pickup points (taxonomy wbbm_bus_pickpoint).
  */
 class BusPickpointListPageClass
@@ -140,7 +143,7 @@ class BusPickpointListPageClass
         $start_num = $offset + 1;
         $end_num = min($offset + $number, $total_terms);
 
-?>
+        ?>
         <div class="wrap shuttle-list-wrap">
             <div class="shuttle-list-container-fullwidth">
                 <!-- Header Section -->
@@ -203,7 +206,7 @@ class BusPickpointListPageClass
                                 <?php foreach ($terms as $term) :
                                     $edit_url = admin_url('admin.php?post_type=wbbm_bus&page=wbbm-bus-pickpoint-edit&term_id=' . $term->term_id);
                                     $delete_url = wp_nonce_url(add_query_arg(array('action' => 'delete', 'term_id' => $term->term_id)), 'delete-bus-pickpoint_' . $term->term_id);
-                                ?>
+                                    ?>
                                     <tr>
                                         <td><input type="checkbox" name="term_ids[]" value="<?php echo esc_attr($term->term_id); ?>"></td>
                                         <td class="shuttle-info-cell">
@@ -260,9 +263,9 @@ class BusPickpointListPageClass
                                 for ($i = 1; $i <= $total_pages; $i++) {
                                     if ($i == $paged) {
                                         echo '<span class="page-link active">' . $i . '</span>';
-                                    } else if ($i == 1 || $i == $total_pages || ($i >= $paged - 1 && $i <= $paged + 1)) {
+                                    } elseif ($i == 1 || $i == $total_pages || ($i >= $paged - 1 && $i <= $paged + 1)) {
                                         echo '<a href="' . add_query_arg('paged', $i) . '" class="page-link">' . $i . '</a>';
-                                    } else if ($i == 2 || $i == $total_pages - 1) {
+                                    } elseif ($i == 2 || $i == $total_pages - 1) {
                                         echo '<span class="pager-sep">...</span>';
                                     }
                                 }
@@ -277,7 +280,7 @@ class BusPickpointListPageClass
                 </div>
             </div>
         </div>
-<?php
+        <?php
     }
 }
 

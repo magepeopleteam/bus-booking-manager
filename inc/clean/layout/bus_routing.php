@@ -9,7 +9,7 @@ if (!defined('ABSPATH')) {
 <div class="mp_tab_item" data-tab-item="#wbtm_routing">
 
     <h3 class="wbbm_mp_tab_item_heading">
-    <?php echo esc_html($cpt_label).' '. esc_html_e('Routing Configuration', 'bus-booking-manager'); ?>
+    <?php echo esc_html($cpt_label) . ' ' . esc_html_e('Routing Configuration', 'bus-booking-manager'); ?>
     </h3>
     <p><?php
     /* translators: %s: post type general name */
@@ -27,13 +27,13 @@ if (!defined('ABSPATH')) {
     <section>
         <div>
             <label for="">
-                <?php 
+                <?php
                 /* translators: %s: post type general name */
                 printf(esc_html__('Crete new %s Stops', 'bus-booking-manager'), esc_html($cpt_label)); ?>
             </label>
             <br>
             <span class="ra-stopage-desc">
-                <?php esc_html_e( "you can do new stops from here.", 'bus-booking-manager' ); ?>
+                <?php esc_html_e("you can do new stops from here.", 'bus-booking-manager'); ?>
             </span>
         </div>
         <div >
@@ -42,7 +42,7 @@ if (!defined('ABSPATH')) {
                     <i class="fas fa-plus"></i>
                     <?php
                     /* translators: %s: post type general name */
-                    printf(esc_html__( 'Add New %s Stops', 'bus-booking-manager' ), esc_html($cpt_label)); ?>
+                    printf(esc_html__('Add New %s Stops', 'bus-booking-manager'), esc_html($cpt_label)); ?>
             </button>
             </div>
         </div>
@@ -57,29 +57,29 @@ if (!defined('ABSPATH')) {
                             <h4>
                                 <?php
                                 /* translators: %s: post type general name */
-                                 printf(esc_html__( 'Add New %s Stops', 'bus-booking-manager' ), esc_html($cpt_label)); ?>
+                                 printf(esc_html__('Add New %s Stops', 'bus-booking-manager'), esc_html($cpt_label)); ?>
                             </h4>
                             <span class="fas fa-times popupClose"></span>
                         </div>
                         <div class="popupBody bus-stop-form">
                             <h6 class="textSuccess success_text" style="display: none;">Added Succesfully</h6>
-                            <h6 class="textduplicate duplicate_text" style="display: none;color: red"><?php esc_html_e( 'This bus stop already exists', 'bus-booking-manager' ); ?></h6>
+                            <h6 class="textduplicate duplicate_text" style="display: none;color: red"><?php esc_html_e('This bus stop already exists', 'bus-booking-manager'); ?></h6>
                             <label>
-                                <span class="w_200"><?php esc_html_e( 'Name:', 'bus-booking-manager' ); ?></span>
+                                <span class="w_200"><?php esc_html_e('Name:', 'bus-booking-manager'); ?></span>
                                 <input type="text"  class="formControl" id="bus_stop_name">
                             </label>
-                            <p class="name_required"><?php esc_html_e( 'Name is required', 'bus-booking-manager' ); ?></p>
+                            <p class="name_required"><?php esc_html_e('Name is required', 'bus-booking-manager'); ?></p>
 
                             <label class="mT">
-                                <span class="w_200"><?php esc_html_e( 'Description:', 'bus-booking-manager' ); ?></span>
+                                <span class="w_200"><?php esc_html_e('Description:', 'bus-booking-manager'); ?></span>
                                 <textarea  id="bus_stop_description" rows="5" cols="50" class="formControl"></textarea>
                             </label>
 
                         </div>
                         <div class="popupFooter">
                             <div class="buttonGroup">
-                                <button class="_themeButton submit-bus-stop" type="button"><?php esc_html_e( 'Save', 'bus-booking-manager' ); ?></button>
-                                <button class="_warningButton submit-bus-stop close_popup" type="button"><?php esc_html_e( 'Save & Close', 'bus-booking-manager' ); ?></button>
+                                <button class="_themeButton submit-bus-stop" type="button"><?php esc_html_e('Save', 'bus-booking-manager'); ?></button>
+                                <button class="_warningButton submit-bus-stop close_popup" type="button"><?php esc_html_e('Save & Close', 'bus-booking-manager'); ?></button>
                             </div>
                         </div>
                     </div>
@@ -114,33 +114,37 @@ if (!defined('ABSPATH')) {
 
                         <?php if ($wbbm_bus_bp) :
                             $wbbm_count = 0;
-                        foreach ($wbbm_bus_bp as $wbbm_field) { ?>
+                            foreach ($wbbm_bus_bp as $wbbm_field) { ?>
                             <tr>
                                 <td align="center">
                                     <div class="wbbm_bus_route_select">
-                                        <span class="wbbm_bus_route_icon wbbm_bus_route_icon1"><img src="<?php echo esc_url(WBTM_PLUGIN_URL .'images/bus_route_map.png');?>"/></span>
+                                        <span class="wbbm_bus_route_icon wbbm_bus_route_icon1"><img src="<?php echo esc_url(WBTM_PLUGIN_URL . 'images/bus_route_map.png');?>"/></span>
                                         <select name="wbbm_bus_bp_stops_name[]" class='seat_type bus_stop_add_option wbbm_bus_stops_route'>
                                             <option value=""><?php esc_html_e('Please Select', 'bus-booking-manager'); ?></option>
-                                            <?php foreach ($terms as $term) { ?>
+                                                <?php foreach ($terms as $term) { ?>
                                                 <option data-term_id="<?php echo esc_attr($term->term_id); ?>" value="<?php echo esc_attr($term->name); ?>" <?php selected($term->name, $wbbm_field['wbbm_bus_bp_stops_name']); ?>> <?php echo esc_html($term->name); ?> </option>
-                                            <?php } ?>
+                                                <?php } ?>
                                         </select>
                                     </div>
                                 </td>
                                 <td align="center">
                                     <div class="wbbm_bus_route_time">
-                                        <span class="wbbm_bus_route_icon wbbm_bus_route_icon2"><img src="<?php echo esc_url(WBTM_PLUGIN_URL .'images/bus_route_clock.png');?>"/></span>
-                                        <input type="text" data-clocklet name='wbbm_bus_bp_start_time[]' value="<?php if (isset($wbbm_field['wbbm_bus_bp_start_time']) && $wbbm_field['wbbm_bus_bp_start_time'] != '') echo esc_attr($wbbm_field['wbbm_bus_bp_start_time']); ?>" class="text" placeholder="15:00">
+                                        <span class="wbbm_bus_route_icon wbbm_bus_route_icon2"><img src="<?php echo esc_url(WBTM_PLUGIN_URL . 'images/bus_route_clock.png');?>"/></span>
+                                        <input type="text" data-clocklet name='wbbm_bus_bp_start_time[]' value="<?php if (isset($wbbm_field['wbbm_bus_bp_start_time']) && $wbbm_field['wbbm_bus_bp_start_time'] != '') {
+                                            echo esc_attr($wbbm_field['wbbm_bus_bp_start_time']);
+                                                                                                                } ?>" class="text" placeholder="15:00">
                                     </div>
                                 </td>
                                 <td align="center">
                                     <a class="button remove-faq-row" href="#"><i class="fas fa-minus-circle"></i>
-                                        <?php esc_html_e('Remove', 'bus-booking-manager'); ?>
+                                            <?php esc_html_e('Remove', 'bus-booking-manager'); ?>
                                     </a>
                                 </td>
                             </tr>
 
-                            <?php $wbbm_count++; } endif; ?>
+                                <?php $wbbm_count++;
+                            }
+                        endif; ?>
 
 
                             <!-- empty hidden one for jQuery -->
@@ -148,13 +152,13 @@ if (!defined('ABSPATH')) {
                             <tr class="empty-row-bp screen-reader-text">
                                 <td align="center">
                                     <div class="wbbm_bus_route_select">
-                                        <span class="wbbm_bus_route_icon wbbm_bus_route_icon1"><img src="<?php echo esc_url(WBTM_PLUGIN_URL .'images/bus_route_map.png');?>"/></span>
-                                        <?php echo wp_kses_post(wbbm_get_bus_stops_list('wbbm_bus_bp_stops_name[]','bus_stop_add_option wbbm_bus_stops_route')); ?>
+                                        <span class="wbbm_bus_route_icon wbbm_bus_route_icon1"><img src="<?php echo esc_url(WBTM_PLUGIN_URL . 'images/bus_route_map.png');?>"/></span>
+                                        <?php echo wp_kses_post(wbbm_get_bus_stops_list('wbbm_bus_bp_stops_name[]', 'bus_stop_add_option wbbm_bus_stops_route')); ?>
                                     </div>
                                 </td>
                                 <td align="center">
                                     <div class="wbbm_bus_route_time">
-                                        <span class="wbbm_bus_route_icon wbbm_bus_route_icon2"><img src="<?php echo esc_url(WBTM_PLUGIN_URL .'images/bus_route_clock.png');?>"/></span>
+                                        <span class="wbbm_bus_route_icon wbbm_bus_route_icon2"><img src="<?php echo esc_url(WBTM_PLUGIN_URL . 'images/bus_route_clock.png');?>"/></span>
                                         <input type="text" data-clocklet name='wbbm_bus_bp_start_time[]' value="" class="text" placeholder="15:00">
                                     </div>
                                 </td>
@@ -179,7 +183,7 @@ if (!defined('ABSPATH')) {
                         <br>
                         <span><?php
                         /* translators: %s: post type general name */
-                         printf(esc_html__( 'Configure %s dropping point.', 'bus-booking-manager' ), esc_html($cpt_label)); ?></span>
+                         printf(esc_html__('Configure %s dropping point.', 'bus-booking-manager'), esc_html($cpt_label)); ?></span>
                     </div>
                 </section>
                 <section>
@@ -195,13 +199,13 @@ if (!defined('ABSPATH')) {
                             <tbody class="dropping-point">
                             <?php
                             if ($wbtm_bus_next_stops) :
-                            $wbbm_count = 0;
-                            foreach ($wbtm_bus_next_stops as $wbbm_field) {
-                            ?>
+                                $wbbm_count = 0;
+                                foreach ($wbtm_bus_next_stops as $wbbm_field) {
+                                    ?>
                                 <tr>
                                     <td align="center">
                                         <div class="wbbm_bus_route_select">
-                                            <span class="wbbm_bus_route_icon wbbm_bus_route_icon1"><img src="<?php echo esc_url(WBTM_PLUGIN_URL .'images/bus_route_map.png');?>"/></span>
+                                            <span class="wbbm_bus_route_icon wbbm_bus_route_icon1"><img src="<?php echo esc_url(WBTM_PLUGIN_URL . 'images/bus_route_map.png');?>"/></span>
                                             <select name="wbbm_bus_next_stops_name[]" class='seat_type bus_stop_add_option wbbm_bus_stops_route'>
                                                 <option value=""><?php esc_html_e('Please Select', 'bus-booking-manager'); ?></option>
                                                 <?php foreach ($terms as $term) {?>
@@ -213,9 +217,11 @@ if (!defined('ABSPATH')) {
                                     </td>
                                     <td align="center">
                                         <div class="wbbm_bus_route_time">
-                                            <span class="wbbm_bus_route_icon wbbm_bus_route_icon2"><img src="<?php echo esc_url(WBTM_PLUGIN_URL .'images/bus_route_clock.png');?>"/></span>
+                                            <span class="wbbm_bus_route_icon wbbm_bus_route_icon2"><img src="<?php echo esc_url(WBTM_PLUGIN_URL . 'images/bus_route_clock.png');?>"/></span>
                                             <input type="text" data-clocklet name='wbbm_bus_next_end_time[]'
-                                                value="<?php if (isset($wbbm_field['wbbm_bus_next_end_time']) && $wbbm_field['wbbm_bus_next_end_time'] != '') echo esc_attr($wbbm_field['wbbm_bus_next_end_time']); ?>"
+                                                value="<?php if (isset($wbbm_field['wbbm_bus_next_end_time']) && $wbbm_field['wbbm_bus_next_end_time'] != '') {
+                                                    echo esc_attr($wbbm_field['wbbm_bus_next_end_time']);
+                                                       } ?>"
                                                 class="text" placeholder="15:00">
                                         </div>
                                     </td>
@@ -224,20 +230,20 @@ if (!defined('ABSPATH')) {
                                         </a></td>
                                 </tr>
                                 <?php }
-                                                endif;
-                                                ?>
+                            endif;
+                            ?>
 
                                 <!-- empty hidden one for jQuery -->
                                 <tr class="empty-row-faq screen-reader-text">
                                     <td align="center">
                                         <div class="wbbm_bus_route_select">
-                                            <span class="wbbm_bus_route_icon wbbm_bus_route_icon1"><img src="<?php echo esc_url(WBTM_PLUGIN_URL .'images/bus_route_map.png');?>"/></span>
-                                            <?php echo wp_kses_post(wbbm_get_bus_stops_list('wbbm_bus_next_stops_name[]','bus_stop_add_option wbbm_bus_stops_route')); ?>
+                                            <span class="wbbm_bus_route_icon wbbm_bus_route_icon1"><img src="<?php echo esc_url(WBTM_PLUGIN_URL . 'images/bus_route_map.png');?>"/></span>
+                                            <?php echo wp_kses_post(wbbm_get_bus_stops_list('wbbm_bus_next_stops_name[]', 'bus_stop_add_option wbbm_bus_stops_route')); ?>
                                         </div>
                                     </td>
                                     <td align="center">
                                         <div class="wbbm_bus_route_time">
-                                            <span class="wbbm_bus_route_icon wbbm_bus_route_icon2"><img src="<?php echo esc_url(WBTM_PLUGIN_URL .'images/bus_route_clock.png');?>"/></span>
+                                            <span class="wbbm_bus_route_icon wbbm_bus_route_icon2"><img src="<?php echo esc_url(WBTM_PLUGIN_URL . 'images/bus_route_clock.png');?>"/></span>
                                             <input type="text" data-clocklet name='wbbm_bus_next_end_time[]' value="" class="text" placeholder="15:00">
                                         </div>
                                     </td>

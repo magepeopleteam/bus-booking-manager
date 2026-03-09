@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('ABSPATH')) {
     die; // Cannot access pages directly.
 }
@@ -7,7 +8,8 @@ if (!defined('ABSPATH')) {
 add_action('template_redirect', 'wbbm_cart_item_have_two_way_route', 10);
 
 // Main Function
-function wbbm_cart_item_have_two_way_route() {
+function wbbm_cart_item_have_two_way_route()
+{
     global $woocommerce;
 
     if (is_cart() || is_checkout()) {
@@ -46,7 +48,8 @@ function wbbm_cart_item_have_two_way_route() {
 }
 
 // Check One way route is exists or not
-function wbbm_check_has_one_way($start, $stop, $j_date) {
+function wbbm_check_has_one_way($start, $stop, $j_date)
+{
     global $woocommerce;
 
     $items = $woocommerce->cart->get_cart();
@@ -71,7 +74,8 @@ function wbbm_check_has_one_way($start, $stop, $j_date) {
 }
 
 // Update Return Price
-function wbbm_update_cart_return_price($key, $return, $recall = false) {
+function wbbm_update_cart_return_price($key, $return, $recall = false)
+{
     $cart = WC()->cart->cart_contents;
 
     if ($return) {
@@ -84,17 +88,17 @@ function wbbm_update_cart_return_price($key, $return, $recall = false) {
                 $cart_item['wbbm_per_adult_price'] = isset($cart_item['wbbm_per_adult_price_original']) ? floatval($cart_item['wbbm_per_adult_price_original']) : 0;
 
                 $cart_item['wbbm_total_adult_price'] = $cart_item['wbbm_total_adult_qt'] * $cart_item['wbbm_per_adult_price'];
-                
+
                 if ($cart_item['wbbm_total_child_qt'] > 0) {
                     $cart_item['wbbm_per_child_price'] = isset($cart_item['wbbm_per_child_price_original']) ? floatval($cart_item['wbbm_per_child_price_original']) : 0;
                     $cart_item['wbbm_total_child_price'] = $cart_item['wbbm_total_child_qt'] * $cart_item['wbbm_per_child_price'];
                 }
-                
+
                 if ($cart_item['wbbm_total_infant_qt'] > 0) {
                     $cart_item['wbbm_per_infant_price'] = isset($cart_item['wbbm_per_infant_price_original']) ? floatval($cart_item['wbbm_per_infant_price_original']) : 0;
                     $cart_item['wbbm_total_infant_price'] = $cart_item['wbbm_total_infant_qt'] * $cart_item['wbbm_per_infant_price'];
                 }
-                
+
                 $cart_item['is_return'] = 2;
 
                 WC()->cart->cart_contents[$key] = $cart_item;
@@ -110,17 +114,17 @@ function wbbm_update_cart_return_price($key, $return, $recall = false) {
 
                 $cart_item['wbbm_per_adult_price'] = isset($cart_item['wbbm_per_adult_price_roundtrip']) ? floatval($cart_item['wbbm_per_adult_price_roundtrip']) : 0;
                 $cart_item['wbbm_total_adult_price'] = $cart_item['wbbm_total_adult_qt'] * $cart_item['wbbm_per_adult_price_roundtrip'];
-                
+
                 if ($cart_item['wbbm_total_child_qt'] > 0) {
                     $cart_item['wbbm_per_child_price'] = isset($cart_item['wbbm_per_child_price_roundtrip']) ? floatval($cart_item['wbbm_per_child_price_roundtrip']) : 0;
                     $cart_item['wbbm_total_child_price'] = $cart_item['wbbm_total_child_qt'] * $cart_item['wbbm_per_child_price_roundtrip'];
                 }
-                
+
                 if ($cart_item['wbbm_total_infant_qt'] > 0) {
                     $cart_item['wbbm_per_infant_price'] = isset($cart_item['wbbm_per_infant_price_roundtrip']) ? floatval($cart_item['wbbm_per_infant_price_roundtrip']) : 0;
                     $cart_item['wbbm_total_infant_price'] = $cart_item['wbbm_total_infant_qt'] * $cart_item['wbbm_per_infant_price_roundtrip'];
                 }
-                
+
                 $cart_item['is_return'] = 1;
 
                 WC()->cart->cart_contents[$key] = $cart_item;

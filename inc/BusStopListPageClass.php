@@ -1,9 +1,12 @@
 <?php
-if (!defined('ABSPATH')) exit;
+
+if (!defined('ABSPATH')) {
+    exit;
+}
 
 /**
  * Bus Stop List Page Class
- * 
+ *
  * Handles the modern custom list page for bus stops (wbbm_bus_stops taxonomy).
  */
 class BusStopListPageClass
@@ -139,7 +142,7 @@ class BusStopListPageClass
         $start_num = $offset + 1;
         $end_num = min($offset + $number, $total_terms);
 
-?>
+        ?>
         <div class="wrap shuttle-list-wrap">
             <div class="shuttle-list-container-fullwidth">
                 <!-- Header Section -->
@@ -203,7 +206,7 @@ class BusStopListPageClass
                                     $edit_url = admin_url('admin.php?post_type=wbbm_bus&page=wbbm-bus-stop-edit&term_id=' . $term->term_id);
                                     $delete_url = wp_nonce_url(add_query_arg(array('action' => 'delete', 'term_id' => $term->term_id)), 'delete-bus-stop_' . $term->term_id);
                                     $filter_url = admin_url('edit.php?post_type=wbbm_bus&page=wbbm-bus-list&wbbm_bus_stops=' . $term->slug);
-                                ?>
+                                    ?>
                                     <tr>
                                         <td><input type="checkbox" name="term_ids[]" value="<?php echo esc_attr($term->term_id); ?>"></td>
                                         <td class="shuttle-info-cell">
@@ -268,7 +271,7 @@ class BusStopListPageClass
                 </div>
             </div>
         </div>
-<?php
+        <?php
     }
 }
 

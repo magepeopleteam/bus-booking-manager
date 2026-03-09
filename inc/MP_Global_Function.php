@@ -1,6 +1,7 @@
 <?php
+
 /*
-* Copyright: 	mage-people.com
+* Copyright:    mage-people.com
 */
 if (! defined('ABSPATH')) {
     die;
@@ -170,7 +171,7 @@ if (! class_exists('MP_Global_Function')) {
             foreach ($dates as $date) {
                 $all_date[] = '"' . gmdate('j-n-Y', strtotime($date)) . '"';
             }
-?>
+            ?>
             <script>
                 jQuery(document).ready(function() {
                     jQuery("<?php echo esc_attr($selector); ?>").datepicker({
@@ -198,7 +199,7 @@ if (! class_exists('MP_Global_Function')) {
                     }
                 });
             </script>
-<?php
+            <?php
         }
 
         public static function date_format($date, $format = 'date')
@@ -488,7 +489,7 @@ if (! class_exists('MP_Global_Function')) {
                 return $tax_list;
             }
 
-            
+
             // Table name (safe, controlled)
             $table_name = $wpdb->prefix . 'wc_tax_rate_classes';
 

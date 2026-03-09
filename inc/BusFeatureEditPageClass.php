@@ -1,9 +1,12 @@
 <?php
-if (!defined('ABSPATH')) exit;
+
+if (!defined('ABSPATH')) {
+    exit;
+}
 
 /**
  * Bus Feature Edit Page Class
- * 
+ *
  * Handles the custom modern edit/add page for bus features (taxonomy wbbm_bus_feature),
  * including the specialized icon selection field.
  */
@@ -85,7 +88,7 @@ class BusFeatureEditPageClass
         }
 
         wp_enqueue_style('bus-edit-css', WBTM_PLUGIN_URL . 'assets/admin/bus-edit.css', array(), time());
-        
+
         // Ensure Font Awesome and any other icon assets are loaded
         if (function_exists('wbbm_all_font_awesome')) {
             wbbm_all_font_awesome();
@@ -156,7 +159,7 @@ class BusFeatureEditPageClass
         $description = $term ? $term->description : '';
         $icon = $term_id ? get_term_meta($term_id, 'feature_icon', true) : 'fas fa-forward';
 
-?>
+        ?>
         <div class="wrap bus-edit-wrap">
             <div class="bus-edit-header">
                 <div style="display: flex; align-items: center; gap: 15px;">
@@ -232,7 +235,7 @@ class BusFeatureEditPageClass
                 </form>
             </div>
         </div>
-<?php
+        <?php
     }
 }
 

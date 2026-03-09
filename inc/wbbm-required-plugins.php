@@ -45,13 +45,13 @@ if (! class_exists('WBBM_Required_Plugins')) {
 
         public function wbbm_plugin_activate()
         {
-            if (isset( $_GET['wbbm_plugin_activate'], $_GET['wbbm_plugin_activate_nonce'] )
+            if (
+                isset($_GET['wbbm_plugin_activate'], $_GET['wbbm_plugin_activate_nonce'])
                     && wp_verify_nonce(
-                        sanitize_text_field( wp_unslash( $_GET['wbbm_plugin_activate_nonce'] ) ),
+                        sanitize_text_field(wp_unslash($_GET['wbbm_plugin_activate_nonce'])),
                         'wbbm_plugin_activate_action'
                     )
-                ) {
-
+            ) {
                 $slug = sanitize_text_field(wp_unslash($_GET['wbbm_plugin_activate']));
                         $activate = activate_plugin($slug);
                         $url = admin_url($this->wbbm_plugin_page_location() . '?page=wbbm-plugins');
@@ -59,7 +59,6 @@ if (! class_exists('WBBM_Required_Plugins')) {
                         var url = "' . esc_url($url) . '";
                         window.location.replace(url);
                     </script>';
-
             } else {
                 return false;
             }
@@ -112,14 +111,15 @@ if (! class_exists('WBBM_Required_Plugins')) {
             }
         }
 
-        public function wbbm_wp_plugin_activation_url( $slug ) {
+        public function wbbm_wp_plugin_activation_url($slug)
+        {
 
-            $slug = sanitize_key( $slug );
+            $slug = sanitize_key($slug);
 
-            if ( $this->wbbm_plugin_page_location() === 'plugins.php' ) {
-                $url = admin_url( $this->wbbm_plugin_page_location() ) . '?page=wbbm-plugins&wbbm_plugin_activate=' . $slug;
+            if ($this->wbbm_plugin_page_location() === 'plugins.php') {
+                $url = admin_url($this->wbbm_plugin_page_location()) . '?page=wbbm-plugins&wbbm_plugin_activate=' . $slug;
             } else {
-                $url = admin_url( $this->wbbm_plugin_page_location() ) . '&page=wbbm-plugins&wbbm_plugin_activate=' . $slug;
+                $url = admin_url($this->wbbm_plugin_page_location()) . '&page=wbbm-plugins&wbbm_plugin_activate=' . $slug;
             }
 
             // Add nonce to URL
@@ -170,7 +170,7 @@ if (! class_exists('WBBM_Required_Plugins')) {
                 }
             }
 
-?>
+            ?>
             <div class="wrap wbbm_plugin_page_wrap">
                 <table>
                     <thead>
@@ -311,7 +311,7 @@ if (! class_exists('WBBM_Required_Plugins')) {
             $total_i_plugins = count($inactive_plugins);
 
             if ($total_r_plugins > 0 || $total_i_plugins > 0) {
-            ?>
+                ?>
                 <div class="notice notice-success is-dismissible">
                     <?php
                     echo '<p>';
@@ -379,7 +379,7 @@ if (! class_exists('WBBM_Required_Plugins')) {
                     echo '</p>';
                     ?>
                 </div>
-<?php
+                <?php
             }
         }
     }

@@ -257,7 +257,7 @@ class ShuttleBookingAdminClass
 
         $start_num = ($paged - 1) * $posts_per_page + 1;
         $end_num = min($paged * $posts_per_page, $total_posts);
-?>
+        ?>
         <div class="wrap shuttle-list-wrap">
             <div class="shuttle-list-container">
                 <!-- Header Section -->
@@ -342,7 +342,8 @@ class ShuttleBookingAdminClass
                         </thead>
                         <tbody>
                             <?php if ($query->have_posts()) : ?>
-                                <?php while ($query->have_posts()) : $query->the_post();
+                                <?php while ($query->have_posts()) :
+                                    $query->the_post();
                                     $post_id = get_the_ID();
                                     $order_id = get_post_meta($post_id, '_wbbm_order_id', true);
                                     $shuttle_id = get_post_meta($post_id, '_wbbm_shuttle_id', true);
@@ -376,7 +377,7 @@ class ShuttleBookingAdminClass
                                         'shuttle_ticket_pdf' => '1',
                                         'booking_id'         => $post_id,
                                     ), admin_url('admin.php'));
-                                ?>
+                                    ?>
                                     <tr>
                                         <td>
                                             <div class="shuttle-title"><a href="<?php echo esc_url(get_edit_post_link($post_id)); ?>" style="color:var(--sh-primary);text-decoration:none;">#<?php echo esc_html($post_id); ?></a></div>
@@ -433,7 +434,7 @@ class ShuttleBookingAdminClass
                                             <div class="action-buttons">
                                                 <?php
                                                 if (is_object($wbbm) && method_exists($wbbm, 'wbbm_pdf')) {
-                                                ?>
+                                                    ?>
                                                     <a href="<?php echo esc_url($pdf_url); ?>" target="_blank" class="action-btn" title="<?php esc_attr_e('PDF Ticket', 'bus-booking-manager'); ?>">
                                                         <span class="dashicons dashicons-media-document"></span>
                                                     </a>
@@ -469,9 +470,9 @@ class ShuttleBookingAdminClass
                                 for ($i = 1; $i <= $total_pages; $i++) {
                                     if ($i == $paged) {
                                         echo '<span class="page-link active">' . $i . '</span>';
-                                    } else if ($i == 1 || $i == $total_pages || ($i >= $paged - 1 && $i <= $paged + 1)) {
+                                    } elseif ($i == 1 || $i == $total_pages || ($i >= $paged - 1 && $i <= $paged + 1)) {
                                         echo '<a href="' . add_query_arg('paged', $i) . '" class="page-link">' . $i . '</a>';
-                                    } else if ($i == 2 || $i == $total_pages - 1) {
+                                    } elseif ($i == 2 || $i == $total_pages - 1) {
                                         echo '<span class="pager-sep">...</span>';
                                     }
                                 }
@@ -533,7 +534,7 @@ class ShuttleBookingAdminClass
                 width: 100px;
             }
         </style>
-    <?php
+        <?php
     }
 
     public function wbbm_handle_shuttle_ticket_pdf()
@@ -609,7 +610,7 @@ class ShuttleBookingAdminClass
 
         // PDF Content
         ob_start();
-    ?>
+        ?>
         <!DOCTYPE html>
         <html>
 
@@ -907,7 +908,7 @@ class ShuttleBookingAdminClass
         </body>
 
         </html>
-<?php
+        <?php
         $html = ob_get_clean();
 
         if (method_exists($wbbm, 'wbbm_pdf')) {

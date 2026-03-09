@@ -1,11 +1,13 @@
 <?php
-if (!defined('ABSPATH')) exit;  // if direct access
+
+if (!defined('ABSPATH')) {
+    exit;  // if direct access
+}
 
 class AdminMetaBoxClass extends CommonClass
 {
     public function __construct()
     {
-
     }
 
     public function wbbm_single_settings_meta_save($post_id)
@@ -143,22 +145,22 @@ class AdminMetaBoxClass extends CommonClass
 
         // Support both old and new field names
         // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-        $bp_price_stops = isset($_POST['wbtm_price_bp']) ? MP_Global_Function::wbbm_recursive_sanitize(wp_unslash($_POST['wbtm_price_bp'])) : 
+        $bp_price_stops = isset($_POST['wbtm_price_bp']) ? MP_Global_Function::wbbm_recursive_sanitize(wp_unslash($_POST['wbtm_price_bp'])) :
                          (isset($_POST['wbbm_bus_bp_price_stop']) ? MP_Global_Function::wbbm_recursive_sanitize(wp_unslash($_POST['wbbm_bus_bp_price_stop'])) : []);
         // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-        $dp_price_stops = isset($_POST['wbtm_price_dp']) ? MP_Global_Function::wbbm_recursive_sanitize(wp_unslash($_POST['wbtm_price_dp'])) : 
+        $dp_price_stops = isset($_POST['wbtm_price_dp']) ? MP_Global_Function::wbbm_recursive_sanitize(wp_unslash($_POST['wbtm_price_dp'])) :
                          (isset($_POST['wbbm_bus_dp_price_stop']) ? MP_Global_Function::wbbm_recursive_sanitize(wp_unslash($_POST['wbbm_bus_dp_price_stop'])) : []);
         // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-        $the_price = isset($_POST['wbtm_adult_price']) ? MP_Global_Function::wbbm_recursive_sanitize(wp_unslash($_POST['wbtm_adult_price'])) : 
+        $the_price = isset($_POST['wbtm_adult_price']) ? MP_Global_Function::wbbm_recursive_sanitize(wp_unslash($_POST['wbtm_adult_price'])) :
                     (isset($_POST['wbbm_bus_price']) ? MP_Global_Function::wbbm_recursive_sanitize(wp_unslash($_POST['wbbm_bus_price'])) : []);
         // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-        $the_price_child = isset($_POST['wbtm_child_price']) ? MP_Global_Function::wbbm_recursive_sanitize(wp_unslash($_POST['wbtm_child_price'])) : 
+        $the_price_child = isset($_POST['wbtm_child_price']) ? MP_Global_Function::wbbm_recursive_sanitize(wp_unslash($_POST['wbtm_child_price'])) :
                           (isset($_POST['wbbm_bus_price_child']) ? MP_Global_Function::wbbm_recursive_sanitize(wp_unslash($_POST['wbbm_bus_price_child'])) : []);
         // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-        $the_price_infant = isset($_POST['wbtm_infant_price']) ? MP_Global_Function::wbbm_recursive_sanitize(wp_unslash($_POST['wbtm_infant_price'])) : 
+        $the_price_infant = isset($_POST['wbtm_infant_price']) ? MP_Global_Function::wbbm_recursive_sanitize(wp_unslash($_POST['wbtm_infant_price'])) :
                            (isset($_POST['wbbm_bus_price_infant']) ? MP_Global_Function::wbbm_recursive_sanitize(wp_unslash($_POST['wbbm_bus_price_infant'])) : []);
         // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-        $the_price_student = isset($_POST['wbtm_student_price']) ? MP_Global_Function::wbbm_recursive_sanitize(wp_unslash($_POST['wbtm_student_price'])) : 
+        $the_price_student = isset($_POST['wbtm_student_price']) ? MP_Global_Function::wbbm_recursive_sanitize(wp_unslash($_POST['wbtm_student_price'])) :
                             (isset($_POST['wbbm_bus_price_student']) ? MP_Global_Function::wbbm_recursive_sanitize(wp_unslash($_POST['wbbm_bus_price_student'])) : []);
         // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
         $the_price_infant_roundtrip = isset($_POST['wbbm_bus_price_infant_roundtrip']) ? MP_Global_Function::wbbm_recursive_sanitize(wp_unslash($_POST['wbbm_bus_price_infant_roundtrip'])) : [];
@@ -336,4 +338,3 @@ class AdminMetaBoxClass extends CommonClass
         update_post_meta($post_id, '_tax_class', $tax_class);
     }
 }
-?>

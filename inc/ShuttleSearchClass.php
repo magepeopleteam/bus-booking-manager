@@ -1,9 +1,11 @@
 <?php
-if (!defined('ABSPATH')) exit;
+
+if (!defined('ABSPATH')) {
+    exit;
+}
 
 class ShuttleSearchClass
 {
-
     public function __construct()
     {
         add_shortcode('wbbm_shuttle_search', array($this, 'render_shuttle_search_shortcode'));
@@ -74,7 +76,7 @@ class ShuttleSearchClass
             }
         }
 
-?>
+        ?>
         <div class="wbbm_shuttle_search_card">
             <h3 class="wbbm_search_title"><?php _e('Book a Shuttle', 'bus-booking-manager'); ?></h3>
             <form action="<?php echo esc_url($action_url); ?>" method="GET" class="wbbm_shuttle_search_form" id="wbbm_shuttle_search_form">
@@ -146,7 +148,7 @@ class ShuttleSearchClass
                             // Get dropoff_point from URL if available
                             $selected_dropoff_point = isset($_GET['shuttle_dropoff_point']) ? sanitize_text_field($_GET['shuttle_dropoff_point']) : '';
                             if ($selected_dropoff_point) :
-                            ?>
+                                ?>
                                 <option value="<?php echo esc_attr($selected_dropoff_point); ?>" selected><?php echo esc_html($selected_dropoff_point); ?></option>
                             <?php endif; ?>
                         </select>
@@ -440,14 +442,16 @@ class ShuttleSearchClass
                 align-self: end;
             }
         </style>
-    <?php
+        <?php
     }
 
     // AJAX: Get Pickup Points
     public function ajax_get_pickup_points()
     {
         $route_val = isset($_POST['route_val']) ? sanitize_text_field($_POST['route_val']) : '';
-        if (!$route_val) wp_send_json_error();
+        if (!$route_val) {
+            wp_send_json_error();
+        }
 
         list($post_id, $route_id) = explode('|', $route_val);
         $routes = maybe_unserialize(get_post_meta($post_id, 'wbbm_shuttle_routes', true));
@@ -506,7 +510,9 @@ class ShuttleSearchClass
         $pickup_val = isset($_POST['pickup_val']) ? sanitize_text_field($_POST['pickup_val']) : '';
         $date = isset($_POST['date']) ? sanitize_text_field($_POST['date']) : '';
 
-        if (!$route_val || !$pickup_val || !$date) wp_send_json_error('Missing Params');
+        if (!$route_val || !$pickup_val || !$date) {
+            wp_send_json_error('Missing Params');
+        }
 
         list($post_id, $route_id) = explode('|', $route_val);
         // pickup_val format: index|location|offset|point
@@ -542,7 +548,9 @@ class ShuttleSearchClass
         $route_val = isset($_POST['route_val']) ? sanitize_text_field($_POST['route_val']) : '';
         $pickup_val = isset($_POST['pickup_val']) ? sanitize_text_field($_POST['pickup_val']) : '';
 
-        if (!$route_val || !$pickup_val) wp_send_json_error();
+        if (!$route_val || !$pickup_val) {
+            wp_send_json_error();
+        }
 
         list($post_id, $route_id) = explode('|', $route_val);
         $parts = explode('|', $pickup_val);
@@ -573,7 +581,9 @@ class ShuttleSearchClass
         $route_val = isset($_POST['route_val']) ? sanitize_text_field($_POST['route_val']) : '';
         $stop_location = isset($_POST['stop_location']) ? sanitize_text_field($_POST['stop_location']) : '';
 
-        if (!$route_val || !$stop_location) wp_send_json_error();
+        if (!$route_val || !$stop_location) {
+            wp_send_json_error();
+        }
 
         list($post_id, $route_id) = explode('|', $route_val);
         $routes = maybe_unserialize(get_post_meta($post_id, 'wbbm_shuttle_routes', true));
@@ -589,7 +599,9 @@ class ShuttleSearchClass
                                 $points = explode("\n", $stop['dropoff_points']);
                                 foreach ($points as $p) {
                                     $p = trim($p);
-                                    if ($p) $options[$p] = $p;
+                                    if ($p) {
+                                        $options[$p] = $p;
+                                    }
                                 }
                             } else {
                                 $options['main'] = 'Main Stop';
@@ -630,7 +642,9 @@ class ShuttleSearchClass
         $pickup_point_name = isset($pickup_parts[3]) ? $pickup_parts[3] : '';
 
         $post = get_post($post_id);
-        if (!$post) return;
+        if (!$post) {
+            return;
+        }
 
         $routes = maybe_unserialize(get_post_meta($post_id, 'wbbm_shuttle_routes', true));
         $pricing = maybe_unserialize(get_post_meta($post_id, 'wbbm_shuttle_pricing', true));
@@ -645,7 +659,9 @@ class ShuttleSearchClass
             }
         }
 
-        if (!$selected_route) return;
+        if (!$selected_route) {
+            return;
+        }
 
         // Calculate Price & Subtotal
         $price = 0;
@@ -671,7 +687,7 @@ class ShuttleSearchClass
             $arrival_time = date('h:i A', strtotime("+$dropoff_offset minutes", strtotime($base_time_str)));
         }
 
-    ?>
+        ?>
         <div class="wbbm_shuttle_booking_summary">
             <h3><?php _e('Review Your Trip', 'bus-booking-manager'); ?></h3>
 
@@ -738,7 +754,7 @@ class ShuttleSearchClass
                     <?php
                     $product_id = get_post_meta($post_id, 'link_wc_product', true);
                     if ($product_id) :
-                    ?>
+                        ?>
                         <form action="<?php echo esc_url(wc_get_cart_url()); ?>" method="POST" class="wbbm_shuttle_add_to_cart_form">
                             <input type="hidden" name="add-to-cart" value="<?php echo esc_attr($product_id); ?>">
                             <input type="hidden" name="shuttle_id" value="<?php echo esc_attr($post_id); ?>">
@@ -983,7 +999,7 @@ class ShuttleSearchClass
                 }
             }
         </style>
-<?php
+        <?php
     }
 }
 

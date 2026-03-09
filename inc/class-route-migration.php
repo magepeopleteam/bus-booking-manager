@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Bus Route Data Migration Class
  * Migrates old separate boarding/dropping point data to unified route structure
@@ -18,7 +19,7 @@ if (!class_exists('WBBM_Route_Migration')) {
         {
             // Admin notice
             add_action('admin_notices', [$this, 'migration_admin_notice']);
-            
+
             // AJAX handlers
             add_action('wp_ajax_wbbm_run_route_migration', [$this, 'ajax_run_migration']);
             add_action('wp_ajax_wbbm_dismiss_migration_notice', [$this, 'ajax_dismiss_notice']);
@@ -41,7 +42,7 @@ if (!class_exists('WBBM_Route_Migration')) {
 
             // Check if there are buses that need migration
             $needs_migration = $this->count_buses_needing_migration();
-            
+
             if ($needs_migration === 0) {
                 return;
             }
@@ -50,11 +51,11 @@ if (!class_exists('WBBM_Route_Migration')) {
             <div class="notice notice-warning is-dismissible wbbm-migration-notice" id="wbbm-route-migration-notice">
                 <h3><?php esc_html_e('Bus Booking Manager - Route Data Migration', 'bus-booking-manager'); ?></h3>
                 <p>
-                    <?php 
+                    <?php
                     printf(
                         esc_html__('We found %d bus(es) with old route data structure. Please migrate to the new unified route system for better compatibility.', 'bus-booking-manager'),
                         $needs_migration
-                    ); 
+                    );
                     ?>
                 </p>
                 <p>
@@ -273,7 +274,7 @@ if (!class_exists('WBBM_Route_Migration')) {
 
             foreach ($buses as $bus) {
                 $result = $this->migrate_single_bus($bus->ID);
-                
+
                 if ($result === 'migrated') {
                     $stats['migrated']++;
                 } elseif ($result === 'skipped') {
@@ -290,7 +291,7 @@ if (!class_exists('WBBM_Route_Migration')) {
                 $stats['errors']
             ));
 
-            $message = $this->dry_run 
+            $message = $this->dry_run
                 ? sprintf(__('Test complete: Would migrate %d buses', 'bus-booking-manager'), $stats['migrated'])
                 : sprintf(__('Successfully migrated %d buses', 'bus-booking-manager'), $stats['migrated']);
 
@@ -306,7 +307,7 @@ if (!class_exists('WBBM_Route_Migration')) {
         private function migrate_single_bus($post_id)
         {
             $bus_title = get_the_title($post_id);
-            
+
             // Check if already migrated
             $existing_route_info = get_post_meta($post_id, 'wbbm_route_info', true);
             if (!empty($existing_route_info) && is_array($existing_route_info)) {

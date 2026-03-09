@@ -14,7 +14,7 @@ function mage_book_now_area($available_seat = null)
     $current_date = gmdate('Y-m-d');
 
     $boarding_time = sanitize_text_field(wbbm_get_datetime(wbbm_boarding_dropping_time(false, false), 'time'));
-    
+
     // If Current time is greater than bus time
     // Bus should not be shown in search result
     if ($current_date === $search_date) {
@@ -23,7 +23,7 @@ function mage_book_now_area($available_seat = null)
             return;
         }
     }
-?>
+    ?>
     <div class="mage_flex mage_book_now_area">
         <div class="mage_thumb mage-notification-area">
             <p class="mage-notification mage-seat-available">
@@ -44,14 +44,13 @@ function mage_book_now_area($available_seat = null)
                 </div>
             </div>
             <?php if ($is_sell_off != 'on') :
-
                 do_action('wbbm_before_add_cart_btn', get_the_ID());
-            ?>
+                ?>
 
                 <div class="mage_book_now mage_center_space">
                     <button type="button" class="mage_button mage_book_now <?php if ($available_seat == 0) {
                                                                                 echo 'cursor-disabled';
-                                                                            } ?>">
+                                                                           } ?>">
                         <?php echo esc_html(wbbm_get_option('wbbm_book_now_text', 'wbbm_label_setting_sec', __('Book Now', 'bus-booking-manager'))); ?>
                     </button>
 
@@ -66,5 +65,5 @@ function mage_book_now_area($available_seat = null)
             <?php endif; ?>
         </div>
     </div>
-<?php
+    <?php
 }

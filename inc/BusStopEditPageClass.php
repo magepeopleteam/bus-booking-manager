@@ -1,9 +1,12 @@
 <?php
-if (!defined('ABSPATH')) exit;
+
+if (!defined('ABSPATH')) {
+    exit;
+}
 
 /**
  * Bus Stop Edit Page Class
- * 
+ *
  * Handles the modern custom edit/add page for bus stops (wbbm_bus_stops taxonomy).
  */
 class BusStopEditPageClass
@@ -153,7 +156,7 @@ class BusStopEditPageClass
         $slug = $term ? $term->slug : '';
         $description = $term ? $term->description : '';
 
-?>
+        ?>
         <div class="wrap bus-edit-wrap">
             <div class="bus-edit-header">
                 <div style="display: flex; align-items: center; gap: 15px;">
@@ -215,7 +218,7 @@ class BusStopEditPageClass
                 </form>
             </div>
         </div>
-<?php
+        <?php
     }
 }
 

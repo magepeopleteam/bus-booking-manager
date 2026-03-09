@@ -1,5 +1,8 @@
 <?php
-if (!defined('ABSPATH')) exit; // if direct access
+
+if (!defined('ABSPATH')) {
+    exit; // if direct access
+}
 
 class WBBMMetaBox
 {
@@ -13,13 +16,13 @@ class WBBMMetaBox
 
         // Tab Contents
         add_action('wbbm_meta_box_tab_content', array($this, 'wbbm_add_meta_box_tab_content'), 10);
-        
+
         // Include Pricing Routing Class for AJAX support
         require_once(dirname(__FILE__) . "/clean/layout/WBBM_Pricing_Routing.php");
 
         // Remove meta box from sidebar
         add_action('admin_init', array($this, 'wbbm_remove_sidebar_meta_box'));
-        
+
         // Bus stop ajax
         add_action('wp_ajax_wbtm_add_bus_stope', [$this, 'wbtm_add_bus_stope']);
         add_action('wp_ajax_nopriv_wbtm_add_bus_stope', [$this, 'wbtm_add_bus_stope']);
@@ -195,7 +198,7 @@ class WBBMMetaBox
         <?php do_action('wbbm_after_meta_box_tab_content'); ?>
         <!-- Partial Payment Setting -->
         <div class="mp_tab_item tab-content" data-tab-item="#wbtm_bus_partial_payment">
-            <h3 class="wbbm_mp_tab_item_heading"><img src="<?php echo esc_url(WBTM_PLUGIN_URL .'images/bus_arrow_left.png'); ?>"/><?php echo esc_html($cpt_label . ' ' . __('Partial Payment', 'bus-booking-manager')); ?></h3>
+            <h3 class="wbbm_mp_tab_item_heading"><img src="<?php echo esc_url(WBTM_PLUGIN_URL . 'images/bus_arrow_left.png'); ?>"/><?php echo esc_html($cpt_label . ' ' . __('Partial Payment', 'bus-booking-manager')); ?></h3>
             <div class="wbtm_bus_partial_payment_inner_wrapper">
                 <?php $this->wbbm_partial_payment_setting(); ?>
             </div>
@@ -234,17 +237,17 @@ class WBBMMetaBox
         $wbtm_bus_next_stops = maybe_unserialize(get_post_meta($post->ID, 'wbbm_bus_next_stops', true));
         $wbbm_bus_bp = get_post_meta($post->ID, 'wbbm_bus_bp_stops', true);
         $values = get_post_custom($post->ID);
-        
+
         $terms = get_terms(array(
             'taxonomy' => 'wbbm_bus_stops',
             'hide_empty' => false
         ));
 
         // require_once(dirname(__FILE__) . "/clean/layout/bus_routing.php");
-        
+
         // Ensure class is loaded (if not loaded in construct)
         require_once(dirname(__FILE__) . "/clean/layout/WBBM_Pricing_Routing.php");
-        
+
         ?>
         <div class="mp_tab_item" data-tab-item="#wbtm_routing">
             <?php do_action('wbtm_add_settings_tab_content', $post->ID); ?>
@@ -273,7 +276,7 @@ class WBBMMetaBox
 
         $boarding_points = maybe_unserialize(get_post_meta($post->ID, 'wbbm_bus_bp_stops', true));
         $boarding_points_array = array();
-        
+
         if ($boarding_points) {
             $boarding_points = array_column($boarding_points, 'wbbm_bus_bp_stops_name');
             foreach ($boarding_points as $item) {
