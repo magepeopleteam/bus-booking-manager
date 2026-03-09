@@ -142,7 +142,7 @@ jQuery(document).ready(function ($) {
     }
 
     // --- AJAX Save Function ---
-    function saveBusData(isDraft = false, callback = null) {
+    function saveBusData(isDraft = false, callback = null, showSuccessToast = false) {
         if (isSaving) return;
 
         if (isDraft) {
@@ -170,6 +170,12 @@ jQuery(document).ready(function ($) {
                 isSaving = false;
                 if (response.success) {
                     savingStatus.html('<span style="color:green;">✓ Saved successfully</span>');
+                    if (showSuccessToast && typeof window.wbbm_show_toast === 'function') {
+                        const successMessage = (response.data && response.data.message)
+                            ? response.data.message
+                            : (isDraft ? 'Bus saved as draft successfully!' : 'Bus saved successfully!');
+                        window.wbbm_show_toast(successMessage, 'success');
+                    }
 
                     // Update post_id in hidden field if it was a new post
                     if (response.data.post_id) {
@@ -386,13 +392,13 @@ jQuery(document).ready(function ($) {
 
     // --- Save as Draft ---
     $('#save-bus-draft').on('click', function () {
-        saveBusData(true);
+        saveBusData(true, null, true);
     });
 
     // --- Top Save/Publish Button (save without step change) ---
     $('#save-bus-publish').on('click', function () {
         $('#post_status').val('publish');
-        saveBusData(false);
+        saveBusData(false, null, true);
     });
 
     // --- Media Uploader ---
