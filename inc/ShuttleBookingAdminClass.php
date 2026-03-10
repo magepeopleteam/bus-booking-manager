@@ -289,38 +289,38 @@ class ShuttleBookingAdminClass
                         <input type="hidden" name="post_type" value="wbbm_shuttle">
                         <input type="hidden" name="page" value="wbbm-shuttle-bookings">
 
-                        <div class="filters-row">
-                            <div class="filter-left" style="flex-wrap: wrap;">
-                                <div class="filter-group">
-                                    <select name="shuttle_id" id="shuttle_id" class="form-control" style="min-width: 150px;">
-                                        <option value=""><?php esc_html_e('All Shuttles', 'bus-booking-manager'); ?></option>
-                                        <?php foreach ($shuttles as $shuttle) : ?>
-                                            <option value="<?php echo esc_attr($shuttle->ID); ?>" <?php selected(isset($_GET['shuttle_id']) ? $_GET['shuttle_id'] : '', $shuttle->ID); ?>>
-                                                <?php echo esc_html($shuttle->post_title); ?>
-                                            </option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                </div>
-                                <div class="filter-group search-group" style="max-width: 250px;">
-                                    <span class="dashicons dashicons-location"></span>
-                                    <input type="text" name="route" id="route" value="<?php echo isset($_GET['route']) ? esc_attr($_GET['route']) : ''; ?>" placeholder="<?php esc_attr_e('Route (e.g. Airport)...', 'bus-booking-manager'); ?>" class="form-control" style="padding-left: 36px !important;">
-                                </div>
-                                <div class="filter-group">
-                                    <input type="date" name="journey_date" id="journey_date" value="<?php echo isset($_GET['journey_date']) ? esc_attr($_GET['journey_date']) : ''; ?>" class="form-control" placeholder="<?php esc_attr_e('Journey Date', 'bus-booking-manager'); ?>">
-                                </div>
-                                <div class="filter-group">
-                                    <input type="date" name="booking_date" id="booking_date" value="<?php echo isset($_GET['booking_date']) ? esc_attr($_GET['booking_date']) : ''; ?>" class="form-control" placeholder="<?php esc_attr_e('Booking Date', 'bus-booking-manager'); ?>">
-                                </div>
-
-                                <button type="submit" class="btn btn-primary btn-sm">
-                                    <?php _e('Filter', 'bus-booking-manager'); ?>
-                                </button>
-                                <?php if (!empty($_GET['shuttle_id']) || !empty($_GET['route']) || !empty($_GET['journey_date']) || !empty($_GET['booking_date'])) : ?>
-                                    <a href="<?php echo admin_url('edit.php?post_type=wbbm_shuttle&page=wbbm-shuttle-bookings'); ?>" class="btn btn-outline btn-sm" style="text-decoration:none;">
-                                        <?php _e('Clear', 'bus-booking-manager'); ?>
-                                    </a>
-                                <?php endif; ?>
+                        <div class="shuttle-booking-filters-grid">
+                            <div class="filter-group">
+                                <select name="shuttle_id" id="shuttle_id" class="form-control">
+                                    <option value=""><?php esc_html_e('All Shuttles', 'bus-booking-manager'); ?></option>
+                                    <?php foreach ($shuttles as $shuttle) : ?>
+                                        <option value="<?php echo esc_attr($shuttle->ID); ?>" <?php selected(isset($_GET['shuttle_id']) ? $_GET['shuttle_id'] : '', $shuttle->ID); ?>>
+                                            <?php echo esc_html($shuttle->post_title); ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
                             </div>
+                            <div class="filter-group search-group booking-route-search">
+                                <span class="dashicons dashicons-location"></span>
+                                <input type="text" name="route" id="route" value="<?php echo isset($_GET['route']) ? esc_attr($_GET['route']) : ''; ?>" placeholder="<?php esc_attr_e('Route (e.g. Airport)...', 'bus-booking-manager'); ?>" class="form-control">
+                            </div>
+                            <div class="filter-group">
+                                <input type="date" name="journey_date" id="journey_date" value="<?php echo isset($_GET['journey_date']) ? esc_attr($_GET['journey_date']) : ''; ?>" class="form-control" placeholder="<?php esc_attr_e('Journey Date', 'bus-booking-manager'); ?>">
+                            </div>
+                            <div class="filter-group">
+                                <input type="date" name="booking_date" id="booking_date" value="<?php echo isset($_GET['booking_date']) ? esc_attr($_GET['booking_date']) : ''; ?>" class="form-control" placeholder="<?php esc_attr_e('Booking Date', 'bus-booking-manager'); ?>">
+                            </div>
+                        </div>
+
+                        <div class="shuttle-booking-filter-actions">
+                            <button type="submit" class="btn btn-primary btn-sm">
+                                <?php _e('Filter', 'bus-booking-manager'); ?>
+                            </button>
+                            <?php if (!empty($_GET['shuttle_id']) || !empty($_GET['route']) || !empty($_GET['journey_date']) || !empty($_GET['booking_date'])) : ?>
+                                <a href="<?php echo admin_url('edit.php?post_type=wbbm_shuttle&page=wbbm-shuttle-bookings'); ?>" class="btn btn-outline btn-sm" style="text-decoration:none;">
+                                    <?php _e('Clear', 'bus-booking-manager'); ?>
+                                </a>
+                            <?php endif; ?>
                         </div>
                     </form>
                 </div>
@@ -501,39 +501,6 @@ class ShuttleBookingAdminClass
                 </div>
             </div>
         </div>
-        <style>
-            .shuttle-modern-table .col-id {
-                width: 100px;
-            }
-
-            .shuttle-modern-table .col-shuttle {
-                width: 200px;
-            }
-
-            .shuttle-modern-table .col-customer {
-                width: 220px;
-            }
-
-            .shuttle-modern-table .col-journey {
-                width: 180px;
-            }
-
-            .shuttle-modern-table .col-route {
-                width: 220px;
-            }
-
-            .shuttle-modern-table .col-passengers {
-                width: 140px;
-            }
-
-            .shuttle-modern-table .col-status {
-                width: 120px;
-            }
-
-            .shuttle-modern-table .col-action {
-                width: 100px;
-            }
-        </style>
         <?php
     }
 

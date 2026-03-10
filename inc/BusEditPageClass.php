@@ -1230,11 +1230,17 @@ class BusEditPageClass
                 </div>
                 <div class="form-group">
                     <label><?php _e('From Time', 'bus-booking-manager'); ?></label>
-                    <input type="time" name="wbtm_od_offtime_from[]" class="form-control" value="<?php echo esc_attr($from_time); ?>">
+                    <div class="wbbm-time-field-wrap">
+                        <input type="text" name="wbtm_od_offtime_from[]" class="form-control wbbm-timepicker-field" value="<?php echo esc_attr($from_time); ?>" placeholder="HH:mm">
+                        <span class="dashicons dashicons-clock" aria-hidden="true"></span>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label><?php _e('To Time', 'bus-booking-manager'); ?></label>
-                    <input type="time" name="wbtm_od_offtime_to[]" class="form-control" value="<?php echo esc_attr($to_time); ?>">
+                    <div class="wbbm-time-field-wrap">
+                        <input type="text" name="wbtm_od_offtime_to[]" class="form-control wbbm-timepicker-field" value="<?php echo esc_attr($to_time); ?>" placeholder="HH:mm">
+                        <span class="dashicons dashicons-clock" aria-hidden="true"></span>
+                    </div>
                 </div>
                 <div class="form-group" style="display: flex; align-items: flex-end;">
                     <button type="button" class="btn btn-secondary remove-offday-item" style="color:#ef4444;padding:7px"><span class="dashicons dashicons-trash"></span></button>
@@ -1277,7 +1283,10 @@ class BusEditPageClass
                     </div>
                     <div class="form-group">
                         <label><?php _e('Time', 'bus-booking-manager'); ?></label>
-                        <input type="time" name="wbtm_route_time[]" class="form-control" value="<?php echo esc_attr($time); ?>">
+                        <div class="wbbm-time-field-wrap">
+                            <input type="text" name="wbtm_route_time[]" class="form-control wbbm-timepicker-field" value="<?php echo esc_attr($time); ?>" placeholder="HH:mm">
+                            <span class="dashicons dashicons-clock" aria-hidden="true"></span>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label><?php _e('Type', 'bus-booking-manager'); ?></label>
@@ -1297,13 +1306,18 @@ class BusEditPageClass
 
                 <!-- Pickup Points Integration -->
                 <div class="route-pickup-points-wrap">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <div class="pickup-points-head">
                         <h4><?php _e('Pickup Points', 'bus-booking-manager'); ?></h4>
-                        <button type="button" class="btn btn-secondary btn-sm add-inline-pickup-item" data-stop-index="<?php echo $index; ?>">
-                            <span class="dashicons dashicons-plus"></span> <?php _e('Add Point', 'bus-booking-manager'); ?>
-                        </button>
+                        <div class="pickup-points-actions">
+                            <button type="button" class="btn btn-secondary btn-sm add-inline-pickup-item" data-stop-index="<?php echo $index; ?>">
+                                <span class="dashicons dashicons-plus"></span> <?php _e('Add Point', 'bus-booking-manager'); ?>
+                            </button>
+                            <button type="button" class="btn btn-secondary btn-sm toggle-pickup-points" aria-expanded="false">
+                                <span class="dashicons dashicons-arrow-down-alt2"></span>
+                            </button>
+                        </div>
                     </div>
-                    <div class="pickup-points-list" data-stop-index="<?php echo $index; ?>">
+                    <div class="pickup-points-list" data-stop-index="<?php echo $index; ?>" style="display:none;">
                         <?php
                         $city_slug = $place ? sanitize_key(str_replace(' ', '_', strtolower($place))) : '';
                         $pickup_data = $city_slug ? get_post_meta(get_the_ID(), 'wbbm_selected_pickpoint_name_' . $city_slug, true) : [];
@@ -1312,15 +1326,18 @@ class BusEditPageClass
                         }
                         foreach ($pickup_data as $p) :
                             ?>
-                            <div class="pickup-point-item" style="display: flex; gap: 10px; margin-bottom: 8px; align-items: center;">
-                                <select name="wbbm_inline_pickpoint_name[<?php echo $index; ?>][]" class="form-control sm" style="width:320px">
+                            <div class="pickup-point-item">
+                                <select name="wbbm_inline_pickpoint_name[<?php echo $index; ?>][]" class="form-control sm">
                                     <option value=""><?php _e('Select Point', 'bus-booking-manager'); ?></option>
                                     <?php foreach ($pickpoints as $point) : ?>
                                         <option value="<?php echo esc_attr($point->name); ?>" <?php selected($point->name, $p['pickpoint']); ?>><?php echo esc_html($point->name); ?></option>
                                     <?php endforeach; ?>
                                 </select>
-                                <input type="time" name="wbbm_inline_pickpoint_time[<?php echo $index; ?>][]" class="form-control sm" value="<?php echo esc_attr($p['time']); ?>" style="width:auto">
-                                <button type="button" class="btn btn-secondary btn-sm remove-inline-pickup-item" style="color: #ef4444; justify-self: end;padding:7px;"><span class="dashicons dashicons-trash"></span></button>
+                                <div class="wbbm-time-field-wrap">
+                                    <input type="text" name="wbbm_inline_pickpoint_time[<?php echo $index; ?>][]" class="form-control sm wbbm-timepicker-field" value="<?php echo esc_attr($p['time']); ?>" placeholder="HH:mm">
+                                    <span class="dashicons dashicons-clock" aria-hidden="true"></span>
+                                </div>
+                                <button type="button" class="btn btn-secondary btn-sm remove-inline-pickup-item"><span class="dashicons dashicons-trash"></span></button>
                             </div>
                         <?php endforeach; ?>
                     </div>
@@ -1403,10 +1420,18 @@ class BusEditPageClass
                                     <input type="hidden" name="wbtm_price_dp[]" value="<?php echo esc_attr($pair['to']); ?>">
                                 </div>
                             </td>
-                            <td><input type="number" step="0.01" name="wbtm_adult_price[]" value="<?php echo esc_attr($pair['prices']['adult']); ?>" class="form-control sm"></td>
-                            <td><input type="number" step="0.01" name="wbtm_child_price[]" value="<?php echo esc_attr($pair['prices']['child']); ?>" class="form-control sm"></td>
-                            <td><input type="number" step="0.01" name="wbtm_student_price[]" value="<?php echo esc_attr($pair['prices']['student']); ?>" class="form-control sm"></td>
-                            <td><input type="number" step="0.01" name="wbtm_infant_price[]" value="<?php echo esc_attr($pair['prices']['infant']); ?>" class="form-control sm"></td>
+                            <td>
+                                <input type="number" step="0.01" name="wbtm_adult_price[]" value="<?php echo esc_attr($pair['prices']['adult']); ?>" class="form-control sm">
+                            </td>
+                            <td>
+                                <input type="number" step="0.01" name="wbtm_child_price[]" value="<?php echo esc_attr($pair['prices']['child']); ?>" class="form-control sm">
+                            </td>
+                            <td>
+                                <input type="number" step="0.01" name="wbtm_student_price[]" value="<?php echo esc_attr($pair['prices']['student']); ?>" class="form-control sm">
+                            </td>
+                            <td>
+                                <input type="number" step="0.01" name="wbtm_infant_price[]" value="<?php echo esc_attr($pair['prices']['infant']); ?>" class="form-control sm">
+                            </td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>

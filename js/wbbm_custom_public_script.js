@@ -6,6 +6,9 @@
         var single_bus = $("#all_date_picker_info").data("single_bus") || '';
         var return_single_bus = $("#return_all_date_picker_info").data("return_single_bus") || '';
         var date_format = $("#all_date_picker_info").data("date_format");
+        var operational_start = $("#all_date_picker_info").data("od_start") || '';
+        var operational_end = $("#all_date_picker_info").data("od_end") || '';
+        var $searchDateFields = jQuery("#j_date, #r_date");
         if (single_bus) {
             var enableDates = $("#all_date_picker_info").data("enabledates");
             var off_particular_date = $("#all_date_picker_info").data("off_particular_date");
@@ -15,8 +18,7 @@
             if (enable_onday || enable_offday) {
                 if (enable_onday == 'yes') {
                     if (enableDates) {
-                        console.log(enableDates);
-                        jQuery('#j_date').datepicker({
+                        $searchDateFields.datepicker({
                             dateFormat: date_format,
                             minDate: 0,
                             beforeShowDay: function (date) {
@@ -24,13 +26,16 @@
                             }
                         });
                     } else {
-                        jQuery("#j_date").datepicker({
+                        $searchDateFields.datepicker({
                             dateFormat: date_format,
                             minDate: 0,
+                            beforeShowDay: function (date) {
+                                return inOperationalRange(date, operational_start, operational_end);
+                            }
                         });
                     }
                 } else if (enable_offday == 'yes') {
-                    jQuery("#j_date").datepicker({
+                    $searchDateFields.datepicker({
                         dateFormat: date_format,
                         minDate: 0,
                         beforeShowDay: function (date) {
@@ -38,14 +43,17 @@
                         }
                     });
                 } else {
-                    jQuery("#j_date").datepicker({
+                    $searchDateFields.datepicker({
                         dateFormat: date_format,
                         minDate: 0,
+                        beforeShowDay: function (date) {
+                            return inOperationalRange(date, operational_start, operational_end);
+                        }
                     });
                 }
             } else {
                 if (enableDates) {
-                    jQuery('#j_date').datepicker({
+                    $searchDateFields.datepicker({
                         dateFormat: date_format,
                         minDate: 0,
                         beforeShowDay: function (date) {
@@ -53,7 +61,7 @@
                         }
                     });
                 } else {
-                    jQuery("#j_date").datepicker({
+                    $searchDateFields.datepicker({
                         dateFormat: date_format,
                         minDate: 0,
                         beforeShowDay: function (date) {
@@ -74,10 +82,11 @@
             });
         }
         function enableAllTheseDays(date, enableDates) {
-            console.log(enableDates);
+            if (!inOperationalRange(date, operational_start, operational_end)[0]) {
+                return [false];
+            }
             var sdate = jQuery.datepicker.formatDate('dd-mm-yy', date)
             if (enableDates.length > 0) {
-                console.log(sdate);
                 if (jQuery.inArray(sdate, enableDates) != -1) {
                     return [true];
                 }
@@ -85,6 +94,9 @@
             return [false];
         }
         function off_particular(date, off_particular_date, weekly_offday) {
+            if (!inOperationalRange(date, operational_start, operational_end)[0]) {
+                return [false];
+            }
             var sdate = jQuery.datepicker.formatDate('dd-mm-yy', date)
             if (off_particular_date.length > 0) {
                 if (jQuery.inArray(sdate, off_particular_date) != -1) {
@@ -99,6 +111,22 @@
                 }
                 // Fix sunday value issue
                 if (weekly_offday.includes(date.getDay())) {
+                    return [false];
+                }
+            }
+            return [true];
+        }
+        function inOperationalRange(date, startDate, endDate) {
+            var current = new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
+            if (startDate) {
+                var start = jQuery.datepicker.parseDate('dd-mm-yy', startDate).getTime();
+                if (current < start) {
+                    return [false];
+                }
+            }
+            if (endDate) {
+                var end = jQuery.datepicker.parseDate('dd-mm-yy', endDate).getTime();
+                if (current > end) {
                     return [false];
                 }
             }

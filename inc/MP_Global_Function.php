@@ -1128,12 +1128,14 @@ if ( ! class_exists( 'MP_Global_Function' ) ) {
     new MP_Global_Function();
 }
 
-if ( ! function_exists( 'dd_array' ) ) {
-    function dd_array( $data, $label = 'DEBUG' ) {
+if ( ! function_exists( 'dd' ) ) {
+    function dd( $data, $die = false, $label = 'DEBUG' ) {
         echo '<pre style="background:#111;color:#0f0;padding:12px;">';
         echo esc_html( $label ) . ":\n";
         print_r( $data );
         echo '</pre>';
-        die( 'Execution stopped' );
+        if($die) {
+            die( 'Execution stopped' );
+        }
     }
 }

@@ -256,12 +256,13 @@ class SearchClass extends CommonClass
         }
 
         $id = get_the_ID();
-        $search_date = isset($_GET['j_date']) ? sanitize_text_field(wp_unslash($_GET['j_date'])) : '';
-        $current_date = gmdate('Y-m-d');
+        $date_var = $return ? 'r_date' : 'j_date';
+        $search_date = isset($_GET[$date_var]) ? sanitize_text_field(wp_unslash($_GET[$date_var])) : '';
+        $current_date = current_time('Y-m-d');
         $boarding_time = wbbm_boarding_dropping_time(false, $return);
         $dropping_time = wbbm_boarding_dropping_time(true, $return);
 
-        if ($current_date === $search_date) {
+        if ($current_date === $search_date && $boarding_time) {
             $search_timestamp = strtotime($search_date . ' ' . $boarding_time);
             if (current_time('timestamp') >= $search_timestamp) {
                 return;
@@ -270,7 +271,6 @@ class SearchClass extends CommonClass
 
         $boarding_var = $return ? 'bus_end_route' : 'bus_start_route';
         $dropping_var = $return ? 'bus_start_route' : 'bus_end_route';
-        $date_var = $return ? 'r_date' : 'j_date';
         $in_cart = mage_find_product_in_cart();
         $type_id = get_post_meta($id, 'wbbm_bus_category', true);
         $type_name = '';

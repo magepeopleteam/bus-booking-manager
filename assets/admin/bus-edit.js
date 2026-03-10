@@ -4,6 +4,82 @@ jQuery(document).ready(function ($) {
     const form = $('#bus-edit-form');
     const savingStatus = $('.saving-status');
     let isSaving = false;
+    let activeTimeInput = null;
+
+    const timePopup = $(`
+        <div class="wbbm-time-popup" style="display:none;">
+            <div class="wbbm-time-popup-head">Select Time</div>
+            <div class="wbbm-time-popup-grid">
+                <select class="wbbm-time-hour"></select>
+                <span>:</span>
+                <select class="wbbm-time-minute"></select>
+            </div>
+            <div class="wbbm-time-popup-actions">
+                <button type="button" class="button button-small wbbm-time-clear">Clear</button>
+                <button type="button" class="button button-primary button-small wbbm-time-apply">Apply</button>
+            </div>
+        </div>
+    `);
+    $('body').append(timePopup);
+
+    function pad2(value) {
+        return String(value).padStart(2, '0');
+    }
+
+    function parseTime(value) {
+        const match = /^(\d{1,2}):(\d{2})$/.exec((value || '').trim());
+        if (!match) return null;
+        const hour = parseInt(match[1], 10);
+        const minute = parseInt(match[2], 10);
+        if (Number.isNaN(hour) || Number.isNaN(minute) || hour < 0 || hour > 23 || minute < 0 || minute > 59) {
+            return null;
+        }
+        return { hour, minute };
+    }
+
+    function initTimeInputs(scope = document) {
+        const $fields = $(scope).find('.wbbm-timepicker-field');
+        if (!$fields.length) return;
+
+        $fields.attr({
+            autocomplete: 'off',
+            inputmode: 'numeric',
+            placeholder: 'HH:mm'
+        });
+    }
+
+    function openTimePopup($input) {
+        activeTimeInput = $input;
+
+        const hourSelect = timePopup.find('.wbbm-time-hour');
+        const minuteSelect = timePopup.find('.wbbm-time-minute');
+        if (!hourSelect.children().length) {
+            for (let h = 0; h < 24; h++) {
+                hourSelect.append(`<option value="${h}">${pad2(h)}</option>`);
+            }
+            for (let m = 0; m < 60; m += 5) {
+                minuteSelect.append(`<option value="${m}">${pad2(m)}</option>`);
+            }
+        }
+
+        const parsed = parseTime($input.val());
+        const now = new Date();
+        const defaultHour = parsed ? parsed.hour : now.getHours();
+        const defaultMinuteRaw = parsed ? parsed.minute : now.getMinutes();
+        const defaultMinute = Math.round(defaultMinuteRaw / 5) * 5 % 60;
+        hourSelect.val(String(defaultHour));
+        minuteSelect.val(String(defaultMinute));
+
+        const offset = $input.offset();
+        const top = offset.top + $input.outerHeight() + 6;
+        const left = offset.left;
+        timePopup.css({ top, left }).fadeIn(120);
+    }
+
+    function closeTimePopup() {
+        timePopup.fadeOut(100);
+        activeTimeInput = null;
+    }
 
     // --- Required Field Validation ---
     function validateCurrentStep() {
@@ -231,6 +307,7 @@ jQuery(document).ready(function ($) {
         container.append(newItem);
         newItem.find('.route-item-body').slideDown();
         newItem.find('.toggle-route-item').addClass('active');
+        initTimeInputs(newItem);
 
         initSortable();
     });
@@ -322,7 +399,8 @@ jQuery(document).ready(function ($) {
     // --- Pickup Points (Inline inside Route Items) ---
     $(document).on('click', '.add-inline-pickup-item', function () {
         const stopIndex = $(this).data('stop-index');
-        const list = $(this).closest('.route-pickup-points-wrap').find('.pickup-points-list');
+        const wrap = $(this).closest('.route-pickup-points-wrap');
+        const list = wrap.find('.pickup-points-list');
         const optionsData = $(this).closest('.bus-card').data('pickpoints-options') || [];
 
         let optionsHtml = '<option value="">Select Point</option>';
@@ -331,26 +409,47 @@ jQuery(document).ready(function ($) {
         });
 
         const html = `
-            <div class="pickup-point-item" style="display: grid; grid-template-columns: 1fr 1fr 40px; gap: 10px; margin-bottom: 8px; align-items: center;">
+            <div class="pickup-point-item">
                 <select name="wbbm_inline_pickpoint_name[${stopIndex}][]" class="form-control sm">
                     ${optionsHtml}
                 </select>
-                <input type="time" name="wbbm_inline_pickpoint_time[${stopIndex}][]" class="form-control sm" value="">
-                <button type="button" class="btn btn-secondary btn-sm remove-inline-pickup-item" style="color: #ef4444; justify-self: end;"><span class="dashicons dashicons-trash"></span></button>
+                <div class="wbbm-time-field-wrap">
+                    <input type="text" name="wbbm_inline_pickpoint_time[${stopIndex}][]" class="form-control sm wbbm-timepicker-field" value="" placeholder="HH:mm">
+                    <span class="dashicons dashicons-clock" aria-hidden="true"></span>
+                </div>
+                <button type="button" class="btn btn-secondary btn-sm remove-inline-pickup-item"><span class="dashicons dashicons-trash"></span></button>
             </div>
         `;
         list.append(html);
+        wrap.removeClass('is-collapsed');
+        list.stop(true, true).slideDown(120);
+        wrap.find('.toggle-pickup-points').attr('aria-expanded', 'true').find('.dashicons').addClass('active');
+        initTimeInputs(list);
     });
 
     $(document).on('click', '.remove-inline-pickup-item', function () {
         $(this).closest('.pickup-point-item').remove();
     });
 
+    $(document).on('click', '.toggle-pickup-points', function () {
+        const btn = $(this);
+        const wrap = btn.closest('.route-pickup-points-wrap');
+        const list = wrap.find('.pickup-points-list');
+        const isExpanded = btn.attr('aria-expanded') === 'true';
+
+        btn.attr('aria-expanded', isExpanded ? 'false' : 'true');
+        btn.find('.dashicons').toggleClass('active', !isExpanded);
+        wrap.toggleClass('is-collapsed', isExpanded);
+        list.stop(true, true).slideToggle(120);
+    });
+
     // --- Step 3: Day Schedule ---
     $(document).on('click', '.add-offday-item', function () {
         const container = $('#offday-items-container');
         const template = $('#offday-item-template').html();
-        container.append(template);
+        const newItem = $(template);
+        container.append(newItem);
+        initTimeInputs(newItem);
     });
 
     $(document).on('click', '.remove-offday-item', function () {
@@ -623,6 +722,42 @@ jQuery(document).ready(function ($) {
     });
 
     // Initialize on load
+    $(document).on('focus click', '.wbbm-timepicker-field', function (e) {
+        e.preventDefault();
+        openTimePopup($(this));
+    });
+
+    $(document).on('keydown', '.wbbm-timepicker-field', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            openTimePopup($(this));
+        }
+    });
+
+    $(document).on('click', '.wbbm-time-apply', function () {
+        if (!activeTimeInput) return;
+        const hour = parseInt(timePopup.find('.wbbm-time-hour').val(), 10);
+        const minute = parseInt(timePopup.find('.wbbm-time-minute').val(), 10);
+        activeTimeInput.val(`${pad2(hour)}:${pad2(minute)}`).trigger('change');
+        closeTimePopup();
+    });
+
+    $(document).on('click', '.wbbm-time-clear', function () {
+        if (!activeTimeInput) return;
+        activeTimeInput.val('').trigger('change');
+        closeTimePopup();
+    });
+
+    $(document).on('mousedown', function (e) {
+        if (!timePopup.is(':visible')) return;
+        const isInsidePopup = $(e.target).closest('.wbbm-time-popup').length > 0;
+        const isTimeField = $(e.target).closest('.wbbm-timepicker-field').length > 0;
+        if (!isInsidePopup && !isTimeField) {
+            closeTimePopup();
+        }
+    });
+
+    initTimeInputs(document);
     const initialStep = new URLSearchParams(window.location.search).get('step') || 1;
     goToStep(initialStep);
 });
