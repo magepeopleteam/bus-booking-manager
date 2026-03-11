@@ -4961,31 +4961,34 @@ function wbbm_all_font_awesome()
 
 add_action("init", "wbbm_bus_cpt_tax", 10);
 
-$wbbm_route_point = array(
-    array(
-        'id'        => 'wbbm_bus_routes_name_list',
-        'title'        => __('Route Point', 'bus-booking-manager'),
-        'details'    => __('Please Select Route Point ', 'bus-booking-manager'),
-        'collapsible' => true,
-        'type'        => 'repeatable',
-        'btn_text'    => 'Add New Route Point',
-        'title_field' => 'wbbm_bus_routes_name',
-        'fields'    => array(
-            array(
-                'type'         => 'select',
-                'default'      => 'option_1',
-                'item_id'      => 'wbbm_bus_routes_name',
-                'name'         => 'Stops Name',
-                'args'         => 'TAXN_%wbbm_bus_stops%'
-            )
+function wbbm_register_bus_route_point_taxonomy_edit()
+{
+    $wbbm_route_point = array(
+        array(
+            'id' => 'wbbm_bus_routes_name_list',
+            'title' => __('Route Point', 'bus-booking-manager'),
+            'details' => __('Please Select Route Point ', 'bus-booking-manager'),
+            'collapsible' => true,
+            'type' => 'repeatable',
+            'btn_text' => 'Add New Route Point',
+            'title_field' => 'wbbm_bus_routes_name',
+            'fields' => array(
+                array(
+                    'type' => 'select',
+                    'default' => 'option_1',
+                    'item_id' => 'wbbm_bus_routes_name',
+                    'name' => 'Stops Name',
+                    'args' => 'TAXN_%wbbm_bus_stops%'
+                )
+            ),
         ),
-    ),
+    );
 
-);
+    $wbbm_args = array(
+        'taxonomy' => 'wbbm_bus_stops',
+        'options' => $wbbm_route_point,
+    );
 
-$wbbm_args = array(
-    'taxonomy'       => 'wbbm_bus_stops',
-    'options'             => $wbbm_route_point,
-);
-
-new TaxonomyEdit($wbbm_args);
+    new TaxonomyEdit($wbbm_args);
+}
+add_action('init', 'wbbm_register_bus_route_point_taxonomy_edit', 20);

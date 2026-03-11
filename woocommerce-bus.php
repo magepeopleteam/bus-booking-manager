@@ -1478,6 +1478,7 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
         }
 
         if ($order) {
+            $order_db_id = $order->get_id();
             $order_status = $order->get_status();
             // error_log("WBBM DEBUG: Order Status: $order_status");
             // Include 'pending' status as it is common during checkout processed hook
@@ -1629,11 +1630,11 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
                             $item_quantity = -1;
                         }
                         $_seats = $item_quantity;
-                        $check_before_add = wbbm_get_order_seat_check($bus_id, $order->ID, $user_type, $b_time, $j_date);
+                        $check_before_add = wbbm_get_order_seat_check($bus_id, $order_db_id, $user_type, $b_time, $j_date);
                         error_log("WBBM DEBUG: Check Before Add Result: $check_before_add");
                         if ($check_before_add == 0) {
                             error_log("WBBM DEBUG: Invoking wbbm_add_passenger");
-                            wbbm_add_passenger($order->ID, $bus_id, $user_id, $start, $next_stops, $end, $user_name, $user_email, $user_phone, $user_gender, $user_dob, $nationality, $flight_arrival_no, $flight_departure_no, $extra_bag_quantity, $user_address, $user_type, $b_time, $j_time, $adult, $adult_per_price, $child, $child_per_price, $infant, $infant_per_price, $entire, $entire_per_price, $total_price, $item_quantity, $j_date, current_time("Y-m-d h:i:s"), $pickpoint, $status);
+                            wbbm_add_passenger($order_db_id, $bus_id, $user_id, $start, $next_stops, $end, $user_name, $user_email, $user_phone, $user_gender, $user_dob, $nationality, $flight_arrival_no, $flight_departure_no, $extra_bag_quantity, $user_address, $user_type, $b_time, $j_time, $adult, $adult_per_price, $child, $child_per_price, $infant, $infant_per_price, $entire, $entire_per_price, $total_price, $item_quantity, $j_date, current_time("Y-m-d h:i:s"), $pickpoint, $status);
                         } else {
                             error_log("WBBM DEBUG: Check Before Add was NOT 0. Skipping.");
                         }
