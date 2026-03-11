@@ -179,7 +179,7 @@ class BusListPageClass
                         </div>
                     </div>
                     <div class="header-right">
-                        <a href="<?php echo admin_url('admin.php?page=wbbm-bus-edit'); ?>" class="btn btn-primary">
+                        <a href="<?php echo esc_url(admin_url('edit.php?post_type=wbbm_bus&page=wbbm-bus-edit')); ?>" class="btn btn-primary">
                             <span class="dashicons dashicons-plus"></span> <?php _e('Add New Bus', 'bus-booking-manager'); ?>
                         </a>
                     </div>
@@ -259,7 +259,7 @@ class BusListPageClass
                                     $status_label = ucfirst($current_status);
                                     $status_class = 'status-' . $current_status;
 
-                                    $edit_url = admin_url('admin.php?page=wbbm-bus-edit&post_id=' . $post_id);
+                                    $edit_url = admin_url('edit.php?post_type=wbbm_bus&page=wbbm-bus-edit&post_id=' . $post_id);
                                     $delete_url = wp_nonce_url(add_query_arg(array('action' => 'delete', 'post_id' => $post_id)), 'delete-bus_' . $post_id);
                                     ?>
                                     <tr>

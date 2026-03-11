@@ -157,7 +157,7 @@ class ShuttleListPageClass
                         </div>
                     </div>
                     <div class="header-right">
-                        <a href="<?php echo admin_url('admin.php?page=wbbm-shuttle-edit'); ?>" class="btn btn-primary">
+                        <a href="<?php echo esc_url(admin_url('edit.php?post_type=wbbm_shuttle&page=wbbm-shuttle-edit')); ?>" class="btn btn-primary">
                             <span class="dashicons dashicons-plus"></span> <?php _e('New Shuttle', 'bus-booking-manager'); ?>
                         </a>
                         <!-- <button type="button" class="btn btn-icon-outline">

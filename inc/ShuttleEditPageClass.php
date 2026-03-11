@@ -11,12 +11,33 @@ if (!defined('ABSPATH')) {
  */
 class ShuttleEditPageClass
 {
+    private function get_shuttle_edit_url($post_id = 0, $extra_args = array())
+    {
+        $args = array(
+            'post_type' => 'wbbm_shuttle',
+            'page'      => 'wbbm-shuttle-edit',
+        );
+
+        if ($post_id > 0) {
+            $args['post_id'] = $post_id;
+        }
+
+        if (!empty($extra_args)) {
+            $args = array_merge($args, $extra_args);
+        }
+
+        return add_query_arg($args, admin_url('edit.php'));
+    }
+
     public function __construct()
     {
         add_action('admin_menu', array($this, 'register_shuttle_edit_page'));
         add_action('admin_enqueue_scripts', array($this, 'enqueue_assets'));
+        add_action('admin_head', array($this, 'hide_shuttle_edit_submenu'));
         add_action('admin_init', array($this, 'handle_shuttle_save'));
         add_filter('post_row_actions', array($this, 'add_custom_edit_link'), 10, 2);
+        add_filter('parent_file', array($this, 'set_parent_menu'));
+        add_filter('submenu_file', array($this, 'set_submenu_active'));
 
         // AJAX Save
         add_action('wp_ajax_wbbm_save_shuttle_ajax', array($this, 'handle_shuttle_save_ajax'));
@@ -73,7 +94,7 @@ class ShuttleEditPageClass
     {
         $screen = get_current_screen();
         if ($screen && $screen->id === 'wbbm_shuttle' && $screen->action === 'add') {
-            wp_redirect(admin_url('admin.php?page=wbbm-shuttle-edit'));
+            wp_safe_redirect($this->get_shuttle_edit_url());
             exit;
         }
     }
@@ -93,9 +114,38 @@ class ShuttleEditPageClass
             'wbbm-shuttle-edit',
             array($this, 'render_shuttle_edit_page')
         );
+    }
 
-        // Keep the page addressable while hiding it from the visible submenu.
-        remove_submenu_page($parent_slug, 'wbbm-shuttle-edit');
+    public function hide_shuttle_edit_submenu()
+    {
+        if (!current_user_can('manage_options')) {
+            return;
+        }
+        ?>
+        <style>
+            #adminmenu a[href="edit.php?post_type=wbbm_shuttle&page=wbbm-shuttle-edit"] {
+                display: none;
+            }
+        </style>
+        <?php
+    }
+
+    public function set_parent_menu($parent_file)
+    {
+        if (isset($_GET['page']) && $_GET['page'] === 'wbbm-shuttle-edit') {
+            return 'edit.php?post_type=wbbm_shuttle';
+        }
+
+        return $parent_file;
+    }
+
+    public function set_submenu_active($submenu_file)
+    {
+        if (isset($_GET['page']) && $_GET['page'] === 'wbbm-shuttle-edit') {
+            return 'wbbm-shuttle-list';
+        }
+
+        return $submenu_file;
     }
 
     /**
@@ -108,11 +158,8 @@ class ShuttleEditPageClass
         }
 
         $custom_edit_url = add_query_arg(
-            array(
-                'page'      => 'wbbm-shuttle-edit',
-                'post_id'   => $post->ID
-            ),
-            admin_url('admin.php')
+            array(),
+            $this->get_shuttle_edit_url($post->ID)
         );
 
         $actions['custom_edit'] = '<a href="' . esc_url($custom_edit_url) . '" style="color:#7c3aed;font-weight:bold;">' . __('Advanced Edit', 'bus-booking-manager') . '</a>';
@@ -445,7 +492,7 @@ class ShuttleEditPageClass
             exit;
         }
 
-        $redirect_args = array('page' => 'wbbm-shuttle-edit', 'post_id' => $post_id, 'saved' => '1');
+        $redirect_args = array('saved' => '1');
         if ($next_step) {
             $redirect_args['step'] = $next_step;
         } elseif ($current_step) {
@@ -453,7 +500,7 @@ class ShuttleEditPageClass
         }
 
         // Redirect to avoid resubmission
-        wp_redirect(add_query_arg($redirect_args, admin_url('edit.php?post_type=wbbm_shuttle')));
+        wp_safe_redirect($this->get_shuttle_edit_url($post_id, $redirect_args));
         exit;
     }
 

@@ -11,12 +11,52 @@ if (!defined('ABSPATH')) {
  */
 class BusEditPageClass
 {
+    private function get_bus_edit_url($post_id = 0, $extra_args = array())
+    {
+        $args = array(
+            'post_type' => 'wbbm_bus',
+            'page'      => 'wbbm-bus-edit',
+        );
+
+        if ($post_id > 0) {
+            $args['post_id'] = $post_id;
+        }
+
+        if (!empty($extra_args)) {
+            $args = array_merge($args, $extra_args);
+        }
+
+        return add_query_arg($args, admin_url('edit.php'));
+    }
+
+    private function get_bus_page_capability()
+    {
+        return apply_filters('wbbm_bus_edit_page_capability', 'edit_posts');
+    }
+
+    private function can_access_bus($post_id = 0)
+    {
+        if ($post_id > 0) {
+            return current_user_can('edit_post', $post_id);
+        }
+
+        return current_user_can($this->get_bus_page_capability());
+    }
+
+    private function can_manage_bus_taxonomies()
+    {
+        return current_user_can('manage_categories') || current_user_can($this->get_bus_page_capability());
+    }
+
     public function __construct()
     {
         add_action('admin_menu', array($this, 'register_bus_edit_page'));
         add_action('admin_enqueue_scripts', array($this, 'enqueue_assets'));
+        add_action('admin_head', array($this, 'hide_bus_edit_submenu'));
         add_action('admin_init', array($this, 'handle_bus_save'));
         add_filter('post_row_actions', array($this, 'add_custom_edit_link'), 10, 2);
+        add_filter('parent_file', array($this, 'set_parent_menu'));
+        add_filter('submenu_file', array($this, 'set_submenu_active'));
 
         // AJAX Save
         add_action('wp_ajax_wbbm_save_bus_ajax', array($this, 'handle_bus_save_ajax'));
@@ -53,7 +93,7 @@ class BusEditPageClass
     {
         $screen = get_current_screen();
         if ($screen && $screen->id === 'wbbm_bus' && $screen->action === 'add') {
-            wp_redirect(admin_url('admin.php?page=wbbm-bus-edit'));
+            wp_safe_redirect($this->get_bus_edit_url());
             exit;
         }
     }
@@ -66,16 +106,45 @@ class BusEditPageClass
         $parent_slug = 'edit.php?post_type=wbbm_bus';
 
         add_submenu_page(
-                $parent_slug,
+            $parent_slug,
             __('Add New', 'bus-booking-manager'),
             __('Add New', 'bus-booking-manager'),
-            'manage_options',
+            'read',
             'wbbm-bus-edit',
             array($this, 'render_bus_edit_page')
         );
+    }
 
-        // Keep the page addressable while hiding it from the visible submenu.
-        remove_submenu_page($parent_slug, 'wbbm-bus-edit');
+    public function hide_bus_edit_submenu()
+    {
+        if (!current_user_can('read')) {
+            return;
+        }
+        ?>
+        <style>
+            #adminmenu a[href="edit.php?post_type=wbbm_bus&page=wbbm-bus-edit"] {
+                display: none;
+            }
+        </style>
+        <?php
+    }
+
+    public function set_parent_menu($parent_file)
+    {
+        if (isset($_GET['page']) && $_GET['page'] === 'wbbm-bus-edit') {
+            return 'edit.php?post_type=wbbm_bus';
+        }
+
+        return $parent_file;
+    }
+
+    public function set_submenu_active($submenu_file)
+    {
+        if (isset($_GET['page']) && $_GET['page'] === 'wbbm-bus-edit') {
+            return 'wbbm-bus-list';
+        }
+
+        return $submenu_file;
     }
 
     /**
@@ -88,11 +157,8 @@ class BusEditPageClass
         }
 
         $custom_edit_url = add_query_arg(
-            array(
-                'page'      => 'wbbm-bus-edit',
-                'post_id'   => $post->ID
-            ),
-            admin_url('admin.php')
+            array(),
+            $this->get_bus_edit_url($post->ID)
         );
 
         $actions['custom_edit'] = '<a href="' . esc_url($custom_edit_url) . '" style="color:#f97316;font-weight:bold;">' . __('Advanced Edit', 'bus-booking-manager') . '</a>';
@@ -124,14 +190,14 @@ class BusEditPageClass
             return;
         }
 
-        if (!current_user_can('manage_options')) {
+        $post_id = isset($_POST['post_id']) ? intval($_POST['post_id']) : 0;
+        if (!$this->can_access_bus($post_id)) {
             if ($is_ajax) {
                 wp_send_json_error('Unauthorized');
             }
             return;
         }
 
-        $post_id = isset($_POST['post_id']) ? intval($_POST['post_id']) : 0;
         $title = isset($_POST['bus_title']) ? sanitize_text_field(wp_unslash($_POST['bus_title'])) : '';
         $content = isset($_POST['bus_content']) ? wp_kses_post(wp_unslash($_POST['bus_content'])) : '';
         $post_status = isset($_POST['post_status']) ? sanitize_text_field($_POST['post_status']) : 'publish';
@@ -351,8 +417,7 @@ class BusEditPageClass
         }
 
         // Standard redirect if not AJAX
-        $redirect_args = array('page' => 'wbbm-bus-edit', 'post_id' => $post_id, 'saved' => '1');
-        wp_redirect(add_query_arg($redirect_args, admin_url('admin.php')));
+        wp_safe_redirect($this->get_bus_edit_url($post_id, array('saved' => '1')));
         exit;
     }
 
@@ -363,7 +428,7 @@ class BusEditPageClass
     {
         check_ajax_referer('wbbm_bus_save', 'security');
 
-        if (!current_user_can('manage_options')) {
+        if (!$this->can_manage_bus_taxonomies()) {
             wp_send_json_error(__('Unauthorized', 'bus-booking-manager'));
         }
 
@@ -400,7 +465,7 @@ class BusEditPageClass
     {
         check_ajax_referer('wbbm_bus_save', 'security');
 
-        if (!current_user_can('manage_options')) {
+        if (!$this->can_manage_bus_taxonomies()) {
             wp_send_json_error(__('Unauthorized', 'bus-booking-manager'));
         }
 
@@ -437,7 +502,7 @@ class BusEditPageClass
     {
         check_ajax_referer('wbbm_bus_save', 'security');
 
-        if (!current_user_can('manage_options')) {
+        if (!$this->can_manage_bus_taxonomies()) {
             wp_send_json_error(__('Unauthorized', 'bus-booking-manager'));
         }
 
@@ -487,6 +552,10 @@ class BusEditPageClass
         }
 
         $post_id = isset($_POST['post_id']) ? intval($_POST['post_id']) : 0;
+        if (!$this->can_access_bus($post_id)) {
+            wp_send_json_error(__('Unauthorized', 'bus-booking-manager'));
+        }
+
         $places = isset($_POST['places']) ? array_map('sanitize_text_field', wp_unslash($_POST['places'])) : [];
         $types = isset($_POST['types']) ? array_map('sanitize_text_field', wp_unslash($_POST['types'])) : [];
 
@@ -536,6 +605,10 @@ class BusEditPageClass
     public function render_bus_edit_page()
     {
         $post_id = isset($_GET['post_id']) ? intval($_GET['post_id']) : 0;
+        if (!$this->can_access_bus($post_id)) {
+            wp_die(__('You do not have permission to edit this bus.', 'bus-booking-manager'));
+        }
+
         $current_step = isset($_GET['step']) ? intval($_GET['step']) : 1;
         $post = $post_id ? get_post($post_id) : null;
 
