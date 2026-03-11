@@ -63,14 +63,19 @@ class BusEditPageClass
      */
     public function register_bus_edit_page()
     {
+        $parent_slug = 'edit.php?post_type=wbbm_bus';
+
         add_submenu_page(
-            null,
+                $parent_slug,
             __('Add New', 'bus-booking-manager'),
             __('Add New', 'bus-booking-manager'),
             'manage_options',
             'wbbm-bus-edit',
             array($this, 'render_bus_edit_page')
         );
+
+        // Keep the page addressable while hiding it from the visible submenu.
+        remove_submenu_page($parent_slug, 'wbbm-bus-edit');
     }
 
     /**

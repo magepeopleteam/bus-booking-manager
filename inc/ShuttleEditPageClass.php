@@ -31,6 +31,30 @@ class ShuttleEditPageClass
     }
 
     /**
+     * Sanitize scalar text input while tolerating null nested values.
+     */
+    private function sanitize_text_value($value)
+    {
+        if (!is_scalar($value) || $value === null) {
+            return '';
+        }
+
+        return sanitize_text_field(wp_unslash((string) $value));
+    }
+
+    /**
+     * Sanitize scalar textarea input while tolerating null nested values.
+     */
+    private function sanitize_textarea_value($value)
+    {
+        if (!is_scalar($value) || $value === null) {
+            return '';
+        }
+
+        return sanitize_textarea_field(wp_unslash((string) $value));
+    }
+
+    /**
      * Add full screen mode class to body
      */
     public function add_admin_body_class($classes)
@@ -59,15 +83,19 @@ class ShuttleEditPageClass
      */
     public function register_shuttle_edit_page()
     {
-        // Create a hidden page by setting parent slug to null
+        $parent_slug = 'edit.php?post_type=wbbm_shuttle';
+
         add_submenu_page(
-            null,
+            $parent_slug,
             __('Add New', 'bus-booking-manager'),
             __('Add New', 'bus-booking-manager'),
             'manage_options',
             'wbbm-shuttle-edit',
             array($this, 'render_shuttle_edit_page')
         );
+
+        // Keep the page addressable while hiding it from the visible submenu.
+        remove_submenu_page($parent_slug, 'wbbm-shuttle-edit');
     }
 
     /**
@@ -141,20 +169,20 @@ class ShuttleEditPageClass
             foreach ($_POST['wbbm_shuttle_routes'] as $route) {
                 if (!empty($route['name'])) {
                     $clean_route = array(
-                        'name' => sanitize_text_field($route['name']),
-                        'type' => isset($route['type']) ? sanitize_text_field($route['type']) : 'one-way',
-                        'id'   => isset($route['id']) ? sanitize_text_field($route['id']) : uniqid('route_'),
+                        'name' => $this->sanitize_text_value($route['name']),
+                        'type' => isset($route['type']) ? $this->sanitize_text_value($route['type']) : 'one-way',
+                        'id'   => isset($route['id']) ? $this->sanitize_text_value($route['id']) : uniqid('route_'),
                         'stops' => array()
                     );
 
                     if (isset($route['stops']) && is_array($route['stops'])) {
                         foreach ($route['stops'] as $stop) {
                             $clean_route['stops'][] = array(
-                                'location' => sanitize_text_field($stop['location']),
-                                'time_offset' => sanitize_text_field($stop['time_offset']),
-                                'distance' => sanitize_text_field($stop['distance']),
-                                'pickup_points' => isset($stop['pickup_points']) ? sanitize_textarea_field($stop['pickup_points']) : '',
-                                'dropoff_points' => isset($stop['dropoff_points']) ? sanitize_textarea_field($stop['dropoff_points']) : ''
+                                'location' => $this->sanitize_text_value(isset($stop['location']) ? $stop['location'] : ''),
+                                'time_offset' => $this->sanitize_text_value(isset($stop['time_offset']) ? $stop['time_offset'] : ''),
+                                'distance' => $this->sanitize_text_value(isset($stop['distance']) ? $stop['distance'] : ''),
+                                'pickup_points' => isset($stop['pickup_points']) ? $this->sanitize_textarea_value($stop['pickup_points']) : '',
+                                'dropoff_points' => isset($stop['dropoff_points']) ? $this->sanitize_textarea_value($stop['dropoff_points']) : ''
                             );
                         }
                     }
@@ -191,20 +219,20 @@ class ShuttleEditPageClass
             foreach ($_POST['wbbm_shuttle_routes'] as $route) {
                 if (!empty($route['name'])) {
                     $clean_route = array(
-                        'name' => sanitize_text_field($route['name']),
-                        'type' => isset($route['type']) ? sanitize_text_field($route['type']) : 'one-way',
-                        'id'   => isset($route['id']) ? sanitize_text_field($route['id']) : uniqid('route_'),
+                        'name' => $this->sanitize_text_value($route['name']),
+                        'type' => isset($route['type']) ? $this->sanitize_text_value($route['type']) : 'one-way',
+                        'id'   => isset($route['id']) ? $this->sanitize_text_value($route['id']) : uniqid('route_'),
                         'stops' => array()
                     );
 
                     if (isset($route['stops']) && is_array($route['stops'])) {
                         foreach ($route['stops'] as $stop) {
                             $clean_route['stops'][] = array(
-                                'location' => sanitize_text_field($stop['location']),
-                                'time_offset' => sanitize_text_field($stop['time_offset']),
-                                'distance' => sanitize_text_field($stop['distance']),
-                                'pickup_points' => isset($stop['pickup_points']) ? sanitize_textarea_field($stop['pickup_points']) : '',
-                                'dropoff_points' => isset($stop['dropoff_points']) ? sanitize_textarea_field($stop['dropoff_points']) : ''
+                                'location' => $this->sanitize_text_value(isset($stop['location']) ? $stop['location'] : ''),
+                                'time_offset' => $this->sanitize_text_value(isset($stop['time_offset']) ? $stop['time_offset'] : ''),
+                                'distance' => $this->sanitize_text_value(isset($stop['distance']) ? $stop['distance'] : ''),
+                                'pickup_points' => isset($stop['pickup_points']) ? $this->sanitize_textarea_value($stop['pickup_points']) : '',
+                                'dropoff_points' => isset($stop['dropoff_points']) ? $this->sanitize_textarea_value($stop['dropoff_points']) : ''
                             );
                         }
                     }
@@ -318,20 +346,20 @@ class ShuttleEditPageClass
                 foreach ($_POST['wbbm_shuttle_routes'] as $route) {
                     if (!empty($route['name'])) {
                         $clean_route = array(
-                            'name' => sanitize_text_field($route['name']),
-                            'type' => isset($route['type']) ? sanitize_text_field($route['type']) : 'one-way',
-                            'id'   => isset($route['id']) ? sanitize_text_field($route['id']) : uniqid('route_'),
+                            'name' => $this->sanitize_text_value($route['name']),
+                            'type' => isset($route['type']) ? $this->sanitize_text_value($route['type']) : 'one-way',
+                            'id'   => isset($route['id']) ? $this->sanitize_text_value($route['id']) : uniqid('route_'),
                             'stops' => array()
                         );
 
                         if (isset($route['stops']) && is_array($route['stops'])) {
                             foreach ($route['stops'] as $stop) {
                                 $clean_route['stops'][] = array(
-                                    'location' => sanitize_text_field($stop['location']),
-                                    'time_offset' => sanitize_text_field($stop['time_offset']),
-                                    'distance' => sanitize_text_field($stop['distance']),
-                                    'pickup_points' => isset($stop['pickup_points']) ? sanitize_textarea_field($stop['pickup_points']) : '',
-                                    'dropoff_points' => isset($stop['dropoff_points']) ? sanitize_textarea_field($stop['dropoff_points']) : ''
+                                    'location' => $this->sanitize_text_value(isset($stop['location']) ? $stop['location'] : ''),
+                                    'time_offset' => $this->sanitize_text_value(isset($stop['time_offset']) ? $stop['time_offset'] : ''),
+                                    'distance' => $this->sanitize_text_value(isset($stop['distance']) ? $stop['distance'] : ''),
+                                    'pickup_points' => isset($stop['pickup_points']) ? $this->sanitize_textarea_value($stop['pickup_points']) : '',
+                                    'dropoff_points' => isset($stop['dropoff_points']) ? $this->sanitize_textarea_value($stop['dropoff_points']) : ''
                                 );
                             }
                         }
@@ -359,11 +387,11 @@ class ShuttleEditPageClass
                                     }
 
                                     if (!empty($p_data)) {
-                                        $pricing['routes'][$r_id][sanitize_text_field($origin)][sanitize_text_field($dest)] = $p_data;
+                                        $pricing['routes'][$r_id][$this->sanitize_text_value($origin)][$this->sanitize_text_value($dest)] = $p_data;
                                     }
                                 } else {
                                     if ($price !== '') {
-                                        $pricing['routes'][$r_id][sanitize_text_field($origin)][sanitize_text_field($dest)] = sanitize_text_field($price);
+                                        $pricing['routes'][$r_id][$this->sanitize_text_value($origin)][$this->sanitize_text_value($dest)] = $this->sanitize_text_value($price);
                                     }
                                 }
                             }
@@ -390,9 +418,9 @@ class ShuttleEditPageClass
                                 continue;
                             }
 
-                            $schedule[sanitize_text_field($r_id)][$dir][] = array(
-                                'time' => sanitize_text_field($time_data['time']),
-                                'days' => isset($time_data['days']) ? array_map('sanitize_text_field', (array)$time_data['days']) : array()
+                            $schedule[$this->sanitize_text_value($r_id)][$dir][] = array(
+                                'time' => $this->sanitize_text_value($time_data['time']),
+                                'days' => isset($time_data['days']) ? array_map(array($this, 'sanitize_text_value'), (array) $time_data['days']) : array()
                             );
                         }
                     }
