@@ -519,6 +519,83 @@ select.form-control {
     transition: all 0.2s;
 }
 
+/* Shuttle Booking List Filters */
+.shuttle-booking-filters-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+    align-items: end;
+}
+
+.shuttle-booking-filters-grid .filter-group {
+    min-width: 0;
+}
+
+.shuttle-booking-filters-grid .form-control {
+    width: 100%;
+}
+
+.shuttle-booking-filters-grid .booking-route-search {
+    width: 100%;
+}
+
+.shuttle-booking-filters-grid .booking-route-search .dashicons {
+    left: 12px;
+    top: 50%;
+}
+
+.shuttle-booking-filters-grid .booking-route-search input {
+    padding-left: 36px !important;
+}
+
+.shuttle-booking-filter-actions {
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* Shuttle Booking List Table Widths */
+.shuttle-modern-table .col-id {
+    width: 100px;
+}
+
+.shuttle-modern-table .col-shuttle {
+    width: 200px;
+}
+
+.shuttle-modern-table .col-customer {
+    width: 220px;
+}
+
+.shuttle-modern-table .col-journey {
+    width: 180px;
+}
+
+.shuttle-modern-table .col-route {
+    width: 220px;
+}
+
+.shuttle-modern-table .col-passengers {
+    width: 140px;
+}
+
+.shuttle-modern-table .col-action {
+    width: 100px;
+}
+
+@media (max-width: 1024px) {
+    .shuttle-booking-filters-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 640px) {
+    .shuttle-booking-filters-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 .stops-toggle-btn:hover {
     background: var(--sh-primary-soft);
 }

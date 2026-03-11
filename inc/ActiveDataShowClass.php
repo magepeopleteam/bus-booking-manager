@@ -1,19 +1,27 @@
 <?php
+
 if (!defined('ABSPATH')) {
     exit;  // Exit if accessed directly
 }
 
-class ActiveDataShowClass extends CommonClass {
-    public function __construct() {
+class ActiveDataShowClass extends CommonClass
+{
+    public function __construct()
+    {
     }
 
     // Next 6 date suggestion
-    public function active_date_picker($singleBus, $post_id) {
+    public function active_date_picker($singleBus, $post_id)
+    {
         if ($singleBus) {
             $wbtm_bus_on_dates = get_post_meta($post_id, 'wbtm_bus_on_date', true) ? maybe_unserialize(get_post_meta($post_id, 'wbtm_bus_on_date', true)) : [];
             $wbtm_offday_schedules = get_post_meta($post_id, 'wbtm_offday_schedule', true) ? get_post_meta($post_id, 'wbtm_offday_schedule', true) : [];
             $show_operational_on_day = sanitize_text_field(get_post_meta($post_id, 'show_operational_on_day', true));
             $show_off_day = sanitize_text_field(get_post_meta($post_id, 'show_off_day', true));
+            $operational_start = sanitize_text_field(get_post_meta($post_id, 'wbtm_od_start', true));
+            $operational_end = sanitize_text_field(get_post_meta($post_id, 'wbtm_od_end', true));
+            $operational_start = $operational_start ? esc_attr(gmdate('d-m-Y', strtotime($operational_start))) : '';
+            $operational_end = $operational_end ? esc_attr(gmdate('d-m-Y', strtotime($operational_end))) : '';
 
             if ($wbtm_bus_on_dates) {
                 $wbtm_bus_on_dates = is_array($wbtm_bus_on_dates) ? $wbtm_bus_on_dates : explode(', ', sanitize_text_field($wbtm_bus_on_dates));
@@ -48,7 +56,7 @@ class ActiveDataShowClass extends CommonClass {
             $weekly_offday = is_array($weekly_offday) ? array_map('sanitize_text_field', $weekly_offday) : [];
             $weekly_offday = '[' . esc_attr(implode(',', $weekly_offday)) . ']';
 
-            echo "<input id='" . esc_attr('all_date_picker_info') . "' data-single_bus='" . esc_attr($singleBus ? 1 : 0) . "' data-enableDates='" . esc_attr($enableDates) . "' data-off_particular_date='" . esc_attr($off_particular_date) . "' data-weekly_offday='" . esc_attr($weekly_offday) . "' data-enable_onday='" . esc_attr($show_operational_on_day) . "' data-enable_offday='" . esc_attr($show_off_day) . "' data-date_format='" . esc_attr($this->convert_datepicker_dateformat()) . "' type='hidden' />";
+            echo "<input id='" . esc_attr('all_date_picker_info') . "' data-single_bus='" . esc_attr($singleBus ? 1 : 0) . "' data-enableDates='" . esc_attr($enableDates) . "' data-off_particular_date='" . esc_attr($off_particular_date) . "' data-weekly_offday='" . esc_attr($weekly_offday) . "' data-enable_onday='" . esc_attr($show_operational_on_day) . "' data-enable_offday='" . esc_attr($show_off_day) . "' data-od_start='" . esc_attr($operational_start) . "' data-od_end='" . esc_attr($operational_end) . "' data-date_format='" . esc_attr($this->convert_datepicker_dateformat()) . "' type='hidden' />";
         } else {
             $global_offdates = wbbm_get_option('global_particular_onday', 'wbbm_global_offday_sec', 0);
             $global_offdays = wbbm_get_option('bus_global_offdays', 'wbbm_global_offday_sec', 0);
@@ -80,4 +88,3 @@ class ActiveDataShowClass extends CommonClass {
         }
     }
 }
-?>

@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Bus Pricing and Routing Configuration
  */
@@ -19,7 +20,7 @@ if (!class_exists('WBBM_Pricing_Routing')) {
         {
             $full_route_infos = MP_Global_Function::get_post_info($post_id, 'wbbm_route_info', []);
             $bus_stop_lists = MP_Global_Function::get_all_term_data('wbbm_bus_stops');
-?>
+            ?>
             <div class="tabsItem wbtm_settings_pricing_routing" data-tabs="#wbtm_settings_pricing_routing">
                 <h3 class="pB_xs"><?php esc_html_e('Price And Routing Settings', 'bus-booking-manager'); ?></h3>
                 <p style="margin-bottom:0;font-size:15px"><?php esc_html_e('Here you can configure Price And Routing for a bus.', 'bus-booking-manager'); ?></p>
@@ -72,7 +73,7 @@ if (!class_exists('WBBM_Pricing_Routing')) {
                     </div>
                 </div>
             </div>
-        <?php
+            <?php
         }
 
         public function add_stops_item($bus_stop_lists, $full_route_info = [], $key = 0)
@@ -88,7 +89,7 @@ if (!class_exists('WBBM_Pricing_Routing')) {
                     $location = $place;
                 }
             }
-        ?>
+            ?>
             <div class="wbtm_remove_area col_12_mB  wbtm_stop_item ">
                 <div class="wbbm_stop_item_inner">
                     <div class="_bgLight_dFlex_justifyBetween_alignCenter wbtm_stop_item_header" data-collapse-target="">
@@ -104,9 +105,13 @@ if (!class_exists('WBBM_Pricing_Routing')) {
                             <label class="wbtm_header_place"><?php echo empty($location) ? esc_html__('Add Stop', 'bus-booking-manager') : esc_html($location); ?></label>
                             <span class="wbtm_header_type">
                                 <?php
-                                if ($type == 'bp') echo ' (Boarding) ';
-                                elseif ($type == 'dp') echo ' (Dropping) ';
-                                elseif ($type == 'both') echo ' (Boarding & Dropping) ';
+                                if ($type == 'bp') {
+                                    echo ' (Boarding) ';
+                                } elseif ($type == 'dp') {
+                                    echo ' (Dropping) ';
+                                } elseif ($type == 'both') {
+                                    echo ' (Boarding & Dropping) ';
+                                }
                                 ?>
                             </span>
                         </div>
@@ -214,7 +219,7 @@ if (!class_exists('WBBM_Pricing_Routing')) {
             }
 
             if (sizeof($all_price_info) > 0) {
-            ?>
+                ?>
                 <table>
                     <thead>
                         <tr>
@@ -281,7 +286,7 @@ if (!class_exists('WBBM_Pricing_Routing')) {
                 <div class="_dLayout_bgWarning_mZero">
                     <h3 style="margin:0"><?php esc_html_e('Please Create Bus route .', 'bus-booking-manager'); ?></h3>
                 </div>
-            <?php
+                <?php
             }
         }
 
@@ -312,12 +317,12 @@ if (!class_exists('WBBM_Pricing_Routing')) {
                 <span class="<?php echo esc_attr($icon_class); ?>"></span>
                 <span class="mL_xs"><?php echo esc_html($button_text); ?></span>
             </button>
-        <?php
+            <?php
         }
 
         public function edit_move_remove_button()
         {
-        ?>
+            ?>
             <div class="allCenter">
                 <div class="buttonGroup max_200">
                     <div class="_whiteButton_xs wbtm_edit_item_btn" type="">
@@ -331,7 +336,7 @@ if (!class_exists('WBBM_Pricing_Routing')) {
                     </div>
                 </div>
             </div>
-<?php
+            <?php
         }
     }
     new WBBM_Pricing_Routing();

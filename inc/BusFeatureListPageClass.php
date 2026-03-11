@@ -1,9 +1,12 @@
 <?php
-if (!defined('ABSPATH')) exit;
+
+if (!defined('ABSPATH')) {
+    exit;
+}
 
 /**
  * Bus Feature List Page Class
- * 
+ *
  * Handles the modern custom list page for bus features (taxonomy wbbm_bus_feature).
  */
 class BusFeatureListPageClass
@@ -139,7 +142,7 @@ class BusFeatureListPageClass
         $start_num = $offset + 1;
         $end_num = min($offset + $number, $total_terms);
 
-?>
+        ?>
         <div class="wrap shuttle-list-wrap">
             <div class="shuttle-list-container-fullwidth">
                 <!-- Header Section -->
@@ -203,14 +206,14 @@ class BusFeatureListPageClass
                                     $edit_url = admin_url('admin.php?post_type=wbbm_bus&page=wbbm-bus-feature-edit&term_id=' . $term->term_id);
                                     $delete_url = wp_nonce_url(add_query_arg(array('action' => 'delete', 'term_id' => $term->term_id)), 'delete-bus-feature_' . $term->term_id);
                                     $icon = get_term_meta($term->term_id, 'feature_icon', true);
-                                ?>
+                                    ?>
                                     <tr>
                                         <td><input type="checkbox" name="term_ids[]" value="<?php echo esc_attr($term->term_id); ?>"></td>
                                         <td class="shuttle-info-cell">
                                             <div class="shuttle-icon" style="background: #f0f4f8; border-radius: 8px; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; margin-right: 15px;">
-                                                <?php if($icon): ?>
+                                                <?php if ($icon) : ?>
                                                     <i class="<?php echo esc_attr($icon); ?>" style="color: #4a5568; font-size: 18px;"></i>
-                                                <?php else: ?>
+                                                <?php else : ?>
                                                     <span class="dashicons dashicons-star-filled" style="color: #cbd5e0;"></span>
                                                 <?php endif; ?>
                                             </div>
@@ -267,9 +270,9 @@ class BusFeatureListPageClass
                                 for ($i = 1; $i <= $total_pages; $i++) {
                                     if ($i == $paged) {
                                         echo '<span class="page-link active">' . $i . '</span>';
-                                    } else if ($i == 1 || $i == $total_pages || ($i >= $paged - 1 && $i <= $paged + 1)) {
+                                    } elseif ($i == 1 || $i == $total_pages || ($i >= $paged - 1 && $i <= $paged + 1)) {
                                         echo '<a href="' . add_query_arg('paged', $i) . '" class="page-link">' . $i . '</a>';
-                                    } else if ($i == 2 || $i == $total_pages - 1) {
+                                    } elseif ($i == 2 || $i == $total_pages - 1) {
                                         echo '<span class="pager-sep">...</span>';
                                     }
                                 }
@@ -284,7 +287,7 @@ class BusFeatureListPageClass
                 </div>
             </div>
         </div>
-<?php
+        <?php
     }
 }
 

@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('ABSPATH')) {
     die;
 } // Cannot access pages directly.
@@ -13,23 +14,20 @@ if (!class_exists('wbbm_dummy_import')) {
         public function __construct()
         {
             //update_option('wbbm_bus_data_update_01', 'completed');
-            
+
             add_action('deactivate_plugin', array($this, 'update_option'), 98);
             add_action('activated_plugin', array($this, 'update_option'), 98);
             add_action('admin_init', array($this, 'dummy_import'), 98);
-
         }
 
-        
-        function update_option() 
+
+        function update_option()
         {
-            update_option('wbbm_dummy_already_inserted', 'no');           
+            update_option('wbbm_dummy_already_inserted', 'no');
         }
 
         public function test()
         {
-
-
         }
 
         public static function check_plugin($plugin_dir_name, $plugin_file): int
@@ -44,64 +42,57 @@ if (!class_exists('wbbm_dummy_import')) {
                 return 0;
             }
         }
-	
-		function craete_pages()
-		{
-				if (empty(wbbm_get_page_by_slug('events-list-style'))) {			
-				$post_details = array(
-					'post_title'    => 'Events – List Style',
-					'post_content'  => '[event-list show="10" style="list" pagination="yes"]',
-					'post_status'   => 'publish',
-					'post_author'   => 1,
-					'post_type' 	  => 'page'
-				);		   
-				wp_insert_post( $post_details );
-				}
 
-				if (empty(wbbm_get_page_by_slug('events-grid-style'))) {
-				$post_details = array(
-					'post_title'    => 'Events – Grid Style',
-					'post_content'  => "[event-list show='10' style='grid']",
-					'post_status'   => 'publish',
-					'post_author'   => 1,
-					'post_type' 	  => 'page'
-				);
-				wp_insert_post( $post_details );
-				}
+        function craete_pages()
+        {
+            if (empty(wbbm_get_page_by_slug('events-list-style'))) {
+                $post_details = array(
+                'post_title'    => 'Events – List Style',
+                'post_content'  => '[event-list show="10" style="list" pagination="yes"]',
+                'post_status'   => 'publish',
+                'post_author'   => 1,
+                'post_type'       => 'page'
+                );
+                wp_insert_post($post_details);
+            }
 
-				if (empty(wbbm_get_page_by_slug('events-list-style-with-search-box'))) {
+            if (empty(wbbm_get_page_by_slug('events-grid-style'))) {
+                $post_details = array(
+                'post_title'    => 'Events – Grid Style',
+                'post_content'  => "[event-list show='10' style='grid']",
+                'post_status'   => 'publish',
+                'post_author'   => 1,
+                'post_type'       => 'page'
+                );
+                wp_insert_post($post_details);
+            }
 
-				$post_details = array(
-					'post_title'    => 'Events – List Style with Search Box',
-					'post_content'  => "[event-list column=4 search-filter='yes']",
-					'post_status'   => 'publish',
-					'post_author'   => 1,
-					'post_type' 	  => 'page'
-				);
-				wp_insert_post( $post_details );	
-				}	   
-
-		}
+            if (empty(wbbm_get_page_by_slug('events-list-style-with-search-box'))) {
+                $post_details = array(
+                'post_title'    => 'Events – List Style with Search Box',
+                'post_content'  => "[event-list column=4 search-filter='yes']",
+                'post_status'   => 'publish',
+                'post_author'   => 1,
+                'post_type'       => 'page'
+                );
+                wp_insert_post($post_details);
+            }
+        }
 
         public function dummy_import()
         {
-            
-            $dummy_post_inserted = get_option('wbbm_dummy_already_inserted','no');
-            $count_existing_event = wp_count_posts('wbbm_bus')->publish;
-            
-            $plugin_active = self::check_plugin('bus-booking-manager', 'woocommerce-bus.php');
-			
-            if ($count_existing_event == 0 && $plugin_active == 1 && $dummy_post_inserted != 'yes') {
 
+            $dummy_post_inserted = get_option('wbbm_dummy_already_inserted', 'no');
+            $count_existing_event = wp_count_posts('wbbm_bus')->publish;
+
+            $plugin_active = self::check_plugin('bus-booking-manager', 'woocommerce-bus.php');
+
+            if ($count_existing_event == 0 && $plugin_active == 1 && $dummy_post_inserted != 'yes') {
                 $dummy_taxonomies = $this->dummy_taxonomy();
 
-                if(array_key_exists('taxonomy', $dummy_taxonomies))
-                {
-                    foreach ($dummy_taxonomies['taxonomy'] as $taxonomy => $dummy_taxonomy) 
-                    {
-                        
+                if (array_key_exists('taxonomy', $dummy_taxonomies)) {
+                    foreach ($dummy_taxonomies['taxonomy'] as $taxonomy => $dummy_taxonomy) {
                         if (taxonomy_exists($taxonomy)) {
-                            
                             $check_terms = get_terms(array('taxonomy' => $taxonomy, 'hide_empty' => false));
 
                             if (is_string($check_terms) || sizeof($check_terms) == 0) {
@@ -116,21 +107,16 @@ if (!class_exists('wbbm_dummy_import')) {
                                     }
                                 }
                             }
-
                         }
-
                     }
 
                     //echo "<pre>";print_r($dummy_taxonomies);exit;
-
                 }
 
                 $dummy_cpt = $this->dummy_cpt();
 
-                if(array_key_exists('custom_post', $dummy_cpt))
-                {
-                    foreach ($dummy_cpt['custom_post'] as $custom_post => $dummy_post) 
-                    {
+                if (array_key_exists('custom_post', $dummy_cpt)) {
+                    foreach ($dummy_cpt['custom_post'] as $custom_post => $dummy_post) {
                         unset($args);
                         $args = array(
                             'post_type' => $custom_post,
@@ -141,7 +127,6 @@ if (!class_exists('wbbm_dummy_import')) {
                         $post = new WP_Query($args);
 
                         if ($post->post_count == 0) {
-
                             foreach ($dummy_post as $dummy_data) {
                                 $title = $dummy_data['name'];
                                 $content = $dummy_data['content'];
@@ -152,37 +137,29 @@ if (!class_exists('wbbm_dummy_import')) {
                                     'post_type' => $custom_post,
                                 ]);
 
-                                if (array_key_exists('taxonomy_terms', $dummy_data) && count($dummy_data['taxonomy_terms'])) 
-                                {
-                                    foreach ($dummy_data['taxonomy_terms'] as $taxonomy_term) 
-                                    {
-                                        wp_set_object_terms( $post_id, $taxonomy_term['terms'], $taxonomy_term['taxonomy_name'], true );
+                                if (array_key_exists('taxonomy_terms', $dummy_data) && count($dummy_data['taxonomy_terms'])) {
+                                    foreach ($dummy_data['taxonomy_terms'] as $taxonomy_term) {
+                                        wp_set_object_terms($post_id, $taxonomy_term['terms'], $taxonomy_term['taxonomy_name'], true);
                                     }
                                 }
 
                                 if (array_key_exists('post_data', $dummy_data)) {
                                     foreach ($dummy_data['post_data'] as $meta_key => $data) {
                                         if ($meta_key == 'feature_image') {
-
                                             $url = $data;
                                             $desc = "The Demo Dummy Image of the bus booking";
                                             $image = media_sideload_image($url, $post_id, $desc, 'id');
                                             set_post_thumbnail($post_id, $image);
-
                                         } else {
-
                                             update_post_meta($post_id, $meta_key, $data);
-
                                         }
-
                                     }
                                 }
-
                             }
                         }
                     }
                 }
-				//$this->craete_pages();
+                //$this->craete_pages();
                 update_option('wbbm_dummy_already_inserted', 'yes');
             }
         }
@@ -259,7 +236,7 @@ if (!class_exists('wbbm_dummy_import')) {
                                     ),
                                 )
                             ),
-                        ],                        
+                        ],
                     ],
                     'wbbm_bus_pickpoint' => [
                         0 => ['name' => 'Berlin'],
@@ -309,22 +286,22 @@ if (!class_exists('wbbm_dummy_import')) {
                                 2 => array(
                                     'taxonomy_name' => 'wbbm_bus_pickpoint',
                                     'terms' => array(
-                                        0=>'Berlin',
-                                        1=>'Frankfurt',
+                                        0 => 'Berlin',
+                                        1 => 'Frankfurt',
                                     )
                                 ),
                                 3 => array(
                                     'taxonomy_name' => 'wbbm_bus_feature',
                                     'terms' => array(
-                                        0=>'WI-FI',
-                                        1=>'Mobile Charger',
+                                        0 => 'WI-FI',
+                                        1 => 'Mobile Charger',
                                     )
-                                ),                                
+                                ),
                             ],
                             'post_data' => [
                                 //configuration
                                 'feature_image' => 'https://img.freepik.com/free-photo/runner-training-marathon_23-2149284923.jpg',
-                                
+
                                 'wbbm_bus_category' => get_term_by('name', 'Non AC', 'wbbm_bus_cat') ? get_term_by('name', 'Non AC', 'wbbm_bus_cat')->term_id : '',
                                 'wbbm_bus_no' => 'Flixbus-01',
                                 'wbbm_total_seat' => '27',
@@ -439,13 +416,13 @@ if (!class_exists('wbbm_dummy_import')) {
                                 'wbtm_od_end' => '',
                                 'wbtm_bus_on_date' => '',
                                 'show_boarding_points' => '',
-                                'show_extra_service' => 'no',                                
+                                'show_extra_service' => 'no',
                                 'show_operational_on_day' => 'no',
                                 'show_off_day' => 'no',
                                 //Bus Feature
                                 'wbbm_features' => array(
                                     0 => get_term_by('name', 'Mobile Charger', 'wbbm_bus_feature') ? get_term_by('name', 'Mobile Charger', 'wbbm_bus_feature')->term_id : '',
-                                    1 => get_term_by('name', 'WI-FI', 'wbbm_bus_feature') ? get_term_by('name', 'WI-FI', 'wbbm_bus_feature')->term_id : '',                                    
+                                    1 => get_term_by('name', 'WI-FI', 'wbbm_bus_feature') ? get_term_by('name', 'WI-FI', 'wbbm_bus_feature')->term_id : '',
                                 ),
                             ],
                         ],
@@ -476,22 +453,22 @@ if (!class_exists('wbbm_dummy_import')) {
                                 2 => array(
                                     'taxonomy_name' => 'wbbm_bus_pickpoint',
                                     'terms' => array(
-                                        0=>'Berlin',
-                                        1=>'Frankfurt',
+                                        0 => 'Berlin',
+                                        1 => 'Frankfurt',
                                     )
                                 ),
                                 3 => array(
                                     'taxonomy_name' => 'wbbm_bus_feature',
                                     'terms' => array(
-                                        0=>'WI-FI',
-                                        1=>'Mobile Charger',
+                                        0 => 'WI-FI',
+                                        1 => 'Mobile Charger',
                                     )
-                                ),                                
+                                ),
                             ],
                             'post_data' => [
                                 //configuration
                                 'feature_image' => 'https://img.freepik.com/free-photo/runner-training-marathon_23-2149284923.jpg',
-                                
+
                                 'wbbm_bus_category' => get_term_by('name', 'AC', 'wbbm_bus_cat') ? get_term_by('name', 'Non AC', 'wbbm_bus_cat')->term_id : '',
                                 'wbbm_bus_no' => 'Megabus-01',
                                 'wbbm_total_seat' => '27',
@@ -598,13 +575,13 @@ if (!class_exists('wbbm_dummy_import')) {
                                 'wbtm_od_end' => '',
                                 'wbtm_bus_on_date' => '',
                                 'show_boarding_points' => '',
-                                'show_extra_service' => 'no',                                
+                                'show_extra_service' => 'no',
                                 'show_operational_on_day' => 'no',
                                 'show_off_day' => 'no',
                                 //Bus Feature
                                 'wbbm_features' => array(
                                     0 => get_term_by('name', 'Mobile Charger', 'wbbm_bus_feature') ? get_term_by('name', 'Mobile Charger', 'wbbm_bus_feature')->term_id : '',
-                                    1 => get_term_by('name', 'WI-FI', 'wbbm_bus_feature') ? get_term_by('name', 'WI-FI', 'wbbm_bus_feature')->term_id : '',                                    
+                                    1 => get_term_by('name', 'WI-FI', 'wbbm_bus_feature') ? get_term_by('name', 'WI-FI', 'wbbm_bus_feature')->term_id : '',
                                 ),
                             ],
                         ],
@@ -635,22 +612,22 @@ if (!class_exists('wbbm_dummy_import')) {
                                 2 => array(
                                     'taxonomy_name' => 'wbbm_bus_pickpoint',
                                     'terms' => array(
-                                        0=>'Berlin',
-                                        1=>'Frankfurt',
+                                        0 => 'Berlin',
+                                        1 => 'Frankfurt',
                                     )
                                 ),
                                 3 => array(
                                     'taxonomy_name' => 'wbbm_bus_feature',
                                     'terms' => array(
-                                        0=>'WI-FI',
-                                        1=>'Mobile Charger',
+                                        0 => 'WI-FI',
+                                        1 => 'Mobile Charger',
                                     )
-                                ),                                
+                                ),
                             ],
                             'post_data' => [
                                 //configuration
                                 'feature_image' => 'https://img.freepik.com/free-photo/runner-training-marathon_23-2149284923.jpg',
-                                
+
                                 'wbbm_bus_category' => get_term_by('name', 'Non AC', 'wbbm_bus_cat') ? get_term_by('name', 'Non AC', 'wbbm_bus_cat')->term_id : '',
                                 'wbbm_bus_no' => 'BYDbus-01',
                                 'wbbm_total_seat' => '27',
@@ -776,13 +753,13 @@ if (!class_exists('wbbm_dummy_import')) {
                                 'wbtm_od_end' => '',
                                 'wbtm_bus_on_date' => '',
                                 'show_boarding_points' => '',
-                                'show_extra_service' => 'no',                                
+                                'show_extra_service' => 'no',
                                 'show_operational_on_day' => 'no',
                                 'show_off_day' => 'no',
                                 //Bus Feature
                                 'wbbm_features' => array(
                                     0 => get_term_by('name', 'Mobile Charger', 'wbbm_bus_feature') ? get_term_by('name', 'Mobile Charger', 'wbbm_bus_feature')->term_id : '',
-                                    1 => get_term_by('name', 'WI-FI', 'wbbm_bus_feature') ? get_term_by('name', 'WI-FI', 'wbbm_bus_feature')->term_id : '',                                    
+                                    1 => get_term_by('name', 'WI-FI', 'wbbm_bus_feature') ? get_term_by('name', 'WI-FI', 'wbbm_bus_feature')->term_id : '',
                                 ),
                             ],
                         ],
@@ -813,22 +790,22 @@ if (!class_exists('wbbm_dummy_import')) {
                                 2 => array(
                                     'taxonomy_name' => 'wbbm_bus_pickpoint',
                                     'terms' => array(
-                                        0=>'Berlin',
-                                        1=>'Frankfurt',
+                                        0 => 'Berlin',
+                                        1 => 'Frankfurt',
                                     )
                                 ),
                                 3 => array(
                                     'taxonomy_name' => 'wbbm_bus_feature',
                                     'terms' => array(
-                                        0=>'WI-FI',
-                                        1=>'Mobile Charger',
+                                        0 => 'WI-FI',
+                                        1 => 'Mobile Charger',
                                     )
-                                ),                                
+                                ),
                             ],
                             'post_data' => [
                                 //configuration
                                 'feature_image' => 'https://img.freepik.com/free-photo/runner-training-marathon_23-2149284923.jpg',
-                                
+
                                 'wbbm_bus_category' => get_term_by('name', 'AC', 'wbbm_bus_cat') ? get_term_by('name', 'Non AC', 'wbbm_bus_cat')->term_id : '',
                                 'wbbm_bus_no' => 'RED-01',
                                 'wbbm_total_seat' => '27',
@@ -954,13 +931,13 @@ if (!class_exists('wbbm_dummy_import')) {
                                 'wbtm_od_end' => '',
                                 'wbtm_bus_on_date' => '',
                                 'show_boarding_points' => '',
-                                'show_extra_service' => 'no',                                
+                                'show_extra_service' => 'no',
                                 'show_operational_on_day' => 'no',
                                 'show_off_day' => 'no',
                                 //Bus Feature
                                 'wbbm_features' => array(
                                     0 => get_term_by('name', 'Mobile Charger', 'wbbm_bus_feature') ? get_term_by('name', 'Mobile Charger', 'wbbm_bus_feature')->term_id : '',
-                                    1 => get_term_by('name', 'WI-FI', 'wbbm_bus_feature') ? get_term_by('name', 'WI-FI', 'wbbm_bus_feature')->term_id : '',                                    
+                                    1 => get_term_by('name', 'WI-FI', 'wbbm_bus_feature') ? get_term_by('name', 'WI-FI', 'wbbm_bus_feature')->term_id : '',
                                 ),
                             ],
                         ],
@@ -991,22 +968,22 @@ if (!class_exists('wbbm_dummy_import')) {
                                 2 => array(
                                     'taxonomy_name' => 'wbbm_bus_pickpoint',
                                     'terms' => array(
-                                        0=>'Berlin',
-                                        1=>'Frankfurt',
+                                        0 => 'Berlin',
+                                        1 => 'Frankfurt',
                                     )
                                 ),
                                 3 => array(
                                     'taxonomy_name' => 'wbbm_bus_feature',
                                     'terms' => array(
-                                        0=>'WI-FI',
-                                        1=>'Mobile Charger',
+                                        0 => 'WI-FI',
+                                        1 => 'Mobile Charger',
                                     )
-                                ),                                
+                                ),
                             ],
                             'post_data' => [
                                 //configuration
                                 'feature_image' => 'https://img.freepik.com/free-photo/runner-training-marathon_23-2149284923.jpg',
-                                
+
                                 'wbbm_bus_category' => get_term_by('name', 'Non AC', 'wbbm_bus_cat') ? get_term_by('name', 'Non AC', 'wbbm_bus_cat')->term_id : '',
                                 'wbbm_bus_no' => 'Bonanza-01',
                                 'wbbm_total_seat' => '27',
@@ -1132,21 +1109,20 @@ if (!class_exists('wbbm_dummy_import')) {
                                 'wbtm_od_end' => '',
                                 'wbtm_bus_on_date' => '',
                                 'show_boarding_points' => '',
-                                'show_extra_service' => 'no',                                
+                                'show_extra_service' => 'no',
                                 'show_operational_on_day' => 'no',
                                 'show_off_day' => 'no',
                                 //Bus Feature
                                 'wbbm_features' => array(
                                     0 => get_term_by('name', 'Mobile Charger', 'wbbm_bus_feature') ? get_term_by('name', 'Mobile Charger', 'wbbm_bus_feature')->term_id : '',
-                                    1 => get_term_by('name', 'WI-FI', 'wbbm_bus_feature') ? get_term_by('name', 'WI-FI', 'wbbm_bus_feature')->term_id : '',                                    
+                                    1 => get_term_by('name', 'WI-FI', 'wbbm_bus_feature') ? get_term_by('name', 'WI-FI', 'wbbm_bus_feature')->term_id : '',
                                 ),
                             ],
                         ],
-                        
+
                     ],
                 ],
             ];
-
         }
     }
 

@@ -1,19 +1,26 @@
-<?php 
-if ( ! defined( 'ABSPATH' ) ) { die; } // Cannot access pages directly.
+<?php
 
-class WBBM_Plugin_Activator {
+if (! defined('ABSPATH')) {
+    die;
+} // Cannot access pages directly.
 
+class WBBM_Plugin_Activator
+{
     // Function to get page slug
-    public function wbtm_get_page_by_slug($slug) {
+    public function wbtm_get_page_by_slug($slug)
+    {
         if ($pages = get_pages()) {
             foreach ($pages as $page) {
-                if ($slug === $page->post_name) return $page;
+                if ($slug === $page->post_name) {
+                    return $page;
+                }
             }
         }
         return false;
     }
 
-    public static function activate() {
+    public static function activate()
+    {
         $activator = new self();
 
         // Array of pages to create

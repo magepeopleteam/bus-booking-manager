@@ -1,9 +1,12 @@
 <?php
-if (!defined('ABSPATH')) exit;
+
+if (!defined('ABSPATH')) {
+    exit;
+}
 
 /**
  * Shuttle Stop Edit Page Class
- * 
+ *
  * Handles the custom modern edit/add page for shuttle stops (taxonomy wbbm_shuttle_stops).
  */
 class ShuttleStopEditPageClass
@@ -146,7 +149,7 @@ class ShuttleStopEditPageClass
         $slug = $term ? $term->slug : '';
         $description = $term ? $term->description : '';
 
-?>
+        ?>
         <div class="wrap shuttle-edit-wrap">
             <div class="shuttle-edit-header">
                 <div style="display: flex; align-items: center; gap: 15px;">
@@ -208,7 +211,7 @@ class ShuttleStopEditPageClass
                 </form>
             </div>
         </div>
-<?php
+        <?php
     }
 }
 

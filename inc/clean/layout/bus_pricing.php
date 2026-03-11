@@ -6,15 +6,15 @@ if (!defined('ABSPATH')) {
 
 <div class="mp_tab_item" data-tab-item="#wbtm_seat_price">
     <h3 class="wbbm_mp_tab_item_heading">
-        <?php echo esc_html($cpt_label).' '. esc_html_e('Seat Price Settings', 'bus-booking-manager'); ?>
+        <?php echo esc_html($cpt_label) . ' ' . esc_html_e('Seat Price Settings', 'bus-booking-manager'); ?>
     </h3>
     <p><?php esc_html_e('Here you can configure seat price.', 'bus-booking-manager'); ?></p>
     <div class="wbbm_seat_price_inner_wrap">
     <?php
     $wbbm_get_terms_default_attributes = array(
-				'taxonomy' => 'wbbm_bus_stops', 
-				'hide_empty' => false, 
-			);
+                'taxonomy' => 'wbbm_bus_stops',
+                'hide_empty' => false,
+            );
     $wbbm_terms = get_terms($wbbm_get_terms_default_attributes);
     $wbbm_discount_price_switch = wbbm_get_option('discount_price_switch', 'wbbm_general_setting_sec', 'off');
 
@@ -47,38 +47,38 @@ if (!defined('ABSPATH')) {
                 </th>
                 <th>
                     <?php
-                        $wbbm_adult_label = wbbm_get_option( 'wbbm_adult_text', 'wbbm_label_setting_sec' );
-                        $wbbm_label_text = $wbbm_adult_label ? $wbbm_adult_label : __( 'Adult', 'bus-booking-manager' );
+                        $wbbm_adult_label = wbbm_get_option('wbbm_adult_text', 'wbbm_label_setting_sec');
+                        $wbbm_label_text = $wbbm_adult_label ? $wbbm_adult_label : __('Adult', 'bus-booking-manager');
 
-                        echo esc_html( $wbbm_label_text ) . ' ' . esc_html__( 'Fare', 'bus-booking-manager' );
+                        echo esc_html($wbbm_label_text) . ' ' . esc_html__('Fare', 'bus-booking-manager');
                     ?>
 
                 </th>
                 <th>
                     <?php
-                        $wbbm_child_label = wbbm_get_option( 'wbbm_child_text', 'wbbm_label_setting_sec' );
-                        $wbbm_label_text = $wbbm_child_label ? $wbbm_child_label : __( 'Child', 'bus-booking-manager' );
+                        $wbbm_child_label = wbbm_get_option('wbbm_child_text', 'wbbm_label_setting_sec');
+                        $wbbm_label_text = $wbbm_child_label ? $wbbm_child_label : __('Child', 'bus-booking-manager');
 
-                        echo esc_html( $wbbm_label_text ) . ' ' . esc_html__( 'Fare', 'bus-booking-manager' );
+                        echo esc_html($wbbm_label_text) . ' ' . esc_html__('Fare', 'bus-booking-manager');
                     ?>
 
                 </th>
                 <th>
                     <?php
-                        $wbbm_infant_label = wbbm_get_option( 'wbbm_infant_text', 'wbbm_label_setting_sec' );
-                        $wbbm_label_text  = $wbbm_infant_label ? $wbbm_infant_label : __( 'Infant', 'bus-booking-manager' );
+                        $wbbm_infant_label = wbbm_get_option('wbbm_infant_text', 'wbbm_label_setting_sec');
+                        $wbbm_label_text  = $wbbm_infant_label ? $wbbm_infant_label : __('Infant', 'bus-booking-manager');
 
-                        echo esc_html( $wbbm_label_text ) . ' ' . esc_html__( 'Fare', 'bus-booking-manager' );
+                        echo esc_html($wbbm_label_text) . ' ' . esc_html__('Fare', 'bus-booking-manager');
                     ?>
 
                 </th>
-                <?php if($entire_bus_booking == 'on'): ?>
+                <?php if ($entire_bus_booking == 'on') : ?>
                     <th>
                         <?php
-                        $wbbm_entire_bus_label = wbbm_get_option( 'wbbm_entire_bus_text', 'wbbm_label_setting_sec' );
-                        $wbbm_label_text = $wbbm_entire_bus_label ? $wbbm_entire_bus_label : __( 'Entire Bus', 'bus-booking-manager' );
+                        $wbbm_entire_bus_label = wbbm_get_option('wbbm_entire_bus_text', 'wbbm_label_setting_sec');
+                        $wbbm_label_text = $wbbm_entire_bus_label ? $wbbm_entire_bus_label : __('Entire Bus', 'bus-booking-manager');
 
-                        echo esc_html( $wbbm_label_text ) . ' ' . esc_html__( 'Fare', 'bus-booking-manager' );
+                        echo esc_html($wbbm_label_text) . ' ' . esc_html__('Fare', 'bus-booking-manager');
                         ?>
                     </th>
 
@@ -93,7 +93,7 @@ if (!defined('ABSPATH')) {
                     <tr>
                         <td>
                             <div class="wbbm_bus_route_select">
-                                <span class="wbbm_bus_route_icon wbbm_bus_route_icon1"><img src="<?php echo esc_url(WBTM_PLUGIN_URL .'images/bus_route_map.png');?>"/></span>
+                                <span class="wbbm_bus_route_icon wbbm_bus_route_icon1"><img src="<?php echo esc_url(WBTM_PLUGIN_URL . 'images/bus_route_map.png');?>"/></span>
                                 <select name="wbbm_bus_bp_price_stop[]" class='seat_type'>
                                     <option value=""><?php esc_html_e('Please Select', 'bus-booking-manager'); ?></option>
                                     <?php foreach ($wbbm_terms as $term) { ?>
@@ -105,7 +105,7 @@ if (!defined('ABSPATH')) {
 
                         <td>
                             <div class="wbbm_bus_route_select">
-                                <span class="wbbm_bus_route_icon wbbm_bus_route_icon1"><img src="<?php echo esc_url(WBTM_PLUGIN_URL .'images/bus_route_map.png');?>"/></span>
+                                <span class="wbbm_bus_route_icon wbbm_bus_route_icon1"><img src="<?php echo esc_url(WBTM_PLUGIN_URL . 'images/bus_route_map.png');?>"/></span>
                                 <select name="wbbm_bus_dp_price_stop[]" class='seat_type'>
                                     <option value=""><?php esc_html_e('Please Select', 'bus-booking-manager'); ?></option>
                                     <?php foreach ($wbbm_terms as $term) { ?>
@@ -116,14 +116,18 @@ if (!defined('ABSPATH')) {
                         </td>
 
                         <td class="wbbm-price-col">
-                            <input type="number" step="0.01" name='wbbm_bus_price[]' value="<?php if (isset($wbbm_field['wbbm_bus_price']) && $wbbm_field['wbbm_bus_price'] != '') echo esc_attr($wbbm_field['wbbm_bus_price']); ?>" class="text">
-                            <?php if($wbbm_discount_price_switch=='on'){ ?>
-                                <input type="number" step="0.01" name='wbbm_bus_price_roundtrip[]' value="<?php if (isset($wbbm_field['wbbm_bus_price_roundtrip']) && $wbbm_field['wbbm_bus_price_roundtrip'] != '') echo esc_attr($wbbm_field['wbbm_bus_price_roundtrip']); ?>" class="text roundtrip-input" placeholder="<?php
-                                    $wbbm_adult_label = esc_html(wbbm_get_option( 'wbbm_adult_text', 'wbbm_label_setting_sec' ));
-                                    $wbbm_label_text  = $wbbm_adult_label ? $wbbm_adult_label : __( 'Adult', 'bus-booking-manager' );
+                            <input type="number" step="0.01" name='wbbm_bus_price[]' value="<?php if (isset($wbbm_field['wbbm_bus_price']) && $wbbm_field['wbbm_bus_price'] != '') {
+                                echo esc_attr($wbbm_field['wbbm_bus_price']);
+                                                                                            } ?>" class="text">
+                            <?php if ($wbbm_discount_price_switch == 'on') { ?>
+                                <input type="number" step="0.01" name='wbbm_bus_price_roundtrip[]' value="<?php if (isset($wbbm_field['wbbm_bus_price_roundtrip']) && $wbbm_field['wbbm_bus_price_roundtrip'] != '') {
+                                    echo esc_attr($wbbm_field['wbbm_bus_price_roundtrip']);
+                                                                                                          } ?>" class="text roundtrip-input" placeholder="<?php
+                                    $wbbm_adult_label = esc_html(wbbm_get_option('wbbm_adult_text', 'wbbm_label_setting_sec'));
+                                    $wbbm_label_text  = $wbbm_adult_label ? $wbbm_adult_label : __('Adult', 'bus-booking-manager');
 
-                                    echo esc_html( $wbbm_label_text ) . ' ' . esc_html__( 'return discount price', 'bus-booking-manager' );
-                                    ?>
+                                    echo esc_html($wbbm_label_text) . ' ' . esc_html__('return discount price', 'bus-booking-manager');
+?>
                                     ">
                             <?php } ?>
                         </td>
@@ -131,22 +135,21 @@ if (!defined('ABSPATH')) {
                         <td class="wbbm-price-col">
                             <input type="number" step="0.01" name='wbbm_bus_price_child[]' value="<?php if (isset($wbbm_field['wbbm_bus_price_child']) && $wbbm_field['wbbm_bus_price_child'] != '') {
                                 echo esc_attr($wbbm_field['wbbm_bus_price_child']);
-                            } else {
-                                echo 0;
-                            } ?>" class="text">
+                                                                                                  } else {
+                                                                                                      echo 0;
+                                                                                                  } ?>" class="text">
 
-                            <?php if($wbbm_discount_price_switch=='on'){ ?>
-
+                            <?php if ($wbbm_discount_price_switch == 'on') { ?>
                                 <input type="number" step="0.01" name='wbbm_bus_price_child_roundtrip[]' value="<?php if (isset($wbbm_field['wbbm_bus_price_child_roundtrip']) && $wbbm_field['wbbm_bus_price_child_roundtrip'] != '') {
-                                echo esc_attr($wbbm_field['wbbm_bus_price_child_roundtrip']);
-                            } else {
-                                echo 0;
-                            } ?>" class="text roundtrip-input"
+                                    echo esc_attr($wbbm_field['wbbm_bus_price_child_roundtrip']);
+                                                                                                                } else {
+                                                                                                                    echo 0;
+                                                                                                                } ?>" class="text roundtrip-input"
                                    placeholder="<?php
-                                    $wbbm_child_label = wbbm_get_option( 'wbbm_child_text', 'wbbm_label_setting_sec' );
-                                    $wbbm_label_text  = $wbbm_child_label ? $wbbm_child_label : __( 'Child', 'bus-booking-manager' );
+                                    $wbbm_child_label = wbbm_get_option('wbbm_child_text', 'wbbm_label_setting_sec');
+                                    $wbbm_label_text  = $wbbm_child_label ? $wbbm_child_label : __('Child', 'bus-booking-manager');
 
-                                    echo esc_html( $wbbm_label_text ) . ' ' . esc_html__( 'return discount price', 'bus-booking-manager' );
+                                    echo esc_html($wbbm_label_text) . ' ' . esc_html__('return discount price', 'bus-booking-manager');
                                     ?>
                                     ">
                             <?php } ?>
@@ -156,45 +159,44 @@ if (!defined('ABSPATH')) {
                         <td class="wbbm-price-col">
                             <input type="number" step="0.01" name='wbbm_bus_price_infant[]' value="<?php if (isset($wbbm_field['wbbm_bus_price_infant']) && $wbbm_field['wbbm_bus_price_infant'] != '') {
                                 echo esc_attr($wbbm_field['wbbm_bus_price_infant']);
-                            } else {
-                                echo 0;
-                            } ?>" class="text">
+                                                                                                   } else {
+                                                                                                       echo 0;
+                                                                                                   } ?>" class="text">
 
-                            <?php if($wbbm_discount_price_switch=='on'){ ?>
-
+                            <?php if ($wbbm_discount_price_switch == 'on') { ?>
                             <input type="number" step="0.01" name='wbbm_bus_price_infant_roundtrip[]' value="<?php if (isset($wbbm_field['wbbm_bus_price_infant_roundtrip']) && $wbbm_field['wbbm_bus_price_infant_roundtrip'] != '') {
                                 echo esc_attr($wbbm_field['wbbm_bus_price_infant_roundtrip']);
-                            } else {
-                                echo 0;
-                            } ?>" class="text roundtrip-input"
+                                                                                                             } else {
+                                                                                                                 echo 0;
+                                                                                                             } ?>" class="text roundtrip-input"
                                    placeholder="<?php
-                                    $wbbm_infant_label = wbbm_get_option( 'wbbm_infant_text', 'wbbm_label_setting_sec' );
-                                    $wbbm_label_text   = $wbbm_infant_label ? $wbbm_infant_label : __( 'Infant', 'bus-booking-manager' );
+                                    $wbbm_infant_label = wbbm_get_option('wbbm_infant_text', 'wbbm_label_setting_sec');
+                                    $wbbm_label_text   = $wbbm_infant_label ? $wbbm_infant_label : __('Infant', 'bus-booking-manager');
 
-                                    echo esc_html( $wbbm_label_text ) . ' ' . esc_html__( 'return discount price', 'bus-booking-manager' );
+                                    echo esc_html($wbbm_label_text) . ' ' . esc_html__('return discount price', 'bus-booking-manager');
                                     ?>
                                     ">
                             <?php } ?>
                         </td>
 
-                        <?php if($entire_bus_booking == 'on'): ?>
+                        <?php if ($entire_bus_booking == 'on') : ?>
                             <td class="wbbm-price-col">
                                 <input type="number" step="0.01" name='wbbm_bus_price_entire[]' value="<?php if (isset($wbbm_field['wbbm_bus_price_entire']) && $wbbm_field['wbbm_bus_price_entire'] != '') {
                                     echo esc_attr($wbbm_field['wbbm_bus_price_entire']);
-                                } else {
-                                    echo 0;
-                                } ?>" class="text">
+                                                                                                       } else {
+                                                                                                           echo 0;
+                                                                                                       } ?>" class="text">
                                 <input type="number" step="0.01" name='wbbm_bus_price_entire_roundtrip[]' value="<?php if (isset($wbbm_field['wbbm_bus_price_entire_roundtrip']) && $wbbm_field['wbbm_bus_price_entire_roundtrip'] != '') {
                                     echo esc_attr($wbbm_field['wbbm_bus_price_entire_roundtrip']);
-                                } else {
-                                    echo 0;
-                                } ?>" class="text roundtrip-input"
+                                                                                                                 } else {
+                                                                                                                     echo 0;
+                                                                                                                 } ?>" class="text roundtrip-input"
                                        placeholder="<?php
-                                            $wbbm_entire_bus_label = wbbm_get_option( 'wbbm_entire_bus_text', 'wbbm_label_setting_sec' );
-                                            $wbbm_label_text = $wbbm_entire_bus_label ? $wbbm_entire_bus_label : __( 'Entire Bus', 'bus-booking-manager' );
+                                            $wbbm_entire_bus_label = wbbm_get_option('wbbm_entire_bus_text', 'wbbm_label_setting_sec');
+                                            $wbbm_label_text = $wbbm_entire_bus_label ? $wbbm_entire_bus_label : __('Entire Bus', 'bus-booking-manager');
 
-                                            echo esc_html( $wbbm_label_text ) . ' ' . esc_html__( 'return discount price', 'bus-booking-manager' );
-                                            ?>
+                                            echo esc_html($wbbm_label_text) . ' ' . esc_html__('return discount price', 'bus-booking-manager');
+                                        ?>
                                         ">
                             </td>
                         <?php endif; ?>
@@ -218,61 +220,61 @@ if (!defined('ABSPATH')) {
             <tr class="empty-row-price screen-reader-text">
                 <td>
                     <div class="wbbm_bus_route_select">
-                        <span class="wbbm_bus_route_icon wbbm_bus_route_icon1"><img src="<?php echo esc_url(WBTM_PLUGIN_URL .'images/bus_route_map.png');?>"/></span>
-                        <?php echo wp_kses_post(wbbm_get_bus_stops_list('wbbm_bus_bp_price_stop[]','ra_bus_bp_price_stop')); ?>
+                        <span class="wbbm_bus_route_icon wbbm_bus_route_icon1"><img src="<?php echo esc_url(WBTM_PLUGIN_URL . 'images/bus_route_map.png');?>"/></span>
+                        <?php echo wp_kses_post(wbbm_get_bus_stops_list('wbbm_bus_bp_price_stop[]', 'ra_bus_bp_price_stop')); ?>
                     </div>
                 </td>
                 <td>
                     <div class="wbbm_bus_route_select">
-                        <span class="wbbm_bus_route_icon wbbm_bus_route_icon1"><img src="<?php echo esc_url(WBTM_PLUGIN_URL .'images/bus_route_map.png');?>"/></span>
-                    <?php echo wp_kses_post(wbbm_get_bus_stops_list('wbbm_bus_dp_price_stop[]','ra_bus_dp_price_stop')); ?>
+                        <span class="wbbm_bus_route_icon wbbm_bus_route_icon1"><img src="<?php echo esc_url(WBTM_PLUGIN_URL . 'images/bus_route_map.png');?>"/></span>
+                    <?php echo wp_kses_post(wbbm_get_bus_stops_list('wbbm_bus_dp_price_stop[]', 'ra_bus_dp_price_stop')); ?>
                     </div>
                 </td>
                 <td class="wbbm-price-col">
                     <input step="0.01" type="number" name='wbbm_bus_price[]' value="" class="text">
-                    <?php if($wbbm_discount_price_switch=='on'){ ?>
+                    <?php if ($wbbm_discount_price_switch == 'on') { ?>
                         <input step="0.01" type="number" name='wbbm_bus_price_roundtrip[]' placeholder="<?php
-                            $wbbm_adult_label = esc_html(wbbm_get_option( 'wbbm_adult_text', 'wbbm_label_setting_sec' ));
-                            $wbbm_label_text = $wbbm_adult_label ? $wbbm_adult_label : __( 'Adult', 'bus-booking-manager' );
+                            $wbbm_adult_label = esc_html(wbbm_get_option('wbbm_adult_text', 'wbbm_label_setting_sec'));
+                            $wbbm_label_text = $wbbm_adult_label ? $wbbm_adult_label : __('Adult', 'bus-booking-manager');
 
-                            echo esc_html( $wbbm_label_text ) . ' ' . esc_html__( 'return discount price', 'bus-booking-manager' );
-                            ?>
+                            echo esc_html($wbbm_label_text) . ' ' . esc_html__('return discount price', 'bus-booking-manager');
+                        ?>
                             " value="" class="text roundtrip-input">
                     <?php } ?>
                 </td>
                 <td class="wbbm-price-col">
                     <input step="0.01" type="number" name='wbbm_bus_price_child[]' value="" class="text">
-                    <?php if($wbbm_discount_price_switch=='on'){ ?>
+                    <?php if ($wbbm_discount_price_switch == 'on') { ?>
                         <input step="0.01" type="number" name='wbbm_bus_price_child_roundtrip[]' placeholder="<?php
-                        $wbbm_child_label = esc_html(wbbm_get_option( 'wbbm_child_text', 'wbbm_label_setting_sec' ));
-                        $wbbm_label_text  = $wbbm_child_label ? $wbbm_child_label : __( 'Child', 'bus-booking-manager' );
+                        $wbbm_child_label = esc_html(wbbm_get_option('wbbm_child_text', 'wbbm_label_setting_sec'));
+                        $wbbm_label_text  = $wbbm_child_label ? $wbbm_child_label : __('Child', 'bus-booking-manager');
 
-                        echo esc_html( $wbbm_label_text ) . ' ' . esc_html__( 'return discount price', 'bus-booking-manager' );
+                        echo esc_html($wbbm_label_text) . ' ' . esc_html__('return discount price', 'bus-booking-manager');
                         ?>
                         " value="" class="text roundtrip-input">
                     <?php } ?>
                 </td>
                 <td class="wbbm-price-col">
                     <input step="0.01" type="number" name='wbbm_bus_price_infant[]' value="" class="text">
-                    <?php if($wbbm_discount_price_switch=='on'){ ?>
+                    <?php if ($wbbm_discount_price_switch == 'on') { ?>
                         <input step="0.01" type="number" name='wbbm_bus_price_infant_roundtrip[]' placeholder="<?php
-                            $wbbm_infant_label = wbbm_get_option( 'wbbm_infant_text', 'wbbm_label_setting_sec' );
-                            $wbbm_label_text   = $wbbm_infant_label ? $wbbm_infant_label : __( 'Infant', 'bus-booking-manager' );
+                            $wbbm_infant_label = wbbm_get_option('wbbm_infant_text', 'wbbm_label_setting_sec');
+                            $wbbm_label_text   = $wbbm_infant_label ? $wbbm_infant_label : __('Infant', 'bus-booking-manager');
 
-                            echo esc_html( $wbbm_label_text ) . ' ' . esc_html__( 'return discount price', 'bus-booking-manager' );
-                            ?>
+                            echo esc_html($wbbm_label_text) . ' ' . esc_html__('return discount price', 'bus-booking-manager');
+                        ?>
                             " value="" class="text roundtrip-input">
                     <?php } ?>
                 </td>
 
-                <?php if($entire_bus_booking == 'on'): ?>
+                <?php if ($entire_bus_booking == 'on') : ?>
                     <td class="wbbm-price-col">
                         <input step="0.01" type="number" name='wbbm_bus_price_entire[]' value="" class="text">
                         <input step="0.01" type="number" name='wbbm_bus_price_entire_roundtrip[]' placeholder="<?php
-                        $wbbm_entire_bus_label = wbbm_get_option( 'wbbm_entire_bus_text', 'wbbm_label_setting_sec' );
-                        $wbbm_label_text = $wbbm_entire_bus_label ? $wbbm_entire_bus_label : __( 'Entire Bus', 'bus-booking-manager' );
+                        $wbbm_entire_bus_label = wbbm_get_option('wbbm_entire_bus_text', 'wbbm_label_setting_sec');
+                        $wbbm_label_text = $wbbm_entire_bus_label ? $wbbm_entire_bus_label : __('Entire Bus', 'bus-booking-manager');
 
-                        echo esc_html( $wbbm_label_text ) . ' ' . esc_html__( 'return discount price', 'bus-booking-manager' );
+                        echo esc_html($wbbm_label_text) . ' ' . esc_html__('return discount price', 'bus-booking-manager');
                         ?>
                         " value="" class="text roundtrip-input">
                     </td>
@@ -337,39 +339,38 @@ if (!defined('ABSPATH')) {
                 <?php
 
                 if ($wbbm_mep_events_extra_prices) :
-
                     foreach ($wbbm_mep_events_extra_prices as $wbbm_field) {
                         $wbbm_qty_type = esc_attr($wbbm_field['option_qty_type']);
                         ?>
                         <tr>
                             <td><input type="text" class="mp_formControl" name="option_name[]" placeholder="Ex: Cap"
                                        value="<?php if ($wbbm_field['option_name'] != '') {
-                                           echo esc_attr($wbbm_field['option_name']);
-                                       } ?>"/></td>
+                                            echo esc_attr($wbbm_field['option_name']);
+                                              } ?>"/></td>
 
                             <td><input type="number" step="0.001" class="mp_formControl" name="option_price[]"
                                        placeholder="Ex: 10"
                                        value="<?php if ($wbbm_field['option_price'] != '') {
-                                           echo esc_attr($wbbm_field['option_price']);
-                                       } else {
-                                           echo '';
-                                       } ?>"/></td>
+                                            echo esc_attr($wbbm_field['option_price']);
+                                              } else {
+                                                  echo '';
+                                              } ?>"/></td>
 
                             <td><input type="number" class="mp_formControl" name="option_qty[]"
                                        placeholder="Ex: 100" value="<?php if ($wbbm_field['option_qty'] != '') {
-                                    echo esc_attr($wbbm_field['option_qty']);
-                                } else {
-                                    echo '';
-                                } ?>"/></td>
+                                            echo esc_attr($wbbm_field['option_qty']);
+                                                                    } else {
+                                                                        echo '';
+                                                                    } ?>"/></td>
 
                             <td align="center">
                                 <select name="option_qty_type[]" class='mp_formControl'>
                                     <option value="inputbox" <?php if ($wbbm_qty_type == 'inputbox') {
                                         echo "Selected";
-                                    } ?>><?php esc_html_e('Input Box', 'bus-booking-manager'); ?></option>
+                                                             } ?>><?php esc_html_e('Input Box', 'bus-booking-manager'); ?></option>
                                     <option value="dropdown" <?php if ($wbbm_qty_type == 'dropdown') {
                                         echo "Selected";
-                                    } ?>><?php esc_html_e('Dropdown List', 'bus-booking-manager'); ?></option>
+                                                             } ?>><?php esc_html_e('Dropdown List', 'bus-booking-manager'); ?></option>
                                 </select>
                             </td>
                             <td>

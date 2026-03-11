@@ -1,9 +1,12 @@
 <?php
-if (!defined('ABSPATH')) exit;
+
+if (!defined('ABSPATH')) {
+    exit;
+}
 
 /**
  * Bus Type Edit Page Class
- * 
+ *
  * Handles the custom modern edit/add page for bus types (taxonomy wbbm_bus_cat).
  */
 class BusTypeEditPageClass
@@ -146,7 +149,7 @@ class BusTypeEditPageClass
         $slug = $term ? $term->slug : '';
         $description = $term ? $term->description : '';
 
-?>
+        ?>
         <div class="wrap bus-edit-wrap">
             <div class="bus-edit-header">
                 <div style="display: flex; align-items: center; gap: 15px;">
@@ -208,7 +211,7 @@ class BusTypeEditPageClass
                 </form>
             </div>
         </div>
-<?php
+        <?php
     }
 }
 

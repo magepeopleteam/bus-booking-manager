@@ -1,11 +1,13 @@
 <?php
-if (!defined('ABSPATH')) exit;  // if direct access
+
+if (!defined('ABSPATH')) {
+    exit;  // if direct access
+}
 
 class ShortCodeClass extends SearchClass
 {
     public function __construct()
     {
-
     }
 
     function mage_bus_search_form($atts)
@@ -14,7 +16,7 @@ class ShortCodeClass extends SearchClass
         $defaults = array("style" => false, "result-page" => '');
         // Extract parameters with sanitization
         $params = shortcode_atts($defaults, $atts);
-        
+
         // Sanitize the result page target
         $global_target = wbbm_get_option('wbbm_search_result_page', 'wbbm_general_setting_sec', 'bus-search');
         $target = !empty($params['result-page']) ? sanitize_title($params['result-page']) : sanitize_title($global_target);

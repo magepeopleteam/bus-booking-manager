@@ -1,9 +1,12 @@
 <?php
-if (!defined('ABSPATH')) exit;  // if direct access
+
+if (!defined('ABSPATH')) {
+    exit;  // if direct access
+}
 
 /**
  * Shuttle Meta Box Class
- * 
+ *
  * Handles all meta boxes for shuttle configuration:
  * - Basic settings (capacity, vehicle type, shuttle type)
  * - Boarding points management
@@ -25,7 +28,7 @@ class ShuttleMetaBoxClass
 
         // AJAX for real-time pricing matrix
         add_action('wp_ajax_wbbm_update_pricing_matrix', array($this, 'wbbm_ajax_get_updated_pricing_matrix'));
-        
+
         // AJAX for real-time schedule layout
         add_action('wp_ajax_wbbm_update_schedule_layout', array($this, 'wbbm_ajax_get_updated_schedule_layout'));
     }
@@ -56,7 +59,7 @@ class ShuttleMetaBoxClass
         $cpt_label = sanitize_text_field(wbbm_get_option('wbbm_shuttle_cpt_label', 'wbbm_general_setting_sec', __('Shuttle', 'bus-booking-manager')));
 
         wp_nonce_field('wbbm_shuttle_settings_nonce', 'wbbm_shuttle_settings_nonce');
-?>
+        ?>
         <div class="wbtm_style mp_event_all_meta_in_tab mp_event_tab_area">
             <div class="mp_tab_menu">
                 <ul>
@@ -88,7 +91,7 @@ class ShuttleMetaBoxClass
                 ?>
             </div>
         </div>
-    <?php
+        <?php
     }
 
     /**
@@ -113,7 +116,7 @@ class ShuttleMetaBoxClass
             'hide_empty' => false
         ));
 
-    ?>
+        ?>
         <div id="wbbm_shuttle_basic" class="mp_tab_item tab-content active" data-tab-item="#wbbm_shuttle_basic">
             <h3 class="wbbm_mp_tab_item_heading">
                 <img src="<?php echo esc_url(WBTM_PLUGIN_URL . 'images/bus_arrow_left.png'); ?>" />
@@ -192,7 +195,7 @@ class ShuttleMetaBoxClass
                 </div>
             </div>
         </div>
-    <?php
+        <?php
     }
 
     /**
@@ -208,7 +211,7 @@ class ShuttleMetaBoxClass
             'hide_empty' => false
         ));
 
-    ?>
+        ?>
         <div id="wbbm_shuttle_routing" class="mp_tab_item" data-tab-item="#wbbm_shuttle_routing">
             <h3 class="wbbm_mp_tab_item_heading">
                 <img src="<?php echo esc_url(WBTM_PLUGIN_URL . 'images/bus_arrow_left.png'); ?>" />
@@ -248,7 +251,7 @@ class ShuttleMetaBoxClass
                 </div>
             </div>
         </div>
-    <?php
+        <?php
     }
 
     /**
@@ -263,7 +266,7 @@ class ShuttleMetaBoxClass
         // Ensure ID
         $route_id = isset($data['id']) ? $data['id'] : ($index === '{{route_index}}' ? '{{route_index}}' : uniqid('route_'));
 
-    ?>
+        ?>
         <div class="wbbm_route_row <?php echo !is_string($index) ? 'active' : ''; ?>" data-index="<?php echo esc_attr($index); ?>">
             <input type="hidden" name="wbbm_shuttle_routes[<?php echo esc_attr($index); ?>][id]" value="<?php echo esc_attr($route_id); ?>">
             <div class="wbbm_route_header">
@@ -323,7 +326,7 @@ class ShuttleMetaBoxClass
                 </div>
             </div>
         </div>
-    <?php
+        <?php
     }
 
     /**
@@ -336,7 +339,7 @@ class ShuttleMetaBoxClass
         $distance = isset($data['distance']) ? $data['distance'] : '0';
         $pickup_points = isset($data['pickup_points']) ? $data['pickup_points'] : '';
         $dropoff_points = isset($data['dropoff_points']) ? $data['dropoff_points'] : '';
-    ?>
+        ?>
         <div class="wbbm_route_stop_row">
             <span class="wbbm_stop_drag_handle dashicons dashicons-move"></span>
 
@@ -398,7 +401,7 @@ class ShuttleMetaBoxClass
                 </button>
             </div>
         </div>
-    <?php
+        <?php
     }
 
     /**
@@ -409,7 +412,7 @@ class ShuttleMetaBoxClass
         $routes = maybe_unserialize(get_post_meta($post_id, 'wbbm_shuttle_routes', true)) ?: array();
         $pricing = maybe_unserialize(get_post_meta($post_id, 'wbbm_shuttle_pricing', true)) ?: array();
 
-    ?>
+        ?>
         <div id="wbbm_shuttle_pricing" class="mp_tab_item" data-tab-item="#wbbm_shuttle_pricing">
             <h3 class="wbbm_mp_tab_item_heading">
                 <img src="<?php echo esc_url(WBTM_PLUGIN_URL . 'images/bus_arrow_left.png'); ?>" />
@@ -422,7 +425,7 @@ class ShuttleMetaBoxClass
                 </div>
             </div>
         </div>
-    <?php
+        <?php
     }
 
     /**
@@ -430,20 +433,24 @@ class ShuttleMetaBoxClass
      */
     public function render_pricing_matrix($routes, $pricing)
     {
-        if (empty($routes)): ?>
+        if (empty($routes)) : ?>
             <div class="notice notice-warning inline" style="margin: 0;">
                 <p><?php _e('Please define and save Routes first to configure pricing.', 'bus-booking-manager'); ?></p>
             </div>
-        <?php else: ?>
+        <?php else : ?>
             <p class="description"><?php echo esc_html(__('Set prices for each stop-to-stop combination. Leaving a field empty implies service is not available for that segment.', 'bus-booking-manager')); ?></p>
 
-            <?php foreach ($routes as $route):
+            <?php foreach ($routes as $route) :
                 $route_id = isset($route['id']) ? $route['id'] : '';
-                if (!$route_id) continue;
+                if (!$route_id) {
+                    continue;
+                }
 
                 $route_stops = isset($route['stops']) ? $route['stops'] : array();
-                if (count($route_stops) < 2) continue;
-            ?>
+                if (count($route_stops) < 2) {
+                    continue;
+                }
+                ?>
                 <div class="wbbm_route_pricing_block" style="margin-bottom: 30px; border: 1px solid #ddd; padding: 15px; background: #fff;">
                     <h4><?php printf(esc_html__('Route: %s', 'bus-booking-manager'), esc_html($route['name'])); ?></h4>
                     <div style="overflow-x: auto;">
@@ -460,7 +467,9 @@ class ShuttleMetaBoxClass
                                 <?php
                                 for ($i = 0; $i < count($route_stops) - 1; $i++) {
                                     $origin = isset($route_stops[$i]['location']) ? $route_stops[$i]['location'] : '';
-                                    if (!$origin) continue;
+                                    if (!$origin) {
+                                        continue;
+                                    }
 
                                     echo '<tr>';
                                     echo '<th>' . esc_html($origin) . '</th>';
@@ -531,7 +540,7 @@ class ShuttleMetaBoxClass
 
         $post_id = isset($_POST['post_id']) ? absint($_POST['post_id']) : 0;
         $routes = isset($_POST['routes']) ? $_POST['routes'] : array();
-        
+
         // Load existing pricing to preserve values
         $existing_pricing = maybe_unserialize(get_post_meta($post_id, 'wbbm_shuttle_pricing', true)) ?: array();
 
@@ -581,7 +590,7 @@ class ShuttleMetaBoxClass
 
         $post_id = isset($_POST['post_id']) ? absint($_POST['post_id']) : 0;
         $routes = isset($_POST['routes']) ? $_POST['routes'] : array();
-        
+
         // Load existing schedule to preserve values
         $existing_schedule = maybe_unserialize(get_post_meta($post_id, 'wbbm_shuttle_schedule', true)) ?: array();
 
@@ -625,8 +634,8 @@ class ShuttleMetaBoxClass
     {
         $routes = maybe_unserialize(get_post_meta($post_id, 'wbbm_shuttle_routes', true)) ?: array();
         $schedule = maybe_unserialize(get_post_meta($post_id, 'wbbm_shuttle_schedule', true)) ?: array();
-        
-    ?>
+
+        ?>
         <div id="wbbm_shuttle_schedule" class="mp_tab_item" data-tab-item="#wbbm_shuttle_schedule">
             <h3 class="wbbm_mp_tab_item_heading">
                 <img src="<?php echo esc_url(WBTM_PLUGIN_URL . 'images/bus_arrow_left.png'); ?>" />
@@ -639,27 +648,31 @@ class ShuttleMetaBoxClass
                 </div>
             </div>
         </div>
-    <?php
+        <?php
     }
 
     public function render_schedule_layout($routes, $schedule)
     {
-        if (empty($routes)): ?>
+        if (empty($routes)) : ?>
             <div class="notice notice-warning inline" style="margin: 0;">
                 <p><?php _e('Please define and save Routes first to configure schedules.', 'bus-booking-manager'); ?></p>
             </div>
-        <?php else: ?>
+        <?php else : ?>
             <p class="description"><?php echo esc_html(__('Define departure times for each route.', 'bus-booking-manager')); ?></p>
 
-            <?php foreach ($routes as $route):
+            <?php foreach ($routes as $route) :
                 $route_id = isset($route['id']) ? $route['id'] : '';
-                if (!$route_id) continue;
+                if (!$route_id) {
+                    continue;
+                }
 
                 $route_stops = isset($route['stops']) ? $route['stops'] : array();
-                if (count($route_stops) < 2) continue;
+                if (count($route_stops) < 2) {
+                    continue;
+                }
 
                 $route_schedule = isset($schedule[$route_id]) ? $schedule[$route_id] : array();
-            ?>
+                ?>
                 <div class="wbbm_route_schedule_block" data-route-id="<?php echo esc_attr($route_id); ?>" style="margin-bottom: 20px; border: 1px solid #ddd; padding: 15px; background: #fff;">
                     <h4><?php printf(esc_html__('Schedule for: %s', 'bus-booking-manager'), esc_html($route['name'])); ?></h4>
 
@@ -680,7 +693,7 @@ class ShuttleMetaBoxClass
                         </button>
                     </div>
 
-                    <?php if (isset($route['type']) && $route['type'] === 'round-trip'): ?>
+                    <?php if (isset($route['type']) && $route['type'] === 'round-trip') : ?>
                         <div class="wbbm_schedule_section_return" style="margin-top: 20px; border-top: 1px dashed #ccc; padding-top: 10px;">
                             <h5 style="margin: 10px 0; border-bottom: 1px solid #eee; padding-bottom: 5px;"><?php _e('Return Journey', 'bus-booking-manager'); ?></h5>
                             <div class="wbbm_schedule_rows" data-direction="return">
@@ -725,7 +738,7 @@ class ShuttleMetaBoxClass
         );
 
         $name_prefix = "wbbm_shuttle_schedule[{$route_id}][{$direction}][{$index}]";
-    ?>
+        ?>
         <div class="wbbm_schedule_row" style="display: flex; gap: 15px; border-bottom: 1px dashed #eee; padding-bottom: 10px; margin-bottom: 10px; align-items: self-end;">
             <div style="width: 150px;">
                 <label style="display: block; font-size: 11px; margin-bottom: 2px;"><?php _e('Departure Time', 'bus-booking-manager'); ?></label>
@@ -739,7 +752,7 @@ class ShuttleMetaBoxClass
             <div class="wbbm_schedule_days_wrapper">
                 <label style="display: block; font-size: 11px; margin-bottom: 2px;"><?php _e('Operating Days', 'bus-booking-manager'); ?></label>
                 <div class="wbbm_schedule_days" style="display: flex; gap: 10px; flex-wrap: wrap;">
-                    <?php foreach ($days_of_week as $key => $label): ?>
+                    <?php foreach ($days_of_week as $key => $label) : ?>
                         <label style="font-size: 12px;">
                             <input type="checkbox"
                                 name="<?php echo $name_prefix; ?>[days][]"
@@ -756,7 +769,7 @@ class ShuttleMetaBoxClass
                 </button>
             </div>
         </div>
-    <?php
+        <?php
     }
 
     /**
@@ -764,7 +777,7 @@ class ShuttleMetaBoxClass
      */
     public function wbbm_shuttle_extra_services($post_id)
     {
-    ?>
+        ?>
         <div id="wbbm_shuttle_extra" class="mp_tab_item" data-tab-item="#wbbm_shuttle_extra">
             <h3 class="wbbm_mp_tab_item_heading">
                 <img src="<?php echo esc_url(WBTM_PLUGIN_URL . 'images/bus_arrow_left.png'); ?>" />
@@ -777,7 +790,7 @@ class ShuttleMetaBoxClass
                 </div>
             </div>
         </div>
-<?php
+        <?php
     }
 
     /**
@@ -863,8 +876,12 @@ class ShuttleMetaBoxClass
                             if (is_array($price)) {
                                 // Handle Oneway / Roundtrip structure
                                 $p_data = array();
-                                if (isset($price['oneway']) && $price['oneway'] !== '') $p_data['oneway'] = sanitize_text_field($price['oneway']);
-                                if (isset($price['roundtrip']) && $price['roundtrip'] !== '') $p_data['roundtrip'] = sanitize_text_field($price['roundtrip']);
+                                if (isset($price['oneway']) && $price['oneway'] !== '') {
+                                    $p_data['oneway'] = sanitize_text_field($price['oneway']);
+                                }
+                                if (isset($price['roundtrip']) && $price['roundtrip'] !== '') {
+                                    $p_data['roundtrip'] = sanitize_text_field($price['roundtrip']);
+                                }
 
                                 if (!empty($p_data)) {
                                     $pricing['routes'][$r_id][sanitize_text_field($origin)][sanitize_text_field($dest)] = $p_data;

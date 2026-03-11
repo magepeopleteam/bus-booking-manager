@@ -9,7 +9,7 @@ if (!defined('ABSPATH')) {
     <h3 class="wbbm_mp_tab_item_heading">
         <?php echo esc_html($cpt_label) . ' ' . esc_html__('On & Off Day Settings', 'bus-booking-manager'); ?>
     </h3>
-    <p><?php 
+    <p><?php
     /* translators: %s: post type general name */
     printf(esc_html__('Here you can configure %s On & Off Day.', 'bus-booking-manager'), esc_html($cpt_label)); ?></p>
 
@@ -25,7 +25,7 @@ if (!defined('ABSPATH')) {
             <div>
                 <label><?php esc_html_e('Enable Operation days', 'bus-booking-manager'); ?></label>
                 <br>
-                <span><?php 
+                <span><?php
                 /* translators: %s: post type general name */
                 printf(esc_html__('If you want to operate %s on a certain date, please enable it and configure operational day.', 'bus-booking-manager'), esc_html($cpt_label)); ?></span>
             </div>
@@ -47,13 +47,14 @@ if (!defined('ABSPATH')) {
                     <span><?php esc_html_e('You can add specific dates for operations', 'bus-booking-manager'); ?></span>
                 </div>
                 <div>
-                    <?php foreach ($wbbm_wbtm_bus_on_date as $wbbm_date) : 
+                    <?php foreach ($wbbm_wbtm_bus_on_date as $wbbm_date) :
                         if (!empty($wbbm_date)) : ?>
                         <div class="operate-day-row">
                             <input type="text" class="ra_bus_on_date datepicker_has" id="bus_on_date" name="wbtm_bus_on_date[]" value="<?php echo esc_attr($wbbm_date); ?>" placeholder="2024-04-30" />
                             <a class="button remove-bp-row" href="#"><i class="fas fa-minus-circle"></i><?php esc_html_e('Remove', 'bus-booking-manager'); ?></a>
                         </div>
-                    <?php endif; endforeach; ?>
+                        <?php endif;
+                    endforeach; ?>
 
                     <div id="operate-date-area">
                         <div class="empty-row-operate-day screen-reader-text">
@@ -102,7 +103,7 @@ if (!defined('ABSPATH')) {
             <div>
                 <label><?php esc_html_e('Off Day Settings', 'bus-booking-manager'); ?></label>
                 <br>
-                <span><?php 
+                <span><?php
                 /* translators: %s: post type general name */
                 printf(esc_html__('If you need to keep %s off for a certain date please enable it and configure off day.', 'bus-booking-manager'), esc_html($cpt_label)); ?></span>
             </div>
@@ -175,7 +176,7 @@ if (!defined('ABSPATH')) {
                                             <a class="button remove-bp-row" href="#"><i class="fas fa-minus-circle"></i><?php esc_html_e('Remove', 'bus-booking-manager'); ?></a>
                                         </td>
                                     </tr>
-                                <?php $wbbm_count++;
+                                    <?php $wbbm_count++;
                                 endforeach;
                             endif; ?>
                             <script>
@@ -257,7 +258,7 @@ if (!defined('ABSPATH')) {
                 <div>
                     <label><?php echo esc_html($cpt_label) . ' ' . esc_html__('Off days', 'bus-booking-manager'); ?></label>
                     <br>
-                    <span><?php 
+                    <span><?php
                     /* translators: %s: post type general name */
                     printf(esc_html__('Check %s off days.', 'bus-booking-manager'), esc_html($cpt_label)); ?></span>
                 </div>
@@ -279,7 +280,7 @@ if (!defined('ABSPATH')) {
                             <input type="checkbox" style="text-align: left;width: auto;" name="weekly_offday[]" value="<?php echo esc_attr($wbbm_day_values[$wbbm_i]); ?>" id="<?php echo esc_attr($wbbm_day_id); ?>" <?php checked(in_array($wbbm_day_values[$wbbm_i], $weekly_offday)); ?>>
                             <?php echo esc_html($wbbm_day_name); ?>
                         </label>
-                    <?php
+                        <?php
                         $wbbm_i++;
                     endforeach;
                     ?>

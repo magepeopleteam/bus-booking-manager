@@ -1,11 +1,12 @@
 <?php
+
 if (!defined('ABSPATH')) {
     die;
 } // Cannot access pages directly.
 
 /**
  * Register Shuttle Custom Post Types
- * 
+ *
  * This file registers two custom post types:
  * 1. wbbm_shuttle - For shuttle services (Airport, Hotel, Corporate)
  * 2. wbbm_shuttle_booking - For shuttle booking records

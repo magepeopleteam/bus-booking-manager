@@ -1,19 +1,43 @@
 <?php
-if (!defined('ABSPATH')) exit;
+
+if (!defined('ABSPATH')) {
+    exit;
+}
 
 /**
  * Shuttle Edit Page Class
- * 
+ *
  * Handles the custom multi-step edit page for shuttles.
  */
 class ShuttleEditPageClass
 {
+    private function get_shuttle_edit_url($post_id = 0, $extra_args = array())
+    {
+        $args = array(
+            'post_type' => 'wbbm_shuttle',
+            'page'      => 'wbbm-shuttle-edit',
+        );
+
+        if ($post_id > 0) {
+            $args['post_id'] = $post_id;
+        }
+
+        if (!empty($extra_args)) {
+            $args = array_merge($args, $extra_args);
+        }
+
+        return add_query_arg($args, admin_url('edit.php'));
+    }
+
     public function __construct()
     {
         add_action('admin_menu', array($this, 'register_shuttle_edit_page'));
         add_action('admin_enqueue_scripts', array($this, 'enqueue_assets'));
+        add_action('admin_head', array($this, 'hide_shuttle_edit_submenu'));
         add_action('admin_init', array($this, 'handle_shuttle_save'));
         add_filter('post_row_actions', array($this, 'add_custom_edit_link'), 10, 2);
+        add_filter('parent_file', array($this, 'set_parent_menu'));
+        add_filter('submenu_file', array($this, 'set_submenu_active'));
 
         // AJAX Save
         add_action('wp_ajax_wbbm_save_shuttle_ajax', array($this, 'handle_shuttle_save_ajax'));
@@ -25,6 +49,30 @@ class ShuttleEditPageClass
         add_action('current_screen', array($this, 'redirect_to_custom_edit'));
 
         add_filter('admin_body_class', array($this, 'add_admin_body_class'));
+    }
+
+    /**
+     * Sanitize scalar text input while tolerating null nested values.
+     */
+    private function sanitize_text_value($value)
+    {
+        if (!is_scalar($value) || $value === null) {
+            return '';
+        }
+
+        return sanitize_text_field(wp_unslash((string) $value));
+    }
+
+    /**
+     * Sanitize scalar textarea input while tolerating null nested values.
+     */
+    private function sanitize_textarea_value($value)
+    {
+        if (!is_scalar($value) || $value === null) {
+            return '';
+        }
+
+        return sanitize_textarea_field(wp_unslash((string) $value));
     }
 
     /**
@@ -46,7 +94,7 @@ class ShuttleEditPageClass
     {
         $screen = get_current_screen();
         if ($screen && $screen->id === 'wbbm_shuttle' && $screen->action === 'add') {
-            wp_redirect(admin_url('admin.php?page=wbbm-shuttle-edit'));
+            wp_safe_redirect($this->get_shuttle_edit_url());
             exit;
         }
     }
@@ -56,15 +104,48 @@ class ShuttleEditPageClass
      */
     public function register_shuttle_edit_page()
     {
-        // Create a hidden page by setting parent slug to null
+        $parent_slug = 'edit.php?post_type=wbbm_shuttle';
+
         add_submenu_page(
-            null,
+            $parent_slug,
             __('Add New', 'bus-booking-manager'),
             __('Add New', 'bus-booking-manager'),
             'manage_options',
             'wbbm-shuttle-edit',
             array($this, 'render_shuttle_edit_page')
         );
+    }
+
+    public function hide_shuttle_edit_submenu()
+    {
+        if (!current_user_can('manage_options')) {
+            return;
+        }
+        ?>
+        <style>
+            #adminmenu a[href="edit.php?post_type=wbbm_shuttle&page=wbbm-shuttle-edit"] {
+                display: none;
+            }
+        </style>
+        <?php
+    }
+
+    public function set_parent_menu($parent_file)
+    {
+        if (isset($_GET['page']) && $_GET['page'] === 'wbbm-shuttle-edit') {
+            return 'edit.php?post_type=wbbm_shuttle';
+        }
+
+        return $parent_file;
+    }
+
+    public function set_submenu_active($submenu_file)
+    {
+        if (isset($_GET['page']) && $_GET['page'] === 'wbbm-shuttle-edit') {
+            return 'wbbm-shuttle-list';
+        }
+
+        return $submenu_file;
     }
 
     /**
@@ -77,11 +158,8 @@ class ShuttleEditPageClass
         }
 
         $custom_edit_url = add_query_arg(
-            array(
-                'page'      => 'wbbm-shuttle-edit',
-                'post_id'   => $post->ID
-            ),
-            admin_url('admin.php')
+            array(),
+            $this->get_shuttle_edit_url($post->ID)
         );
 
         $actions['custom_edit'] = '<a href="' . esc_url($custom_edit_url) . '" style="color:#7c3aed;font-weight:bold;">' . __('Advanced Edit', 'bus-booking-manager') . '</a>';
@@ -138,27 +216,27 @@ class ShuttleEditPageClass
             foreach ($_POST['wbbm_shuttle_routes'] as $route) {
                 if (!empty($route['name'])) {
                     $clean_route = array(
-                        'name' => sanitize_text_field($route['name']),
-                        'type' => isset($route['type']) ? sanitize_text_field($route['type']) : 'one-way',
-                        'id'   => isset($route['id']) ? sanitize_text_field($route['id']) : uniqid('route_'),
+                        'name' => $this->sanitize_text_value($route['name']),
+                        'type' => isset($route['type']) ? $this->sanitize_text_value($route['type']) : 'one-way',
+                        'id'   => isset($route['id']) ? $this->sanitize_text_value($route['id']) : uniqid('route_'),
                         'stops' => array()
                     );
 
                     if (isset($route['stops']) && is_array($route['stops'])) {
                         foreach ($route['stops'] as $stop) {
                             $clean_route['stops'][] = array(
-                                'location' => sanitize_text_field($stop['location']),
-                                'time_offset' => sanitize_text_field($stop['time_offset']),
-                                'distance' => sanitize_text_field($stop['distance']),
-                                'pickup_points' => isset($stop['pickup_points']) ? sanitize_textarea_field($stop['pickup_points']) : '',
-                                'dropoff_points' => isset($stop['dropoff_points']) ? sanitize_textarea_field($stop['dropoff_points']) : ''
+                                'location' => $this->sanitize_text_value(isset($stop['location']) ? $stop['location'] : ''),
+                                'time_offset' => $this->sanitize_text_value(isset($stop['time_offset']) ? $stop['time_offset'] : ''),
+                                'distance' => $this->sanitize_text_value(isset($stop['distance']) ? $stop['distance'] : ''),
+                                'pickup_points' => isset($stop['pickup_points']) ? $this->sanitize_textarea_value($stop['pickup_points']) : '',
+                                'dropoff_points' => isset($stop['dropoff_points']) ? $this->sanitize_textarea_value($stop['dropoff_points']) : ''
                             );
                         }
                     }
                     $routes[] = $clean_route;
                 }
             }
-        } else if ($post_id) {
+        } elseif ($post_id) {
             $routes = maybe_unserialize(get_post_meta($post_id, 'wbbm_shuttle_routes', true)) ?: array();
         }
 
@@ -188,27 +266,27 @@ class ShuttleEditPageClass
             foreach ($_POST['wbbm_shuttle_routes'] as $route) {
                 if (!empty($route['name'])) {
                     $clean_route = array(
-                        'name' => sanitize_text_field($route['name']),
-                        'type' => isset($route['type']) ? sanitize_text_field($route['type']) : 'one-way',
-                        'id'   => isset($route['id']) ? sanitize_text_field($route['id']) : uniqid('route_'),
+                        'name' => $this->sanitize_text_value($route['name']),
+                        'type' => isset($route['type']) ? $this->sanitize_text_value($route['type']) : 'one-way',
+                        'id'   => isset($route['id']) ? $this->sanitize_text_value($route['id']) : uniqid('route_'),
                         'stops' => array()
                     );
 
                     if (isset($route['stops']) && is_array($route['stops'])) {
                         foreach ($route['stops'] as $stop) {
                             $clean_route['stops'][] = array(
-                                'location' => sanitize_text_field($stop['location']),
-                                'time_offset' => sanitize_text_field($stop['time_offset']),
-                                'distance' => sanitize_text_field($stop['distance']),
-                                'pickup_points' => isset($stop['pickup_points']) ? sanitize_textarea_field($stop['pickup_points']) : '',
-                                'dropoff_points' => isset($stop['dropoff_points']) ? sanitize_textarea_field($stop['dropoff_points']) : ''
+                                'location' => $this->sanitize_text_value(isset($stop['location']) ? $stop['location'] : ''),
+                                'time_offset' => $this->sanitize_text_value(isset($stop['time_offset']) ? $stop['time_offset'] : ''),
+                                'distance' => $this->sanitize_text_value(isset($stop['distance']) ? $stop['distance'] : ''),
+                                'pickup_points' => isset($stop['pickup_points']) ? $this->sanitize_textarea_value($stop['pickup_points']) : '',
+                                'dropoff_points' => isset($stop['dropoff_points']) ? $this->sanitize_textarea_value($stop['dropoff_points']) : ''
                             );
                         }
                     }
                     $routes[] = $clean_route;
                 }
             }
-        } else if ($post_id) {
+        } elseif ($post_id) {
             $routes = maybe_unserialize(get_post_meta($post_id, 'wbbm_shuttle_routes', true)) ?: array();
         }
 
@@ -240,12 +318,16 @@ class ShuttleEditPageClass
         }
 
         if (!isset($_POST['wbbm_shuttle_nonce']) || !wp_verify_nonce($_POST['wbbm_shuttle_nonce'], 'wbbm_shuttle_save')) {
-            if ($is_ajax) wp_send_json_error('Nonce verification failed');
+            if ($is_ajax) {
+                wp_send_json_error('Nonce verification failed');
+            }
             return;
         }
 
         if (!current_user_can('manage_options')) {
-            if ($is_ajax) wp_send_json_error('Unauthorized');
+            if ($is_ajax) {
+                wp_send_json_error('Unauthorized');
+            }
             return;
         }
 
@@ -311,20 +393,20 @@ class ShuttleEditPageClass
                 foreach ($_POST['wbbm_shuttle_routes'] as $route) {
                     if (!empty($route['name'])) {
                         $clean_route = array(
-                            'name' => sanitize_text_field($route['name']),
-                            'type' => isset($route['type']) ? sanitize_text_field($route['type']) : 'one-way',
-                            'id'   => isset($route['id']) ? sanitize_text_field($route['id']) : uniqid('route_'),
+                            'name' => $this->sanitize_text_value($route['name']),
+                            'type' => isset($route['type']) ? $this->sanitize_text_value($route['type']) : 'one-way',
+                            'id'   => isset($route['id']) ? $this->sanitize_text_value($route['id']) : uniqid('route_'),
                             'stops' => array()
                         );
 
                         if (isset($route['stops']) && is_array($route['stops'])) {
                             foreach ($route['stops'] as $stop) {
                                 $clean_route['stops'][] = array(
-                                    'location' => sanitize_text_field($stop['location']),
-                                    'time_offset' => sanitize_text_field($stop['time_offset']),
-                                    'distance' => sanitize_text_field($stop['distance']),
-                                    'pickup_points' => isset($stop['pickup_points']) ? sanitize_textarea_field($stop['pickup_points']) : '',
-                                    'dropoff_points' => isset($stop['dropoff_points']) ? sanitize_textarea_field($stop['dropoff_points']) : ''
+                                    'location' => $this->sanitize_text_value(isset($stop['location']) ? $stop['location'] : ''),
+                                    'time_offset' => $this->sanitize_text_value(isset($stop['time_offset']) ? $stop['time_offset'] : ''),
+                                    'distance' => $this->sanitize_text_value(isset($stop['distance']) ? $stop['distance'] : ''),
+                                    'pickup_points' => isset($stop['pickup_points']) ? $this->sanitize_textarea_value($stop['pickup_points']) : '',
+                                    'dropoff_points' => isset($stop['dropoff_points']) ? $this->sanitize_textarea_value($stop['dropoff_points']) : ''
                                 );
                             }
                         }
@@ -344,15 +426,19 @@ class ShuttleEditPageClass
                             foreach ($dests as $dest => $price) {
                                 if (is_array($price)) {
                                     $p_data = array();
-                                    if (isset($price['oneway']) && $price['oneway'] !== '') $p_data['oneway'] = sanitize_text_field($price['oneway']);
-                                    if (isset($price['roundtrip']) && $price['roundtrip'] !== '') $p_data['roundtrip'] = sanitize_text_field($price['roundtrip']);
+                                    if (isset($price['oneway']) && $price['oneway'] !== '') {
+                                        $p_data['oneway'] = sanitize_text_field($price['oneway']);
+                                    }
+                                    if (isset($price['roundtrip']) && $price['roundtrip'] !== '') {
+                                        $p_data['roundtrip'] = sanitize_text_field($price['roundtrip']);
+                                    }
 
                                     if (!empty($p_data)) {
-                                        $pricing['routes'][$r_id][sanitize_text_field($origin)][sanitize_text_field($dest)] = $p_data;
+                                        $pricing['routes'][$r_id][$this->sanitize_text_value($origin)][$this->sanitize_text_value($dest)] = $p_data;
                                     }
                                 } else {
                                     if ($price !== '') {
-                                        $pricing['routes'][$r_id][sanitize_text_field($origin)][sanitize_text_field($dest)] = sanitize_text_field($price);
+                                        $pricing['routes'][$r_id][$this->sanitize_text_value($origin)][$this->sanitize_text_value($dest)] = $this->sanitize_text_value($price);
                                     }
                                 }
                             }
@@ -368,16 +454,20 @@ class ShuttleEditPageClass
         if (isset($_POST['wbbm_shuttle_schedule']) && is_array($_POST['wbbm_shuttle_schedule'])) {
             // Sanitize schedule data
             foreach ($_POST['wbbm_shuttle_schedule'] as $r_id => $r_data) {
-                if (!is_array($r_data)) continue;
+                if (!is_array($r_data)) {
+                    continue;
+                }
 
                 foreach (['forward', 'return'] as $dir) {
                     if (isset($r_data[$dir]) && is_array($r_data[$dir])) {
                         foreach ($r_data[$dir] as $idx => $time_data) {
-                            if (empty($time_data['time'])) continue;
+                            if (empty($time_data['time'])) {
+                                continue;
+                            }
 
-                            $schedule[sanitize_text_field($r_id)][$dir][] = array(
-                                'time' => sanitize_text_field($time_data['time']),
-                                'days' => isset($time_data['days']) ? array_map('sanitize_text_field', (array)$time_data['days']) : array()
+                            $schedule[$this->sanitize_text_value($r_id)][$dir][] = array(
+                                'time' => $this->sanitize_text_value($time_data['time']),
+                                'days' => isset($time_data['days']) ? array_map(array($this, 'sanitize_text_value'), (array) $time_data['days']) : array()
                             );
                         }
                     }
@@ -402,15 +492,15 @@ class ShuttleEditPageClass
             exit;
         }
 
-        $redirect_args = array('page' => 'wbbm-shuttle-edit', 'post_id' => $post_id, 'saved' => '1');
+        $redirect_args = array('saved' => '1');
         if ($next_step) {
             $redirect_args['step'] = $next_step;
-        } else if ($current_step) {
+        } elseif ($current_step) {
             $redirect_args['step'] = $current_step;
         }
 
         // Redirect to avoid resubmission
-        wp_redirect(add_query_arg($redirect_args, admin_url('edit.php?post_type=wbbm_shuttle')));
+        wp_safe_redirect($this->get_shuttle_edit_url($post_id, $redirect_args));
         exit;
     }
 
@@ -512,7 +602,7 @@ class ShuttleEditPageClass
 
         $selected_stops = $post_id ? wp_get_post_terms($post_id, 'wbbm_shuttle_stops', array('fields' => 'ids')) : array();
 
-?>
+        ?>
         <div class="wrap shuttle-edit-wrap">
             <div class="shuttle-container">
                 <div class="shuttle-edit-header">
@@ -731,9 +821,9 @@ class ShuttleEditPageClass
                                     <label><?php _e('Route Type', 'bus-booking-manager'); ?></label>
                                     <select name="wbbm_shuttle_routes[0][type]" class="form-control">
                                         <option value="one-way" <?php selected($route['type'], 'one-way'); ?>><?php _e('One Way', 'bus-booking-manager'); ?></option>
-                                        <!-- <option value="round-trip" <?php //selected($route['type'], 'round-trip'); 
-                                                                        ?>><?php //_e('Round Trip', 'bus-booking-manager'); 
-                                                                            ?></option> -->
+                                        <!-- <option value="round-trip" <?php //selected($route['type'], 'round-trip');
+                                        ?>><?php //_e('Round Trip', 'bus-booking-manager');
+?></option> -->
                                     </select>
                                 </div>
                             </div>
@@ -812,7 +902,7 @@ class ShuttleEditPageClass
         <script type="text/html" id="wbbm_schedule_row_template">
             <?php $this->render_schedule_row('{{route_id}}', '{{time_index}}', array(), '{{direction}}'); ?>
         </script>
-    <?php
+        <?php
     }
 
     /**
@@ -825,7 +915,7 @@ class ShuttleEditPageClass
         $distance = isset($data['distance']) ? $data['distance'] : '0';
         $pickup_points = isset($data['pickup_points']) ? $data['pickup_points'] : '';
         $dropoff_points = isset($data['dropoff_points']) ? $data['dropoff_points'] : '';
-    ?>
+        ?>
         <div class="wbbm_route_stop_row" data-index="<?php echo esc_attr($stop_index); ?>">
             <span class="wbbm_stop_drag_handle dashicons dashicons-move"></span>
 
@@ -891,11 +981,15 @@ class ShuttleEditPageClass
 
             <?php foreach ($routes as $route) :
                 $route_id = isset($route['id']) ? $route['id'] : '';
-                if (!$route_id) continue;
+                if (!$route_id) {
+                    continue;
+                }
 
                 $route_stops = isset($route['stops']) ? $route['stops'] : array();
-                if (count($route_stops) < 2) continue;
-            ?>
+                if (count($route_stops) < 2) {
+                    continue;
+                }
+                ?>
                 <div class="shuttle-pricing-block">
                     <div class="shuttle-pricing-header">
                         <h4><?php printf(esc_html__('Route: %s', 'bus-booking-manager'), esc_html($route['name'])); ?></h4>
@@ -914,7 +1008,9 @@ class ShuttleEditPageClass
                                 <?php
                                 for ($i = 0; $i < count($route_stops) - 1; $i++) {
                                     $origin = isset($route_stops[$i]['location']) ? $route_stops[$i]['location'] : '';
-                                    if (!$origin) continue;
+                                    if (!$origin) {
+                                        continue;
+                                    }
 
                                     echo '<tr>';
                                     echo '<td class="stop-origin-cell">' . esc_html($origin) . '</td>';
@@ -995,13 +1091,17 @@ class ShuttleEditPageClass
 
             <?php foreach ($routes as $route) :
                 $route_id = isset($route['id']) ? $route['id'] : '';
-                if (!$route_id) continue;
+                if (!$route_id) {
+                    continue;
+                }
 
                 $route_stops = isset($route['stops']) ? $route['stops'] : array();
-                if (count($route_stops) < 2) continue;
+                if (count($route_stops) < 2) {
+                    continue;
+                }
 
                 $route_schedule = isset($schedule[$route_id]) ? $schedule[$route_id] : array();
-            ?>
+                ?>
                 <div class="shuttle-schedule-block" data-route-id="<?php echo esc_attr($route_id); ?>">
                     <div class="shuttle-schedule-header">
                         <h4><?php printf(esc_html__('Route: %s', 'bus-booking-manager'), esc_html($route['name'])); ?></h4>
@@ -1078,7 +1178,7 @@ class ShuttleEditPageClass
                 </div>
             </div>
         </div>
-<?php
+        <?php
     }
 }
 

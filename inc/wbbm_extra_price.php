@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('ABSPATH')) {
     die; // Cannot access pages directly.
 }
@@ -262,6 +263,17 @@ function wbbm_add_the_date_validation($passed)
 
             if (empty($journey_date)) {
                 wc_add_notice(__('Journey date is missing.', 'bus-booking-manager'), 'error');
+                return false;
+            }
+
+            $journey_date_ymd = mage_wp_date($journey_date, 'Y-m-d');
+            $start_time_for_compare = '';
+            if (class_exists('MP_Global_Function')) {
+                $start_time_for_compare = MP_Global_Function::wbbm_get_route_time_by_place($eid, $boarding_var_get, 'bp');
+            }
+
+            if (!wbbm_is_bus_operational_on_date($eid, $journey_date_ymd, $start_time_for_compare)) {
+                wc_add_notice(__('This bus is not operational on the selected date.', 'bus-booking-manager'), 'error');
                 return false;
             }
 

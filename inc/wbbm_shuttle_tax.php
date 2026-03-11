@@ -1,11 +1,12 @@
 <?php
+
 if (!defined('ABSPATH')) {
     die;
 } // Cannot access pages directly.
 
 /**
  * Register Shuttle Taxonomies
- * 
+ *
  * This file registers taxonomies for the shuttle service:
  * 1. wbbm_shuttle_type - Shuttle types (Airport, Hotel, Corporate)
  * 2. wbbm_shuttle_cat - Vehicle categories (Van, Minibus, Bus, etc.)

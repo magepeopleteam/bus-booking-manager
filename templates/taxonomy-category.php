@@ -25,15 +25,17 @@ $wbbm_term_id = isset($wbbm_queried_obj->term_id) ? intval($wbbm_queried_obj->te
             'wbbm_bus_cat'   => $wbbm_term_id,
         );
         $wbbm_loop = new WP_Query($wbbm_args_search_qqq);
-        
+
         while ($wbbm_loop->have_posts()) {
-            $wbbm_loop->the_post(); 
-            $wbbm_bp_arr = get_post_meta(get_the_ID(), 'wbbm_bus_bp_stops', true); 
-            $wbbm_dp_arr = get_post_meta(get_the_ID(), 'wbbm_bus_next_stops', true);
+            $wbbm_loop->the_post();
+            $wbbm_bp_arr = MP_Global_Function::wbbm_get_boarding_points(get_the_ID());
+            $wbbm_dp_arr = MP_Global_Function::wbbm_get_dropping_points(get_the_ID());
             $wbbm_price_arr = get_post_meta(get_the_ID(), 'wbbm_bus_prices', true);
-            $wbbm_total_dp = count($wbbm_dp_arr) - 1;
-            $term = get_the_terms(get_the_ID(), 'wbbm_bus_cat');	
-        ?>
+            $wbbm_total_dp = max(count($wbbm_dp_arr) - 1, 0);
+            $start = $wbbm_bp_arr[0]['wbbm_bus_bp_stops_name'] ?? '';
+            $end = $wbbm_dp_arr[$wbbm_total_dp]['wbbm_bus_next_stops_name'] ?? '';
+            $term = get_the_terms(get_the_ID(), 'wbbm_bus_cat');
+            ?>
         <div class="wbbm-bus-lists">
             <div class="bus-thumb">
                 <?php the_post_thumbnail('full'); ?>
@@ -43,14 +45,14 @@ $wbbm_term_id = isset($wbbm_queried_obj->term_id) ? intval($wbbm_queried_obj->te
                 <li><strong><?php esc_html_e('Type:', 'bus-booking-manager'); ?></strong> <?php echo esc_html($term[0]->name ?? ''); ?></li>
                 <li><strong><?php esc_html_e('Bus No:', 'bus-booking-manager'); ?></strong> <?php echo esc_html(get_post_meta(get_the_ID(), 'wbbm_bus_no', true)); ?></li>
                 <li><strong><?php esc_html_e('Total Seat:', 'bus-booking-manager'); ?></strong> <?php echo esc_html(get_post_meta(get_the_ID(), 'wbbm_total_seat', true)); ?></li>
-                <li><strong><?php esc_html_e('Start From:', 'bus-booking-manager'); ?></strong> <?php echo esc_html($wbbm_bp_arr[0]['wbbm_bus_bp_stops_name'] ?? ''); ?></li>
-                <li><strong><?php esc_html_e('End at:', 'bus-booking-manager'); ?></strong> <?php echo esc_html($wbbm_dp_arr[$wbbm_total_dp]['wbbm_bus_next_stops_name'] ?? ''); ?></li>
+                <li><strong><?php esc_html_e('Start From:', 'bus-booking-manager'); ?></strong> <?php echo esc_html($start); ?></li>
+                <li><strong><?php esc_html_e('End at:', 'bus-booking-manager'); ?></strong> <?php echo esc_html($end); ?></li>
                 <li><strong><?php esc_html_e('Fare:', 'bus-booking-manager'); ?></strong> <?php echo wp_kses_post(wc_price(wbbm_get_bus_price($start, $end, $wbbm_price_arr))); ?></li>
             </ul>
 
             <a href="<?php echo esc_url(get_permalink()); ?>" class='btn wbbm-bus-list-btn'><?php esc_html_e('Book Now', 'bus-booking-manager'); ?></a>
         </div>
-        <?php
+            <?php
         }
         wp_reset_postdata(); // Reset post data after custom query
         ?>

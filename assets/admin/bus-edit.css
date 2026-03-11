@@ -42,7 +42,7 @@
         width: 100vw !important;
         box-sizing: border-box;
         padding-bottom: 80px !important;
-        padding-top: 80px !important;
+        padding-top: 40px !important;
         /* Space for sticky header */
     }
 
@@ -394,6 +394,7 @@ select.form-control {
     cursor: pointer;
     height: 40px;
     border-radius: 8px;
+    line-height: initial;
 }
 
 .form-control:hover {
@@ -582,24 +583,62 @@ select.form-control {
 
 /* Inline Pickup Points (Step 2) */
 .route-pickup-points-wrap {
-    background: #fdfdfd;
-    padding: 15px;
-    border-radius: 10px;
-    border: 1px solid #f1f5f9;
+    background: #e4e4e8;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #eef2f7;
 }
 
 .route-pickup-points-wrap h4 {
-    margin: 0 0 12px 0;
-    font-size: 14px;
-    color: #1e293b;
+    margin: 0;
+    font-size: 13px;
+    color: #334155;
     font-weight: 600;
 }
 
+.pickup-points-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}
+
+.pickup-points-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.toggle-pickup-points {
+    min-width: 32px;
+    padding: 5px !important;
+}
+
+.toggle-pickup-points .dashicons {
+    transition: transform 0.2s ease;
+}
+
+.toggle-pickup-points .dashicons.active {
+    transform: rotate(180deg);
+}
+
+.route-pickup-points-wrap.is-collapsed .pickup-points-list {
+    display: none;
+}
+
+.pickup-points-list {
+    margin-top: 8px;
+}
+
 .pickup-point-item {
-    background: #f8fafc;
-    padding: 8px;
-    border-radius: 8px;
-    margin-bottom: 8px;
+    background: #fff;
+    padding: 6px;
+    border-radius: 6px;
+    margin-bottom: 6px;
+    display: grid;
+    grid-template-columns: minmax(120px, 1fr) 120px 32px;
+    gap: 6px;
+    align-items: center;
     border: 1px solid transparent;
     transition: all 0.2s;
 }
@@ -611,10 +650,82 @@ select.form-control {
 }
 
 .pickup-point-item .form-control.sm {
-    height: 32px;
+    height: 30px;
     font-size: 12px;
-    padding: 4px 10px;
+    padding: 4px 8px;
     border-radius: 6px;
+}
+
+.pickup-point-item .remove-inline-pickup-item {
+    color: #ef4444;
+    padding: 5px !important;
+    min-width: 32px;
+}
+
+.wbbm-time-field-wrap {
+    position: relative;
+    width: 100%;
+}
+
+.wbbm-time-field-wrap .wbbm-timepicker-field {
+    padding-right: 34px;
+}
+
+.wbbm-time-field-wrap .dashicons-clock {
+    position: absolute;
+    right: 9px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 15px;
+    width: 15px;
+    height: 15px;
+    color: #94a3b8;
+    pointer-events: none;
+}
+
+.wbbm-time-popup {
+    position: absolute;
+    z-index: 100000;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(2, 6, 23, 0.16);
+    padding: 10px;
+    min-width: 190px;
+}
+
+.wbbm-time-popup-head {
+    font-size: 12px;
+    font-weight: 600;
+    color: #334155;
+    margin-bottom: 8px;
+}
+
+.wbbm-time-popup-grid {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 8px;
+    align-items: center;
+}
+
+.wbbm-time-popup-grid span {
+    color: #64748b;
+    font-weight: 700;
+}
+
+.wbbm-time-popup-grid select {
+    height: 34px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 4px 8px;
+    background: #f8fafc;
+}
+
+.wbbm-time-popup-actions {
+    margin-top: 10px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 6px;
 }
 
 .btn-block {
@@ -844,6 +955,10 @@ select.form-control {
     font-size: 13px;
     color: var(--bus-text-light);
     border-bottom: 2px solid var(--bus-border);
+
+    &:first-child {
+        width: 200px;
+    }
 }
 
 .pricing-matrix-table td {

@@ -11,10 +11,9 @@ if (!defined('ABSPATH')) {
     die;
 }
 
-if (!class_exists('MAGE_Setting_API')):
+if (!class_exists('MAGE_Setting_API')) :
     class MAGE_Setting_API
     {
-
         /**
          * settings sections array
          *
@@ -136,7 +135,6 @@ if (!class_exists('MAGE_Setting_API')):
             //register settings fields
             foreach ($this->settings_fields as $section => $field) {
                 foreach ($field as $option) {
-
                     $type = isset($option['type']) ? $option['type'] : 'text';
                     $label = isset($option['label']) ? $option['label'] : '';
                     $desc = isset($option['desc']) ? $option['desc'] : '';
@@ -175,9 +173,9 @@ if (!class_exists('MAGE_Setting_API')):
             $custom_class = esc_attr(text: $args['class']);
             $size = isset($args['size']) && ! is_null(value: $args['size']) ? esc_attr($args['size']) : 'regular';
             $placeholder = isset($args['placeholder']) && ! is_null(value: $args['placeholder']) ? esc_attr(text: $args['placeholder']) : '';
-?>
+            ?>
             <input type="text" class="<?php echo esc_attr(text: $size); ?>-text <?php echo esc_attr(text: $custom_class); ?>" id="<?php echo esc_attr(text: $args['section'] . '[' . $args['id'] . ']'); ?>" name="<?php echo esc_attr(text: $args['section'] . '[' . $args['id'] . ']'); ?>" value="<?php echo esc_attr(text: $value); ?>" placeholder="<?php echo esc_attr(text: $placeholder); ?>" />
-        <?php
+            <?php
         }
 
         public function callback_checkbox_multi($option)
@@ -193,35 +191,55 @@ if (!class_exists('MAGE_Setting_API')):
             $value =  $this->get_option($option['id'], $option['section'], $option['std']);
             $field_id       = $id;
             $field_name     = !empty($field_name) ? '[' . $field_name . ']' : '[' . $id . ']';
-        ?>
+            ?>
             <div class="hhh">
                 <?php
-                foreach ($args as $key => $argName):
+                foreach ($args as $key => $argName) :
                     $checked = is_array($value) && in_array($key, $value) ? "checked" : "";
-                ?>
+                    ?>
                     <label for="<?php echo esc_attr($field_id . '-' . $key); ?>"> <input class="<?php echo esc_attr($field_id); ?>" name="<?php echo esc_attr($option['section'] . $field_name . '[]'); ?>" type="checkbox" id="<?php echo esc_attr($field_id . '-' . $key); ?>" value="<?php echo esc_attr($key); ?>" <?php echo esc_attr($checked); ?>> <?php echo esc_html($argName); ?> </label><br>
-                <?php
+                    <?php
                 endforeach;
                 ?>
                 <div class="error-mgs"></div>
             </div>
-        <?php
+            <?php
         }
 
 
         public function args_from_string($string)
         {
 
-            if (strpos($string, 'WBBM_PAGES_IDS_ARRAY')    !== false) return $this->get_pages_array();
-            if (strpos($string, 'WBBM_POSTS_IDS_ARRAY')    !== false) return $this->get_posts_array();
-            if (strpos($string, 'WBBM_POST_TYPES_ARRAY')   !== false) return $this->get_post_types_array();
-            if (strpos($string, 'TAX_')               !== false) return $this->get_taxonomies_array($string);
-            if (strpos($string, 'WBBM_USER_ROLES')         !== false) return $this->get_user_roles_array();
-            if (strpos($string, 'WBBM_USER_IDS_ARRAY')     !== false) return $this->get_user_ids_array();
-            if (strpos($string, 'MENUS')              !== false) return $this->get_menus_array();
-            if (strpos($string, 'WBBM_SIDEBARS_ARRAY')     !== false) return $this->get_sidebars_array();
-            if (strpos($string, 'WBBM_THUMB_SIEZS_ARRAY')  !== false) return $this->get_thumb_sizes_array();
-            if (strpos($string, 'WBBM_FONTAWESOME_ARRAY')  !== false) return $this->get_font_aws_array();
+            if (strpos($string, 'WBBM_PAGES_IDS_ARRAY')    !== false) {
+                return $this->get_pages_array();
+            }
+            if (strpos($string, 'WBBM_POSTS_IDS_ARRAY')    !== false) {
+                return $this->get_posts_array();
+            }
+            if (strpos($string, 'WBBM_POST_TYPES_ARRAY')   !== false) {
+                return $this->get_post_types_array();
+            }
+            if (strpos($string, 'TAX_')               !== false) {
+                return $this->get_taxonomies_array($string);
+            }
+            if (strpos($string, 'WBBM_USER_ROLES')         !== false) {
+                return $this->get_user_roles_array();
+            }
+            if (strpos($string, 'WBBM_USER_IDS_ARRAY')     !== false) {
+                return $this->get_user_ids_array();
+            }
+            if (strpos($string, 'MENUS')              !== false) {
+                return $this->get_menus_array();
+            }
+            if (strpos($string, 'WBBM_SIDEBARS_ARRAY')     !== false) {
+                return $this->get_sidebars_array();
+            }
+            if (strpos($string, 'WBBM_THUMB_SIEZS_ARRAY')  !== false) {
+                return $this->get_thumb_sizes_array();
+            }
+            if (strpos($string, 'WBBM_FONTAWESOME_ARRAY')  !== false) {
+                return $this->get_font_aws_array();
+            }
 
             return array();
         }
@@ -599,7 +617,7 @@ if (!class_exists('MAGE_Setting_API')):
          */
         function sanitize_options($options)
         {
-            if (is_array($options)):
+            if (is_array($options)) :
                 foreach ($options as $option_slug => $option_value) {
                     $sanitize_callback = $this->get_sanitize_callback($option_slug);
 
@@ -690,7 +708,7 @@ if (!class_exists('MAGE_Setting_API')):
          */
         function show_forms()
         {
-        ?>
+            ?>
             <div class="metabox-holder">
                 <div class="postbox">
                     <?php foreach ($this->settings_sections as $form) { ?>
@@ -710,7 +728,7 @@ if (!class_exists('MAGE_Setting_API')):
                     <?php } ?>
                 </div>
             </div>
-        <?php
+            <?php
             $this->script();
         }
 
@@ -722,7 +740,7 @@ if (!class_exists('MAGE_Setting_API')):
          */
         function script()
         {
-        ?>
+            ?>
             <script>
                 jQuery(document).ready(function($) {
                     //Initiate Color Picker
@@ -790,7 +808,7 @@ if (!class_exists('MAGE_Setting_API')):
                     text-align: left !important;
                 }
             </style>
-<?php
+            <?php
         }
     }
 endif;

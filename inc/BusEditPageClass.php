@@ -1,19 +1,62 @@
 <?php
-if (!defined('ABSPATH')) exit;
+
+if (!defined('ABSPATH')) {
+    exit;
+}
 
 /**
  * Bus Edit Page Class
- * 
+ *
  * Handles the custom multi-step edit page for buses.
  */
 class BusEditPageClass
 {
+    private function get_bus_edit_url($post_id = 0, $extra_args = array())
+    {
+        $args = array(
+            'post_type' => 'wbbm_bus',
+            'page'      => 'wbbm-bus-edit',
+        );
+
+        if ($post_id > 0) {
+            $args['post_id'] = $post_id;
+        }
+
+        if (!empty($extra_args)) {
+            $args = array_merge($args, $extra_args);
+        }
+
+        return add_query_arg($args, admin_url('edit.php'));
+    }
+
+    private function get_bus_page_capability()
+    {
+        return apply_filters('wbbm_bus_edit_page_capability', 'edit_posts');
+    }
+
+    private function can_access_bus($post_id = 0)
+    {
+        if ($post_id > 0) {
+            return current_user_can('edit_post', $post_id);
+        }
+
+        return current_user_can($this->get_bus_page_capability());
+    }
+
+    private function can_manage_bus_taxonomies()
+    {
+        return current_user_can('manage_categories') || current_user_can($this->get_bus_page_capability());
+    }
+
     public function __construct()
     {
         add_action('admin_menu', array($this, 'register_bus_edit_page'));
         add_action('admin_enqueue_scripts', array($this, 'enqueue_assets'));
+        add_action('admin_head', array($this, 'hide_bus_edit_submenu'));
         add_action('admin_init', array($this, 'handle_bus_save'));
         add_filter('post_row_actions', array($this, 'add_custom_edit_link'), 10, 2);
+        add_filter('parent_file', array($this, 'set_parent_menu'));
+        add_filter('submenu_file', array($this, 'set_submenu_active'));
 
         // AJAX Save
         add_action('wp_ajax_wbbm_save_bus_ajax', array($this, 'handle_bus_save_ajax'));
@@ -50,7 +93,7 @@ class BusEditPageClass
     {
         $screen = get_current_screen();
         if ($screen && $screen->id === 'wbbm_bus' && $screen->action === 'add') {
-            wp_redirect(admin_url('admin.php?page=wbbm-bus-edit'));
+            wp_safe_redirect($this->get_bus_edit_url());
             exit;
         }
     }
@@ -60,14 +103,48 @@ class BusEditPageClass
      */
     public function register_bus_edit_page()
     {
+        $parent_slug = 'edit.php?post_type=wbbm_bus';
+
         add_submenu_page(
-            null,
+            $parent_slug,
             __('Add New', 'bus-booking-manager'),
             __('Add New', 'bus-booking-manager'),
-            'manage_options',
+            'read',
             'wbbm-bus-edit',
             array($this, 'render_bus_edit_page')
         );
+    }
+
+    public function hide_bus_edit_submenu()
+    {
+        if (!current_user_can('read')) {
+            return;
+        }
+        ?>
+        <style>
+            #adminmenu a[href="edit.php?post_type=wbbm_bus&page=wbbm-bus-edit"] {
+                display: none;
+            }
+        </style>
+        <?php
+    }
+
+    public function set_parent_menu($parent_file)
+    {
+        if (isset($_GET['page']) && $_GET['page'] === 'wbbm-bus-edit') {
+            return 'edit.php?post_type=wbbm_bus';
+        }
+
+        return $parent_file;
+    }
+
+    public function set_submenu_active($submenu_file)
+    {
+        if (isset($_GET['page']) && $_GET['page'] === 'wbbm-bus-edit') {
+            return 'wbbm-bus-list';
+        }
+
+        return $submenu_file;
     }
 
     /**
@@ -80,11 +157,8 @@ class BusEditPageClass
         }
 
         $custom_edit_url = add_query_arg(
-            array(
-                'page'      => 'wbbm-bus-edit',
-                'post_id'   => $post->ID
-            ),
-            admin_url('admin.php')
+            array(),
+            $this->get_bus_edit_url($post->ID)
         );
 
         $actions['custom_edit'] = '<a href="' . esc_url($custom_edit_url) . '" style="color:#f97316;font-weight:bold;">' . __('Advanced Edit', 'bus-booking-manager') . '</a>';
@@ -110,16 +184,20 @@ class BusEditPageClass
         }
 
         if (!isset($_POST['wbbm_bus_nonce']) || !wp_verify_nonce($_POST['wbbm_bus_nonce'], 'wbbm_bus_save')) {
-            if ($is_ajax) wp_send_json_error('Nonce verification failed');
-            return;
-        }
-
-        if (!current_user_can('manage_options')) {
-            if ($is_ajax) wp_send_json_error('Unauthorized');
+            if ($is_ajax) {
+                wp_send_json_error('Nonce verification failed');
+            }
             return;
         }
 
         $post_id = isset($_POST['post_id']) ? intval($_POST['post_id']) : 0;
+        if (!$this->can_access_bus($post_id)) {
+            if ($is_ajax) {
+                wp_send_json_error('Unauthorized');
+            }
+            return;
+        }
+
         $title = isset($_POST['bus_title']) ? sanitize_text_field(wp_unslash($_POST['bus_title'])) : '';
         $content = isset($_POST['bus_content']) ? wp_kses_post(wp_unslash($_POST['bus_content'])) : '';
         $post_status = isset($_POST['post_status']) ? sanitize_text_field($_POST['post_status']) : 'publish';
@@ -339,8 +417,7 @@ class BusEditPageClass
         }
 
         // Standard redirect if not AJAX
-        $redirect_args = array('page' => 'wbbm-bus-edit', 'post_id' => $post_id, 'saved' => '1');
-        wp_redirect(add_query_arg($redirect_args, admin_url('admin.php')));
+        wp_safe_redirect($this->get_bus_edit_url($post_id, array('saved' => '1')));
         exit;
     }
 
@@ -351,7 +428,7 @@ class BusEditPageClass
     {
         check_ajax_referer('wbbm_bus_save', 'security');
 
-        if (!current_user_can('manage_options')) {
+        if (!$this->can_manage_bus_taxonomies()) {
             wp_send_json_error(__('Unauthorized', 'bus-booking-manager'));
         }
 
@@ -388,7 +465,7 @@ class BusEditPageClass
     {
         check_ajax_referer('wbbm_bus_save', 'security');
 
-        if (!current_user_can('manage_options')) {
+        if (!$this->can_manage_bus_taxonomies()) {
             wp_send_json_error(__('Unauthorized', 'bus-booking-manager'));
         }
 
@@ -425,7 +502,7 @@ class BusEditPageClass
     {
         check_ajax_referer('wbbm_bus_save', 'security');
 
-        if (!current_user_can('manage_options')) {
+        if (!$this->can_manage_bus_taxonomies()) {
             wp_send_json_error(__('Unauthorized', 'bus-booking-manager'));
         }
 
@@ -440,6 +517,12 @@ class BusEditPageClass
         if (is_wp_error($term)) {
             if ($term->get_error_code() === 'term_exists') {
                 $existing_term = get_term_by('name', $term_name, 'wbbm_bus_feature');
+                if ($existing_term && !is_wp_error($existing_term)) {
+                    $existing_icon = (string) get_term_meta($existing_term->term_id, 'feature_icon', true);
+                    if (trim($existing_icon) === '') {
+                        update_term_meta($existing_term->term_id, 'feature_icon', MP_Global_Function::wbbm_get_feature_default_icon($existing_term->name));
+                    }
+                }
                 wp_send_json_success(array(
                     'term_id' => $existing_term->term_id,
                     'name'    => $existing_term->name,
@@ -449,9 +532,13 @@ class BusEditPageClass
             wp_send_json_error($term->get_error_message());
         }
 
+        $feature_icon = MP_Global_Function::wbbm_get_feature_default_icon($term_name);
+        update_term_meta($term['term_id'], 'feature_icon', $feature_icon);
+
         wp_send_json_success(array(
             'term_id' => $term['term_id'],
-            'name'    => $term_name
+            'name'    => $term_name,
+            'icon'    => $feature_icon
         ));
     }
 
@@ -465,6 +552,10 @@ class BusEditPageClass
         }
 
         $post_id = isset($_POST['post_id']) ? intval($_POST['post_id']) : 0;
+        if (!$this->can_access_bus($post_id)) {
+            wp_send_json_error(__('Unauthorized', 'bus-booking-manager'));
+        }
+
         $places = isset($_POST['places']) ? array_map('sanitize_text_field', wp_unslash($_POST['places'])) : [];
         $types = isset($_POST['types']) ? array_map('sanitize_text_field', wp_unslash($_POST['types'])) : [];
 
@@ -514,6 +605,10 @@ class BusEditPageClass
     public function render_bus_edit_page()
     {
         $post_id = isset($_GET['post_id']) ? intval($_GET['post_id']) : 0;
+        if (!$this->can_access_bus($post_id)) {
+            wp_die(__('You do not have permission to edit this bus.', 'bus-booking-manager'));
+        }
+
         $current_step = isset($_GET['step']) ? intval($_GET['step']) : 1;
         $post = $post_id ? get_post($post_id) : null;
 
@@ -537,7 +632,7 @@ class BusEditPageClass
         $thumb_url = $thumb_id ? wp_get_attachment_image_url($thumb_id, 'medium') : '';
 
         $all_cats = get_terms(array('taxonomy' => 'wbbm_bus_cat', 'hide_empty' => false));
-?>
+        ?>
         <div class="wrap bus-edit-wrap">
             <div class="bus-container">
                 <div class="bus-edit-header">
@@ -567,12 +662,12 @@ class BusEditPageClass
                             5 => __('Tax', 'bus-booking-manager'),
                             6 => __('Custom Fields', 'bus-booking-manager')
                         );
-                        foreach ($steps as $step_id => $label): ?>
+                        foreach ($steps as $step_id => $label) : ?>
                             <div class="step-item <?php echo $current_step === $step_id ? 'active' : ($current_step > $step_id ? 'completed' : ''); ?>" data-step="<?php echo $step_id; ?>">
                                 <div class="step-number"><?php echo $current_step > $step_id ? '✓' : $step_id; ?></div>
                                 <div class="step-label">
                                     <?php echo $label; ?>
-                                    <?php if ($step_id === 6): ?>
+                                    <?php if ($step_id === 6) : ?>
                                         <span class="pro-badge-nav">PRO</span>
                                     <?php endif; ?>
                                 </div>
@@ -748,7 +843,7 @@ class BusEditPageClass
             </form>
         </div>
         </div>
-    <?php
+        <?php
     }
 
     /**
@@ -759,7 +854,7 @@ class BusEditPageClass
         $route_info = get_post_meta($post_id, 'wbbm_route_info', true) ?: [];
         $bus_stops = get_terms(array('taxonomy' => 'wbbm_bus_stops', 'hide_empty' => false));
         $pickpoints = get_terms(array('taxonomy' => 'wbbm_bus_pickpoint', 'hide_empty' => false));
-    ?>
+        ?>
         <div class="bus-edit-content">
             <div class="bus-edit-left">
                 <div class="bus-card" data-pickpoints-options='<?php echo esc_attr(json_encode($pickpoints)); ?>'>
@@ -830,7 +925,7 @@ class BusEditPageClass
                 </div>
             </div>
         </div>
-    <?php
+        <?php
     }
 
     /**
@@ -852,7 +947,7 @@ class BusEditPageClass
             'taxonomy'   => 'wbbm_bus_feature',
             'hide_empty' => false,
         ));
-    ?>
+        ?>
         <div class="bus-edit-content">
             <div class="bus-edit-left">
                 <div class="bus-card">
@@ -860,9 +955,9 @@ class BusEditPageClass
                     <div class="features-grid">
                         <?php if (!is_wp_error($available_features) && !empty($available_features)) : ?>
                             <?php foreach ($available_features as $term) :
-                                $icon = get_term_meta($term->term_id, 'feature_icon', true) ?: 'fas fa-star';
+                                $icon = MP_Global_Function::wbbm_get_feature_icon_class($term->term_id, $term->name);
                                 $is_active = in_array($term->term_id, $selected_features);
-                            ?>
+                                ?>
                                 <label class="feature-item <?php echo $is_active ? 'active' : ''; ?>">
                                     <input type="checkbox" name="wbbm_features[]" value="<?php echo $term->term_id; ?>" <?php checked($is_active); ?>>
                                     <div class="feature-content">
@@ -879,35 +974,35 @@ class BusEditPageClass
 
                 <!-- <div class="bus-card">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                        <h3 style="margin: 0; border: none; padding: 0;"><?php //_e('Extra Services', 'bus-booking-manager'); 
-                                                                            ?></h3>
+                        <h3 style="margin: 0; border: none; padding: 0;"><?php //_e('Extra Services', 'bus-booking-manager');
+                        ?></h3>
                         <button type="button" class="btn btn-secondary btn-sm add-extra-service">
-                            <span class="dashicons dashicons-plus"></span> <?php //_e('Add Extra Service', 'bus-booking-manager'); 
-                                                                            ?>
+                            <span class="dashicons dashicons-plus"></span> <?php //_e('Add Extra Service', 'bus-booking-manager');
+                            ?>
                         </button>
                     </div>
 
                     <div id="extra-services-container">
-                        <?php //if (!empty($extra_services)) : 
+                        <?php //if (!empty($extra_services)) :
                         ?>
-                            <?php //foreach ($extra_services as $service) : 
+                            <?php //foreach ($extra_services as $service) :
                             ?>
-                                <?php //$this->render_extra_service_item($service); 
+                                <?php //$this->render_extra_service_item($service);
                                 ?>
-                            <?php //endforeach; 
+                            <?php //endforeach;
                             ?>
-                        <?php //else : 
+                        <?php //else :
                         ?>
-                            <?php //$this->render_extra_service_item(); 
+                            <?php //$this->render_extra_service_item();
                             ?>
-                        <?php //endif; 
+                        <?php //endif;
                         ?>
                     </div>
                     
 
                     <!-- Template for new items -->
                 <!-- <script type="text/template" id="extra-service-template">
-                        <?php //$this->render_extra_service_item(); 
+                        <?php //$this->render_extra_service_item();
                         ?>
                     </script> -->
                 <!-- </div> -->
@@ -950,7 +1045,7 @@ class BusEditPageClass
                 </div>
             </div>
         </div>
-    <?php
+        <?php
     }
 
     /**
@@ -958,7 +1053,7 @@ class BusEditPageClass
      */
     private function render_step_6($post_id)
     {
-    ?>
+        ?>
         <div class="bus-edit-content">
             <div class="bus-edit-left" style="width: 100%;">
                 <div class="bus-card">
@@ -966,7 +1061,7 @@ class BusEditPageClass
                         <h3 style="margin: 0; border: none; padding: 0;"><?php _e('Passenger Registration', 'bus-booking-manager'); ?></h3>
                     </div>
 
-                    <?php 
+                    <?php
                     if (has_action('wbbm_after_meta_box_tab_content')) {
                         do_action('wbbm_after_meta_box_tab_content', $post_id);
                     } else {
@@ -992,7 +1087,7 @@ class BusEditPageClass
                 </div>
             </div>
         </div>
-    <?php
+        <?php
     }
 
     /**
@@ -1024,7 +1119,7 @@ class BusEditPageClass
         $tax_class = get_post_meta($post_id, 'wbtm_bus_tax_class', true) ?: '';
 
         $tax_classes = WC_Tax::get_tax_classes();
-    ?>
+        ?>
         <div class="bus-edit-content">
             <div class="bus-edit-left">
                 <div class="bus-card">
@@ -1060,7 +1155,7 @@ class BusEditPageClass
                 </div>
             </div>
         </div>
-    <?php
+        <?php
     }
 
     /**
@@ -1072,7 +1167,7 @@ class BusEditPageClass
         $price = isset($data['option_price']) ? $data['option_price'] : '';
         $qty = isset($data['option_qty']) ? $data['option_qty'] : '';
         $type = isset($data['option_qty_type']) ? $data['option_qty_type'] : 'fixed';
-    ?>
+        ?>
         <div class="extra-service-item">
             <div class="bus-grid" style="grid-template-columns: 2fr 1fr 1fr 1fr 40px !important;">
                 <div class="form-group">
@@ -1100,7 +1195,7 @@ class BusEditPageClass
                 </div>
             </div>
         </div>
-    <?php
+        <?php
     }
 
     /**
@@ -1122,12 +1217,12 @@ class BusEditPageClass
             '6' => __('Saturday', 'bus-booking-manager'),
             '7' => __('Sunday', 'bus-booking-manager'),
         ];
-    ?>
+        ?>
         <div class="bus-edit-content">
             <div class="bus-edit-left">
                 <div class="bus-card">
-                    <h3><?php _e('Operating Days', 'bus-booking-manager'); ?></h3>
-                    <p style="margin-bottom: 20px; color: var(--bus-text-light);"><?php _e('Select the days of the week when this bus service is active.', 'bus-booking-manager'); ?></p>
+                    <h3><?php _e('Weekly Off Days', 'bus-booking-manager'); ?></h3>
+                    <p style="margin-bottom: 20px; color: var(--bus-text-light);"><?php _e('Select the days of the week when this bus service is off.', 'bus-booking-manager'); ?></p>
                     <div class="days-selector">
                         <?php foreach ($days as $value => $label) : ?>
                             <label class="day-checkbox">
@@ -1181,14 +1276,14 @@ class BusEditPageClass
                 <div class="bus-card">
                     <h3><?php _e('Schedule Info', 'bus-booking-manager'); ?></h3>
                     <ul style="font-size: 13px; color: var(--bus-text-light); padding-left: 15px;">
-                        <li><?php _e('Operating Days define the weekly routine.', 'bus-booking-manager'); ?></li>
+                        <li><?php _e('Weekly Off Days define recurring weekly non-operational days.', 'bus-booking-manager'); ?></li>
                         <li><?php _e('Date Range defines the long-term availability.', 'bus-booking-manager'); ?></li>
                         <li><?php _e('Off-day Schedule is for specific dates/times like holidays.', 'bus-booking-manager'); ?></li>
                     </ul>
                 </div>
             </div>
         </div>
-    <?php
+        <?php
     }
 
     /**
@@ -1200,7 +1295,7 @@ class BusEditPageClass
         $to_date = isset($data['to_date']) ? $data['to_date'] : '';
         $from_time = isset($data['from_time']) ? $data['from_time'] : '';
         $to_time = isset($data['to_time']) ? $data['to_time'] : '';
-    ?>
+        ?>
         <div class="offday-item">
             <div class="bus-grid" style="grid-template-columns: 1fr 1fr 1fr 1fr 40px !important;">
                 <div class="form-group">
@@ -1213,18 +1308,24 @@ class BusEditPageClass
                 </div>
                 <div class="form-group">
                     <label><?php _e('From Time', 'bus-booking-manager'); ?></label>
-                    <input type="time" name="wbtm_od_offtime_from[]" class="form-control" value="<?php echo esc_attr($from_time); ?>">
+                    <div class="wbbm-time-field-wrap">
+                        <input type="text" name="wbtm_od_offtime_from[]" class="form-control wbbm-timepicker-field" value="<?php echo esc_attr($from_time); ?>" placeholder="HH:mm">
+                        <span class="dashicons dashicons-clock" aria-hidden="true"></span>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label><?php _e('To Time', 'bus-booking-manager'); ?></label>
-                    <input type="time" name="wbtm_od_offtime_to[]" class="form-control" value="<?php echo esc_attr($to_time); ?>">
+                    <div class="wbbm-time-field-wrap">
+                        <input type="text" name="wbtm_od_offtime_to[]" class="form-control wbbm-timepicker-field" value="<?php echo esc_attr($to_time); ?>" placeholder="HH:mm">
+                        <span class="dashicons dashicons-clock" aria-hidden="true"></span>
+                    </div>
                 </div>
                 <div class="form-group" style="display: flex; align-items: flex-end;">
                     <button type="button" class="btn btn-secondary remove-offday-item" style="color:#ef4444;padding:7px"><span class="dashicons dashicons-trash"></span></button>
                 </div>
             </div>
         </div>
-    <?php
+        <?php
     }
 
 
@@ -1237,7 +1338,7 @@ class BusEditPageClass
         $time = isset($data['time']) ? $data['time'] : '';
         $type = isset($data['type']) ? $data['type'] : 'both';
         $next_day = isset($data['next_day']) ? $data['next_day'] : 0;
-    ?>
+        ?>
         <div class="route-item" data-index="<?php echo $index; ?>">
             <div class="route-item-header">
                 <span class="dashicons dashicons-menu drag-handle"></span>
@@ -1260,7 +1361,10 @@ class BusEditPageClass
                     </div>
                     <div class="form-group">
                         <label><?php _e('Time', 'bus-booking-manager'); ?></label>
-                        <input type="time" name="wbtm_route_time[]" class="form-control" value="<?php echo esc_attr($time); ?>">
+                        <div class="wbbm-time-field-wrap">
+                            <input type="text" name="wbtm_route_time[]" class="form-control wbbm-timepicker-field" value="<?php echo esc_attr($time); ?>" placeholder="HH:mm">
+                            <span class="dashicons dashicons-clock" aria-hidden="true"></span>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label><?php _e('Type', 'bus-booking-manager'); ?></label>
@@ -1280,13 +1384,18 @@ class BusEditPageClass
 
                 <!-- Pickup Points Integration -->
                 <div class="route-pickup-points-wrap">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <div class="pickup-points-head">
                         <h4><?php _e('Pickup Points', 'bus-booking-manager'); ?></h4>
-                        <button type="button" class="btn btn-secondary btn-sm add-inline-pickup-item" data-stop-index="<?php echo $index; ?>">
-                            <span class="dashicons dashicons-plus"></span> <?php _e('Add Point', 'bus-booking-manager'); ?>
-                        </button>
+                        <div class="pickup-points-actions">
+                            <button type="button" class="btn btn-secondary btn-sm add-inline-pickup-item" data-stop-index="<?php echo $index; ?>">
+                                <span class="dashicons dashicons-plus"></span> <?php _e('Add Point', 'bus-booking-manager'); ?>
+                            </button>
+                            <button type="button" class="btn btn-secondary btn-sm toggle-pickup-points" aria-expanded="false">
+                                <span class="dashicons dashicons-arrow-down-alt2"></span>
+                            </button>
+                        </div>
                     </div>
-                    <div class="pickup-points-list" data-stop-index="<?php echo $index; ?>">
+                    <div class="pickup-points-list" data-stop-index="<?php echo $index; ?>" style="display:none;">
                         <?php
                         $city_slug = $place ? sanitize_key(str_replace(' ', '_', strtolower($place))) : '';
                         $pickup_data = $city_slug ? get_post_meta(get_the_ID(), 'wbbm_selected_pickpoint_name_' . $city_slug, true) : [];
@@ -1294,23 +1403,26 @@ class BusEditPageClass
                             $pickup_data = [['pickpoint' => '', 'time' => '']];
                         }
                         foreach ($pickup_data as $p) :
-                        ?>
-                            <div class="pickup-point-item" style="display: flex; gap: 10px; margin-bottom: 8px; align-items: center;">
-                                <select name="wbbm_inline_pickpoint_name[<?php echo $index; ?>][]" class="form-control sm" style="width:320px">
+                            ?>
+                            <div class="pickup-point-item">
+                                <select name="wbbm_inline_pickpoint_name[<?php echo $index; ?>][]" class="form-control sm">
                                     <option value=""><?php _e('Select Point', 'bus-booking-manager'); ?></option>
                                     <?php foreach ($pickpoints as $point) : ?>
                                         <option value="<?php echo esc_attr($point->name); ?>" <?php selected($point->name, $p['pickpoint']); ?>><?php echo esc_html($point->name); ?></option>
                                     <?php endforeach; ?>
                                 </select>
-                                <input type="time" name="wbbm_inline_pickpoint_time[<?php echo $index; ?>][]" class="form-control sm" value="<?php echo esc_attr($p['time']); ?>" style="width:auto">
-                                <button type="button" class="btn btn-secondary btn-sm remove-inline-pickup-item" style="color: #ef4444; justify-self: end;padding:7px;"><span class="dashicons dashicons-trash"></span></button>
+                                <div class="wbbm-time-field-wrap">
+                                    <input type="text" name="wbbm_inline_pickpoint_time[<?php echo $index; ?>][]" class="form-control sm wbbm-timepicker-field" value="<?php echo esc_attr($p['time']); ?>" placeholder="HH:mm">
+                                    <span class="dashicons dashicons-clock" aria-hidden="true"></span>
+                                </div>
+                                <button type="button" class="btn btn-secondary btn-sm remove-inline-pickup-item"><span class="dashicons dashicons-trash"></span></button>
                             </div>
                         <?php endforeach; ?>
                     </div>
                 </div>
             </div>
         </div>
-    <?php
+        <?php
     }
 
     /**
@@ -1362,7 +1474,7 @@ class BusEditPageClass
             echo '<div class="alert alert-warning">' . __('Please add at least one Boarding and one Dropping stop to see the pricing matrix.', 'bus-booking-manager') . '</div>';
             return;
         }
-    ?>
+        ?>
         <div class="pricing-matrix-table-wrap">
             <table class="pricing-matrix-table">
                 <thead>
@@ -1386,16 +1498,24 @@ class BusEditPageClass
                                     <input type="hidden" name="wbtm_price_dp[]" value="<?php echo esc_attr($pair['to']); ?>">
                                 </div>
                             </td>
-                            <td><input type="number" step="0.01" name="wbtm_adult_price[]" value="<?php echo esc_attr($pair['prices']['adult']); ?>" class="form-control sm"></td>
-                            <td><input type="number" step="0.01" name="wbtm_child_price[]" value="<?php echo esc_attr($pair['prices']['child']); ?>" class="form-control sm"></td>
-                            <td><input type="number" step="0.01" name="wbtm_student_price[]" value="<?php echo esc_attr($pair['prices']['student']); ?>" class="form-control sm"></td>
-                            <td><input type="number" step="0.01" name="wbtm_infant_price[]" value="<?php echo esc_attr($pair['prices']['infant']); ?>" class="form-control sm"></td>
+                            <td>
+                                <input type="number" step="0.01" name="wbtm_adult_price[]" value="<?php echo esc_attr($pair['prices']['adult']); ?>" class="form-control sm">
+                            </td>
+                            <td>
+                                <input type="number" step="0.01" name="wbtm_child_price[]" value="<?php echo esc_attr($pair['prices']['child']); ?>" class="form-control sm">
+                            </td>
+                            <td>
+                                <input type="number" step="0.01" name="wbtm_student_price[]" value="<?php echo esc_attr($pair['prices']['student']); ?>" class="form-control sm">
+                            </td>
+                            <td>
+                                <input type="number" step="0.01" name="wbtm_infant_price[]" value="<?php echo esc_attr($pair['prices']['infant']); ?>" class="form-control sm">
+                            </td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>
         </div>
-<?php
+        <?php
     }
     /**
      * Get status metadata (label and class)

@@ -31,15 +31,15 @@ if (!defined('ABSPATH')) {
         <div style="display: <?php echo esc_attr(($show_pickup_point == "yes" ? "block" : "none")); ?>" id="pickup-point">
             <section>
                 <div>
-                    <label><?php esc_html_e( "Create A New Point", 'bus-booking-manager' ); ?></label>
+                    <label><?php esc_html_e("Create A New Point", 'bus-booking-manager'); ?></label>
                     <br>
-                    <span class="ra-stopage-desc"><?php esc_html_e( "You can add new pickup point from here that is not listed in pickup point.", 'bus-booking-manager' ); ?></span>
+                    <span class="ra-stopage-desc"><?php esc_html_e("You can add new pickup point from here that is not listed in pickup point.", 'bus-booking-manager'); ?></span>
                 </div>
                 <div>
                     <div class="mpStyle">
                         <button type="button" class="_dButton_xs_bgBlue ra-picup-point-button" data-target-popup="#wbtm_pickup_popup">
                             <i class="fas fa-plus"></i>
-                            <?php esc_html_e( "Create new pickup point", 'bus-booking-manager' ); ?>
+                            <?php esc_html_e("Create new pickup point", 'bus-booking-manager'); ?>
                         </button>
                     </div>
                 </div>
@@ -49,29 +49,29 @@ if (!defined('ABSPATH')) {
                     <div class="popupMainArea">
                         <div class="popupHeader">
                             <h4>
-                                <?php esc_html_e( 'Add new Pickup', 'bus-booking-manager' ); ?>
+                                <?php esc_html_e('Add new Pickup', 'bus-booking-manager'); ?>
                             </h4>
                             <span class="fas fa-times popupClose"></span>
                         </div>
                         <div class="popupBody pickup-form">
-                            <h6 class="textSuccess success_text" style="display: none;"><?php esc_html_e( 'Added Succesfully', 'bus-booking-manager' ); ?></h6>
-                            <h6 class="textduplicate duplicate_text" style="display: none;color: red"><?php esc_html_e( 'This pickup point already exists', 'bus-booking-manager' ); ?></h6>
+                            <h6 class="textSuccess success_text" style="display: none;"><?php esc_html_e('Added Succesfully', 'bus-booking-manager'); ?></h6>
+                            <h6 class="textduplicate duplicate_text" style="display: none;color: red"><?php esc_html_e('This pickup point already exists', 'bus-booking-manager'); ?></h6>
                             <label>
-                                <span class="w_200"><?php esc_html_e( 'Name:', 'bus-booking-manager' ); ?></span>
+                                <span class="w_200"><?php esc_html_e('Name:', 'bus-booking-manager'); ?></span>
                                 <input type="text"  class="formControl" id="pickup_name">
                             </label>
-                            <p class="name_required"><?php esc_html_e( 'Name is required', 'bus-booking-manager' ); ?></p>
+                            <p class="name_required"><?php esc_html_e('Name is required', 'bus-booking-manager'); ?></p>
 
                             <label class="mT">
-                                <span class="w_200"><?php esc_html_e( 'Description:', 'bus-booking-manager' ); ?></span>
+                                <span class="w_200"><?php esc_html_e('Description:', 'bus-booking-manager'); ?></span>
                                 <textarea  id="pickup_description" rows="5" cols="50" class="formControl"></textarea>
                             </label>
 
                         </div>
                         <div class="popupFooter">
                             <div class="buttonGroup">
-                                <button class="_themeButton submit-pickup" type="button"><?php esc_html_e( 'Save', 'bus-booking-manager' ); ?></button>
-                                <button class="_warningButton submit-pickup close_popup" type="button"><?php esc_html_e( 'Save & Close', 'bus-booking-manager' ); ?></button>
+                                <button class="_themeButton submit-pickup" type="button"><?php esc_html_e('Save', 'bus-booking-manager'); ?></button>
+                                <button class="_warningButton submit-pickup close_popup" type="button"><?php esc_html_e('Save & Close', 'bus-booking-manager'); ?></button>
                             </div>
                         </div>
                     </div>
@@ -93,7 +93,7 @@ if (!defined('ABSPATH')) {
                         ?>
                         <input type="hidden" name="select_city_pickpoints" id="select_city_pickpoints" value="<?php echo esc_attr($wbbm_selected_city_pickpoints) ?>">
                         
-                        <span class="wbbm_bus_route_icon wbbm_bus_route_icon1"><img src="<?php echo esc_url(WBTM_PLUGIN_URL .'images/bus_route_map.png');?>"/></span>
+                        <span class="wbbm_bus_route_icon wbbm_bus_route_icon1"><img src="<?php echo esc_url(WBTM_PLUGIN_URL . 'images/bus_route_map.png');?>"/></span>
                         <select name="wbbm_pick_boarding" id="wbbm_pick_boarding" class="ra_pick_boarding">
                         </select>
                         <button class="wbbm_add_pickpoint_this_city" id="wbbm_add_pickpoint_this_city">
@@ -120,10 +120,7 @@ if (!defined('ABSPATH')) {
 
 
                                             if ($wbbm_get_pickpoints_data) {
-
-
                                                 foreach ($wbbm_get_pickpoints_data as $wbbm_pickpoint) : ?>
-
                                                     <div class="pickpoint-adding">
                                                         <div class="pickpoint-adding-col">
                                                         <span class="wbbm_bus_route_icon wbbm_bus_route_icon1"> <img src="<?php echo esc_url(WBTM_PLUGIN_URL . 'images/bus_route_map.png'); ?>"/> </span>
@@ -138,14 +135,14 @@ if (!defined('ABSPATH')) {
                                                             </select>
                                                         </div>
                                                         <div class="pickpoint-adding-col">
-                                                            <span class="wbbm_bus_route_icon wbbm_bus_route_icon2"><img src="<?php echo esc_url(WBTM_PLUGIN_URL .'images/bus_route_clock.png');?>"/></span>
+                                                            <span class="wbbm_bus_route_icon wbbm_bus_route_icon2"><img src="<?php echo esc_url(WBTM_PLUGIN_URL . 'images/bus_route_clock.png');?>"/></span>
                                                             <input type="text" data-clocklet name="wbbm_selected_pickpoint_time_<?php echo esc_attr($wbbm_single); ?>[]" value="<?php echo esc_attr($wbbm_pickpoint['time']); ?>" placeholder="15:00">
                                                         </div>
                                                         <button class="wbbm_remove_pickpoint"><i class="fas fa-minus-circle"></i> Remove
                                                         </button>
                                                     </div>
 
-                                                <?php
+                                                    <?php
                                                 endforeach;
                                             } ?>
                                         </div>
@@ -157,7 +154,6 @@ if (!defined('ABSPATH')) {
                                 </div>
                                 <?php
                             }
-
                         } else {
                             echo '<p class="blank-pickpoint" style="color: #FF9800;font-weight: 700;text-align:left">' . esc_html_e('No pickup point added yet!', 'bus-booking-manager') . '</p>';
                         }
@@ -210,12 +206,12 @@ if (!defined('ABSPATH')) {
                             '">' +
                             '<div class="pickpoint-adding-wrap-main"><div class="pickpoint-adding-wrap"><div class="pickpoint-adding">' +
                             '<div class="pickpoint-adding-col">' +
-                            '<span class="wbbm_bus_route_icon wbbm_bus_route_icon1"><img src="<?php echo esc_url(WBTM_PLUGIN_URL .'images/bus_route_map.png');?>"/></span>' +
+                            '<span class="wbbm_bus_route_icon wbbm_bus_route_icon1"><img src="<?php echo esc_url(WBTM_PLUGIN_URL . 'images/bus_route_map.png');?>"/></span>' +
                             '<select class="pickup_add_option" name="wbbm_selected_pickpoint_name_' + get_boarding_point + '[]">' + pickuppoints_first +
                             '</select>' +
                             '</div>'+
                             '<div class="pickpoint-adding-col">' +
-                            '<span class="wbbm_bus_route_icon wbbm_bus_route_icon2"><img src="<?php echo esc_url(WBTM_PLUGIN_URL .'images/bus_route_clock.png');?>"/></span>' +
+                            '<span class="wbbm_bus_route_icon wbbm_bus_route_icon2"><img src="<?php echo esc_url(WBTM_PLUGIN_URL . 'images/bus_route_clock.png');?>"/></span>' +
                             '<input type="text" data-clocklet name="wbbm_selected_pickpoint_time_' + get_boarding_point +
                             '[]" placeholder="15:00">' +
                             '</div>'+

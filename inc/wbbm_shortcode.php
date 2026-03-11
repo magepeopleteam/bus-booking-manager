@@ -1,8 +1,11 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) { die; } // Cannot access pages directly.
+if (! defined('ABSPATH')) {
+    die;
+} // Cannot access pages directly.
 
-add_shortcode( 'bus-list', 'wbbm_bus_list' );
-function wbbm_bus_list($atts, $content=null) {
+add_shortcode('bus-list', 'wbbm_bus_list');
+function wbbm_bus_list($atts, $content = null)
+{
     $defaults = array(
         "cat"      => "0",
         "show"     => "20",
@@ -33,24 +36,24 @@ function wbbm_bus_list($atts, $content=null) {
     $loop = new WP_Query($args_search_qqq);
     ?>
     <div class="wbbm-bus-list-sec wbbm-bus-grid">
-    <?php 
+    <?php
     while ($loop->have_posts()) {
-        $loop->the_post(); 
-        $bp_arr = get_post_meta(get_the_id(), 'wbbm_bus_bp_stops', true); 
-        $dp_arr = get_post_meta(get_the_id(), 'wbbm_bus_next_stops', true);
+        $loop->the_post();
+        $bp_arr = MP_Global_Function::wbbm_get_boarding_points(get_the_ID());
+        $dp_arr = MP_Global_Function::wbbm_get_dropping_points(get_the_ID());
         $price_arr = get_post_meta(get_the_id(), 'wbbm_bus_prices', true);
-        $total_dp = count($dp_arr) - 1;
+        $total_dp = max(count($dp_arr) - 1, 0);
 
         $start = !empty($bp_arr[0]['wbbm_bus_bp_stops_name']) ? sanitize_text_field($bp_arr[0]['wbbm_bus_bp_stops_name']) : '';
         $end = !empty($dp_arr[$total_dp]['wbbm_bus_next_stops_name']) ? sanitize_text_field($dp_arr[$total_dp]['wbbm_bus_next_stops_name']) : '';
-        
+
         $type_id = get_post_meta(get_the_id(), 'wbbm_bus_category', true);
         $type_name = '';
         if ($type_id != '') {
             $type_array = get_term_by('term_id', $type_id, 'wbbm_bus_cat');
             $type_name = !empty($type_array) ? sanitize_text_field($type_array->name) : '';
-        } 
-    ?>
+        }
+        ?>
     <div class="wbbm-bus-lists">
         <div class="bus-thumb">
             <?php the_post_thumbnail('full'); ?>
@@ -59,24 +62,24 @@ function wbbm_bus_list($atts, $content=null) {
             <h2><?php the_title(); ?></h2>
             <ul>
                 <li><strong>
-                <?php echo esc_html(wbbm_get_option('wbbm_type_text', 'wbbm_label_setting_sec', __('Type','bus-booking-manager'))); ?>:</strong> <?php echo esc_html($type_name); ?></li>
+                <?php echo esc_html(wbbm_get_option('wbbm_type_text', 'wbbm_label_setting_sec', __('Type', 'bus-booking-manager'))); ?>:</strong> <?php echo esc_html($type_name); ?></li>
                 <li><strong>
-                <?php echo esc_html(wbbm_get_option('wbbm_bus_no_text', 'wbbm_label_setting_sec', __('Bus No','bus-booking-manager'))); ?>:</strong> <?php echo esc_html(get_post_meta(get_the_id(), 'wbbm_bus_no', true)); ?></li>
+                <?php echo esc_html(wbbm_get_option('wbbm_bus_no_text', 'wbbm_label_setting_sec', __('Bus No', 'bus-booking-manager'))); ?>:</strong> <?php echo esc_html(get_post_meta(get_the_id(), 'wbbm_bus_no', true)); ?></li>
                 <li><strong>
-                <?php echo esc_html(wbbm_get_option('wbbm_total_seat_text', 'wbbm_label_setting_sec', __('Total Seat','bus-booking-manager'))); ?>:</strong> <?php echo esc_html(get_post_meta(get_the_id(), 'wbbm_total_seat', true)); ?></li>
+                <?php echo esc_html(wbbm_get_option('wbbm_total_seat_text', 'wbbm_label_setting_sec', __('Total Seat', 'bus-booking-manager'))); ?>:</strong> <?php echo esc_html(get_post_meta(get_the_id(), 'wbbm_total_seat', true)); ?></li>
                 <li><strong>
-                <?php echo esc_html(wbbm_get_option('wbbm_start_from_text', 'wbbm_label_setting_sec', __('Start From','bus-booking-manager'))); ?>:</strong> <?php echo esc_html($start); ?></li>
+                <?php echo esc_html(wbbm_get_option('wbbm_start_from_text', 'wbbm_label_setting_sec', __('Start From', 'bus-booking-manager'))); ?>:</strong> <?php echo esc_html($start); ?></li>
                 <li><strong>
-                <?php echo esc_html(wbbm_get_option('wbbmesc_html_end_to_text', 'wbbm_label_setting_sec', __('End at','bus-booking-manager'))); ?>:</strong> <?php echo esc_html($end); ?></li>
+                <?php echo esc_html(wbbm_get_option('wbbmesc_html_end_to_text', 'wbbm_label_setting_sec', __('End at', 'bus-booking-manager'))); ?>:</strong> <?php echo esc_html($end); ?></li>
                 <li><strong>
-                <?php echo esc_html(wbbm_get_option('wbbm_fare_text', 'wbbm_label_setting_sec', __('Fare','bus-booking-manager'))); ?>:</strong> <?php echo wp_kses_post(wc_price(mage_seat_price(get_the_id(), $start, $end, 'adult'))); ?></li>
+                <?php echo esc_html(wbbm_get_option('wbbm_fare_text', 'wbbm_label_setting_sec', __('Fare', 'bus-booking-manager'))); ?>:</strong> <?php echo wp_kses_post(wc_price(mage_seat_price(get_the_id(), $start, $end, 'adult'))); ?></li>
             </ul>
             <a href="<?php echo esc_url(get_permalink()); ?>" class="btn wbbm-btn">
-                <?php echo esc_html(wbbm_get_option('wbbm_book_now_text', 'wbbm_label_setting_sec', __('Book Now','bus-booking-manager'))); ?>
+                <?php echo esc_html(wbbm_get_option('wbbm_book_now_text', 'wbbm_label_setting_sec', __('Book Now', 'bus-booking-manager'))); ?>
             </a>
         </div>
     </div>
-    <?php
+        <?php
     }
     ?>
     <div class="row">
@@ -96,8 +99,9 @@ function wbbm_bus_list($atts, $content=null) {
     return $content;
 }
 
-add_shortcode( 'destination', 'wbbm_bus_popular_destination' );
-function wbbm_bus_popular_destination($atts, $content=null) {
+add_shortcode('destination', 'wbbm_bus_popular_destination');
+function wbbm_bus_popular_destination($atts, $content = null)
+{
     $defaults = array(
         "from"     => "",
         "to"       => "",

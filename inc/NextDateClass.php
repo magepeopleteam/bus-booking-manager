@@ -1,5 +1,8 @@
 <?php
-if (!defined('ABSPATH')) exit;  // if direct access
+
+if (!defined('ABSPATH')) {
+    exit;  // if direct access
+}
 
 class NextDateClass extends CommonClass
 {
@@ -17,8 +20,8 @@ class NextDateClass extends CommonClass
             // Verify next-date nonce if provided. If valid, allow using `tab_date`/`tab_date_r` from GET.
             $next_date_nonce = isset($_GET['bus_search_nonce']) ? sanitize_text_field(wp_unslash($_GET['bus_search_nonce'])) : '';
             $next_date_nonce_ok = $next_date_nonce && wp_verify_nonce($next_date_nonce, 'bus_search_nonce_action');
-            if ( isset($_GET['bus_search_nonce']) && ! $next_date_nonce_ok ) {
-                if ( function_exists('wc_add_notice') ) {
+            if (isset($_GET['bus_search_nonce']) && ! $next_date_nonce_ok) {
+                if (function_exists('wc_add_notice')) {
                     wc_add_notice(__('Security check failed. Invalid date request.', 'bus-booking-manager'), 'error');
                 }
             }
@@ -36,7 +39,7 @@ class NextDateClass extends CommonClass
             $r_date_safe = $next_date_nonce_ok ? $r_date_get : ($this->mage_bus_isset('r_date') ? wp_strip_all_tags(wp_unslash($this->mage_bus_isset('r_date'))) : '');
             $next_date = $return ? $tab_date_r : $tab_date;
             $next_date_text = $next_date;
-?>
+            ?>
             <div class="mage_default_xs">
                 <ul class="mage_list_inline flexEqual mage_next_date">
                     <?php
@@ -45,28 +48,27 @@ class NextDateClass extends CommonClass
                     $next_date_nonce_query = '&bus_search_nonce=' . rawurlencode($next_date_link_nonce);
 
                     $bus_start_route = isset($_GET['bus_start_route'])
-                        ? sanitize_text_field( wp_unslash( $_GET['bus_start_route'] ) )
+                        ? sanitize_text_field(wp_unslash($_GET['bus_start_route']))
                         : '';
 
                     $bus_end_route = isset($_GET['bus_end_route'])
-                        ? sanitize_text_field( wp_unslash( $_GET['bus_end_route'] ) )
+                        ? sanitize_text_field(wp_unslash($_GET['bus_end_route']))
                         : '';
 
                     $j_date = isset($_GET['j_date'])
-                        ? sanitize_text_field( wp_unslash( $_GET['j_date'] ) )
+                        ? sanitize_text_field(wp_unslash($_GET['j_date']))
                         : '';
 
                     $r_date = isset($_GET['r_date'])
-                        ? sanitize_text_field( wp_unslash( $_GET['r_date'] ) )
+                        ? sanitize_text_field(wp_unslash($_GET['r_date']))
                         : '';
 
                     $bus_r = isset($_GET['bus-r'])
-                        ? sanitize_text_field( wp_unslash( $_GET['bus-r'] ) )
+                        ? sanitize_text_field(wp_unslash($_GET['bus-r']))
                         : '';
 
 
-                    for ( $i = 0; $i < 6; $i++ ) {
-
+                    for ($i = 0; $i < 6; $i++) {
                         $query_args = array(
                             'bus_start_route' => $bus_start_route,
                             'bus_end_route'   => $bus_end_route,
@@ -75,34 +77,34 @@ class NextDateClass extends CommonClass
                             'bus-r'           => $bus_r,
                             'tab_date'        => $tab_date,
                             'tab_date_r'      => $tab_date_r,
-                            'bus_search_nonce'=> $next_date_link_nonce,
+                            'bus_search_nonce' => $next_date_link_nonce,
                         );
 
                         $url = $single_bus
-                            ? add_query_arg( $query_args, home_url( $target ) )
-                            : add_query_arg( $query_args, home_url( $target ) );
+                            ? add_query_arg($query_args, home_url($target))
+                            : add_query_arg($query_args, home_url($target));
                         ?>
                         
-                        <li class="<?php echo esc_attr( $date === $next_date ? 'mage_active' : '' ); ?>">
+                        <li class="<?php echo esc_attr($date === $next_date ? 'mage_active' : ''); ?>">
                             <a
-                                href="<?php echo esc_url( $url ); ?>"
+                                href="<?php echo esc_url($url); ?>"
                                 class="wbtm_next_day_search"
-                                data-jdate="<?php echo esc_attr( $next_date ); ?>"
-                                data-rdate="<?php echo esc_attr( $return ? $next_date : $r_date ); ?>"
+                                data-jdate="<?php echo esc_attr($next_date); ?>"
+                                data-rdate="<?php echo esc_attr($return ? $next_date : $r_date); ?>"
                             >
-                                <?php echo esc_html( $this->wbbm_get_datetime( $next_date, 'date-text' ) ); ?>
+                                <?php echo esc_html($this->wbbm_get_datetime($next_date, 'date-text')); ?>
                             </a>
                         </li>
 
                         <?php
                         // ⏭ move to next day
-                        $next_date = gmdate( 'Y-m-d', strtotime( $next_date . ' +1 day' ) );
+                        $next_date = gmdate('Y-m-d', strtotime($next_date . ' +1 day'));
                     }
 
                     ?>
                 </ul>
             </div>
-        <?php
+            <?php
         }
     }
 
@@ -121,8 +123,8 @@ class NextDateClass extends CommonClass
         // verify incoming next-date nonce (if present) before trusting GET tab/date parameters
         $next_date_nonce = isset($_GET['bus_search_nonce']) ? sanitize_text_field(wp_unslash($_GET['bus_search_nonce'])) : '';
         $next_date_nonce_ok = $next_date_nonce && wp_verify_nonce($next_date_nonce, 'bus_search_nonce_action');
-        if ( isset($_GET['bus_search_nonce']) && ! $next_date_nonce_ok ) {
-            if ( function_exists('wc_add_notice') ) {
+        if (isset($_GET['bus_search_nonce']) && ! $next_date_nonce_ok) {
+            if (function_exists('wc_add_notice')) {
                 wc_add_notice(__('Security check failed. Invalid date request.', 'bus-booking-manager'), 'error');
             }
         }
@@ -142,90 +144,88 @@ class NextDateClass extends CommonClass
         $weekly_offday = get_post_meta(get_the_id(), 'weekly_offday', true) ? get_post_meta(get_the_id(), 'weekly_offday', true) : [];
 
         if ($wbtm_bus_on_dates && $show_operational_on_day === 'yes') {
-        ?>
+            ?>
             <div class="mage_default_xs">
                 <ul class="mage_list_inline flexEqual mage_next_date">
                     <?php
                         // Create nonce
-                        $bus_search_nonce = wp_create_nonce( 'bus_search_nonce_action' );
+                        $bus_search_nonce = wp_create_nonce('bus_search_nonce_action');
 
                         // Sanitize GET inputs once
                         $bus_start_route = isset($_GET['bus_start_route'])
-                            ? sanitize_text_field( wp_unslash( $_GET['bus_start_route'] ) )
+                            ? sanitize_text_field(wp_unslash($_GET['bus_start_route']))
                             : '';
 
                         $bus_end_route = isset($_GET['bus_end_route'])
-                            ? sanitize_text_field( wp_unslash( $_GET['bus_end_route'] ) )
+                            ? sanitize_text_field(wp_unslash($_GET['bus_end_route']))
                             : '';
 
                         $j_date = isset($_GET['j_date'])
-                            ? sanitize_text_field( wp_unslash( $_GET['j_date'] ) )
+                            ? sanitize_text_field(wp_unslash($_GET['j_date']))
                             : '';
 
                         $r_date = isset($_GET['r_date'])
-                            ? sanitize_text_field( wp_unslash( $_GET['r_date'] ) )
+                            ? sanitize_text_field(wp_unslash($_GET['r_date']))
                             : '';
 
                         $bus_r = isset($_GET['bus-r'])
-                            ? sanitize_text_field( wp_unslash( $_GET['bus-r'] ) )
+                            ? sanitize_text_field(wp_unslash($_GET['bus-r']))
                             : '';
 
-                            $wbtm_bus_on_dates_arr = is_array( $wbtm_bus_on_dates )
+                            $wbtm_bus_on_dates_arr = is_array($wbtm_bus_on_dates)
                             ? $wbtm_bus_on_dates
-                            : explode( ',', $wbtm_bus_on_dates );
+                            : explode(',', $wbtm_bus_on_dates);
 
-                        foreach ( $wbtm_bus_on_dates_arr as $i => $ondate ) {
+                    foreach ($wbtm_bus_on_dates_arr as $i => $ondate) {
+                        $ondate = mage_wp_date($ondate, 'Y-m-d');
 
-                            $ondate = mage_wp_date( $ondate, 'Y-m-d' );
+                        if ($j_date <= $ondate) {
+                            $ondate = $ondate ?: $j_date;
 
-                            if ( $j_date <= $ondate ) {
+                            // Build query safely
+                            $query_args = array(
+                                'bus_start_route' => $bus_start_route,
+                                'bus_end_route'   => $bus_end_route,
+                                'j_date'          => $return ? $j_date : $ondate,
+                                'r_date'          => $return ? $ondate : $r_date,
+                                'bus-r'           => $bus_r,
+                                'bus_search_nonce' => $bus_search_nonce, // nonce added
+                            );
 
-                                $ondate = $ondate ?: $j_date;
+                            $url = $single_bus
+                                ? '#'
+                                : add_query_arg($query_args, home_url($target));
+                            ?>
 
-                                // Build query safely
-                                $query_args = array(
-                                    'bus_start_route' => $bus_start_route,
-                                    'bus_end_route'   => $bus_end_route,
-                                    'j_date'          => $return ? $j_date : $ondate,
-                                    'r_date'          => $return ? $ondate : $r_date,
-                                    'bus-r'           => $bus_r,
-                                    'bus_search_nonce'=> $bus_search_nonce, // nonce added
-                                );
-
-                                $url = $single_bus
-                                    ? '#'
-                                    : add_query_arg( $query_args, home_url( $target ) );
-                                ?>
-
-                                <?php if ( ! in_array( $j_date, $wbtm_bus_on_dates_arr, true ) && $i === 0 ) : ?>
+                            <?php if (! in_array($j_date, $wbtm_bus_on_dates_arr, true) && $i === 0) : ?>
                                     <li class="mage_active">
                                         <a href="#">
-                                            <?php echo esc_html( $this->wbbm_get_datetime( $j_date, 'date-text' ) ); ?>
+                                            <?php echo esc_html($this->wbbm_get_datetime($j_date, 'date-text')); ?>
                                         </a>
                                     </li>
-                                <?php endif; ?>
+                            <?php endif; ?>
 
-                                <li class="<?php echo esc_attr( $j_date === $ondate ? 'mage_active' : '' ); ?>">
+                                <li class="<?php echo esc_attr($j_date === $ondate ? 'mage_active' : ''); ?>">
                                     <a
-                                        href="<?php echo esc_url( $url ); ?>"
+                                        href="<?php echo esc_url($url); ?>"
                                         class="wbtm_next_day_search"
-                                        data-sroute="<?php echo esc_attr( $bus_start_route ); ?>"
-                                        data-eroute="<?php echo esc_attr( $bus_end_route ); ?>"
-                                        data-jdate="<?php echo esc_attr( $return ? $j_date : $ondate ); ?>"
-                                        data-rdate="<?php echo esc_attr( $return ? $ondate : $r_date ); ?>"
+                                        data-sroute="<?php echo esc_attr($bus_start_route); ?>"
+                                        data-eroute="<?php echo esc_attr($bus_end_route); ?>"
+                                        data-jdate="<?php echo esc_attr($return ? $j_date : $ondate); ?>"
+                                        data-rdate="<?php echo esc_attr($return ? $ondate : $r_date); ?>"
                                     >
-                                        <?php echo esc_html( $this->wbbm_get_datetime( $ondate, 'date-text' ) ); ?>
+                                    <?php echo esc_html($this->wbbm_get_datetime($ondate, 'date-text')); ?>
                                     </a>
                                 </li>
 
                                 <?php
-                            }
                         }
+                    }
                     ?>
                 </ul>
             </div>
-        <?php
-        } elseif (($wbtm_offday_schedules || $weekly_offday) && $show_off_day === 'yes') {
+            <?php
+        } elseif (($wbtm_offday_schedules || $weekly_offday)) {
             $alloffdays = [];
             foreach ($wbtm_offday_schedules as $wbtm_offday_schedule) {
                 $alloffdays = array_unique(array_merge($alloffdays, WbbmdisplayDates($wbtm_offday_schedule['from_date'], $wbtm_offday_schedule['to_date'])));
@@ -239,66 +239,64 @@ class NextDateClass extends CommonClass
 
             $next_date_text = $next_date;
 
-        ?>
+            ?>
             <div class="mage_default_xs">
                 <ul class="mage_list_inline flexEqual mage_next_date">
                     <?php
-                        $bus_search_nonce = wp_create_nonce( 'bus_search_nonce_action' );
+                        $bus_search_nonce = wp_create_nonce('bus_search_nonce_action');
 
                         $bus_start_route = isset($_GET['bus_start_route'])
-                            ? sanitize_text_field( wp_unslash( $_GET['bus_start_route'] ) )
+                            ? sanitize_text_field(wp_unslash($_GET['bus_start_route']))
                             : '';
 
                         $bus_end_route = isset($_GET['bus_end_route'])
-                            ? sanitize_text_field( wp_unslash( $_GET['bus_end_route'] ) )
+                            ? sanitize_text_field(wp_unslash($_GET['bus_end_route']))
                             : '';
 
                         $j_date = isset($_GET['j_date'])
-                            ? sanitize_text_field( wp_unslash( $_GET['j_date'] ) )
+                            ? sanitize_text_field(wp_unslash($_GET['j_date']))
                             : '';
 
                         $r_date = isset($_GET['r_date'])
-                            ? sanitize_text_field( wp_unslash( $_GET['r_date'] ) )
+                            ? sanitize_text_field(wp_unslash($_GET['r_date']))
                             : '';
 
                         $bus_r = isset($_GET['bus-r'])
-                            ? sanitize_text_field( wp_unslash( $_GET['bus-r'] ) )
+                            ? sanitize_text_field(wp_unslash($_GET['bus-r']))
                             : '';
 
                         $m = 0; // how many valid dates printed
 
-                    while ( $m < 5 ) {
-
+                    while ($m < 5) {
                         // skip off-days
                         if (
-                            ! in_array( $next_date, $offday, true ) &&
-                            ! in_array( gmdate( 'w', strtotime( $next_date ) ), $weekly_offday, true )
+                            ! wbbm_is_bus_offday(get_the_ID(), $next_date) &&
+                            wbbm_is_date_in_operational_range(get_the_ID(), $next_date)
                         ) {
-
                             $query_args = array(
                                 'bus_start_route' => $bus_start_route,
                                 'bus_end_route'   => $bus_end_route,
                                 'j_date'          => $return ? $j_date : $next_date,
                                 'r_date'          => $return ? $next_date : $r_date,
                                 'bus-r'           => $bus_r,
-                                'bus_search_nonce'=> $bus_search_nonce, // 🔐 nonce
+                                'bus_search_nonce' => $bus_search_nonce, // 🔐 nonce
                             );
 
                             $url = $single_bus
                                 ? '#'
-                                : add_query_arg( $query_args, home_url( $target ) );
+                                : add_query_arg($query_args, home_url($target));
                             ?>
 
-                            <li class="<?php echo esc_attr( $j_date === $next_date ? 'mage_active' : '' ); ?>">
+                            <li class="<?php echo esc_attr($j_date === $next_date ? 'mage_active' : ''); ?>">
                                 <a
-                                    href="<?php echo esc_url( $url ); ?>"
+                                    href="<?php echo esc_url($url); ?>"
                                     class="wbtm_next_day_search"
-                                    data-sroute="<?php echo esc_attr( $bus_start_route ); ?>"
-                                    data-eroute="<?php echo esc_attr( $bus_end_route ); ?>"
-                                    data-jdate="<?php echo esc_attr( $return ? $j_date : $next_date ); ?>"
-                                    data-rdate="<?php echo esc_attr( $return ? $next_date : $r_date ); ?>"
+                                    data-sroute="<?php echo esc_attr($bus_start_route); ?>"
+                                    data-eroute="<?php echo esc_attr($bus_end_route); ?>"
+                                    data-jdate="<?php echo esc_attr($return ? $j_date : $next_date); ?>"
+                                    data-rdate="<?php echo esc_attr($return ? $next_date : $r_date); ?>"
                                 >
-                                    <?php echo esc_html( $this->wbbm_get_datetime( $next_date, 'date-text' ) ); ?>
+                                    <?php echo esc_html($this->wbbm_get_datetime($next_date, 'date-text')); ?>
                                 </a>
                             </li>
 
@@ -307,14 +305,14 @@ class NextDateClass extends CommonClass
                         }
 
                         // ⏭ always move to next day
-                        $next_date = gmdate( 'Y-m-d', strtotime( $next_date . ' +1 day' ) );
+                        $next_date = gmdate('Y-m-d', strtotime($next_date . ' +1 day'));
                     }
 
 
                     ?>
                 </ul>
             </div>
-<?php
+            <?php
         } else {
             $this->mage_next_date_suggestion(false, false, $target);
         }

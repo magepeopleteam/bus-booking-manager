@@ -1,9 +1,12 @@
 <?php
-if (!defined('ABSPATH')) exit;
+
+if (!defined('ABSPATH')) {
+    exit;
+}
 
 /**
  * Bus List Page Class
- * 
+ *
  * Handles the modern custom list page for general buses.
  */
 class BusListPageClass
@@ -162,7 +165,7 @@ class BusListPageClass
             'hide_empty' => false,
         ));
 
-?>
+        ?>
         <div class="wrap shuttle-list-wrap">
             <div class="shuttle-list-container-fullwidth">
                 <!-- Header Section -->
@@ -176,7 +179,7 @@ class BusListPageClass
                         </div>
                     </div>
                     <div class="header-right">
-                        <a href="<?php echo admin_url('admin.php?page=wbbm-bus-edit'); ?>" class="btn btn-primary">
+                        <a href="<?php echo esc_url(admin_url('edit.php?post_type=wbbm_bus&page=wbbm-bus-edit')); ?>" class="btn btn-primary">
                             <span class="dashicons dashicons-plus"></span> <?php _e('Add New Bus', 'bus-booking-manager'); ?>
                         </a>
                     </div>
@@ -231,7 +234,8 @@ class BusListPageClass
                         </thead>
                         <tbody>
                             <?php if ($query->have_posts()) : ?>
-                                <?php while ($query->have_posts()) : $query->the_post();
+                                <?php while ($query->have_posts()) :
+                                    $query->the_post();
                                     $post_id = get_the_ID();
                                     $thumb_id = get_post_thumbnail_id($post_id);
                                     $thumb_url = $thumb_id ? wp_get_attachment_image_url($thumb_id, 'thumbnail') : '';
@@ -255,9 +259,9 @@ class BusListPageClass
                                     $status_label = ucfirst($current_status);
                                     $status_class = 'status-' . $current_status;
 
-                                    $edit_url = admin_url('admin.php?page=wbbm-bus-edit&post_id=' . $post_id);
+                                    $edit_url = admin_url('edit.php?post_type=wbbm_bus&page=wbbm-bus-edit&post_id=' . $post_id);
                                     $delete_url = wp_nonce_url(add_query_arg(array('action' => 'delete', 'post_id' => $post_id)), 'delete-bus_' . $post_id);
-                                ?>
+                                    ?>
                                     <tr>
                                         <td><input type="checkbox" name="bus_ids[]" value="<?php echo esc_attr($post_id); ?>"></td>
                                         <td class="shuttle-info-cell" style="width: 250px;">
@@ -289,7 +293,7 @@ class BusListPageClass
                                                 <?php
                                                 if (!empty($route_pieces)) :
                                                     $count = count($route_pieces);
-                                                ?>
+                                                    ?>
                                                     <div class="stops-list-wrapper">
                                                         <div class="stops-visible">
                                                             <?php echo esc_html(implode(' ➝ ', array_slice($route_pieces, 0, 2))); ?>
@@ -306,7 +310,8 @@ class BusListPageClass
                                                             </div>
                                                         <?php endif; ?>
                                                     </div>
-                                                <?php else : echo '—';
+                                                <?php else :
+                                                    echo '—';
                                                 endif; ?>
                                             </div>
                                         </td>
@@ -350,9 +355,9 @@ class BusListPageClass
                                 for ($i = 1; $i <= $total_pages; $i++) {
                                     if ($i == $paged) {
                                         echo '<span class="page-link active">' . $i . '</span>';
-                                    } else if ($i == 1 || $i == $total_pages || ($i >= $paged - 1 && $i <= $paged + 1)) {
+                                    } elseif ($i == 1 || $i == $total_pages || ($i >= $paged - 1 && $i <= $paged + 1)) {
                                         echo '<a href="' . add_query_arg('paged', $i) . '" class="page-link">' . $i . '</a>';
-                                    } else if ($i == 2 || $i == $total_pages - 1) {
+                                    } elseif ($i == 2 || $i == $total_pages - 1) {
                                         echo '<span class="pager-sep">...</span>';
                                     }
                                 }
@@ -367,7 +372,7 @@ class BusListPageClass
                 </div>
             </div>
         </div>
-<?php
+        <?php
     }
 }
 
