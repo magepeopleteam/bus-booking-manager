@@ -18,6 +18,7 @@ if (! class_exists('WBBM_Required_Plugins')) {
             add_action('admin_notices', array($this, 'wbbm_admin_notices'));
             add_action('admin_menu', array($this, 'wbbm_plugins_admin_menu'));
             add_action('admin_init', array($this, 'wbbm_plugin_activate'));
+            add_action('admin_init', array($this, 'wbbm_plugin_install'));
         }
 
         public function wbbm_plugin_page_location()
@@ -46,81 +47,130 @@ if (! class_exists('WBBM_Required_Plugins')) {
         public function wbbm_plugin_activate()
         {
             if (
-                isset($_GET['wbbm_plugin_activate'], $_GET['wbbm_plugin_activate_nonce'])
-                    && wp_verify_nonce(
-                        sanitize_text_field(wp_unslash($_GET['wbbm_plugin_activate_nonce'])),
-                        'wbbm_plugin_activate_action'
-                    )
+                ! isset($_GET['wbbm_plugin_activate'], $_GET['wbbm_plugin_activate_nonce'])
+                || ! wp_verify_nonce(
+                    sanitize_text_field(wp_unslash($_GET['wbbm_plugin_activate_nonce'])),
+                    'wbbm_plugin_activate_action'
+                )
             ) {
-                $slug = sanitize_text_field(wp_unslash($_GET['wbbm_plugin_activate']));
-                        $activate = activate_plugin($slug);
-                        $url = admin_url($this->wbbm_plugin_page_location() . '?page=wbbm-plugins');
-                        echo '<script>
-                        var url = "' . esc_url($url) . '";
-                        window.location.replace(url);
-                    </script>';
-            } else {
                 return false;
             }
+
+            if (! current_user_can('activate_plugins')) {
+                return false;
+            }
+
+            $plugin_file = sanitize_text_field(wp_unslash($_GET['wbbm_plugin_activate']));
+
+            if (! $plugin_file) {
+                return false;
+            }
+
+            activate_plugin($plugin_file);
+
+            wp_safe_redirect(admin_url($this->wbbm_plugin_page_location() . '?page=wbbm-plugins'));
+            exit;
         }
 
-        public function wbbm_mpdf_plugin_install()
+        public function wbbm_plugin_install()
         {
-            if (! current_user_can('administrator')) {
-                exit;
-            }
-
-            // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-            if (isset($_GET['wbbm_plugin_install']) && ! $this->wbbm_chk_plugin_folder_exist(sanitize_text_field(wp_unslash($_GET['wbbm_plugin_install'])))) {
-                // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-                $slug = sanitize_text_field(wp_unslash($_GET['wbbm_plugin_install']));
-
-                if ($slug !== 'magepeople-pdf-support-master') {
-                    $action = 'install-plugin';
-                    $url = wp_nonce_url(
-                        add_query_arg(
-                            array(
-                                'action' => $action,
-                                'plugin' => $slug
-                            ),
-                            admin_url('update.php')
-                        ),
-                        $action . '_' . $slug
-                    );
-
-                    if (isset($url)) {
-                        echo '<script>
-                        str = "' . esc_url($url) . '";
-                        var url = str.replace(/&amp;/g, "&");
-                        window.location.replace(url);
-                    </script>';
-                    }
-                } elseif ($slug === 'magepeople-pdf-support-master') {
-                    include_once(ABSPATH . 'wp-admin/includes/plugin-install.php');
-                    include_once(ABSPATH . 'wp-admin/includes/file.php');
-                    include_once(ABSPATH . 'wp-admin/includes/misc.php');
-                    include_once(ABSPATH . 'wp-admin/includes/class-wp-upgrader.php');
-
-                    $upgrader = new Plugin_Upgrader(new Plugin_Installer_Skin());
-                    $upgrader->install('https://github.com/magepeopleteam/magepeople-pdf-support/archive/master.zip');
-                } else {
-                    return false;
-                }
-            } else {
+            if (! isset($_GET['wbbm_plugin_install'], $_GET['wbbm_plugin_install_nonce'])) {
                 return false;
             }
+
+            if (! current_user_can('install_plugins')) {
+                return false;
+            }
+
+            if (
+                ! wp_verify_nonce(
+                    sanitize_text_field(wp_unslash($_GET['wbbm_plugin_install_nonce'])),
+                    'wbbm_plugin_install_action'
+                )
+            ) {
+                return false;
+            }
+
+            $slug = sanitize_text_field(wp_unslash($_GET['wbbm_plugin_install']));
+
+            if ($this->wbbm_chk_plugin_folder_exist($slug)) {
+                return false;
+            }
+
+            include_once(ABSPATH . 'wp-admin/includes/plugin-install.php');
+            include_once(ABSPATH . 'wp-admin/includes/file.php');
+            include_once(ABSPATH . 'wp-admin/includes/misc.php');
+            include_once(ABSPATH . 'wp-admin/includes/class-wp-upgrader.php');
+
+            $upgrader = new Plugin_Upgrader(new Automatic_Upgrader_Skin());
+
+            if ($slug !== 'magepeople-pdf-support-master') {
+                $api = plugins_api(
+                    'plugin_information',
+                    array(
+                        'slug' => $slug,
+                        'fields' => array(
+                            'short_description' => false,
+                            'sections' => false,
+                            'requires' => false,
+                            'rating' => false,
+                            'ratings' => false,
+                            'downloaded' => false,
+                            'last_updated' => false,
+                            'added' => false,
+                            'tags' => false,
+                            'compatibility' => false,
+                            'homepage' => false,
+                            'donate_link' => false,
+                        ),
+                    )
+                );
+
+                if (is_wp_error($api) || empty($api->download_link)) {
+                    return false;
+                }
+
+                $result = $upgrader->install($api->download_link);
+            } else {
+                $result = $upgrader->install('https://github.com/magepeopleteam/magepeople-pdf-support/archive/master.zip');
+            }
+
+            if (is_wp_error($result) || ! $result) {
+                return false;
+            }
+
+            $plugin_file = $this->wbbm_get_plugin_file_from_slug($slug);
+
+            if ($plugin_file && file_exists(WP_PLUGIN_DIR . '/' . $plugin_file)) {
+                activate_plugin($plugin_file);
+            }
+
+            wp_safe_redirect(admin_url($this->wbbm_plugin_page_location() . '?page=wbbm-plugins'));
+            exit;
+
+            return true;
+        }
+
+        public function wbbm_get_plugin_file_from_slug($slug)
+        {
+            $plugin_files = array(
+                'woocommerce' => 'woocommerce/woocommerce.php',
+                'bus-booking-manager' => 'bus-booking-manager/woocommerce-bus.php',
+                'magepeople-pdf-support-master' => 'magepeople-pdf-support-master/mage-pdf.php',
+            );
+
+            return isset($plugin_files[$slug]) ? $plugin_files[$slug] : '';
         }
 
         public function wbbm_wp_plugin_activation_url($slug)
         {
-
-            $slug = sanitize_key($slug);
-
-            if ($this->wbbm_plugin_page_location() === 'plugins.php') {
-                $url = admin_url($this->wbbm_plugin_page_location()) . '?page=wbbm-plugins&wbbm_plugin_activate=' . $slug;
-            } else {
-                $url = admin_url($this->wbbm_plugin_page_location()) . '&page=wbbm-plugins&wbbm_plugin_activate=' . $slug;
-            }
+            $url = add_query_arg(
+                array(
+                    'page' => 'wbbm-plugins',
+                    'wbbm_plugin_activate' => sanitize_text_field($slug),
+                ),
+                admin_url($this->wbbm_plugin_page_location())
+            );
 
             // Add nonce to URL
             $url = wp_nonce_url(
@@ -248,12 +298,23 @@ if (! class_exists('WBBM_Required_Plugins')) {
             </style>
             <?php
 
-            $this->wbbm_mpdf_plugin_install();
         }
 
         public function wbbm_wp_plugin_installation_url($slug)
         {
-            return $slug ? admin_url($this->wbbm_plugin_page_location()) . '?page=wbbm-plugins&wbbm_plugin_install=' . sanitize_text_field($slug) : '';
+            if (! $slug) {
+                return '';
+            }
+
+            $url = add_query_arg(
+                array(
+                    'page' => 'wbbm-plugins',
+                    'wbbm_plugin_install' => sanitize_text_field($slug),
+                ),
+                admin_url($this->wbbm_plugin_page_location())
+            );
+
+            return wp_nonce_url($url, 'wbbm_plugin_install_action', 'wbbm_plugin_install_nonce');
         }
 
         public function wbbm_required_plugin_list()
