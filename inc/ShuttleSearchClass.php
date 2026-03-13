@@ -22,6 +22,9 @@ class ShuttleSearchClass
 
         add_action('wp_ajax_wbbm_get_shuttle_dropoff_points', array($this, 'ajax_get_dropoff_points'));
         add_action('wp_ajax_nopriv_wbbm_get_shuttle_dropoff_points', array($this, 'ajax_get_dropoff_points'));
+
+        add_action('wp_ajax_wbbm_get_shuttle_available_seats', array($this, 'ajax_get_available_seats'));
+        add_action('wp_ajax_nopriv_wbbm_get_shuttle_available_seats', array($this, 'ajax_get_available_seats'));
     }
 
     /**
@@ -111,21 +114,18 @@ class ShuttleSearchClass
                         <input type="text" name="shuttle_date" id="shuttle_date" required class="form-control" value="<?php echo esc_attr($selected_date); ?>" readonly style="background-color: #fff; cursor: pointer;">
                     </div>
 
-                    <!-- 4. Time (Populated via AJAX based on Route + Date + Pickup Offset) -->
+                    <!-- 4. Time (Auto-selected from the shuttle schedule) -->
                     <div class="wbbm_field_group">
                         <label><?php _e('Time', 'bus-booking-manager'); ?></label>
-                        <select name="shuttle_time" id="shuttle_time" required class="form-control" <?php echo $selected_time ? '' : 'disabled'; ?>>
-                            <option value=""><?php _e('Select Date & Pickup', 'bus-booking-manager'); ?></option>
-                            <?php if ($selected_time) : ?>
-                                <option value="<?php echo esc_attr($selected_time); ?>" selected><?php echo esc_html($selected_time); ?></option>
-                            <?php endif; ?>
-                        </select>
+                        <input type="text" id="shuttle_time_display" class="form-control" value="<?php echo esc_attr($selected_time); ?>" readonly placeholder="<?php esc_attr_e('Select Date & Pickup', 'bus-booking-manager'); ?>" style="background-color: #f5f5f5; cursor: not-allowed;">
+                        <input type="hidden" name="shuttle_time" id="shuttle_time" value="<?php echo esc_attr($selected_time); ?>">
                     </div>
 
                     <!-- 5. Passengers -->
                     <div class="wbbm_field_group">
                         <label><?php _e('Passengers', 'bus-booking-manager'); ?></label>
-                        <input type="number" name="shuttle_qty" min="1" value="<?php echo esc_attr($selected_passengers); ?>" required class="form-control">
+                        <input type="number" name="shuttle_qty" id="shuttle_qty" min="1" value="<?php echo esc_attr($selected_passengers); ?>" required class="form-control">
+                        <div class="wbbm_field_hint" id="wbbm_shuttle_available_seats"></div>
                     </div>
 
                     <!-- 6. Drop-off Stop (Populated via AJAX based on Route + Pickup Index) -->
@@ -156,26 +156,52 @@ class ShuttleSearchClass
 
                     <!-- Submit -->
                     <div class="wbbm_field_group wbbm_submit_group">
-                        <button type="submit" class="button wbbm_search_btn"><?php _e('Search', 'bus-booking-manager'); ?></button>
+                        <button type="submit" class="button wbbm_search_btn"><?php _e('Continue', 'bus-booking-manager'); ?></button>
                     </div>
                 </div>
             </form>
         </div>
 
+        <script type="application/json" id="wbbm-shuttle-search-config"><?php
+            echo wp_json_encode(array(
+                'ajaxUrl' => admin_url('admin-ajax.php'),
+                'preSelected' => array(
+                    'route' => $selected_route,
+                    'pickup' => $selected_pickup,
+                    'dropoff' => $selected_dropoff,
+                    'dropoffPoint' => $selected_dropoff_point,
+                    'time' => $selected_time,
+                ),
+                'labels' => array(
+                    'booked' => __('Booked', 'bus-booking-manager'),
+                    'wait' => __('Wait...', 'bus-booking-manager'),
+                    'selectDateAndPickup' => __('Select Date & Pickup', 'bus-booking-manager'),
+                    'checkingSeatAvailability' => __('Checking seat availability...', 'bus-booking-manager'),
+                    'seatAvailabilityError' => __('Unable to check seat availability.', 'bus-booking-manager'),
+                ),
+            ), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
+        ?></script>
+
         <script type="text/javascript">
             jQuery(document).ready(function($) {
-                var ajaxUrl = '<?php echo admin_url('admin-ajax.php'); ?>';
+                var configNode = document.getElementById('wbbm-shuttle-search-config');
+                var shuttleConfig = {};
 
-                // Pre-selected values from PHP
-                var preSelected = {
-                    route: "<?php echo esc_js($selected_route); ?>",
-                    pickup: "<?php echo esc_js($selected_pickup); ?>",
-                    dropoff: "<?php echo esc_js($selected_dropoff); ?>",
-                    dropoffPoint: "<?php echo esc_js($selected_dropoff_point); ?>",
-                    time: "<?php echo esc_js($selected_time); ?>"
-                };
+                if (configNode) {
+                    try {
+                        shuttleConfig = JSON.parse(configNode.textContent || '{}');
+                    } catch (error) {
+                        shuttleConfig = {};
+                    }
+                }
 
-                var wbbm_shuttle_allowed_days = [];
+                var ajaxUrl = shuttleConfig.ajaxUrl || '';
+                var preSelected = shuttleConfig.preSelected || {};
+                var labels = shuttleConfig.labels || {};
+
+                var wbbmShuttleAllowedDays = [];
+                var wbbmShuttleBookedDates = [];
+                var wbbmShuttleRouteTimes = [];
                 var isFirstLoad = true;
 
                 // Initialize jQuery UI Datepicker
@@ -183,9 +209,17 @@ class ShuttleSearchClass
                     dateFormat: 'yy-mm-dd',
                     minDate: 0,
                     beforeShowDay: function(date) {
-                        if (!wbbm_shuttle_allowed_days.length) return [false, ""];
-                        var day = date.getDay();
-                        return [wbbm_shuttle_allowed_days.indexOf(day) !== -1, ""];
+                        var formattedDate = $.datepicker.formatDate('yy-mm-dd', date);
+
+                        if (!wbbmShuttleAllowedDays.length) {
+                            return [false, ''];
+                        }
+
+                        if (wbbmShuttleBookedDates.indexOf(formattedDate) !== -1) {
+                            return [false, 'wbbm-booked-date', labels.booked || 'Booked'];
+                        }
+
+                        return [wbbmShuttleAllowedDays.indexOf(date.getDay()) !== -1, ''];
                     },
                     onSelect: function() {
                         $(this).trigger('change');
@@ -196,7 +230,9 @@ class ShuttleSearchClass
                 $('#shuttle_route_id').on('change', function() {
                     var routeVal = $(this).val();
                     resetFields(['shuttle_pickup_point', 'shuttle_time', 'shuttle_dropoff_stop', 'shuttle_dropoff_point']);
-                    wbbm_shuttle_allowed_days = [];
+                    wbbmShuttleAllowedDays = [];
+                    wbbmShuttleBookedDates = [];
+                    wbbmShuttleRouteTimes = [];
                     $('#shuttle_date').datepicker('refresh');
 
                     if (!routeVal) return;
@@ -210,25 +246,18 @@ class ShuttleSearchClass
                         },
                         success: function(res) {
                             if (res.success) {
-                                wbbm_shuttle_allowed_days = res.data.days || [];
+                                wbbmShuttleAllowedDays = res.data.days || [];
+                                wbbmShuttleBookedDates = res.data.booked_dates || [];
+                                wbbmShuttleRouteTimes = res.data.schedule || [];
                                 $('#shuttle_date').datepicker('refresh');
 
-                                // Auto-correct date if selected date is now disabled (but string might be prefilled on page load)
-                                var currentDate = $('#shuttle_date').datepicker('getDate');
-                                if (currentDate) {
-                                    var currentDay = currentDate.getDay();
-                                    if (wbbm_shuttle_allowed_days.length > 0 && wbbm_shuttle_allowed_days.indexOf(currentDay) === -1) {
-                                        $('#shuttle_date').val('');
-                                        // On first load, don't trigger time load if date gets cleared
-                                        if (!isFirstLoad) {
-                                            $('#shuttle_time').html('<option>Select Date & Pickup</option>').prop('disabled', true);
-                                        }
-                                    }
-                                }
+                                validateSelectedDate();
 
                                 // Populate and try to select pre-value
                                 populateSelect('#shuttle_pickup_point', res.data.options, 'Select Pickup Point', preSelected.pickup);
                                 $('#shuttle_pickup_point').prop('disabled', false);
+                                updateTimeField();
+                                updateAvailableSeats();
 
                                 // Reset preSelected after use to avoid stickiness on manual changes
                                 if (preSelected.pickup) {
@@ -244,43 +273,17 @@ class ShuttleSearchClass
                     });
                 });
 
-                // 2. Pickup Point OR Date Changed -> Get Times
+                // 2. Pickup Point OR Date Changed
                 $('#shuttle_pickup_point, #shuttle_date').on('change', function() {
-                    var routeVal = $('#shuttle_route_id').val();
                     var pickupVal = $('#shuttle_pickup_point').val();
-                    var dateVal = $('#shuttle_date').val();
 
-                    $('#shuttle_time').prop('disabled', true).html('<option>Loading...</option>');
-
-                    if (!routeVal || !pickupVal || !dateVal) {
-                        $('#shuttle_time').html('<option>Select Date & Pickup</option>');
-                        return;
+                    if (this.id === 'shuttle_date') {
+                        updateAvailableSeats();
                     }
-
-                    $.ajax({
-                        url: ajaxUrl,
-                        type: 'POST',
-                        data: {
-                            action: 'wbbm_get_shuttle_times',
-                            route_val: routeVal,
-                            pickup_val: pickupVal,
-                            date: dateVal
-                        },
-                        success: function(res) {
-                            if (res.success) {
-                                populateSelect('#shuttle_time', res.data, 'Select Time', preSelected.time);
-                                $('#shuttle_time').prop('disabled', false);
-
-                                if (preSelected.time) preSelected.time = '';
-                            } else {
-                                $('#shuttle_time').html('<option>' + res.data + '</option>');
-                            }
-                        }
-                    });
 
                     // Also Update Available Drop-off Stops (must be AFTER pickup index)
                     if (this.id === 'shuttle_pickup_point') {
-                        updateDropoffStops(routeVal, pickupVal);
+                        updateDropoffStops($('#shuttle_route_id').val(), pickupVal);
                     }
                 });
 
@@ -341,16 +344,189 @@ class ShuttleSearchClass
 
                 function resetFields(ids) {
                     ids.forEach(function(id) {
+                        if (id === 'shuttle_time') {
+                            setLockedTimeField('', labels.wait || 'Wait...');
+                            return;
+                        }
+
                         $('#' + id).prop('disabled', true).empty().append('<option>Wait...</option>');
                     });
                 }
 
+                function setLockedTimeField(value, placeholder) {
+                    var displayValue = value || '';
+                    var displayPlaceholder = placeholder || labels.selectDateAndPickup || 'Select Date & Pickup';
+
+                    $('#shuttle_time').val(value || '');
+                    $('#shuttle_time_display').val(displayValue);
+                    $('#shuttle_time_display').attr('placeholder', displayPlaceholder);
+                }
+
+                function setAutoSelectedTime(options, selectedVal) {
+                    var values = Array.isArray(options) ? options : Object.keys(options || {});
+                    var selectedTime = '';
+                    var hasSelectedValue = false;
+
+                    if (selectedVal) {
+                        if (Array.isArray(options)) {
+                            hasSelectedValue = values.indexOf(selectedVal) !== -1;
+                        } else if (options) {
+                            if (options[selectedVal]) {
+                                hasSelectedValue = true;
+                            }
+                        }
+                    }
+
+                    if (hasSelectedValue) {
+                        selectedTime = selectedVal;
+                    } else if (values.length) {
+                        selectedTime = values[0];
+                    }
+
+                    setLockedTimeField(selectedTime);
+                }
+
+                function updateTimeField() {
+                    var routeVal = $('#shuttle_route_id').val();
+                    if (!routeVal) {
+                        setLockedTimeField('');
+                        return;
+                    }
+
+                    if (!wbbmShuttleRouteTimes.length) {
+                        setLockedTimeField('');
+                        return;
+                    }
+
+                    setAutoSelectedTime(wbbmShuttleRouteTimes, preSelected.time);
+
+                    if (preSelected.time) {
+                        preSelected.time = '';
+                    }
+                }
+
+                function validateSelectedDate() {
+                    var selectedDate = $('#shuttle_date').val();
+                    var selectedDateObj;
+
+                    if (!selectedDate) {
+                        return;
+                    }
+
+                    try {
+                        selectedDateObj = $.datepicker.parseDate('yy-mm-dd', selectedDate);
+                    } catch (error) {
+                        $('#shuttle_date').val('');
+                        return;
+                    }
+
+                    var isAllowedDay = wbbmShuttleAllowedDays.indexOf(selectedDateObj.getDay()) !== -1;
+                    var isBookedDate = wbbmShuttleBookedDates.indexOf(selectedDate) !== -1;
+
+                    if (!isAllowedDay || isBookedDate) {
+                        $('#shuttle_date').val('');
+                    }
+                }
+
+                function updateAvailableSeats() {
+                    var routeVal = $('#shuttle_route_id').val();
+                    var dateVal = $('#shuttle_date').val();
+                    var $hint = $('#wbbm_shuttle_available_seats');
+
+                    if (!routeVal || !dateVal) {
+                        $hint.removeClass('is-error').text('');
+                        resetPassengerLimit();
+                        return;
+                    }
+
+                    $hint.removeClass('is-error').text(labels.checkingSeatAvailability || 'Checking seat availability...');
+
+                    $.ajax({
+                        url: ajaxUrl,
+                        type: 'POST',
+                        data: {
+                            action: 'wbbm_get_shuttle_available_seats',
+                            route_val: routeVal,
+                            date: dateVal
+                        },
+                        success: function(res) {
+                            if (res) {
+                                if (res.success) {
+                                    if (res.data) {
+                                        applyPassengerLimit(res.data.available_seats);
+                                        $hint.removeClass('is-error').text(res.data.message);
+                                    } else {
+                                        resetPassengerLimit();
+                                        $hint.addClass('is-error').text(labels.seatAvailabilityError || 'Unable to check seat availability.');
+                                    }
+                                } else {
+                                    resetPassengerLimit();
+                                    if (res.data) {
+                                        $hint.addClass('is-error').text(res.data);
+                                    } else {
+                                        $hint.addClass('is-error').text(labels.seatAvailabilityError || 'Unable to check seat availability.');
+                                    }
+                                }
+                            } else {
+                                resetPassengerLimit();
+                                $hint.addClass('is-error').text(labels.seatAvailabilityError || 'Unable to check seat availability.');
+                            }
+                        },
+                        error: function() {
+                            resetPassengerLimit();
+                            $hint.addClass('is-error').text(labels.seatAvailabilityError || 'Unable to check seat availability.');
+                        }
+                    });
+                }
+
+                function applyPassengerLimit(availableSeats) {
+                    var $qty = $('#shuttle_qty');
+                    var currentValue = parseInt($qty.val(), 10) || 1;
+                    var maxSeats = Math.max(0, parseInt(availableSeats, 10) || 0);
+
+                    if (maxSeats > 0) {
+                        $qty.attr('max', maxSeats).prop('disabled', false);
+
+                        if (currentValue > maxSeats) {
+                            $qty.val(maxSeats);
+                        }
+                    } else {
+                        $qty.attr('max', 1).val(1).prop('disabled', true);
+                    }
+                }
+
+                function resetPassengerLimit() {
+                    $('#shuttle_qty').attr('max', '').prop('disabled', false);
+                }
+
+                $('#shuttle_qty').on('input change', function() {
+                    var maxSeats = parseInt($(this).attr('max'), 10);
+                    var currentValue = parseInt($(this).val(), 10);
+
+                    if (currentValue < 1 || isNaN(currentValue)) {
+                        $(this).val(1);
+                        return;
+                    }
+
+                    if (!isNaN(maxSeats)) {
+                        if (currentValue > maxSeats) {
+                            $(this).val(maxSeats);
+                        }
+                    }
+                });
 
                 function populateSelect(selector, options, placeholder, selectedVal = '') {
                     var $el = $(selector);
                     $el.empty().append('<option value="">' + placeholder + '</option>');
                     $.each(options, function(key, val) {
-                        var isSelected = (selectedVal && selectedVal == key) ? 'selected' : '';
+                        var isSelected = '';
+
+                        if (selectedVal) {
+                            if (selectedVal == key) {
+                                isSelected = 'selected';
+                            }
+                        }
+
                         $el.append($('<option value="' + key + '" ' + isSelected + '>' + val + '</option>'));
                     });
                 }
@@ -371,24 +547,72 @@ class ShuttleSearchClass
                 border-radius: 8px;
                 box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
                 padding: 30px;
-                max-width: 800px;
+                max-width: 1400px;
                 margin: 0 auto;
                 font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             }
 
+            .wbbm_notice {
+                max-width: 1400px;
+                margin: 0 auto 18px;
+                padding: 16px 18px;
+                border-radius: 10px;
+                display: flex;
+                align-items: flex-start;
+                gap: 12px;
+                border: 1px solid transparent;
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            }
+
+            .wbbm_notice_warning {
+                background: #fff8e5;
+                border-color: #f0c36d;
+                color: #7a4b00;
+            }
+
+            .wbbm_notice .dashicons {
+                font-size: 22px;
+                width: 22px;
+                height: 22px;
+                color: #dba617;
+                margin-top: 1px;
+            }
+
+            .wbbm_notice_content strong {
+                display: block;
+                font-size: 15px;
+                margin-bottom: 4px;
+                color: #5f3b00;
+            }
+
+            .wbbm_notice_content p {
+                margin: 0;
+                font-size: 14px;
+                line-height: 1.5;
+                color: #7a4b00;
+            }
+
             .wbbm_search_title {
-                margin-top: 0;
-                margin-bottom: 20px;
-                text-align: center;
-                color: #333;
-                font-size: 24px;
+                margin-top: -30px;
+                background: #ffd279;
+                display: table;
+                margin-left: auto;
+                margin-right: auto;
+                padding: 10px;
+                border-bottom-left-radius: 6px;
+                border-bottom-right-radius: 6px;
+                font-size: 2rem;
+                margin-bottom: 60px;
+                color: #000000;
+                text-transform: uppercase;
             }
 
             .wbbm_form_grid {
                 display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
                 gap: 20px;
-                align-items: end;
+                align-items: start;
             }
 
             .wbbm_field_group label {
@@ -441,6 +665,34 @@ class ShuttleSearchClass
             .wbbm_submit_group {
                 align-self: end;
             }
+
+            .wbbm_field_hint {
+                margin-top: 6px;
+                color: #2271b1;
+                font-size: 12px;
+                line-height: 1.4;
+                min-height: 17px;
+            }
+
+            .wbbm_field_hint.is-error {
+                color: #d63638;
+            }
+
+            .ui-datepicker td.wbbm-booked-date span {
+                color: transparent;
+                position: relative;
+            }
+
+            .ui-datepicker td.wbbm-booked-date span::after {
+                content: 'x';
+                color: #d63638;
+                font-weight: 700;
+                text-transform: lowercase;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
         </style>
         <?php
     }
@@ -460,21 +712,38 @@ class ShuttleSearchClass
 
         $options = array();
         $allowed_days = array();
-        $day_map = array('sun' => 0, 'mon' => 1, 'tue' => 2, 'wed' => 3, 'thu' => 4, 'fri' => 5, 'sat' => 6);
+        $schedule_times = array();
+        $day_map = array(
+            'sun' => 0,
+            'mon' => 1,
+            'tue' => 2,
+            'wed' => 3,
+            'thu' => 4,
+            'fri' => 5,
+            'sat' => 6,
+        );
 
         if ($schedule && isset($schedule[$route_id]['forward'])) {
             foreach ($schedule[$route_id]['forward'] as $dep) {
-                if (isset($dep['days']) && is_array($dep['days'])) {
-                    foreach ($dep['days'] as $d) {
-                        $d_lower = strtolower(substr($d, 0, 3));
-                        if (isset($day_map[$d_lower])) {
-                            $allowed_days[] = $day_map[$d_lower];
+                $base_time = isset($dep['time']) ? sanitize_text_field($dep['time']) : '';
+                if ($base_time) {
+                    $schedule_times[] = $base_time;
+                }
+
+                if (!empty($dep['days']) && is_array($dep['days'])) {
+                    foreach ($dep['days'] as $day) {
+                        $day_key = strtolower(substr(sanitize_text_field($day), 0, 3));
+
+                        if (isset($day_map[$day_key])) {
+                            $allowed_days[] = $day_map[$day_key];
                         }
                     }
                 }
             }
         }
         $allowed_days = array_values(array_unique($allowed_days));
+        $schedule_times = array_values(array_unique($schedule_times));
+        $booked_dates = $this->get_fully_booked_dates($post_id);
 
         if ($routes) {
             foreach ($routes as $route) {
@@ -498,9 +767,117 @@ class ShuttleSearchClass
         }
 
         wp_send_json_success(array(
-            'options' => $options,
-            'days'    => $allowed_days
+            'days'         => $allowed_days,
+            'booked_dates' => $booked_dates,
+            'options'      => $options,
+            'schedule'     => $schedule_times
         ));
+    }
+
+    /**
+     * Get fully booked dates for a shuttle within the next year.
+     *
+     * @param int $shuttle_id Shuttle post ID.
+     * @return array
+     */
+    private function get_fully_booked_dates($shuttle_id)
+    {
+        $capacity = (int) get_post_meta($shuttle_id, 'wbbm_shuttle_capacity', true);
+
+        if ($capacity <= 0) {
+            return array();
+        }
+
+        $start_date = current_time('Y-m-d');
+        $end_date = gmdate('Y-m-d', strtotime($start_date . ' +365 days'));
+        $seat_status = function_exists('wbbm_seat_booked_on_status') ? wbbm_seat_booked_on_status() : '';
+        $status_arr = $seat_status ? array_map('trim', explode(',', $seat_status)) : array(1, 2);
+
+        $meta_query = array(
+            'relation' => 'AND',
+            array(
+                'key'     => '_wbbm_shuttle_id',
+                'value'   => $shuttle_id,
+                'compare' => '=',
+            ),
+            array(
+                'key'     => '_wbbm_journey_date',
+                'value'   => array($start_date, $end_date),
+                'compare' => 'BETWEEN',
+                'type'    => 'DATE',
+            ),
+            array(
+                'key'     => '_wbbm_status',
+                'value'   => $status_arr,
+                'compare' => 'IN',
+            ),
+            array(
+                'key'     => '_wbbm_is_shuttle',
+                'value'   => 'yes',
+                'compare' => '=',
+            ),
+        );
+
+        $query = new WP_Query(array(
+            'post_type'      => 'wbbm_booking',
+            'posts_per_page' => -1,
+            'post_status'    => 'publish',
+            'fields'         => 'ids',
+            'meta_query'     => $meta_query,
+        ));
+
+        $booked_by_date = array();
+
+        if ($query->have_posts()) {
+            foreach ($query->posts as $booking_id) {
+                $journey_date = get_post_meta($booking_id, '_wbbm_journey_date', true);
+                $seats = (int) get_post_meta($booking_id, '_wbbm_seat', true);
+
+                if (!$journey_date) {
+                    continue;
+                }
+
+                if (!isset($booked_by_date[$journey_date])) {
+                    $booked_by_date[$journey_date] = 0;
+                }
+
+                $booked_by_date[$journey_date] += max(1, $seats);
+            }
+        }
+
+        wp_reset_postdata();
+
+        if (function_exists('WC') && WC()->cart) {
+            foreach (WC()->cart->get_cart() as $cart_item) {
+                if (
+                    !isset($cart_item['wbbm_shuttle_id'], $cart_item['wbbm_journey_date']) ||
+                    (int) $cart_item['wbbm_shuttle_id'] !== (int) $shuttle_id
+                ) {
+                    continue;
+                }
+
+                $journey_date = sanitize_text_field($cart_item['wbbm_journey_date']);
+                $cart_seats = isset($cart_item['wbbm_total_seat']) ? (int) $cart_item['wbbm_total_seat'] : 1;
+
+                if (!isset($booked_by_date[$journey_date])) {
+                    $booked_by_date[$journey_date] = 0;
+                }
+
+                $booked_by_date[$journey_date] += max(1, $cart_seats);
+            }
+        }
+
+        $fully_booked_dates = array();
+
+        foreach ($booked_by_date as $journey_date => $booked_seats) {
+            if ($booked_seats >= $capacity) {
+                $fully_booked_dates[] = $journey_date;
+            }
+        }
+
+        sort($fully_booked_dates);
+
+        return $fully_booked_dates;
     }
 
     // AJAX: Get Times
@@ -508,9 +885,7 @@ class ShuttleSearchClass
     {
         $route_val = isset($_POST['route_val']) ? sanitize_text_field($_POST['route_val']) : '';
         $pickup_val = isset($_POST['pickup_val']) ? sanitize_text_field($_POST['pickup_val']) : '';
-        $date = isset($_POST['date']) ? sanitize_text_field($_POST['date']) : '';
-
-        if (!$route_val || !$pickup_val || !$date) {
+        if (!$route_val || !$pickup_val) {
             wp_send_json_error('Missing Params');
         }
 
@@ -520,14 +895,12 @@ class ShuttleSearchClass
         $offset = intval($parts[2]);
 
         $schedule = maybe_unserialize(get_post_meta($post_id, 'wbbm_shuttle_schedule', true));
-        $day_of_week = strtolower(date('D', strtotime($date)));
 
         $times = array();
 
         if (isset($schedule[$route_id]['forward'])) {
             foreach ($schedule[$route_id]['forward'] as $dep) {
-                if (isset($dep['days']) && in_array($day_of_week, $dep['days'])) {
-                    // Calculate Time at Pickup Point
+                if (!empty($dep['time'])) {
                     $base_time = $dep['time'];
                     $pickup_time = date('h:i A', strtotime("+$offset minutes", strtotime($base_time)));
                     $times[$pickup_time] = $pickup_time;
@@ -536,7 +909,7 @@ class ShuttleSearchClass
         }
 
         if (empty($times)) {
-            wp_send_json_error(__('No shuttles on this date', 'bus-booking-manager'));
+            wp_send_json_error(__('No shuttle schedule available', 'bus-booking-manager'));
         } else {
             wp_send_json_success($times);
         }
@@ -617,6 +990,36 @@ class ShuttleSearchClass
     }
 
     /**
+     * AJAX: Get available seats for a shuttle on a date.
+     */
+    public function ajax_get_available_seats()
+    {
+        $route_val = isset($_POST['route_val']) ? sanitize_text_field($_POST['route_val']) : '';
+        $date = isset($_POST['date']) ? sanitize_text_field($_POST['date']) : '';
+
+        if (!$route_val || !$date) {
+            wp_send_json_error(__('Select route and date first.', 'bus-booking-manager'));
+        }
+
+        $route_parts = explode('|', $route_val);
+        $post_id = isset($route_parts[0]) ? absint($route_parts[0]) : 0;
+
+        if (!$post_id) {
+            wp_send_json_error(__('Invalid shuttle route.', 'bus-booking-manager'));
+        }
+
+        $available_seats = wbbm_shuttle_available_seats($post_id, $date);
+        $message = $available_seats > 0
+            ? sprintf(_n('%d seat available', '%d seats available', $available_seats, 'bus-booking-manager'), $available_seats)
+            : __('No seats available', 'bus-booking-manager');
+
+        wp_send_json_success(array(
+            'available_seats' => $available_seats,
+            'message'         => $message,
+        ));
+    }
+
+    /**
      * Render Search Results (Trip Summary)
      */
     private function render_search_results()
@@ -630,7 +1033,13 @@ class ShuttleSearchClass
         $dropoff_point = isset($_GET['shuttle_dropoff_point']) ? sanitize_text_field($_GET['shuttle_dropoff_point']) : '';
 
         if (!$route_id_val || !$pickup_val || !$date || !$time) {
-            echo '<p class="wbbm_error">' . __('Incomplete search criteria.', 'bus-booking-manager') . '</p>';
+            echo '<div class="wbbm_notice wbbm_notice_warning">';
+            echo '<span class="dashicons dashicons-warning"></span>';
+            echo '<div class="wbbm_notice_content">';
+            echo '<strong>' . esc_html__('Incomplete search criteria', 'bus-booking-manager') . '</strong>';
+            echo '<p>' . esc_html__('Please select a route, pickup point, journey date, and drop-off stop before continuing.', 'bus-booking-manager') . '</p>';
+            echo '</div>';
+            echo '</div>';
             $this->render_search_form(array());
             return;
         }
@@ -700,28 +1109,13 @@ class ShuttleSearchClass
                     <div class="wbbm_trip_details">
                         <div class="wbbm_detail_item">
                             <span class="dashicons dashicons-calendar"></span>
-                            <strong><?php echo date_i18n(get_option('date_format'), strtotime($date)); ?></strong>
-                        </div>
-                        <div class="wbbm_detail_item">
-                            <?php
-                            // Calculate available seats for this shuttle
-                            $available_seats = wbbm_shuttle_available_seats($post_id, $date, $route_id, $pickup_loc, $dropoff_stop);
-                            $seat_class = $available_seats <= 3 ? 'wbbm_low_seats' : 'wbbm_available_seats';
-                            ?>
-                            <span class="dashicons dashicons-tickets-alt"></span>
-                            <strong class="<?php echo esc_attr($seat_class); ?>">
-                                <?php
-                                if ($available_seats > 0) {
-                                    printf(_n('%d Seat Available', '%d Seats Available', $available_seats, 'bus-booking-manager'), $available_seats);
-                                } else {
-                                    _e('Sold Out', 'bus-booking-manager');
-                                }
-                                ?>
-                            </strong>
+                            <strong><?php esc_html_e('Journey Date:', 'bus-booking-manager'); ?></strong>
+                            <span><?php echo esc_html(date_i18n(get_option('date_format'), strtotime($date))); ?></span>
                         </div>
                         <div class="wbbm_detail_item">
                             <span class="dashicons dashicons-groups"></span>
-                            <strong><?php printf(_n('%d Passenger', '%d Passengers', $passengers, 'bus-booking-manager'), $passengers); ?></strong>
+                            <strong><?php esc_html_e('Seat Quantity:', 'bus-booking-manager'); ?></strong>
+                            <span><?php echo esc_html($passengers); ?></span>
                         </div>
                     </div>
 
@@ -787,7 +1181,13 @@ class ShuttleSearchClass
                                 </div>
                                 <div class="wbbm_price_row wbbm_subtotal">
                                     <span><?php _e('Subtotal:', 'bus-booking-manager'); ?></span>
-                                    <strong><?php echo function_exists('wc_price') ? wc_price($subtotal) : '$' . number_format($subtotal, 2); ?></strong>
+                                    <strong>
+                                        <?php
+                                        $formatted_price_per_seat = function_exists('wc_price') ? wp_strip_all_tags(wc_price($price_per_seat)) : '$' . number_format($price_per_seat, 2);
+                                        $formatted_subtotal = function_exists('wc_price') ? wc_price($subtotal) : '$' . number_format($subtotal, 2);
+                                        echo esc_html($passengers . ' x ' . $formatted_price_per_seat . ' = ') . wp_kses_post($formatted_subtotal);
+                                        ?>
+                                    </strong>
                                 </div>
                             </div>
 
@@ -817,7 +1217,7 @@ class ShuttleSearchClass
 
         <style>
             .wbbm_shuttle_booking_summary {
-                max-width: 800px;
+                max-width: 1400px;
                 margin: 30px auto;
                 font-family: 'Segoe UI', sans-serif;
             }
@@ -882,7 +1282,7 @@ class ShuttleSearchClass
             .wbbm_route_visual {
                 display: flex;
                 align-items: flex-start;
-                gap: 15px;
+                gap: 62px;
                 margin-top: 10px;
             }
 
@@ -891,7 +1291,6 @@ class ShuttleSearchClass
                 display: flex;
                 align-items: flex-start;
                 gap: 10px;
-                flex: 1;
             }
 
             .wbbm_dot {

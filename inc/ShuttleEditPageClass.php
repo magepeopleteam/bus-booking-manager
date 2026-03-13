@@ -76,6 +76,53 @@ class ShuttleEditPageClass
     }
 
     /**
+     * Get the WordPress time format used for shuttle schedule fields.
+     *
+     * @return string
+     */
+    private function get_schedule_time_format()
+    {
+        return (string) get_option('time_format', 'H:i');
+    }
+
+    /**
+     * Format a stored schedule time for the admin field.
+     *
+     * @param string $time Stored time string.
+     * @return string
+     */
+    private function format_schedule_time_for_field($time)
+    {
+        $timestamp = $time ? strtotime($time) : false;
+
+        if (!$timestamp) {
+            return '';
+        }
+
+        return wp_date($this->get_schedule_time_format(), $timestamp);
+    }
+
+    /**
+     * Normalize schedule time input from WordPress-style admin fields.
+     *
+     * @param array $time_data Schedule row input.
+     * @return string
+     */
+    private function normalize_schedule_time($time_data)
+    {
+        if (isset($time_data['time'])) {
+            $raw_time = $this->sanitize_text_value($time_data['time']);
+            $timestamp = $raw_time ? strtotime($raw_time) : false;
+
+            if ($timestamp) {
+                return wp_date($this->get_schedule_time_format(), $timestamp);
+            }
+        }
+
+        return '';
+    }
+
+    /**
      * Add full screen mode class to body
      */
     public function add_admin_body_class($classes)
@@ -461,12 +508,14 @@ class ShuttleEditPageClass
                 foreach (['forward', 'return'] as $dir) {
                     if (isset($r_data[$dir]) && is_array($r_data[$dir])) {
                         foreach ($r_data[$dir] as $idx => $time_data) {
-                            if (empty($time_data['time'])) {
+                            $normalized_time = $this->normalize_schedule_time((array) $time_data);
+
+                            if ($normalized_time === '') {
                                 continue;
                             }
 
                             $schedule[$this->sanitize_text_value($r_id)][$dir][] = array(
-                                'time' => $this->sanitize_text_value($time_data['time']),
+                                'time' => $normalized_time,
                                 'days' => isset($time_data['days']) ? array_map(array($this, 'sanitize_text_value'), (array) $time_data['days']) : array()
                             );
                         }
@@ -1108,9 +1157,9 @@ class ShuttleEditPageClass
                     </div>
 
                     <div class="shuttle-schedule-section" data-direction="forward">
-                        <div class="schedule-section-header">
-                            <h5><span class="dashicons dashicons-arrow-right-alt"></span> <?php _e('Forward Journey Schedule', 'bus-booking-manager'); ?></h5>
-                        </div>
+<!--                        <div class="schedule-section-header">-->
+<!--                            <h5><span class="dashicons dashicons-arrow-right-alt"></span> --><?php //_e('Forward Journey Schedule', 'bus-booking-manager'); ?><!--</h5>-->
+<!--                        </div>-->
                         <div class="shuttle-schedule-rows" data-direction="forward">
                             <?php
                             $forward_schedule = (isset($route_schedule['forward']) && is_array($route_schedule['forward'])) ? $route_schedule['forward'] : array();
@@ -1147,6 +1196,8 @@ class ShuttleEditPageClass
     {
         $time = isset($data['time']) ? $data['time'] : '';
         $days = isset($data['days']) ? $data['days'] : array();
+        $formatted_time = $this->format_schedule_time_for_field($time);
+        $time_placeholder = wp_date($this->get_schedule_time_format(), current_time('timestamp'));
 
         $days_of_week = array(
             'mon' => __('Mon', 'bus-booking-manager'),
@@ -1163,7 +1214,7 @@ class ShuttleEditPageClass
         <div class="shuttle-schedule-row">
             <div class="schedule-time-col">
                 <div class="input-group">
-                    <input type="text" name="<?php echo $name_prefix; ?>[time]" class="form-control wbbm_time_picker" data-clocklet value="<?php echo esc_attr($time); ?>" placeholder="08:00 AM" required>
+                    <input type="text" name="<?php echo $name_prefix; ?>[time]" class="form-control" value="<?php echo esc_attr($formatted_time); ?>" placeholder="<?php echo esc_attr($time_placeholder); ?>" required>
                     <span class="input-group-text"><span class="dashicons dashicons-clock"></span></span>
                 </div>
             </div>
