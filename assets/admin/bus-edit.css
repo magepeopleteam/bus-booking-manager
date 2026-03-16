@@ -583,7 +583,7 @@ select.form-control {
 
 /* Inline Pickup Points (Step 2) */
 .route-pickup-points-wrap {
-    background: #e4e4e8;
+    background: #e2cdbe;
     padding: 10px;
     border-radius: 8px;
     border: 1px solid #eef2f7;
@@ -636,7 +636,7 @@ select.form-control {
     border-radius: 6px;
     margin-bottom: 6px;
     display: grid;
-    grid-template-columns: minmax(120px, 1fr) 120px 32px;
+    grid-template-columns: minmax(120px, 1fr) 200px 32px;
     gap: 6px;
     align-items: center;
     border: 1px solid transparent;
@@ -839,6 +839,31 @@ select.form-control {
     margin-top: 30px;
 }
 
+.footer-status-area {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.bus-publish-warning {
+    display: inline-flex;
+    align-items: center;
+    max-width: 520px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: #fff7ed;
+    border: 1px solid #fdba74;
+    color: #9a3412;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.bus-publish-warning.is-hidden {
+    display: none;
+}
+
 /* Adjust margin for non-full screen if needed, but for now let's keep it consistent */
 .bus-container {
     padding: 30px;
@@ -852,6 +877,22 @@ select.form-control {
 .saving-status {
     font-size: 14px;
     color: var(--bus-text-light);
+}
+
+@media (max-width: 782px) {
+    .bus-edit-footer {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 14px;
+    }
+
+    .footer-status-area {
+        width: 100%;
+    }
+
+    .bus-publish-warning {
+        max-width: none;
+    }
 }
 
 /* Step Transitions */
@@ -1360,4 +1401,7 @@ select.form-control {
     align-items: center;
     justify-content: center;
     padding: 0 !important;
+}
+.btn {
+    height: 28px;
 }

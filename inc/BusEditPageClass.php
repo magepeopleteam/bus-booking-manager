@@ -48,6 +48,61 @@ class BusEditPageClass
         return current_user_can('manage_categories') || current_user_can($this->get_bus_page_capability());
     }
 
+    /**
+     * Get the WordPress time format used for bus admin time fields.
+     *
+     * @return string
+     */
+    private function get_bus_time_format()
+    {
+        return (string) get_option('time_format', 'H:i');
+    }
+
+    /**
+     * Format a stored time string for the bus edit admin fields.
+     *
+     * @param string $time Stored time string.
+     * @return string
+     */
+    private function format_bus_time_for_field($time)
+    {
+        $timestamp = $time ? strtotime($time) : false;
+
+        if (!$timestamp) {
+            return '';
+        }
+
+        return wp_date($this->get_bus_time_format(), $timestamp);
+    }
+
+    /**
+     * Normalize a submitted bus admin time value to the current WordPress time format.
+     *
+     * @param string $time Raw submitted time string.
+     * @return string
+     */
+    private function normalize_bus_time_value($time)
+    {
+        $time = sanitize_text_field(wp_unslash((string) $time));
+        $timestamp = $time ? strtotime($time) : false;
+
+        if (!$timestamp) {
+            return '';
+        }
+
+        return wp_date($this->get_bus_time_format(), $timestamp);
+    }
+
+    /**
+     * Get a sample time placeholder that follows the current WordPress time format.
+     *
+     * @return string
+     */
+    private function get_bus_time_placeholder()
+    {
+        return wp_date($this->get_bus_time_format(), current_time('timestamp'));
+    }
+
     public function __construct()
     {
         add_action('admin_menu', array($this, 'register_bus_edit_page'));
@@ -250,13 +305,29 @@ class BusEditPageClass
             if (isset($_POST['wbtm_route_place'])) {
                 $route_info = [];
                 $route_places = array_map('sanitize_text_field', wp_unslash($_POST['wbtm_route_place']));
-                $route_times = isset($_POST['wbtm_route_time']) ? array_map('sanitize_text_field', wp_unslash($_POST['wbtm_route_time'])) : [];
+                $route_times = [];
+                if (isset($_POST['wbtm_route_time']) && is_array($_POST['wbtm_route_time'])) {
+                    foreach (wp_unslash($_POST['wbtm_route_time']) as $index => $time) {
+                        $route_times[$index] = $this->normalize_bus_time_value($time);
+                    }
+                }
                 $route_types = isset($_POST['wbtm_route_type']) ? array_map('sanitize_text_field', wp_unslash($_POST['wbtm_route_type'])) : [];
                 $route_next_day = isset($_POST['wbtm_route_next_day']) ? $_POST['wbtm_route_next_day'] : [];
 
                 // Inline Pickup Points
                 $pickup_names = isset($_POST['wbbm_inline_pickpoint_name']) ? $_POST['wbbm_inline_pickpoint_name'] : [];
-                $pickup_times = isset($_POST['wbbm_inline_pickpoint_time']) ? $_POST['wbbm_inline_pickpoint_time'] : [];
+                $pickup_times = [];
+                if (isset($_POST['wbbm_inline_pickpoint_time']) && is_array($_POST['wbbm_inline_pickpoint_time'])) {
+                    foreach (wp_unslash($_POST['wbbm_inline_pickpoint_time']) as $route_index => $route_pickup_times) {
+                        if (!is_array($route_pickup_times)) {
+                            continue;
+                        }
+
+                        foreach ($route_pickup_times as $pickup_index => $pickup_time) {
+                            $pickup_times[$route_index][$pickup_index] = $this->normalize_bus_time_value($pickup_time);
+                        }
+                    }
+                }
 
                 $selected_cities = [];
 
@@ -279,7 +350,7 @@ class BusEditPageClass
                                 if ($name) {
                                     $pickup_data[] = [
                                         'pickpoint' => sanitize_text_field($name),
-                                        'time' => isset($pickup_times[$i][$k]) ? sanitize_text_field($pickup_times[$i][$k]) : ''
+                                        'time' => isset($pickup_times[$i][$k]) ? $pickup_times[$i][$k] : ''
                                     ];
                                 }
                             }
@@ -336,8 +407,18 @@ class BusEditPageClass
                 $offday_schedule = [];
                 $from_dates = array_map('sanitize_text_field', wp_unslash($_POST['wbtm_od_offdate_from']));
                 $to_dates = isset($_POST['wbtm_od_offdate_to']) ? array_map('sanitize_text_field', wp_unslash($_POST['wbtm_od_offdate_to'])) : [];
-                $from_times = isset($_POST['wbtm_od_offtime_from']) ? array_map('sanitize_text_field', wp_unslash($_POST['wbtm_od_offtime_from'])) : [];
-                $to_times = isset($_POST['wbtm_od_offtime_to']) ? array_map('sanitize_text_field', wp_unslash($_POST['wbtm_od_offtime_to'])) : [];
+                $from_times = [];
+                if (isset($_POST['wbtm_od_offtime_from']) && is_array($_POST['wbtm_od_offtime_from'])) {
+                    foreach (wp_unslash($_POST['wbtm_od_offtime_from']) as $index => $time) {
+                        $from_times[$index] = $this->normalize_bus_time_value($time);
+                    }
+                }
+                $to_times = [];
+                if (isset($_POST['wbtm_od_offtime_to']) && is_array($_POST['wbtm_od_offtime_to'])) {
+                    foreach (wp_unslash($_POST['wbtm_od_offtime_to']) as $index => $time) {
+                        $to_times[$index] = $this->normalize_bus_time_value($time);
+                    }
+                }
 
                 foreach ($from_dates as $i => $date) {
                     if ($date) {
@@ -592,8 +673,10 @@ class BusEditPageClass
         wp_enqueue_script('bus-edit-js', WBTM_PLUGIN_URL . 'assets/admin/bus-edit.js', array('jquery', 'bus-toaster-js'), time(), true);
 
         wp_localize_script('bus-edit-js', 'wbbm_bus_edit', array(
-            'ajax_url' => admin_url('admin-ajax.php'),
-            'nonce'    => wp_create_nonce('wbbm_bus_save')
+            'ajax_url'         => admin_url('admin-ajax.php'),
+            'nonce'            => wp_create_nonce('wbbm_bus_save'),
+            'time_format'      => $this->get_bus_time_format(),
+            'time_placeholder' => $this->get_bus_time_placeholder()
         ));
 
         wp_enqueue_editor();
@@ -833,7 +916,12 @@ class BusEditPageClass
             </div>
 
             <div class="bus-edit-footer">
-                <div class="saving-status"></div>
+                <div class="footer-status-area">
+                    <div class="bus-publish-warning<?php echo ($current_status === 'publish') ? ' is-hidden' : ''; ?>">
+                        <?php _e('This bus is not published yet. Click the Publish button to make this bus live.', 'bus-booking-manager'); ?>
+                    </div>
+                    <div class="saving-status"></div>
+                </div>
                 <div class="footer-buttons">
                     <button type="button" class="btn btn-secondary prev-step" style="display: none;">&larr; <?php _e('Previous', 'bus-booking-manager'); ?></button>
                     <button type="button" class="btn btn-primary next-step"><?php _e('Save & Next', 'bus-booking-manager'); ?> &rarr;</button>
@@ -1293,8 +1381,9 @@ class BusEditPageClass
     {
         $from_date = isset($data['from_date']) ? $data['from_date'] : '';
         $to_date = isset($data['to_date']) ? $data['to_date'] : '';
-        $from_time = isset($data['from_time']) ? $data['from_time'] : '';
-        $to_time = isset($data['to_time']) ? $data['to_time'] : '';
+        $from_time = $this->format_bus_time_for_field(isset($data['from_time']) ? $data['from_time'] : '');
+        $to_time = $this->format_bus_time_for_field(isset($data['to_time']) ? $data['to_time'] : '');
+        $time_placeholder = $this->get_bus_time_placeholder();
         ?>
         <div class="offday-item">
             <div class="bus-grid" style="grid-template-columns: 1fr 1fr 1fr 1fr 40px !important;">
@@ -1309,15 +1398,13 @@ class BusEditPageClass
                 <div class="form-group">
                     <label><?php _e('From Time', 'bus-booking-manager'); ?></label>
                     <div class="wbbm-time-field-wrap">
-                        <input type="text" name="wbtm_od_offtime_from[]" class="form-control wbbm-timepicker-field" value="<?php echo esc_attr($from_time); ?>" placeholder="HH:mm">
-                        <span class="dashicons dashicons-clock" aria-hidden="true"></span>
+                        <input type="time" name="wbtm_od_offtime_from[]" class="form-control wbbm-timepicker-field" value="<?php echo esc_attr($from_time); ?>" placeholder="<?php echo esc_attr($time_placeholder); ?>">
                     </div>
                 </div>
                 <div class="form-group">
                     <label><?php _e('To Time', 'bus-booking-manager'); ?></label>
                     <div class="wbbm-time-field-wrap">
-                        <input type="text" name="wbtm_od_offtime_to[]" class="form-control wbbm-timepicker-field" value="<?php echo esc_attr($to_time); ?>" placeholder="HH:mm">
-                        <span class="dashicons dashicons-clock" aria-hidden="true"></span>
+                        <input type="time" name="wbtm_od_offtime_to[]" class="form-control wbbm-timepicker-field" value="<?php echo esc_attr($to_time); ?>" placeholder="<?php echo esc_attr($time_placeholder); ?>">
                     </div>
                 </div>
                 <div class="form-group" style="display: flex; align-items: flex-end;">
@@ -1335,9 +1422,10 @@ class BusEditPageClass
     private function render_route_item($index, $data = [], $bus_stops = [], $pickpoints = [])
     {
         $place = isset($data['place']) ? $data['place'] : '';
-        $time = isset($data['time']) ? $data['time'] : '';
+        $time = $this->format_bus_time_for_field(isset($data['time']) ? $data['time'] : '');
         $type = isset($data['type']) ? $data['type'] : 'both';
         $next_day = isset($data['next_day']) ? $data['next_day'] : 0;
+        $time_placeholder = $this->get_bus_time_placeholder();
         ?>
         <div class="route-item" data-index="<?php echo $index; ?>">
             <div class="route-item-header">
@@ -1362,8 +1450,7 @@ class BusEditPageClass
                     <div class="form-group">
                         <label><?php _e('Time', 'bus-booking-manager'); ?></label>
                         <div class="wbbm-time-field-wrap">
-                            <input type="text" name="wbtm_route_time[]" class="form-control wbbm-timepicker-field" value="<?php echo esc_attr($time); ?>" placeholder="HH:mm">
-                            <span class="dashicons dashicons-clock" aria-hidden="true"></span>
+                            <input type="time" name="wbtm_route_time[]" class="form-control wbbm-timepicker-field" value="<?php echo esc_attr($time); ?>" placeholder="<?php echo esc_attr($time_placeholder); ?>">
                         </div>
                     </div>
                     <div class="form-group">
@@ -1412,8 +1499,7 @@ class BusEditPageClass
                                     <?php endforeach; ?>
                                 </select>
                                 <div class="wbbm-time-field-wrap">
-                                    <input type="text" name="wbbm_inline_pickpoint_time[<?php echo $index; ?>][]" class="form-control sm wbbm-timepicker-field" value="<?php echo esc_attr($p['time']); ?>" placeholder="HH:mm">
-                                    <span class="dashicons dashicons-clock" aria-hidden="true"></span>
+                                    <input type="time" name="wbbm_inline_pickpoint_time[<?php echo $index; ?>][]" class="form-control sm wbbm-timepicker-field" value="<?php echo esc_attr($this->format_bus_time_for_field(isset($p['time']) ? $p['time'] : '')); ?>" placeholder="<?php echo esc_attr($time_placeholder); ?>">
                                 </div>
                                 <button type="button" class="btn btn-secondary btn-sm remove-inline-pickup-item"><span class="dashicons dashicons-trash"></span></button>
                             </div>

@@ -202,28 +202,30 @@ $wbbm_off_date_status = false;
                                 <?php
                                 // Pickup Point
                                 $wbbm_boarding_point      = $Wbbm_boarding;
-                                $wbbm_boarding_point_slug = strtolower($wbbm_boarding_point);
-                                $wbbm_boarding_point_slug = preg_replace('/[^A-Za-z0-9-]/', '_', $wbbm_boarding_point_slug);
+                                $wbbm_boarding_point_slug = sanitize_key(str_replace(' ', '_', strtolower($wbbm_boarding_point)));
                                 $wbbm_pickpoints          = get_post_meta(get_the_ID(), 'wbbm_selected_pickpoint_name_' . $wbbm_boarding_point_slug, true);
-                                $wbbm_is_enable_pickpoint = get_post_meta($id, 'show_pickup_point', true);
-                                if ($wbbm_pickpoints && $wbbm_is_enable_pickpoint == 'yes') {
-                                    $wbbm_pickpoints = is_string($wbbm_pickpoints) ? maybe_unserialize($wbbm_pickpoints) : $wbbm_pickpoints;
-                                    if (! empty($wbbm_pickpoints)) { ?>
-                                        <div class="mage-form-field mage-field-inline">
-                                            <label for="mage_pickpoint"><?php esc_html_e('Select Pickup Area', 'bus-booking-manager'); ?></label>
-                                            <select name="mage_pickpoint" class="mage_pickpoint">
-                                                <option value=""><?php esc_html_e('Select your Pickup Area', 'bus-booking-manager'); ?></option>
-                                                <?php
-                                                foreach ($wbbm_pickpoints as $wbbm_pickpoint) {
-                                                    $wbbm_time_html  = $wbbm_pickpoint["time"] ? ' (' . esc_html(wbbm_get_datetime($wbbm_pickpoint["time"], 'time')) . ')' : '';
-                                                    $wbbm_time_value = $wbbm_pickpoint["time"] ? '-' . esc_html(wbbm_get_datetime($wbbm_pickpoint["time"], 'time')) : '';
-                                                    $wbbm_pick_desc  = ( get_term_by('name', $wbbm_pickpoint["pickpoint"], 'wbbm_bus_pickpoint') ? get_term_by('name', $wbbm_pickpoint["pickpoint"], 'wbbm_bus_pickpoint')->description : '' );
-                                                    echo '<option value="' . esc_attr($wbbm_pickpoint["pickpoint"] . $wbbm_time_value) . '">' . esc_html(ucfirst($wbbm_pickpoint["pickpoint"])) . esc_html($wbbm_time_html) . '</option>';
-                                                    echo( $wbbm_pick_desc ? '<option disabled>&nbsp;&nbsp; ' . esc_html($wbbm_pick_desc) . '</option>' : '' );
-                                                } ?>
-                                            </select>
-                                        </div>
-                                    <?php }
+                                $wbbm_pickpoints          = is_string($wbbm_pickpoints) ? maybe_unserialize($wbbm_pickpoints) : $wbbm_pickpoints;
+                                $wbbm_pickpoints          = is_array($wbbm_pickpoints) ? array_values(array_filter($wbbm_pickpoints, function ($wbbm_pickpoint) {
+                                    return !empty($wbbm_pickpoint['pickpoint']);
+                                })) : array();
+                                if (! empty($wbbm_pickpoints)) {
+                                    ?>
+                                    <div class="mage-form-field mage-field-inline">
+                                        <label for="mage_pickpoint"><?php esc_html_e('Select Pickup Area', 'bus-booking-manager'); ?></label>
+                                        <select name="mage_pickpoint" class="mage_pickpoint">
+                                            <option value=""><?php esc_html_e('Select your Pickup Area', 'bus-booking-manager'); ?></option>
+                                            <?php
+                                            foreach ($wbbm_pickpoints as $wbbm_pickpoint) {
+                                                $wbbm_time_html  = $wbbm_pickpoint["time"] ? ' (' . esc_html(wbbm_get_datetime($wbbm_pickpoint["time"], 'time')) . ')' : '';
+                                                $wbbm_time_value = $wbbm_pickpoint["time"] ? '-' . esc_html(wbbm_get_datetime($wbbm_pickpoint["time"], 'time')) : '';
+                                                $wbbm_pick_desc  = ( get_term_by('name', $wbbm_pickpoint["pickpoint"], 'wbbm_bus_pickpoint') ? get_term_by('name', $wbbm_pickpoint["pickpoint"], 'wbbm_bus_pickpoint')->description : '' );
+                                                echo '<option value="' . esc_attr($wbbm_pickpoint["pickpoint"] . $wbbm_time_value) . '">' . esc_html(ucfirst($wbbm_pickpoint["pickpoint"])) . esc_html($wbbm_time_html) . '</option>';
+                                                echo( $wbbm_pick_desc ? '<option disabled>&nbsp;&nbsp; ' . esc_html($wbbm_pick_desc) . '</option>' : '' );
+                                            }
+                                            ?>
+                                        </select>
+                                    </div>
+                                    <?php
                                 }
                                 // Pickup Point END
                                 ?>
@@ -266,7 +268,7 @@ $wbbm_off_date_status = false;
                                     wbbm_hidden_input_field('start_stops', $wbbm_start);
                                     wbbm_hidden_input_field('end_stops', $wbbm_end);
                                     wbbm_hidden_input_field('user_start_time', $Wbbm_boarding_time);
-                                    wbbm_hidden_input_field('bus_start_time', $Wbbm_dropping_time);
+                                    wbbm_hidden_input_field('bus_start_time', $Wbbm_boarding_time);
                                     ?>
                                     <div class="adult"></div>
                                     <div class="child"></div>

@@ -298,11 +298,13 @@ class SearchClass extends CommonClass
         $seat_price_infant = mage_seat_price($id, $boarding, $dropping, 'infant');
         $seat_price_entire = mage_seat_price($id, $boarding, $dropping, 'entire');
         $boarding_point = $input_boarding_var;
-        $boarding_point_slug = strtolower(preg_replace('/[^A-Za-z0-9-]/', '_', $boarding_point));
+        $boarding_point_slug = sanitize_key(str_replace(' ', '_', strtolower($boarding_point)));
         $coach_no = get_post_meta($id, 'wbbm_bus_no', true);
-        $is_enable_pickpoint = get_post_meta($id, 'show_pickup_point', true);
         $pickpoints = get_post_meta($id, 'wbbm_selected_pickpoint_name_' . $boarding_point_slug, true);
         $pickpoints = is_string($pickpoints) ? maybe_unserialize($pickpoints) : $pickpoints;
+        $pickpoints = is_array($pickpoints) ? array_values(array_filter($pickpoints, function ($pickpoint) {
+            return !empty($pickpoint['pickpoint']);
+        })) : [];
         $is_sell_off = get_post_meta($id, 'wbbm_sell_off', true);
         $wbbm_features = get_post_meta($id, 'wbbm_features', true);
         $seat_available = get_post_meta($id, 'wbbm_seat_available', true);
@@ -496,7 +498,7 @@ class SearchClass extends CommonClass
                                         </div>
                                         <?php endif; ?>
 
-                                        <?php if (!empty($pickpoints) && $is_enable_pickpoint == 'yes') : ?>
+                                        <?php if (!empty($pickpoints)) : ?>
                                         <div class="mage_center_space">
                                             <div class="mage-form-field mage-form-pickpoint-field">
                                                 <strong><label for="mage_pickpoint"><?php esc_html_e('Select Pickup Area', 'bus-booking-manager');
@@ -525,7 +527,7 @@ class SearchClass extends CommonClass
                                             wbbm_hidden_input_field('start_stops', $start);
                                             wbbm_hidden_input_field('end_stops', $end);
                                             wbbm_hidden_input_field('user_start_time', $boarding_time);
-                                            wbbm_hidden_input_field('bus_start_time', $dropping_time);
+                                            wbbm_hidden_input_field('bus_start_time', $boarding_time);
                                             ?>
                                         <div class="adult"></div>
                                         <div class="child"></div>
@@ -636,7 +638,7 @@ class SearchClass extends CommonClass
                                     </div>
                                     <?php endif; ?>
 
-                                    <?php if (!empty($pickpoints) && $is_enable_pickpoint == 'yes') : ?>
+                                    <?php if (!empty($pickpoints)) : ?>
                                     <div class="mage_center_space">
                                         <div class="mage-form-field mage-form-pickpoint-field">
                                             <label for="mage_pickpoint"><?php echo esc_html(wbbm_get_option('wbbm_pickuppoint_area_text', 'wbbm_label_setting_sec', __('Select Pickup Area', 'bus-booking-manager')));
@@ -665,7 +667,7 @@ class SearchClass extends CommonClass
                                         wbbm_hidden_input_field('start_stops', $start);
                                         wbbm_hidden_input_field('end_stops', $end);
                                         wbbm_hidden_input_field('user_start_time', $boarding_time);
-                                        wbbm_hidden_input_field('bus_start_time', $dropping_time);
+                                        wbbm_hidden_input_field('bus_start_time', $boarding_time);
                                         ?>
                                     <div class="adult"></div>
                                     <div class="child"></div>
