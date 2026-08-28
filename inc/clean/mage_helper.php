@@ -309,6 +309,30 @@ function wbbm_is_bus_offday($bus_id, $date, $start_time = ''): bool
     return false;
 }
 
+function wbbm_is_global_offday($date): bool
+{
+    $date = $date ? mage_wp_date($date, 'Y-m-d') : '';
+    if ($date === '') {
+        return false;
+    }
+
+    $weekly_offdays = wbbm_normalize_weekly_offday(wbbm_get_option('bus_global_offdays', 'wbbm_global_offday_sec', array()));
+    if (in_array(gmdate('N', strtotime($date)), $weekly_offdays, true)) {
+        return true;
+    }
+
+    $offdates = wbbm_get_option('global_particular_onday', 'wbbm_global_offday_sec', '');
+    $offdates = is_array($offdates) ? $offdates : preg_split('/\s*,\s*/', (string) $offdates, -1, PREG_SPLIT_NO_EMPTY);
+    foreach ($offdates as $offdate) {
+        $timestamp = strtotime($offdate);
+        if ($timestamp !== false && gmdate('Y-m-d', $timestamp) === $date) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 function wbbm_is_bus_operational_on_date($bus_id, $date, $start_time = ''): bool
 {
     $bus_id = absint($bus_id);
@@ -316,6 +340,10 @@ function wbbm_is_bus_operational_on_date($bus_id, $date, $start_time = ''): bool
 
     if (!$bus_id || $date === '') {
         return true;
+    }
+
+    if (wbbm_is_global_offday($date)) {
+        return false;
     }
 
     if (!wbbm_is_date_in_operational_range($bus_id, $date)) {
@@ -390,7 +418,9 @@ function wbbm_get_cart_item($bus_id, $date_var)
                 $adult_qty = isset($cart_item['wbbm_total_adult_qt']) ? (int) $cart_item['wbbm_total_adult_qt'] : 0;
                 $child_qty = isset($cart_item['wbbm_total_child_qt']) ? (int) $cart_item['wbbm_total_child_qt'] : 0;
                 $infant_qty = isset($cart_item['wbbm_total_infant_qt']) ? (int) $cart_item['wbbm_total_infant_qt'] : 0;
-                $wbbm_cart_qty += $adult_qty + $child_qty + $infant_qty;
+                // FilterClass stores the actual seat count (not the checkbox quantity).
+                $entire_seats = isset($cart_item['wbbm_total_entire_qt']) ? (int) $cart_item['wbbm_total_entire_qt'] : 0;
+                $wbbm_cart_qty += $adult_qty + $child_qty + $infant_qty + $entire_seats;
             }
         }
     }
@@ -777,14 +807,19 @@ add_action('wp_footer', 'wbbm_global_css_func');
 if (!function_exists('wbbm_global_css_func')) {
     function wbbm_global_css_func()
     {
-        $search_button_bg_color = wbbm_get_option('wbbm_search_button_bg_color', 'wbbm_style_setting_sec');
-        $search_button_hover_bg_color = wbbm_get_option('wbbm_search_button_hover_bg_color', 'wbbm_style_setting_sec');
-        $wbbm_cart_table_bg_color = wbbm_get_option('wbbm_cart_table_bg_color', 'wbbm_style_setting_sec');
-        $wbbm_cart_table_text_color = wbbm_get_option('wbbm_cart_table_text_color', 'wbbm_style_setting_sec');
-        $wbbm_sub_total_bg_color = wbbm_get_option('wbbm_sub_total_bg_color', 'wbbm_style_setting_sec');
+        $base_color = sanitize_hex_color(wbbm_get_option('wbbm_base_color', 'wbbm_style_setting_sec', ''));
+        $search_button_bg_color = sanitize_hex_color(wbbm_get_option('wbbm_search_button_bg_color', 'wbbm_style_setting_sec'));
+        $search_button_hover_bg_color = sanitize_hex_color(wbbm_get_option('wbbm_search_button_hover_bg_color', 'wbbm_style_setting_sec'));
+        $wbbm_cart_table_bg_color = sanitize_hex_color(wbbm_get_option('wbbm_cart_table_bg_color', 'wbbm_style_setting_sec'));
+        $wbbm_cart_table_text_color = sanitize_hex_color(wbbm_get_option('wbbm_cart_table_text_color', 'wbbm_style_setting_sec'));
+        $wbbm_sub_total_bg_color = sanitize_hex_color(wbbm_get_option('wbbm_sub_total_bg_color', 'wbbm_style_setting_sec'));
 
-        if ($search_button_bg_color || $search_button_hover_bg_color) :
+        if ($base_color || $search_button_bg_color || $search_button_hover_bg_color || $wbbm_cart_table_bg_color || $wbbm_cart_table_text_color || $wbbm_sub_total_bg_color) :
             echo '<style>';
+            if ($base_color) :
+                echo ':root{--wbbm-primary:' . esc_attr($base_color) . ';}';
+                echo '.mage_bus_info a,.mage_price_info strong,.wbbm-bus-lists .mage-bus-stopage .dashicons{color:' . esc_attr($base_color) . ';}';
+            endif;
             if ($search_button_bg_color) :
                 echo '.wbbm-bus-lists a, button.mage_button, .mage-search-brief-row .mage-bus-detail-action {';
                 echo 'background-color:' . esc_attr($search_button_bg_color) . ';';

@@ -135,17 +135,6 @@ if (!class_exists('MAGE_WBBM_Setting_Controls')) :
                     )
                 ),
                 array(
-                    'name' => 'wbbm_entire_bus_booking_switch',
-                    'label' => esc_html__('On/Off Entire bus', 'bus-booking-manager'),
-                    'desc' => esc_html__('Enable/Disable entire bus option.', 'bus-booking-manager'),
-                    'type' => 'select',
-                    'default' => 'off',
-                    'options' => array(
-                        'on' => 'On',
-                        'off'  => 'Off'
-                    )
-                ),
-                array(
                     'name' => 'wbbm_cpt_label',
                     'label' => esc_html__('CPT Name', 'bus-booking-manager'),
                     'desc' => esc_html__('Enter the name you want to display as post type name. Default is Bus.', 'bus-booking-manager'),
@@ -1035,3 +1024,50 @@ function wbbm_get_option($option, $section, $default = '')
     }
     return $default;
 }
+
+/**
+ * Apply configurable labels to legacy templates that still use translated
+ * literals. Direct wbbm_get_option() calls continue to take precedence.
+ */
+function wbbm_apply_configured_label($translation, $text, $domain)
+{
+    if ($domain !== 'bus-booking-manager') {
+        return $translation;
+    }
+
+    $labels = array(
+        'Departing' => 'wbbm_departing_text',
+        'End Time' => 'wbbm_end_text',
+        'Arrival' => 'wbbm_arrival_text',
+        'View Seats' => 'wbbm_view_seats_text',
+        'Start & Arrival Time' => 'wbbm_start_arrival_time_text',
+        'Seat No' => 'wbbm_seat_no_text',
+        'Seat No.' => 'wbbm_seat_no_text',
+        'Remove' => 'wbbm_remove_text',
+        'Search' => 'wbbm_search_text',
+        'Seat List' => 'wbbm_seat_list_text',
+        'Total Passenger' => 'wbbm_total_passenger_text',
+        'End To' => 'wbbm_end_to_text',
+        'Journey Date' => 'wbbm_journeydate_text',
+        'Time' => 'wbbm_time_text',
+        'Check In' => 'wbbm_checkin_text',
+        'Checkin' => 'wbbm_checkin_text',
+        'Passenger Checked In' => 'wbbm_passangercheckedin_text',
+        'You need to login your account to view the ticket' => 'wbbm_login_to_view_ticket_text',
+    );
+
+    $base_text = rtrim($text, ': ');
+    if (!isset($labels[$base_text])) {
+        return $translation;
+    }
+
+    $options = get_option('wbbm_label_setting_sec', array());
+    $configured = is_array($options) && !empty($options[$labels[$base_text]]) ? $options[$labels[$base_text]] : '';
+    if ($configured === '') {
+        return $translation;
+    }
+
+    $suffix = substr($text, strlen($base_text));
+    return sanitize_text_field($configured) . $suffix;
+}
+add_filter('gettext', 'wbbm_apply_configured_label', 20, 3);

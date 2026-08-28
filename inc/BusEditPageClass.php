@@ -11,6 +11,44 @@ if (!defined('ABSPATH')) {
  */
 class BusEditPageClass
 {
+    private function sanitize_date($date)
+    {
+        $date = sanitize_text_field(wp_unslash($date));
+        $parsed = DateTime::createFromFormat('Y-m-d', $date);
+        return $parsed && $parsed->format('Y-m-d') === $date ? $date : '';
+    }
+
+    private function sanitize_price_array($key)
+    {
+        if (!isset($_POST[$key]) || !is_array($_POST[$key])) {
+            return array();
+        }
+
+        return array_map(static function ($price) {
+            $price = function_exists('wc_format_decimal') ? wc_format_decimal(wp_unslash($price)) : sanitize_text_field(wp_unslash($price));
+            return is_numeric($price) && (float) $price >= 0 ? $price : '';
+        }, $_POST[$key]);
+    }
+
+    private function sanitize_current_prices($rows)
+    {
+        $sanitized = array();
+        $allowed = array('adult', 'child', 'student', 'infant', 'adult_roundtrip', 'child_roundtrip', 'infant_roundtrip', 'entire', 'entire_roundtrip');
+        foreach ($rows as $route_key => $prices) {
+            if (!is_array($prices)) {
+                continue;
+            }
+            $route_key = sanitize_text_field($route_key);
+            foreach ($allowed as $key) {
+                if (isset($prices[$key])) {
+                    $price = function_exists('wc_format_decimal') ? wc_format_decimal($prices[$key]) : sanitize_text_field($prices[$key]);
+                    $sanitized[$route_key][$key] = is_numeric($price) && (float) $price >= 0 ? $price : '';
+                }
+            }
+        }
+        return $sanitized;
+    }
+
     private function get_bus_edit_url($post_id = 0, $extra_args = array())
     {
         $args = array(
@@ -183,7 +221,7 @@ class BusEditPageClass
             return;
         }
 
-        if (!isset($_POST['wbbm_bus_nonce']) || !wp_verify_nonce($_POST['wbbm_bus_nonce'], 'wbbm_bus_save')) {
+        if (!isset($_POST['wbbm_bus_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['wbbm_bus_nonce'])), 'wbbm_bus_save')) {
             if ($is_ajax) {
                 wp_send_json_error('Nonce verification failed');
             }
@@ -198,9 +236,28 @@ class BusEditPageClass
             return;
         }
 
+        if ($post_id && get_post_type($post_id) !== 'wbbm_bus') {
+            if ($is_ajax) {
+                wp_send_json_error(__('Invalid bus record.', 'bus-booking-manager'), 400);
+            }
+            return;
+        }
+
         $title = isset($_POST['bus_title']) ? sanitize_text_field(wp_unslash($_POST['bus_title'])) : '';
         $content = isset($_POST['bus_content']) ? wp_kses_post(wp_unslash($_POST['bus_content'])) : '';
-        $post_status = isset($_POST['post_status']) ? sanitize_text_field($_POST['post_status']) : 'publish';
+        $post_status = isset($_POST['post_status']) ? sanitize_key(wp_unslash($_POST['post_status'])) : 'publish';
+        $post_status = in_array($post_status, array('draft', 'pending', 'publish'), true) ? $post_status : 'draft';
+
+        if ($title === '') {
+            if ($is_ajax) {
+                wp_send_json_error(__('Bus name is required.', 'bus-booking-manager'), 400);
+            }
+            return;
+        }
+
+        if ($post_status === 'publish' && !current_user_can('publish_posts')) {
+            $post_status = 'pending';
+        }
 
         $post_data = array(
             'post_title'   => $title,
@@ -213,63 +270,94 @@ class BusEditPageClass
             $post_data['ID'] = $post_id;
             // Remove meta box save actions to avoid recursion
             remove_action('save_post_wbbm_bus', array('AdminMetaBoxClass', 'wbbm_single_settings_meta_save'));
-            wp_update_post($post_data);
+            $result = wp_update_post($post_data, true);
+            if (is_wp_error($result)) {
+                if ($is_ajax) {
+                    wp_send_json_error($result->get_error_message(), 500);
+                }
+                return;
+            }
         } else {
-            $post_id = wp_insert_post($post_data);
+            $post_id = wp_insert_post($post_data, true);
+            if (is_wp_error($post_id)) {
+                if ($is_ajax) {
+                    wp_send_json_error($post_id->get_error_message(), 500);
+                }
+                return;
+            }
         }
 
         if ($post_id) {
             // Save Basic Info (mapped from AdminMetaBoxClass)
             if (isset($_POST['bus_no'])) {
-                update_post_meta($post_id, 'wbbm_bus_no', sanitize_text_field($_POST['bus_no']));
+                update_post_meta($post_id, 'wbbm_bus_no', sanitize_text_field(wp_unslash($_POST['bus_no'])));
             }
             if (isset($_POST['total_seat'])) {
-                update_post_meta($post_id, 'wbbm_total_seat', sanitize_text_field($_POST['total_seat']));
+                update_post_meta($post_id, 'wbbm_total_seat', max(1, absint($_POST['total_seat'])));
             }
             if (isset($_POST['bus_category'])) {
-                wp_set_post_terms($post_id, array(intval($_POST['bus_category'])), 'wbbm_bus_cat', false);
-                update_post_meta($post_id, 'wbbm_bus_category', sanitize_text_field($_POST['bus_category']));
+                $category_id = absint($_POST['bus_category']);
+                if ($category_id && term_exists($category_id, 'wbbm_bus_cat')) {
+                    wp_set_post_terms($post_id, array($category_id), 'wbbm_bus_cat', false);
+                    update_post_meta($post_id, 'wbbm_bus_category', $category_id);
+                }
             }
             if (isset($_POST['price_zero_allow'])) {
-                update_post_meta($post_id, 'wbbm_price_zero_allow', sanitize_text_field($_POST['price_zero_allow']));
+                update_post_meta($post_id, 'wbbm_price_zero_allow', 'on');
             } else {
                 update_post_meta($post_id, 'wbbm_price_zero_allow', 'off');
             }
             if (isset($_POST['sell_off'])) {
-                update_post_meta($post_id, 'wbbm_sell_off', sanitize_text_field($_POST['sell_off']));
+                update_post_meta($post_id, 'wbbm_sell_off', 'on');
             } else {
                 update_post_meta($post_id, 'wbbm_sell_off', 'off');
             }
             if (isset($_POST['seat_available'])) {
-                update_post_meta($post_id, 'wbbm_seat_available', sanitize_text_field($_POST['seat_available']));
+                update_post_meta($post_id, 'wbbm_seat_available', 'on');
             } else {
                 update_post_meta($post_id, 'wbbm_seat_available', 'off');
             }
 
             // Save Route & Price (Step 2)
             if (isset($_POST['wbtm_route_place'])) {
+                $previous_cities = array_filter(array_map('trim', explode(',', (string) get_post_meta($post_id, 'wbbm_pickpoint_selected_city', true))));
                 $route_info = [];
                 $route_places = array_map('sanitize_text_field', wp_unslash($_POST['wbtm_route_place']));
                 $route_times = isset($_POST['wbtm_route_time']) ? array_map('sanitize_text_field', wp_unslash($_POST['wbtm_route_time'])) : [];
-                $route_types = isset($_POST['wbtm_route_type']) ? array_map('sanitize_text_field', wp_unslash($_POST['wbtm_route_type'])) : [];
-                $route_next_day = isset($_POST['wbtm_route_next_day']) ? $_POST['wbtm_route_next_day'] : [];
+                $route_types = isset($_POST['wbtm_route_type']) ? array_map('sanitize_key', wp_unslash($_POST['wbtm_route_type'])) : [];
+                $route_next_day = isset($_POST['wbtm_route_next_day']) ? array_map('absint', (array) wp_unslash($_POST['wbtm_route_next_day'])) : [];
 
                 // Inline Pickup Points
-                $pickup_names = isset($_POST['wbbm_inline_pickpoint_name']) ? $_POST['wbbm_inline_pickpoint_name'] : [];
-                $pickup_times = isset($_POST['wbbm_inline_pickpoint_time']) ? $_POST['wbbm_inline_pickpoint_time'] : [];
+                $pickup_names = isset($_POST['wbbm_inline_pickpoint_name']) ? (array) wp_unslash($_POST['wbbm_inline_pickpoint_name']) : [];
+                $pickup_times = isset($_POST['wbbm_inline_pickpoint_time']) ? (array) wp_unslash($_POST['wbbm_inline_pickpoint_time']) : [];
 
                 $selected_cities = [];
+                $boarding_points = [];
+                $dropping_points = [];
 
                 foreach ($route_places as $i => $place) {
                     if ($place !== '') {
                         $route_info[$i] = [
                             'place' => $place,
                             'time' => isset($route_times[$i]) ? $route_times[$i] : '',
-                            'type' => isset($route_types[$i]) ? $route_types[$i] : '',
+                            'type' => isset($route_types[$i]) && in_array($route_types[$i], array('bp', 'dp', 'both'), true) ? $route_types[$i] : 'both',
                             'next_day' => isset($route_next_day[$i]) ? intval($route_next_day[$i]) : 0,
                         ];
 
                         $selected_cities[] = $place;
+
+                        if ($route_info[$i]['type'] === 'bp' || $route_info[$i]['type'] === 'both') {
+                            $boarding_points[] = array(
+                                'wbbm_bus_bp_stops_name' => $place,
+                                'wbbm_bus_bp_start_time' => $route_info[$i]['time'],
+                            );
+                        }
+                        if ($route_info[$i]['type'] === 'dp' || $route_info[$i]['type'] === 'both') {
+                            $dropping_points[] = array(
+                                'wbbm_bus_next_stops_name' => $place,
+                                'wbbm_bus_next_end_time'   => $route_info[$i]['time'],
+                            );
+                        }
 
                         // Save Inline Pickup Points to legacy keys
                         if (isset($pickup_names[$i])) {
@@ -288,16 +376,26 @@ class BusEditPageClass
                     }
                 }
                 update_post_meta($post_id, 'wbbm_route_info', $route_info);
+                update_post_meta($post_id, 'wbbm_bus_bp_stops', $boarding_points);
+                update_post_meta($post_id, 'wbbm_bus_next_stops', $dropping_points);
                 update_post_meta($post_id, 'wbbm_pickpoint_selected_city', implode(',', array_unique($selected_cities)));
+                foreach (array_diff($previous_cities, $selected_cities) as $removed_city) {
+                    delete_post_meta($post_id, 'wbbm_selected_pickpoint_name_' . sanitize_key(str_replace(' ', '_', strtolower($removed_city))));
+                }
 
                 // Pricing
                 $new_prices = [];
                 $bp_price_stops = isset($_POST['wbtm_price_bp']) ? array_map('sanitize_text_field', wp_unslash($_POST['wbtm_price_bp'])) : [];
                 $dp_price_stops = isset($_POST['wbtm_price_dp']) ? array_map('sanitize_text_field', wp_unslash($_POST['wbtm_price_dp'])) : [];
-                $adult_prices = isset($_POST['wbtm_adult_price']) ? array_map('sanitize_text_field', wp_unslash($_POST['wbtm_adult_price'])) : [];
-                $child_prices = isset($_POST['wbtm_child_price']) ? array_map('sanitize_text_field', wp_unslash($_POST['wbtm_child_price'])) : [];
-                $infant_prices = isset($_POST['wbtm_infant_price']) ? array_map('sanitize_text_field', wp_unslash($_POST['wbtm_infant_price'])) : [];
-                $student_prices = isset($_POST['wbtm_student_price']) ? array_map('sanitize_text_field', wp_unslash($_POST['wbtm_student_price'])) : [];
+                $adult_prices = $this->sanitize_price_array('wbtm_adult_price');
+                $child_prices = $this->sanitize_price_array('wbtm_child_price');
+                $infant_prices = $this->sanitize_price_array('wbtm_infant_price');
+                $student_prices = $this->sanitize_price_array('wbtm_student_price');
+                $adult_roundtrip_prices = $this->sanitize_price_array('wbbm_bus_price_roundtrip');
+                $child_roundtrip_prices = $this->sanitize_price_array('wbbm_bus_price_child_roundtrip');
+                $infant_roundtrip_prices = $this->sanitize_price_array('wbbm_bus_price_infant_roundtrip');
+                $entire_prices = $this->sanitize_price_array('wbbm_bus_price_entire');
+                $entire_roundtrip_prices = $this->sanitize_price_array('wbbm_bus_price_entire_roundtrip');
 
                 foreach ($bp_price_stops as $i => $bp_stop) {
                     if ($bp_stop && isset($dp_price_stops[$i])) {
@@ -308,6 +406,11 @@ class BusEditPageClass
                             'wbbm_bus_price_child' => isset($child_prices[$i]) ? $child_prices[$i] : '',
                             'wbbm_bus_price_infant' => isset($infant_prices[$i]) ? $infant_prices[$i] : '',
                             'wbbm_bus_price_student' => isset($student_prices[$i]) ? $student_prices[$i] : '',
+                            'wbbm_bus_price_roundtrip' => isset($adult_roundtrip_prices[$i]) ? $adult_roundtrip_prices[$i] : '',
+                            'wbbm_bus_price_child_roundtrip' => isset($child_roundtrip_prices[$i]) ? $child_roundtrip_prices[$i] : '',
+                            'wbbm_bus_price_infant_roundtrip' => isset($infant_roundtrip_prices[$i]) ? $infant_roundtrip_prices[$i] : '',
+                            'wbbm_bus_price_entire' => isset($entire_prices[$i]) ? $entire_prices[$i] : '',
+                            'wbbm_bus_price_entire_roundtrip' => isset($entire_roundtrip_prices[$i]) ? $entire_roundtrip_prices[$i] : '',
                         ];
                     }
                 }
@@ -326,16 +429,20 @@ class BusEditPageClass
             }
 
             if (isset($_POST['wbtm_od_start'])) {
-                update_post_meta($post_id, 'wbtm_od_start', sanitize_text_field($_POST['wbtm_od_start']));
+                update_post_meta($post_id, 'wbtm_od_start', $this->sanitize_date($_POST['wbtm_od_start']));
             }
             if (isset($_POST['wbtm_od_end'])) {
-                update_post_meta($post_id, 'wbtm_od_end', sanitize_text_field($_POST['wbtm_od_end']));
+                update_post_meta($post_id, 'wbtm_od_end', $this->sanitize_date($_POST['wbtm_od_end']));
             }
+
+            $bus_on_dates = isset($_POST['wbtm_bus_on_date']) ? array_filter(array_map(array($this, 'sanitize_date'), (array) $_POST['wbtm_bus_on_date'])) : array();
+            update_post_meta($post_id, 'wbtm_bus_on_date', array_values($bus_on_dates));
+            update_post_meta($post_id, 'show_operational_on_day', !empty($bus_on_dates) ? 'yes' : 'no');
 
             if (isset($_POST['wbtm_od_offdate_from'])) {
                 $offday_schedule = [];
-                $from_dates = array_map('sanitize_text_field', wp_unslash($_POST['wbtm_od_offdate_from']));
-                $to_dates = isset($_POST['wbtm_od_offdate_to']) ? array_map('sanitize_text_field', wp_unslash($_POST['wbtm_od_offdate_to'])) : [];
+                $from_dates = array_map(array($this, 'sanitize_date'), (array) $_POST['wbtm_od_offdate_from']);
+                $to_dates = isset($_POST['wbtm_od_offdate_to']) ? array_map(array($this, 'sanitize_date'), (array) $_POST['wbtm_od_offdate_to']) : [];
                 $from_times = isset($_POST['wbtm_od_offtime_from']) ? array_map('sanitize_text_field', wp_unslash($_POST['wbtm_od_offtime_from'])) : [];
                 $to_times = isset($_POST['wbtm_od_offtime_to']) ? array_map('sanitize_text_field', wp_unslash($_POST['wbtm_od_offtime_to'])) : [];
 
@@ -384,10 +491,15 @@ class BusEditPageClass
 
             // Save Tax (Step 6)
             if (isset($_POST['wbtm_bus_tax_status'])) {
-                update_post_meta($post_id, 'wbtm_bus_tax_status', sanitize_text_field($_POST['wbtm_bus_tax_status']));
+                $tax_status = sanitize_text_field(wp_unslash($_POST['wbtm_bus_tax_status']));
+                $tax_status = in_array($tax_status, array('taxable', 'shipping', 'none'), true) ? $tax_status : 'none';
+                update_post_meta($post_id, 'wbtm_bus_tax_status', $tax_status);
+                update_post_meta($post_id, '_tax_status', $tax_status);
             }
             if (isset($_POST['wbtm_bus_tax_class'])) {
-                update_post_meta($post_id, 'wbtm_bus_tax_class', sanitize_text_field($_POST['wbtm_bus_tax_class']));
+                $tax_class = sanitize_title(wp_unslash($_POST['wbtm_bus_tax_class']));
+                update_post_meta($post_id, 'wbtm_bus_tax_class', $tax_class);
+                update_post_meta($post_id, '_tax_class', $tax_class);
             }
 
             // Thumbnail
@@ -547,7 +659,7 @@ class BusEditPageClass
      */
     public function handle_reload_pricing_ajax()
     {
-        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'wbbm_bus_save')) {
+        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'wbbm_bus_save')) {
             wp_send_json_error('Nonce verification failed');
         }
 
@@ -557,20 +669,23 @@ class BusEditPageClass
         }
 
         $places = isset($_POST['places']) ? array_map('sanitize_text_field', wp_unslash($_POST['places'])) : [];
-        $types = isset($_POST['types']) ? array_map('sanitize_text_field', wp_unslash($_POST['types'])) : [];
+        $types = isset($_POST['types']) ? array_map('sanitize_key', wp_unslash($_POST['types'])) : [];
+        $current_prices = isset($_POST['current_prices']) && is_array($_POST['current_prices'])
+            ? $this->sanitize_current_prices(wp_unslash($_POST['current_prices']))
+            : array();
 
         $route_infos = [];
         foreach ($places as $key => $place) {
             if ($place) {
                 $route_infos[$key] = [
                     'place' => $place,
-                    'type'  => isset($types[$key]) ? $types[$key] : 'both'
+                    'type'  => isset($types[$key]) && in_array($types[$key], array('bp', 'dp', 'both'), true) ? $types[$key] : 'both'
                 ];
             }
         }
 
         ob_start();
-        $this->render_pricing_matrix($post_id, $route_infos);
+        $this->render_pricing_matrix($post_id, $route_infos, $current_prices);
         $html = ob_get_clean();
 
         wp_send_json_success($html);
@@ -857,7 +972,7 @@ class BusEditPageClass
         ?>
         <div class="bus-edit-content">
             <div class="bus-edit-left">
-                <div class="bus-card" data-pickpoints-options='<?php echo esc_attr(json_encode($pickpoints)); ?>'>
+                <div class="bus-card" data-pickpoints-options='<?php echo esc_attr(wp_json_encode($pickpoints)); ?>'>
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                         <h3 style="margin: 0; border: none; padding: 0;"><?php _e('Route Management', 'bus-booking-manager'); ?></h3>
                         <button type="button" class="btn btn-secondary btn-sm add-route-item">
@@ -868,16 +983,16 @@ class BusEditPageClass
                     <div id="route-items-container" class="route-sortable">
                         <?php if (!empty($route_info)) : ?>
                             <?php foreach ($route_info as $index => $item) : ?>
-                                <?php $this->render_route_item($index, $item, $bus_stops, $pickpoints); ?>
+                                <?php $this->render_route_item($index, $item, $bus_stops, $pickpoints, $post_id); ?>
                             <?php endforeach; ?>
                         <?php else : ?>
-                            <?php $this->render_route_item(0, [], $bus_stops, $pickpoints); ?>
+                            <?php $this->render_route_item(0, [], $bus_stops, $pickpoints, $post_id); ?>
                         <?php endif; ?>
                     </div>
 
                     <!-- Template for new items -->
                     <script type="text/template" id="route-item-template">
-                        <?php $this->render_route_item('{{index}}', [], $bus_stops, $pickpoints); ?>
+                        <?php $this->render_route_item('{{index}}', [], $bus_stops, $pickpoints, $post_id); ?>
                     </script>
                 </div>
 
@@ -1115,8 +1230,11 @@ class BusEditPageClass
      */
     private function render_step_5($post_id)
     {
-        $tax_status = get_post_meta($post_id, 'wbtm_bus_tax_status', true) ?: 'none';
-        $tax_class = get_post_meta($post_id, 'wbtm_bus_tax_class', true) ?: '';
+        $tax_status = get_post_meta($post_id, 'wbtm_bus_tax_status', true);
+        $tax_status = $tax_status !== '' ? $tax_status : get_post_meta($post_id, '_tax_status', true);
+        $tax_status = $tax_status !== '' ? $tax_status : 'none';
+        $tax_class = get_post_meta($post_id, 'wbtm_bus_tax_class', true);
+        $tax_class = $tax_class !== '' ? $tax_class : get_post_meta($post_id, '_tax_class', true);
 
         $tax_classes = WC_Tax::get_tax_classes();
         ?>
@@ -1207,6 +1325,8 @@ class BusEditPageClass
         $od_start = get_post_meta($post_id, 'wbtm_od_start', true);
         $od_end = get_post_meta($post_id, 'wbtm_od_end', true);
         $offday_schedule = get_post_meta($post_id, 'wbtm_offday_schedule', true) ?: [];
+        $bus_on_dates = get_post_meta($post_id, 'wbtm_bus_on_date', true);
+        $bus_on_dates = is_array($bus_on_dates) ? $bus_on_dates : array_filter(array_map('trim', explode(',', (string) $bus_on_dates)));
 
         $days = [
             '1' => __('Monday', 'bus-booking-manager'),
@@ -1245,6 +1365,25 @@ class BusEditPageClass
                             <input type="date" name="wbtm_od_end" class="form-control" value="<?php echo esc_attr($od_end); ?>">
                         </div>
                     </div>
+                </div>
+
+                <div class="bus-card">
+                    <div class="bus-card-heading-row">
+                        <div>
+                            <h3><?php esc_html_e('Specific Operational Dates', 'bus-booking-manager'); ?></h3>
+                            <p><?php esc_html_e('When dates are added here, this bus can only be booked on those dates.', 'bus-booking-manager'); ?></p>
+                        </div>
+                        <button type="button" class="btn btn-secondary btn-sm add-bus-on-date"><span class="dashicons dashicons-plus"></span> <?php esc_html_e('Add Date', 'bus-booking-manager'); ?></button>
+                    </div>
+                    <div id="bus-on-dates-container">
+                        <?php foreach (!empty($bus_on_dates) ? $bus_on_dates : array('') as $date) : ?>
+                            <div class="bus-on-date-item">
+                                <input type="date" name="wbtm_bus_on_date[]" class="form-control" value="<?php echo esc_attr($date); ?>">
+                                <button type="button" class="btn btn-secondary remove-bus-on-date" aria-label="<?php esc_attr_e('Remove date', 'bus-booking-manager'); ?>"><span class="dashicons dashicons-trash"></span></button>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                    <script type="text/template" id="bus-on-date-template"><div class="bus-on-date-item"><input type="date" name="wbtm_bus_on_date[]" class="form-control" value=""><button type="button" class="btn btn-secondary remove-bus-on-date" aria-label="<?php esc_attr_e('Remove date', 'bus-booking-manager'); ?>"><span class="dashicons dashicons-trash"></span></button></div></script>
                 </div>
 
                 <div class="bus-card">
@@ -1332,7 +1471,7 @@ class BusEditPageClass
     /**
      * Render a single route item (stop)
      */
-    private function render_route_item($index, $data = [], $bus_stops = [], $pickpoints = [])
+    private function render_route_item($index, $data = [], $bus_stops = [], $pickpoints = [], $post_id = 0)
     {
         $place = isset($data['place']) ? $data['place'] : '';
         $time = isset($data['time']) ? $data['time'] : '';
@@ -1398,7 +1537,7 @@ class BusEditPageClass
                     <div class="pickup-points-list" data-stop-index="<?php echo $index; ?>" style="display:none;">
                         <?php
                         $city_slug = $place ? sanitize_key(str_replace(' ', '_', strtolower($place))) : '';
-                        $pickup_data = $city_slug ? get_post_meta(get_the_ID(), 'wbbm_selected_pickpoint_name_' . $city_slug, true) : [];
+                        $pickup_data = $city_slug && $post_id ? get_post_meta($post_id, 'wbbm_selected_pickpoint_name_' . $city_slug, true) : [];
                         if (empty($pickup_data)) {
                             $pickup_data = [['pickpoint' => '', 'time' => '']];
                         }
@@ -1428,9 +1567,11 @@ class BusEditPageClass
     /**
      * Render Pricing Matrix
      */
-    private function render_pricing_matrix($post_id, $route_infos = [])
+    private function render_pricing_matrix($post_id, $route_infos = [], $current_prices = array())
     {
         $price_infos = get_post_meta($post_id, 'wbbm_bus_prices', true) ?: [];
+        $roundtrip_enabled = 'on' === wbbm_get_option('discount_price_switch', 'wbbm_general_setting_sec', 'off');
+        $entire_enabled = 'on' === wbbm_get_option('wbbm_entire_bus_booking_switch', 'wbbm_general_setting_sec', 'off');
         $all_pairs = [];
 
         if (!empty($route_infos)) {
@@ -1443,7 +1584,12 @@ class BusEditPageClass
                                 'adult'   => '',
                                 'child'   => '',
                                 'student' => '',
-                                'infant'  => ''
+                                'infant'  => '',
+                                'adult_roundtrip' => '',
+                                'child_roundtrip' => '',
+                                'infant_roundtrip' => '',
+                                'entire' => '',
+                                'entire_roundtrip' => '',
                             ];
 
                             // Try to find existing price
@@ -1453,15 +1599,25 @@ class BusEditPageClass
                                         'adult'   => isset($p['wbbm_bus_price']) ? $p['wbbm_bus_price'] : '',
                                         'child'   => isset($p['wbbm_bus_price_child']) ? $p['wbbm_bus_price_child'] : '',
                                         'student' => isset($p['wbbm_bus_price_student']) ? $p['wbbm_bus_price_student'] : '',
-                                        'infant'  => isset($p['wbbm_bus_price_infant']) ? $p['wbbm_bus_price_infant'] : ''
+                                        'infant'  => isset($p['wbbm_bus_price_infant']) ? $p['wbbm_bus_price_infant'] : '',
+                                        'adult_roundtrip' => isset($p['wbbm_bus_price_roundtrip']) ? $p['wbbm_bus_price_roundtrip'] : '',
+                                        'child_roundtrip' => isset($p['wbbm_bus_price_child_roundtrip']) ? $p['wbbm_bus_price_child_roundtrip'] : '',
+                                        'infant_roundtrip' => isset($p['wbbm_bus_price_infant_roundtrip']) ? $p['wbbm_bus_price_infant_roundtrip'] : '',
+                                        'entire' => isset($p['wbbm_bus_price_entire']) ? $p['wbbm_bus_price_entire'] : '',
+                                        'entire_roundtrip' => isset($p['wbbm_bus_price_entire_roundtrip']) ? $p['wbbm_bus_price_entire_roundtrip'] : '',
                                     ];
                                     break;
                                 }
                             }
 
+                            $route_key = $start['place'] . '||' . $end['place'];
+                            if (isset($current_prices[$route_key])) {
+                                $pair_prices = array_merge($pair_prices, $current_prices[$route_key]);
+                            }
                             $all_pairs[] = [
                                 'from'   => $start['place'],
                                 'to'     => $end['place'],
+                                'key'    => $route_key,
                                 'prices' => $pair_prices
                             ];
                         }
@@ -1480,15 +1636,24 @@ class BusEditPageClass
                 <thead>
                     <tr>
                         <th><?php _e('Route (From ➝ To)', 'bus-booking-manager'); ?></th>
-                        <th><?php _e('Adult', 'bus-booking-manager'); ?></th>
-                        <th><?php _e('Child', 'bus-booking-manager'); ?></th>
-                        <th><?php _e('Student', 'bus-booking-manager'); ?></th>
-                        <th><?php _e('Infant', 'bus-booking-manager'); ?></th>
+                        <th><?php echo esc_html(wbbm_get_option('wbbm_adult_text', 'wbbm_label_setting_sec', __('Adult', 'bus-booking-manager'))); ?></th>
+                        <th><?php echo esc_html(wbbm_get_option('wbbm_child_text', 'wbbm_label_setting_sec', __('Child', 'bus-booking-manager'))); ?></th>
+                        <th><?php echo esc_html(wbbm_get_option('wbbm_student_text', 'wbbm_label_setting_sec', __('Student', 'bus-booking-manager'))); ?></th>
+                        <th><?php echo esc_html(wbbm_get_option('wbbm_infant_text', 'wbbm_label_setting_sec', __('Infant', 'bus-booking-manager'))); ?></th>
+                        <?php if ($roundtrip_enabled) : ?>
+                            <th><?php esc_html_e('Adult Round Trip', 'bus-booking-manager'); ?></th>
+                            <th><?php esc_html_e('Child Round Trip', 'bus-booking-manager'); ?></th>
+                            <th><?php esc_html_e('Infant Round Trip', 'bus-booking-manager'); ?></th>
+                        <?php endif; ?>
+                        <?php if ($entire_enabled) : ?>
+                            <th><?php esc_html_e('Entire Bus', 'bus-booking-manager'); ?></th>
+                            <?php if ($roundtrip_enabled) : ?><th><?php esc_html_e('Entire Bus Round Trip', 'bus-booking-manager'); ?></th><?php endif; ?>
+                        <?php endif; ?>
                     </tr>
                 </thead>
                 <tbody>
                     <?php foreach ($all_pairs as $pair) : ?>
-                        <tr>
+                        <tr data-price-key="<?php echo esc_attr($pair['key']); ?>">
                             <td>
                                 <div class="route-pair">
                                     <span class="from"><?php echo esc_html($pair['from']); ?></span>
@@ -1499,17 +1664,26 @@ class BusEditPageClass
                                 </div>
                             </td>
                             <td>
-                                <input type="number" step="0.01" name="wbtm_adult_price[]" value="<?php echo esc_attr($pair['prices']['adult']); ?>" class="form-control sm">
+                                <input type="number" min="0" step="0.01" data-price-field="adult" name="wbtm_adult_price[]" value="<?php echo esc_attr($pair['prices']['adult']); ?>" class="form-control sm">
                             </td>
                             <td>
-                                <input type="number" step="0.01" name="wbtm_child_price[]" value="<?php echo esc_attr($pair['prices']['child']); ?>" class="form-control sm">
+                                <input type="number" min="0" step="0.01" data-price-field="child" name="wbtm_child_price[]" value="<?php echo esc_attr($pair['prices']['child']); ?>" class="form-control sm">
                             </td>
                             <td>
-                                <input type="number" step="0.01" name="wbtm_student_price[]" value="<?php echo esc_attr($pair['prices']['student']); ?>" class="form-control sm">
+                                <input type="number" min="0" step="0.01" data-price-field="student" name="wbtm_student_price[]" value="<?php echo esc_attr($pair['prices']['student']); ?>" class="form-control sm">
                             </td>
                             <td>
-                                <input type="number" step="0.01" name="wbtm_infant_price[]" value="<?php echo esc_attr($pair['prices']['infant']); ?>" class="form-control sm">
+                                <input type="number" min="0" step="0.01" data-price-field="infant" name="wbtm_infant_price[]" value="<?php echo esc_attr($pair['prices']['infant']); ?>" class="form-control sm">
                             </td>
+                            <?php if ($roundtrip_enabled) : ?>
+                                <td><input type="number" min="0" step="0.01" data-price-field="adult_roundtrip" name="wbbm_bus_price_roundtrip[]" value="<?php echo esc_attr($pair['prices']['adult_roundtrip']); ?>" class="form-control sm"></td>
+                                <td><input type="number" min="0" step="0.01" data-price-field="child_roundtrip" name="wbbm_bus_price_child_roundtrip[]" value="<?php echo esc_attr($pair['prices']['child_roundtrip']); ?>" class="form-control sm"></td>
+                                <td><input type="number" min="0" step="0.01" data-price-field="infant_roundtrip" name="wbbm_bus_price_infant_roundtrip[]" value="<?php echo esc_attr($pair['prices']['infant_roundtrip']); ?>" class="form-control sm"></td>
+                            <?php endif; ?>
+                            <?php if ($entire_enabled) : ?>
+                                <td><input type="number" min="0" step="0.01" data-price-field="entire" name="wbbm_bus_price_entire[]" value="<?php echo esc_attr($pair['prices']['entire']); ?>" class="form-control sm"></td>
+                                <?php if ($roundtrip_enabled) : ?><td><input type="number" min="0" step="0.01" data-price-field="entire_roundtrip" name="wbbm_bus_price_entire_roundtrip[]" value="<?php echo esc_attr($pair['prices']['entire_roundtrip']); ?>" class="form-control sm"></td><?php endif; ?>
+                            <?php endif; ?>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>

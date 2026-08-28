@@ -13,6 +13,20 @@ class ActiveDataShowClass extends CommonClass
     // Next 6 date suggestion
     public function active_date_picker($singleBus, $post_id)
     {
+        $global_offdates = wbbm_get_option('global_particular_onday', 'wbbm_global_offday_sec', '');
+        $global_offdays = wbbm_get_option('bus_global_offdays', 'wbbm_global_offday_sec', array());
+        $global_offdates = !empty($global_offdates) ? preg_split('/\s*,\s*/', sanitize_text_field($global_offdates), -1, PREG_SPLIT_NO_EMPTY) : array();
+        $global_offdays = wbbm_normalize_weekly_offday($global_offdays);
+        $formatted_global_dates = array();
+        foreach ($global_offdates as $offdate) {
+            $timestamp = strtotime($offdate);
+            if ($timestamp !== false) {
+                $formatted_global_dates[] = gmdate('d-m-Y', $timestamp);
+            }
+        }
+        $global_dates_json = wp_json_encode(array_values(array_unique($formatted_global_dates)));
+        $global_days_json = wp_json_encode($global_offdays);
+
         if ($singleBus) {
             $wbtm_bus_on_dates = get_post_meta($post_id, 'wbtm_bus_on_date', true) ? maybe_unserialize(get_post_meta($post_id, 'wbtm_bus_on_date', true)) : [];
             $wbtm_offday_schedules = get_post_meta($post_id, 'wbtm_offday_schedule', true) ? get_post_meta($post_id, 'wbtm_offday_schedule', true) : [];
@@ -56,14 +70,8 @@ class ActiveDataShowClass extends CommonClass
             $weekly_offday = is_array($weekly_offday) ? array_map('sanitize_text_field', $weekly_offday) : [];
             $weekly_offday = '[' . esc_attr(implode(',', $weekly_offday)) . ']';
 
-            echo "<input id='" . esc_attr('all_date_picker_info') . "' data-single_bus='" . esc_attr($singleBus ? 1 : 0) . "' data-enableDates='" . esc_attr($enableDates) . "' data-off_particular_date='" . esc_attr($off_particular_date) . "' data-weekly_offday='" . esc_attr($weekly_offday) . "' data-enable_onday='" . esc_attr($show_operational_on_day) . "' data-enable_offday='" . esc_attr($show_off_day) . "' data-od_start='" . esc_attr($operational_start) . "' data-od_end='" . esc_attr($operational_end) . "' data-date_format='" . esc_attr($this->convert_datepicker_dateformat()) . "' type='hidden' />";
+            echo "<input id='" . esc_attr('all_date_picker_info') . "' data-single_bus='" . esc_attr($singleBus ? 1 : 0) . "' data-enableDates='" . esc_attr($enableDates) . "' data-off_particular_date='" . esc_attr($off_particular_date) . "' data-weekly_offday='" . esc_attr($weekly_offday) . "' data-global_off_dates='" . esc_attr($global_dates_json) . "' data-global_off_days='" . esc_attr($global_days_json) . "' data-enable_onday='" . esc_attr($show_operational_on_day) . "' data-enable_offday='" . esc_attr($show_off_day) . "' data-od_start='" . esc_attr($operational_start) . "' data-od_end='" . esc_attr($operational_end) . "' data-date_format='" . esc_attr($this->convert_datepicker_dateformat()) . "' type='hidden' />";
         } else {
-            $global_offdates = wbbm_get_option('global_particular_onday', 'wbbm_global_offday_sec', 0);
-            $global_offdays = wbbm_get_option('bus_global_offdays', 'wbbm_global_offday_sec', 0);
-
-            $global_offdates = !empty($global_offdates) ? explode(', ', sanitize_text_field($global_offdates)) : [];
-            $global_offdays = is_array($global_offdays) ? array_map('sanitize_text_field', $global_offdays) : [];
-
             if (!empty($global_offdates)) {
                 $pday = array();
 
@@ -84,7 +92,7 @@ class ActiveDataShowClass extends CommonClass
                 $disableDays = '[]';
             }
 
-            echo "<input id='" . esc_attr('all_date_picker_info') . "' data-single_bus='0' data-disableDates='" . esc_attr($disableDates) . "' data-disableDays='" . esc_attr($disableDays) . "' data-date_format='" . esc_attr($this->convert_datepicker_dateformat()) . "' type='hidden' />";
+            echo "<input id='" . esc_attr('all_date_picker_info') . "' data-single_bus='0' data-disableDates='" . esc_attr($disableDates) . "' data-disableDays='" . esc_attr($disableDays) . "' data-global_off_dates='" . esc_attr($global_dates_json) . "' data-global_off_days='" . esc_attr($global_days_json) . "' data-date_format='" . esc_attr($this->convert_datepicker_dateformat()) . "' type='hidden' />";
         }
     }
 }

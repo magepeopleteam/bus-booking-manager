@@ -25,24 +25,24 @@ class WBBMMetaBox
 
         // Bus stop ajax
         add_action('wp_ajax_wbtm_add_bus_stope', [$this, 'wbtm_add_bus_stope']);
-        add_action('wp_ajax_nopriv_wbtm_add_bus_stope', [$this, 'wbtm_add_bus_stope']);
 
         // Bus feature ajax
         add_action('wp_ajax_wbtm_add_bus_feature', [$this, 'wbtm_add_bus_feature']);
-        add_action('wp_ajax_nopriv_wbtm_add_bus_feature', [$this, 'wbtm_add_bus_feature']);
 
         add_action('edited_wbbm_bus_feature', 'wbbm_save_wbbm_bus_feature');
         add_action('create_wbbm_bus_feature', 'wbbm_save_wbbm_bus_feature', 10, 2);
 
         // Bus stop ajax
         add_action('wp_ajax_wbtm_add_pickup', [$this, 'wbtm_add_pickup']);
-        add_action('wp_ajax_nopriv_wbtm_add_pickup', [$this, 'wbtm_add_pickup']);
     }
 
     // Add Bus stop ajax function
     public function wbtm_add_bus_stope()
     {
         check_ajax_referer('wbbm_admin_ajax_nonce', 'nonce');
+        if (!current_user_can('manage_categories')) {
+            wp_send_json_error(__('Unauthorized', 'bus-booking-manager'), 403);
+        }
 
         if (isset($_POST['name'])) {
             $name = sanitize_text_field(wp_unslash($_POST['name']));
@@ -68,11 +68,18 @@ class WBBMMetaBox
     public function wbtm_add_bus_feature()
     {
         check_ajax_referer('wbbm_admin_ajax_nonce', 'nonce');
+        if (!current_user_can('manage_categories')) {
+            wp_send_json_error(__('Unauthorized', 'bus-booking-manager'), 403);
+        }
 
         if (isset($_POST['name'])) {
             $name = sanitize_text_field(wp_unslash($_POST['name']));
             $description = isset($_POST['description']) ? sanitize_textarea_field(wp_unslash($_POST['description'])) : '';
             $terms = wp_insert_term($name, 'wbbm_bus_feature', array('description' => $description));
+
+            if (is_wp_error($terms)) {
+                wp_send_json_error($terms->get_error_message(), 400);
+            }
 
             if (isset($_POST['wbbm_feature_icon'])) {
                 $feature_icon = sanitize_text_field(wp_unslash($_POST['wbbm_feature_icon']));
@@ -95,6 +102,9 @@ class WBBMMetaBox
     public function wbtm_add_pickup()
     {
         check_ajax_referer('wbbm_admin_ajax_nonce', 'nonce');
+        if (!current_user_can('manage_categories')) {
+            wp_send_json_error(__('Unauthorized', 'bus-booking-manager'), 403);
+        }
 
         if (isset($_POST['name'])) {
             $name = sanitize_text_field(wp_unslash($_POST['name']));

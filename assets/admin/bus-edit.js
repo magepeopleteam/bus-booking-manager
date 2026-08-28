@@ -354,11 +354,21 @@ jQuery(document).ready(function ($) {
     function reloadPricingMatrix() {
         const places = [];
         const types = [];
+        const currentPrices = {};
         $('.route-place-select').each(function () {
             places.push($(this).val());
         });
         $('.route-type-select').each(function () {
             types.push($(this).val());
+        });
+        $('.pricing-matrix-table tbody tr').each(function () {
+            const row = $(this);
+            const routeKey = row.data('price-key');
+            if (!routeKey) return;
+            currentPrices[routeKey] = {};
+            row.find('[data-price-field]').each(function () {
+                currentPrices[routeKey][$(this).data('price-field')] = $(this).val();
+            });
         });
 
         const matrixContainer = $('#pricing-matrix-container');
@@ -372,7 +382,8 @@ jQuery(document).ready(function ($) {
                 nonce: wbbm_bus_edit.nonce,
                 post_id: $('input[name="post_id"]').val(),
                 places: places,
-                types: types
+                types: types,
+                current_prices: currentPrices
             },
             success: function (response) {
                 matrixContainer.removeClass('loading');
@@ -458,6 +469,19 @@ jQuery(document).ready(function ($) {
             $(this).closest('.offday-item').remove();
         } else {
             $(this).closest('.offday-item').find('input').val('');
+        }
+    });
+
+    $(document).on('click', '.add-bus-on-date', function () {
+        $('#bus-on-dates-container').append($('#bus-on-date-template').html());
+    });
+
+    $(document).on('click', '.remove-bus-on-date', function () {
+        const container = $('#bus-on-dates-container');
+        if (container.find('.bus-on-date-item').length > 1) {
+            $(this).closest('.bus-on-date-item').remove();
+        } else {
+            $(this).closest('.bus-on-date-item').find('input').val('');
         }
     });
 

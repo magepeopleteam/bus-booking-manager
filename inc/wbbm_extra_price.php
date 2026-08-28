@@ -21,33 +21,81 @@ function wbbm_add_custom_price($cart_object)
     }
 }
 
-// Validate checkout
-function wbbm_after_checkout_validation()
+// Validate classic checkout and Cart/Checkout Blocks without mutating the cart.
+function wbbm_validate_cart_bookings($errors)
 {
+    if (!is_object($errors) || !method_exists($errors, 'add') || !WC()->cart) {
+        return;
+    }
+
     $cart_items = WC()->cart->get_cart();
     if (sizeof($cart_items) > 0) {
-        foreach ($cart_items as $cart_item) {
+        foreach ($cart_items as $cart_item_key => $cart_item) {
             $post_id = isset($cart_item['wbbm_id']) ? intval($cart_item['wbbm_id']) : 0; // Sanitize ID
             if (get_post_type($post_id) == 'wbbm_bus') {
                 $start_route = isset($cart_item['wbbm_start_stops']) ? sanitize_text_field($cart_item['wbbm_start_stops']) : '';
                 $end_route = isset($cart_item['wbbm_end_stops']) ? sanitize_text_field($cart_item['wbbm_end_stops']) : '';
                 $date = isset($cart_item['wbbm_journey_date']) ? sanitize_text_field($cart_item['wbbm_journey_date']) : '';
+                if ($date === '') {
+                    $errors->add('wbbm_bus_date_missing_' . sanitize_key($cart_item_key), __('Journey date is missing. Please remove this booking and select a date.', 'bus-booking-manager'));
+                    continue;
+                }
+                if (!wbbm_has_priced_route($post_id, $start_route, $end_route)) {
+                    $errors->add('wbbm_bus_route_invalid_' . sanitize_key($cart_item_key), __('The selected bus route is no longer available. Please remove this booking and select a route again.', 'bus-booking-manager'));
+                    continue;
+                }
+                $journey_date = mage_wp_date(wbbm_convert_date_to_php($date), 'Y-m-d');
+                $start_time = class_exists('MP_Global_Function') ? MP_Global_Function::wbbm_get_route_time_by_place($post_id, $start_route, 'bp') : '';
+                if (!wbbm_is_bus_operational_on_date($post_id, $journey_date, $start_time)) {
+                    $errors->add('wbbm_bus_not_operational_' . sanitize_key($cart_item_key), __('This bus is not operational on the selected date. Please choose another date.', 'bus-booking-manager'));
+                    continue;
+                }
                 $available_seat = wbbm_intermidiate_available_seat($start_route, $end_route, wbbm_convert_date_to_php($date), $post_id);
 
                 $adult_qty = isset($cart_item['wbbm_total_adult_qt']) ? intval($cart_item['wbbm_total_adult_qt']) : 0;
                 $child_qty = isset($cart_item['wbbm_total_child_qt']) ? intval($cart_item['wbbm_total_child_qt']) : 0;
                 $infant_qty = isset($cart_item['wbbm_total_infant_qt']) ? intval($cart_item['wbbm_total_infant_qt']) : 0;
-                $wbbm_cart_qty = $adult_qty + $child_qty + $infant_qty;
+                // Cart data stores the number of seats represented by an entire-bus booking.
+                $entire_seats = isset($cart_item['wbbm_total_entire_qt']) ? intval($cart_item['wbbm_total_entire_qt']) : 0;
+                $wbbm_cart_qty = $adult_qty + $child_qty + $infant_qty + $entire_seats;
 
                 if ($available_seat < $wbbm_cart_qty) {
-                    WC()->cart->empty_cart();
-                    wc_add_notice(__("Sorry, your selected ticket is already booked by another user", 'bus-booking-manager'), 'error');
+                    $errors->add('wbbm_bus_capacity_' . sanitize_key($cart_item_key), __('Sorry, the selected bus no longer has enough available seats. Please adjust or remove this booking.', 'bus-booking-manager'));
+                }
+            } elseif (get_post_type($post_id) === 'wbbm_shuttle' && function_exists('wbbm_shuttle_available_seats')) {
+                $date = isset($cart_item['wbbm_journey_date']) ? sanitize_text_field($cart_item['wbbm_journey_date']) : '';
+                $route_id = isset($cart_item['wbbm_route_id']) ? sanitize_text_field($cart_item['wbbm_route_id']) : '';
+                $pickup = isset($cart_item['wbbm_start_stops']) ? sanitize_text_field($cart_item['wbbm_start_stops']) : '';
+                $dropoff = isset($cart_item['wbbm_end_stops']) ? sanitize_text_field($cart_item['wbbm_end_stops']) : '';
+                $passengers = isset($cart_item['wbbm_total_seat']) ? absint($cart_item['wbbm_total_seat']) : 1;
+                if (wbbm_shuttle_available_seats($post_id, $date, $route_id, $pickup, $dropoff) < $passengers) {
+                    $errors->add('wbbm_shuttle_capacity_' . sanitize_key($cart_item_key), __('The selected shuttle no longer has enough seats. Please adjust or remove this booking.', 'bus-booking-manager'));
                 }
             }
         }
     }
 }
-add_action('woocommerce_after_checkout_validation', 'wbbm_after_checkout_validation');
+
+function wbbm_after_checkout_validation($data, $errors)
+{
+    wbbm_validate_cart_bookings($errors);
+}
+add_action('woocommerce_after_checkout_validation', 'wbbm_after_checkout_validation', 10, 2);
+add_action('woocommerce_store_api_cart_errors', 'wbbm_validate_cart_bookings', 10, 1);
+
+function wbbm_has_priced_route($bus_id, $start_route, $end_route)
+{
+    $prices = get_post_meta(absint($bus_id), 'wbbm_bus_prices', true);
+    if (!is_array($prices)) {
+        return false;
+    }
+    foreach ($prices as $price) {
+        if (isset($price['wbbm_bus_bp_price_stop'], $price['wbbm_bus_dp_price_stop']) && $price['wbbm_bus_bp_price_stop'] === $start_route && $price['wbbm_bus_dp_price_stop'] === $end_route) {
+            return true;
+        }
+    }
+    return false;
+}
 
 // Add custom fields to order items
 function wbbm_add_custom_fields_text_to_order_items($item, $cart_item_key, $values, $order)
@@ -266,6 +314,11 @@ function wbbm_add_the_date_validation($passed)
                 return false;
             }
 
+            if (!wbbm_has_priced_route($eid, $boarding_var_get, $dropping_var_get)) {
+                wc_add_notice(__('The selected bus route is invalid or no longer available.', 'bus-booking-manager'), 'error');
+                return false;
+            }
+
             $journey_date_ymd = mage_wp_date($journey_date, 'Y-m-d');
             $start_time_for_compare = '';
             if (class_exists('MP_Global_Function')) {
@@ -286,7 +339,14 @@ function wbbm_add_the_date_validation($passed)
             $adult_qty = isset($_POST['adult_quantity']) ? intval($_POST['adult_quantity']) : 0;
             $child_qty = isset($_POST['child_quantity']) ? intval($_POST['child_quantity']) : 0;
             $infant_qty = isset($_POST['infant_quantity']) ? intval($_POST['infant_quantity']) : 0;
-            $total_booking_seat = $adult_qty + $child_qty + $infant_qty;
+            $entire_qty = isset($_POST['entire_quantity']) ? intval($_POST['entire_quantity']) : 0;
+            $entire_seats = $entire_qty > 0 ? max(1, (int) get_post_meta($eid, 'wbbm_total_seat', true)) * $entire_qty : 0;
+            $total_booking_seat = $adult_qty + $child_qty + $infant_qty + $entire_seats;
+
+            if ($total_booking_seat <= 0) {
+                wc_add_notice(__('Please select at least one ticket.', 'bus-booking-manager'), 'error');
+                return false;
+            }
 
             // Prevent adding to cart if already exists for the same date
             if ($cart_qty > 0) {

@@ -1272,6 +1272,97 @@ select.form-control {
     gap: 12px;
 }
 
+.bus-card-heading-row,
+.bus-on-date-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.bus-card-heading-row h3 {
+    margin-bottom: 4px;
+}
+
+.bus-card-heading-row p {
+    margin: 0 0 18px;
+    color: var(--bus-text-light);
+}
+
+.bus-on-date-item {
+    max-width: 420px;
+    margin-bottom: 10px;
+}
+
+.bus-on-date-item .form-control {
+    flex: 1;
+}
+
+@media (max-width: 1024px) {
+    .bus-edit-content {
+        grid-template-columns: minmax(0, 1fr) !important;
+    }
+
+    .bus-edit-right {
+        width: 100%;
+    }
+
+    .pricing-matrix-table-wrap,
+    .passenger-list-table-wrap {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .pricing-matrix-table,
+    .passenger-list-table {
+        min-width: 720px;
+    }
+}
+
+@media (max-width: 782px) {
+    .wbbm-full-screen-mode #wpcontent,
+    .wbbm-full-screen-mode #wpbody-content {
+        padding-left: 0;
+    }
+
+    .bus-edit-header,
+    .bus-edit-footer,
+    .bus-card-heading-row {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .bus-grid,
+    .offday-item .bus-grid,
+    .extra-service-item .bus-grid {
+        grid-template-columns: minmax(0, 1fr) !important;
+    }
+
+    .bus-on-date-item {
+        max-width: none;
+    }
+
+    .footer-buttons,
+    .footer-buttons .btn {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .bus-card,
+    .route-item-body {
+        padding: 14px;
+    }
+
+    .pickup-point-item {
+        grid-template-columns: minmax(0, 1fr) !important;
+    }
+
+    .bus-on-date-item {
+        align-items: stretch;
+    }
+}
+
 /* Step 5: Features & Extra Services */
 .features-grid {
     display: grid;
