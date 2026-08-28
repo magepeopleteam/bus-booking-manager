@@ -158,7 +158,14 @@ if (!class_exists('MAGE_Setting_API')) :
 
             // creates our settings in the options table
             foreach ($this->settings_sections as $section) {
-                register_setting($section['id'], $section['id'], array($this, 'sanitize_options'));
+                $section_id = $section['id'];
+                register_setting(
+                    $section_id,
+                    $section_id,
+                    function ($options) use ($section_id) {
+                        return $this->sanitize_options($options, $section_id);
+                    }
+                );
             }
         }
 
@@ -169,12 +176,12 @@ if (!class_exists('MAGE_Setting_API')) :
          */
         function callback_text($args): void
         {
-            $value = esc_attr(text: $this->get_option($args['id'], $args['section'], $args['std']));
-            $custom_class = esc_attr(text: $args['class']);
-            $size = isset($args['size']) && ! is_null(value: $args['size']) ? esc_attr($args['size']) : 'regular';
-            $placeholder = isset($args['placeholder']) && ! is_null(value: $args['placeholder']) ? esc_attr(text: $args['placeholder']) : '';
+            $value = esc_attr($this->get_option($args['id'], $args['section'], $args['std']));
+            $custom_class = esc_attr($args['class']);
+            $size = isset($args['size']) && ! is_null($args['size']) ? esc_attr($args['size']) : 'regular';
+            $placeholder = isset($args['placeholder']) && ! is_null($args['placeholder']) ? esc_attr($args['placeholder']) : '';
             ?>
-            <input type="text" class="<?php echo esc_attr(text: $size); ?>-text <?php echo esc_attr(text: $custom_class); ?>" id="<?php echo esc_attr(text: $args['section'] . '[' . $args['id'] . ']'); ?>" name="<?php echo esc_attr(text: $args['section'] . '[' . $args['id'] . ']'); ?>" value="<?php echo esc_attr(text: $value); ?>" placeholder="<?php echo esc_attr(text: $placeholder); ?>" />
+            <input type="text" class="<?php echo esc_attr($size); ?>-text <?php echo esc_attr($custom_class); ?>" id="<?php echo esc_attr($args['section'] . '[' . $args['id'] . ']'); ?>" name="<?php echo esc_attr($args['section'] . '[' . $args['id'] . ']'); ?>" value="<?php echo esc_attr($value); ?>" placeholder="<?php echo esc_attr($placeholder); ?>" />
             <?php
         }
 
@@ -439,8 +446,9 @@ if (!class_exists('MAGE_Setting_API')) :
         function callback_wysiwyg($args)
         {
 
-            // Sanitize and escape the value
-            $value = sanitize_text_field($this->get_option($args['id'], $args['section'], $args['std']));
+            // Keep the limited HTML supported by the editor. Escaping is handled
+            // by wp_editor() when the field is rendered.
+            $value = wp_kses_post($this->get_option($args['id'], $args['section'], $args['std']));
 
             // Sanitize and escape the size
             $size = isset($args['size']) && !is_null($args['size']) ? esc_attr($args['size']) : '500px';
@@ -615,22 +623,99 @@ if (!class_exists('MAGE_Setting_API')) :
         /**
          * Sanitize callback for Settings API
          */
-        function sanitize_options($options)
+        function sanitize_options($options, $section = '')
         {
-            if (is_array($options)) :
-                foreach ($options as $option_slug => $option_value) {
-                    $sanitize_callback = $this->get_sanitize_callback($option_slug);
+            $options = is_array($options) ? $options : array();
+            $existing = $section ? get_option($section, array()) : array();
+            $existing = is_array($existing) ? $existing : array();
+            $registered = isset($this->settings_fields[$section]) ? $this->settings_fields[$section] : array();
+            $field_map = array();
 
-                    // If callback is set, call it
-                    if ($sanitize_callback) {
-                        $options[$option_slug] = call_user_func($sanitize_callback, $option_value);
-                        continue;
-                    } else {
-                        $options[$option_slug] = sanitize_text_field($option_value);
-                    }
+            foreach ($registered as $field) {
+                if (!empty($field['name'])) {
+                    $field_map[$field['name']] = $field;
                 }
-            endif;
-            return $options;
+            }
+
+            $sanitized = array();
+            foreach ($options as $option_slug => $option_value) {
+                if (!isset($field_map[$option_slug])) {
+                    // Unknown keys are retained from the stored option below,
+                    // but a settings request cannot introduce arbitrary values.
+                    continue;
+                }
+
+                $field = $field_map[$option_slug];
+                $sanitize_callback = $this->get_sanitize_callback($option_slug);
+                if ($sanitize_callback) {
+                    $sanitized[$option_slug] = call_user_func($sanitize_callback, $option_value);
+                    continue;
+                }
+
+                $type = isset($field['type']) ? $field['type'] : 'text';
+                switch ($type) {
+                    case 'multicheck':
+                        $allowed = isset($field['options']) && is_array($field['options']) ? array_map('strval', array_keys($field['options'])) : array();
+                        $values = is_array($option_value) ? $option_value : array();
+                        foreach ($values as $key => $value) {
+                            $key = sanitize_key($key);
+                            $value = sanitize_text_field(wp_unslash($value));
+                            if (in_array($key, $allowed, true) && (string) $key === (string) $value) {
+                                $sanitized[$option_slug][$key] = $value;
+                            }
+                        }
+                        break;
+
+                    case 'checkbox_multi':
+                        $allowed = isset($field['args']) && is_array($field['args']) ? array_map('strval', array_keys($field['args'])) : array();
+                        $values = is_array($option_value) ? $option_value : array();
+                        $values = array_map('sanitize_text_field', wp_unslash($values));
+                        $sanitized[$option_slug] = array_values(array_intersect($values, $allowed));
+                        break;
+
+                    case 'select':
+                    case 'radio':
+                        $value = sanitize_text_field(wp_unslash($option_value));
+                        $allowed = isset($field['options']) && is_array($field['options']) ? array_map('strval', array_keys($field['options'])) : array();
+                        $sanitized[$option_slug] = in_array($value, $allowed, true) ? $value : (isset($field['default']) ? $field['default'] : '');
+                        break;
+
+                    case 'wysiwyg':
+                        $sanitized[$option_slug] = wp_kses_post(wp_unslash($option_value));
+                        break;
+
+                    case 'textarea':
+                        $sanitized[$option_slug] = sanitize_textarea_field(wp_unslash($option_value));
+                        break;
+
+                    case 'media':
+                        $sanitized[$option_slug] = absint($option_value);
+                        break;
+
+                    case 'color':
+                        $color = sanitize_hex_color(wp_unslash($option_value));
+                        $sanitized[$option_slug] = $color ? $color : '';
+                        break;
+
+                    case 'checkbox':
+                        $sanitized[$option_slug] = 'on' === $option_value ? 'on' : 'off';
+                        break;
+
+                    default:
+                        $sanitized[$option_slug] = sanitize_text_field(wp_unslash($option_value));
+                        break;
+                }
+            }
+
+            // An unchecked array control is not submitted. Clear it explicitly,
+            // while retaining unrelated legacy keys in the section option.
+            foreach ($field_map as $option_slug => $field) {
+                if (in_array($field['type'], array('multicheck', 'checkbox_multi'), true) && !array_key_exists($option_slug, $sanitized)) {
+                    $sanitized[$option_slug] = array();
+                }
+            }
+
+            return array_merge($existing, $sanitized);
         }
 
         /**

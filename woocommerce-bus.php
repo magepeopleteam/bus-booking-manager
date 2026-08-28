@@ -5,6 +5,7 @@
  * Plugin URI: http://mage-people.com
  * Description: A Complete Ticket Booking System for WordPress & WooCommerce
  * Version: 5.0.1
+ * Requires PHP: 7.4
  * Author: MagePeople Team
  * Author URI: http://www.mage-people.com/
  * License: GPL v2 or later
@@ -16,6 +17,12 @@
 if (!defined('ABSPATH')) {
     die;
 } // Cannot access pages directly.
+
+add_action('before_woocommerce_init', static function () {
+    if (class_exists('Automattic\\WooCommerce\\Utilities\\FeaturesUtil')) {
+        Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility('cart_checkout_blocks', __FILE__, true);
+    }
+});
 
 // function to create passenger list table
 function wbbm_booking_list_table_create()
@@ -188,7 +195,6 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
     }
 
 
-    flush_rewrite_rules();
     require_once WBTM_PLUGIN_DIR . '/inc/WBTM_Quick_Setup.php';
     add_action('activated_plugin', 'wbbm_activation_redirect', 90, 1);
     /**

@@ -8,6 +8,8 @@
         var date_format = $("#all_date_picker_info").data("date_format");
         var operational_start = $("#all_date_picker_info").data("od_start") || '';
         var operational_end = $("#all_date_picker_info").data("od_end") || '';
+        var globalOffDates = $("#all_date_picker_info").data("global_off_dates") || [];
+        var globalOffDays = $("#all_date_picker_info").data("global_off_days") || [];
         var $searchDateFields = jQuery("#j_date, #r_date");
         if (single_bus) {
             var enableDates = $("#all_date_picker_info").data("enabledates");
@@ -82,7 +84,7 @@
             });
         }
         function enableAllTheseDays(date, enableDates) {
-            if (!inOperationalRange(date, operational_start, operational_end)[0]) {
+            if (!inOperationalRange(date, operational_start, operational_end)[0] || !isGloballyAvailable(date)) {
                 return [false];
             }
             var sdate = jQuery.datepicker.formatDate('dd-mm-yy', date)
@@ -94,7 +96,9 @@
             return [false];
         }
         function off_particular(date, off_particular_date, weekly_offday) {
-            if (!inOperationalRange(date, operational_start, operational_end)[0]) {
+            off_particular_date = Array.isArray(off_particular_date) ? off_particular_date : [];
+            weekly_offday = Array.isArray(weekly_offday) ? weekly_offday : [];
+            if (!inOperationalRange(date, operational_start, operational_end)[0] || !isGloballyAvailable(date)) {
                 return [false];
             }
             var sdate = jQuery.datepicker.formatDate('dd-mm-yy', date)
@@ -105,16 +109,17 @@
             }
             if (weekly_offday.length > 0) {
                 // Fix sunday value issue
-                const sundayIndex = weekly_offday.indexOf(7);
-                if (sundayIndex !== -1) {
-                    weekly_offday[sundayIndex] = 0;
-                }
-                // Fix sunday value issue
-                if (weekly_offday.includes(date.getDay())) {
+                var normalizedDays = weekly_offday.map(function (day) { return Number(day) === 7 ? 0 : Number(day); });
+                if (normalizedDays.indexOf(date.getDay()) !== -1) {
                     return [false];
                 }
             }
             return [true];
+        }
+        function isGloballyAvailable(date) {
+            var formatted = jQuery.datepicker.formatDate('dd-mm-yy', date);
+            var normalizedDays = (Array.isArray(globalOffDays) ? globalOffDays : []).map(function (day) { return Number(day) === 7 ? 0 : Number(day); });
+            return (Array.isArray(globalOffDates) ? globalOffDates : []).indexOf(formatted) === -1 && normalizedDays.indexOf(date.getDay()) === -1;
         }
         function inOperationalRange(date, startDate, endDate) {
             var current = new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
