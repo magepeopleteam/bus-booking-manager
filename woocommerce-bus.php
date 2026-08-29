@@ -4,7 +4,7 @@
  * Plugin Name: Multipurpose Ticket Booking Manager (Bus/Train/Ferry/Boat/Shuttle)
  * Plugin URI: http://mage-people.com
  * Description: A Complete Ticket Booking System for WordPress & WooCommerce
- * Version: 5.0.1
+ * Version: 5.0.2
  * Requires PHP: 7.4
  * Author: MagePeople Team
  * Author URI: http://www.mage-people.com/
@@ -100,14 +100,7 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
     require_once(dirname(__FILE__) . "/inc/wbbm_dummy_import.php");
     require_once(dirname(__FILE__) . "/inc/BusListPageClass.php");
     require_once(dirname(__FILE__) . "/inc/BusEditPageClass.php");
-    require_once(dirname(__FILE__) . "/inc/BusTypeListPageClass.php");
-    require_once(dirname(__FILE__) . "/inc/BusTypeEditPageClass.php");
-    require_once(dirname(__FILE__) . "/inc/BusStopListPageClass.php");
-    require_once(dirname(__FILE__) . "/inc/BusStopEditPageClass.php");
-    require_once(dirname(__FILE__) . "/inc/BusPickpointListPageClass.php");
-    require_once(dirname(__FILE__) . "/inc/BusPickpointEditPageClass.php");
-    require_once(dirname(__FILE__) . "/inc/BusFeatureListPageClass.php");
-    require_once(dirname(__FILE__) . "/inc/BusFeatureEditPageClass.php");
+    require_once(dirname(__FILE__) . "/inc/class-wbbm-bus-configuration-page.php");
 
     // Shuttle Service Files - Conditional loading
     if (function_exists('wbbm_get_option') && wbbm_get_option('wbbm_shuttle_module_enable', 'wbbm_general_setting_sec', 'off') === 'on') {
