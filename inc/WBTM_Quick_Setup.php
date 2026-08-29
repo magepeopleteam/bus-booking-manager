@@ -9,8 +9,19 @@ require_once WBTM_PLUGIN_DIR . 'inc/MP_Global_Style.php';
 if (!class_exists('WBTM_Quick_Setup')) {
     class WBTM_Quick_Setup
     {
+        /** The instance booted at load time, for hub delegation. */
+        private static $instance = null;
+
+        public static function instance()
+        {
+            return self::$instance;
+        }
+
         public function __construct()
         {
+            if (null === self::$instance) {
+                self::$instance = $this;
+            }
             add_action('admin_enqueue_scripts', array($this, 'add_admin_scripts'), 10, 1);
             add_action('admin_menu', array($this, 'quick_setup_menu'));
         }

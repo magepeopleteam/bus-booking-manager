@@ -6,8 +6,19 @@ if (!defined('ABSPATH')) {
 
 class ShuttleBookingAdminClass
 {
+    /** The instance booted at load time, for hub delegation. */
+    private static $instance = null;
+
+    public static function instance()
+    {
+        return self::$instance;
+    }
+
     public function __construct()
     {
+        if (null === self::$instance) {
+            self::$instance = $this;
+        }
         add_action('admin_menu', array($this, 'wbbm_shuttle_booking_menu'));
         add_action('admin_enqueue_scripts', array($this, 'wbbm_enqueue_assets'));
         add_action('admin_init', array($this, 'wbbm_handle_shuttle_booking_export'));
@@ -15,9 +26,25 @@ class ShuttleBookingAdminClass
         add_action('admin_init', array($this, 'wbbm_handle_shuttle_ticket_pdf'));
     }
 
+    /**
+     * Is this request for this module's screen?
+     *
+     * True on the module's own legacy page and on the Shuttle Manager tab
+     * that now hosts it, so assets and row actions work in both places.
+     */
+    private function is_module_request()
+    {
+        if (class_exists('WBBM_Admin_Hub')) {
+            return WBBM_Admin_Hub::is_module_screen('wbbm-shuttle-bookings', 'wbbm-shuttle-manager', 'bookings');
+        }
+
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Screen check only.
+        return isset($_GET['page']) && 'wbbm-shuttle-bookings' === sanitize_key(wp_unslash($_GET['page']));
+    }
+
     public function wbbm_enqueue_assets($hook)
     {
-        if (strpos($hook, 'wbbm-shuttle-bookings') !== false) {
+        if ($this->is_module_request()) {
             wp_enqueue_style('shuttle-list-css', WBTM_PLUGIN_URL . 'assets/admin/shuttle-list.css', array(), time());
             wp_enqueue_script('shuttle-list-js', WBTM_PLUGIN_URL . 'assets/admin/shuttle-list.js', array('jquery'), time(), true);
         }
@@ -28,7 +55,7 @@ class ShuttleBookingAdminClass
      */
     public function wbbm_handle_shuttle_booking_delete()
     {
-        if (!isset($_GET['page']) || $_GET['page'] !== 'wbbm-shuttle-bookings' || !isset($_GET['action']) || $_GET['action'] !== 'delete') {
+        if (!$this->is_module_request() || !isset($_GET['action']) || $_GET['action'] !== 'delete') {
             return;
         }
 
@@ -62,7 +89,7 @@ class ShuttleBookingAdminClass
      */
     public function wbbm_handle_shuttle_booking_export()
     {
-        if (!isset($_GET['page']) || $_GET['page'] !== 'wbbm-shuttle-bookings' || !isset($_GET['export']) || $_GET['export'] !== 'csv') {
+        if (!$this->is_module_request() || !isset($_GET['export']) || $_GET['export'] !== 'csv') {
             return;
         }
 

@@ -18,10 +18,16 @@ if (! class_exists('MP_Global_Style')) {
         }
         public function add_global_style()
         {
-            $default_color   = MP_Global_Function::get_style_settings('default_text_color', '#303030');
-            $theme_color     = MP_Global_Function::get_style_settings('theme_color', '#f12971');
+            /*
+             * Palette defaults. These match the admin design system in
+             * assets/admin/wbbm-admin-shell.css so the plugin renders as one
+             * product front and back. A site that sets its own colours in
+             * Style Settings still overrides every one of these.
+             */
+            $default_color   = MP_Global_Function::get_style_settings('default_text_color', '#172033');
+            $theme_color     = MP_Global_Function::get_style_settings('theme_color', '#f97316');
             $alternate_color = MP_Global_Function::get_style_settings('theme_alternate_color', '#fff');
-            $warning_color   = MP_Global_Function::get_style_settings('warning_color', '#E67C30');
+            $warning_color   = MP_Global_Function::get_style_settings('warning_color', '#b45309');
             $default_fs      = MP_Global_Function::get_style_settings('default_font_size', '14') . 'px';
             $fs_h1           = MP_Global_Function::get_style_settings('font_size_h1', '35') . 'px';
             $fs_h2           = MP_Global_Function::get_style_settings('font_size_h2', '30') . 'px';
@@ -32,8 +38,8 @@ if (! class_exists('MP_Global_Style')) {
             $fs_label        = MP_Global_Function::get_style_settings('font_size_label', '16') . 'px';
             $button_fs       = MP_Global_Function::get_style_settings('button_font_size', '16') . 'px';
             $button_color    = MP_Global_Function::get_style_settings('button_color', $alternate_color);
-            $button_bg       = MP_Global_Function::get_style_settings('button_bg', '#ea8125');
-            $section_bg      = MP_Global_Function::get_style_settings('section_bg', '#FAFCFE');
+            $button_bg       = MP_Global_Function::get_style_settings('button_bg', '#f97316');
+            $section_bg      = MP_Global_Function::get_style_settings('section_bg', '#f8fafc');
             ?>
                 <style>
                     :root {
@@ -79,7 +85,7 @@ if (! class_exists('MP_Global_Style')) {
                     /*******Color***********/
                     :root {
                         --d_color: <?php echo esc_attr($default_color); ?>;
-                        --color_border: #DDD;
+                        --color_border: #e2e8f0;
                         --color_active: #0E6BB7;
                         --color_section: <?php echo esc_attr($section_bg); ?>;
                         --color_theme: <?php echo esc_attr($theme_color); ?>;

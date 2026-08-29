@@ -21,6 +21,7 @@ final class WBBM_Bus_Configuration_Page
     public function __construct()
     {
         add_action('admin_menu', array($this, 'register_page'), 30);
+        add_action('wp_ajax_wbbm_bus_config_tab', array($this, 'ajax_render_tab'));
         add_action('admin_menu', array($this, 'remove_legacy_submenus'), 999);
         add_action('admin_enqueue_scripts', array($this, 'enqueue_assets'));
         add_action('admin_init', array($this, 'handle_request'), 5);
@@ -613,6 +614,11 @@ final class WBBM_Bus_Configuration_Page
         $js = WBTM_PLUGIN_DIR . 'assets/admin/bus-configuration.js';
         wp_enqueue_style('wbbm-bus-configuration', WBTM_PLUGIN_URL . 'assets/admin/bus-configuration.css', array('dashicons'), file_exists($css) ? filemtime($css) : '1.0.0');
         wp_enqueue_script('wbbm-bus-configuration', WBTM_PLUGIN_URL . 'assets/admin/bus-configuration.js', array(), file_exists($js) ? filemtime($js) : '1.0.0', true);
+        wp_localize_script('wbbm-bus-configuration', 'wbbmConfig', array(
+            'ajaxUrl' => admin_url('admin-ajax.php'),
+            'nonce'   => wp_create_nonce('wbbm_bus_config_tab'),
+            'page'    => self::PAGE,
+        ));
     }
 
     public function parent_file($parent)
@@ -644,16 +650,17 @@ final class WBBM_Bus_Configuration_Page
                         <div><h1><?php esc_html_e('Bus Configuration', 'bus-booking-manager'); ?></h1><p><?php esc_html_e('Manage reusable bus data and fleet records from one place.', 'bus-booking-manager'); ?></p></div>
                     </div>
                     <?php if ($this->can($tab, 'create')) : ?>
-                        <a class="wbbm-config-button wbbm-config-primary js-wbbm-modal-link" href="<?php echo esc_url($this->page_url($tab_key, array('modal' => 'add'))); ?>" data-mode="add"><span class="dashicons dashicons-plus-alt2"></span><?php echo esc_html(sprintf(__('Add %s', 'bus-booking-manager'), $tab['singular'])); ?></a>
+                        <a class="wbbm-config-button wbbm-config-primary js-wbbm-modal-link" data-wbbm-cfg-add href="<?php echo esc_url($this->page_url($tab_key, array('modal' => 'add'))); ?>" data-mode="add"><span class="dashicons dashicons-plus-alt2"></span><?php echo esc_html(sprintf(__('Add %s', 'bus-booking-manager'), $tab['singular'])); ?></a>
                     <?php endif; ?>
                 </header>
 
                 <nav class="wbbm-config-tabs" aria-label="<?php esc_attr_e('Bus configuration sections', 'bus-booking-manager'); ?>">
                     <?php foreach ($tabs as $key => $item) : ?>
-                        <a href="<?php echo esc_url($this->page_url($key)); ?>" <?php echo $key === $tab_key ? 'aria-current="page"' : ''; ?>><span class="dashicons <?php echo esc_attr(isset($item['icon']) ? $item['icon'] : 'dashicons-admin-generic'); ?>"></span><?php echo esc_html($item['label']); ?></a>
+                        <a href="<?php echo esc_url($this->page_url($key)); ?>" data-wbbm-cfg-tab="<?php echo esc_attr($key); ?>" <?php echo $key === $tab_key ? 'aria-current="page"' : ''; ?>><span class="dashicons <?php echo esc_attr(isset($item['icon']) ? $item['icon'] : 'dashicons-admin-generic'); ?>"></span><?php echo esc_html($item['label']); ?></a>
                     <?php endforeach; ?>
                 </nav>
 
+                <div data-wbbm-cfg-panel>
                 <?php $this->render_notice(); ?>
                 <div class="wbbm-config-toolbar">
                     <form method="get" action="<?php echo esc_url(admin_url('edit.php')); ?>">
@@ -666,6 +673,7 @@ final class WBBM_Bus_Configuration_Page
                 </div>
 
                 <?php $this->render_table($tab_key, $tab, $data); ?>
+                </div>
             </section>
             <?php $this->render_modal($tab_key, $tab, $modal); ?>
         </div>
@@ -676,6 +684,59 @@ final class WBBM_Bus_Configuration_Page
     }
 
     /** Fetch one page of terms or posts. */
+    /**
+     * Render one configuration tab's toolbar + table for an in-page swap.
+     *
+     * Mirrors what render_page() puts inside [data-wbbm-cfg-panel], so the
+     * client can switch tabs without a reload. Capability is re-checked per
+     * tab, exactly as a full page load would.
+     */
+    public function ajax_render_tab()
+    {
+        check_ajax_referer('wbbm_bus_config_tab', 'nonce');
+
+        $tabs = $this->tabs(true);
+        $requested = isset($_POST['tab']) ? sanitize_key(wp_unslash($_POST['tab'])) : '';
+        if (!$requested || !isset($tabs[$requested])) {
+            wp_send_json_error(array('message' => __('You do not have permission to open this section.', 'bus-booking-manager')), 403);
+        }
+
+        $tab = $tabs[$requested];
+        $search = isset($_POST['s']) ? sanitize_text_field(wp_unslash($_POST['s'])) : '';
+        $paged = isset($_POST['paged']) ? max(1, absint(wp_unslash($_POST['paged']))) : 1;
+
+        // Modules read these from $_GET.
+        $_GET['page'] = self::PAGE;
+        $_GET['tab'] = $requested;
+        $_GET['s'] = $search;
+        $_GET['paged'] = $paged;
+
+        $data = $this->items($tab, $search, $paged);
+
+        ob_start();
+        ?>
+        <div class="wbbm-config-toolbar">
+            <form method="get" action="<?php echo esc_url(admin_url('edit.php')); ?>">
+                <input type="hidden" name="post_type" value="wbbm_bus"><input type="hidden" name="page" value="<?php echo esc_attr(self::PAGE); ?>"><input type="hidden" name="tab" value="<?php echo esc_attr($requested); ?>">
+                <label class="screen-reader-text" for="wbbm-config-search"><?php echo esc_html(sprintf(/* translators: %s: tab label. */ __('Search %s', 'bus-booking-manager'), $tab['label'])); ?></label>
+                <span class="dashicons dashicons-search"></span><input id="wbbm-config-search" type="search" name="s" value="<?php echo esc_attr($search); ?>" placeholder="<?php echo esc_attr(sprintf(/* translators: %s: tab label. */ __('Search %s...', 'bus-booking-manager'), strtolower($tab['label']))); ?>">
+                <button class="wbbm-config-button wbbm-config-primary" type="submit"><?php esc_html_e('Search', 'bus-booking-manager'); ?></button>
+                <?php if ($search) : ?><a class="wbbm-config-button" href="<?php echo esc_url($this->page_url($requested)); ?>"><?php esc_html_e('Clear', 'bus-booking-manager'); ?></a><?php endif; ?>
+            </form>
+        </div>
+        <?php
+        $this->render_table($requested, $tab, $data);
+        $html = ob_get_clean();
+
+        wp_send_json_success(array(
+            'tab'      => $requested,
+            'html'     => $html,
+            'canCreate'=> (bool) $this->can($tab, 'create'),
+            'addLabel' => sprintf(/* translators: %s: singular resource name. */ __('Add %s', 'bus-booking-manager'), $tab['singular']),
+            'addUrl'   => $this->page_url($requested, array('modal' => 'add')),
+        ));
+    }
+
     private function items($tab, $search, $paged)
     {
         $per_page = 20;
@@ -781,10 +842,10 @@ final class WBBM_Bus_Configuration_Page
             <a class="wbbm-config-backdrop js-wbbm-modal-close" href="<?php echo esc_url($this->page_url($tab_key)); ?>" tabindex="-1" aria-hidden="true"></a>
             <div class="wbbm-config-dialog" role="dialog" aria-modal="true" aria-labelledby="wbbm-config-modal-title">
                 <header><div><span class="dashicons <?php echo esc_attr(isset($tab['icon']) ? $tab['icon'] : 'dashicons-admin-generic'); ?>"></span><h2 id="wbbm-config-modal-title"><?php echo esc_html($title); ?></h2></div><a class="wbbm-config-modal-close js-wbbm-modal-close" href="<?php echo esc_url($this->page_url($tab_key)); ?>" aria-label="<?php esc_attr_e('Close dialog', 'bus-booking-manager'); ?>"><span class="dashicons dashicons-no-alt"></span></a></header>
-                <form method="post" action="<?php echo esc_url($this->page_url($tab_key)); ?>" novalidate>
+                <form method="post" action="<?php echo esc_url($this->page_url($tab_key)); ?>" data-wbbm-cfg-form novalidate>
                     <?php wp_nonce_field('wbbm_config_save_' . $tab_key, 'wbbm_config_nonce'); ?>
                     <input type="hidden" name="wbbm_config_action" value="save"><input type="hidden" name="tab" value="<?php echo esc_attr($tab_key); ?>"><input type="hidden" name="item_id" id="wbbm-config-item-id" value="<?php echo esc_attr($id); ?>"><input type="hidden" name="item_token" id="wbbm-config-item-token" value="<?php echo esc_attr($v['token']); ?>">
-                    <?php if ($this->errors) : ?><div class="wbbm-config-error" role="alert" tabindex="-1"><strong><?php esc_html_e('Please fix the following:', 'bus-booking-manager'); ?></strong><ul><?php foreach ($this->errors as $error) : ?><li><?php echo esc_html($error); ?></li><?php endforeach; ?></ul></div><?php endif; ?>
+                    <div class="wbbm-config-error" role="alert" tabindex="-1" data-wbbm-cfg-errors <?php echo $this->errors ? '' : 'hidden'; ?>><strong><?php esc_html_e('Please fix the following:', 'bus-booking-manager'); ?></strong><ul><?php foreach ($this->errors as $error) : ?><li><?php echo esc_html($error); ?></li><?php endforeach; ?></ul></div>
                     <div class="wbbm-config-fields">
                         <label for="wbbm-config-name"><?php esc_html_e('Name', 'bus-booking-manager'); ?> <span aria-hidden="true">*</span></label><input type="text" id="wbbm-config-name" name="item_name" value="<?php echo esc_attr($v['name']); ?>" required <?php echo isset($this->errors['name']) ? 'aria-invalid="true" autofocus' : ''; ?>>
                         <?php if (!empty($tab['taxonomy'])) : ?>
