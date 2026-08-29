@@ -33,7 +33,14 @@
             $(this).siblings('ul.mage_route_list').find('li').slideDown(200);
         }
     });
-    $('.mage_form_group input.mage_form').on('keyup keydown', function (e) {
+    /*
+     * Delegated from document so these keep working on markup that arrives
+     * after page load. Search results are rendered in place in the admin
+     * booking screen, and direct bindings were lost on every re-render:
+     * the quantity still changed (another script handles that) but the
+     * sub total was never recalculated, so it sat at 0.
+     */
+    $(document).on('keyup keydown', '.mage_form_group input.mage_form', function (e) {
         if (e.keyCode === 13) {
             e.preventDefault();
             return false;
@@ -42,13 +49,13 @@
         let value = parseInt(target.val());
         mageTicketQty(target, value);
     });
-    $('.mage_qty_dec').on('click', function () {
+    $(document).on('click', '.mage_qty_dec', function () {
         let target = $(this).siblings('input');
         let value = (parseInt(target.val()) - 1) > 0 ? (parseInt(target.val()) - 1) : 0;
         target.trigger('input');
         mageTicketQty(target, value);
     });
-    $('.mage_qty_inc').on('click', function () {
+    $(document).on('click', '.mage_qty_inc', function () {
         let target = $(this).siblings('input');
         let value = target.val() ? parseInt(target.val()) + 1 : 1;
         target.trigger('input');
@@ -56,26 +63,26 @@
     });
 
     // Extra Service Price
-    $('.extra-qty-box').change(function () {
+    $(document).on('change', '.extra-qty-box', function () {
         const target = $(this);
         let value = target.find('option:selected').val();
         if (value == undefined) {
             value = target.val();
         }
         mageExtServiceQty(target, value);
-    })
-    $('.mage_es_qty_minus').click(function () {
+    });
+    $(document).on('click', '.mage_es_qty_minus', function () {
         const target = $(this).siblings('input');
         const value = parseInt(target.val()) - 1;
         target.trigger('input');
         mageExtServiceQty(target, value);
-    })
-    $('.mage_es_qty_plus').click(function () {
+    });
+    $(document).on('click', '.mage_es_qty_plus', function () {
         const target = $(this).siblings('input');
         const value = parseInt(target.val()) + 1;
         target.trigger('input');
         mageExtServiceQty(target, value);
-    })
+    });
     // Extra Service Price END
 
     // Extra Bag price qty change

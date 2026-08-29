@@ -1568,3 +1568,104 @@ body.wbbm-admin #ttbm_add_meta_box .mpStyle [data-tabs-target]:hover {
 .wbbm-hub-panel .ticket-search {
     margin-top: 0 !important;
 }
+
+/* ------------------------------------------- booking panel inside a hub */
+/* The expanded row is inline-styled with a pink tint on the frontend. */
+.wbbm-hub-panel .mage_search_list {
+    background-color: #fff !important;
+    border-top: 1px solid var(--wbbm-line);
+}
+
+.wbbm-hub-panel .mage_search_list .mage_bus_details,
+.wbbm-hub-panel .mage_search_list .mage_book_now_area {
+    border-color: var(--wbbm-line);
+}
+
+/* Book Now is a primary action: brand colour, not the legacy green. */
+.wbbm-hub-panel .mage_book_now .mage_button,
+.wbbm-hub-panel .mage_book_now_area .mage_button,
+.wbbm-hub-panel .mage_button.mage_book_now,
+.wbbm-hub-panel button.mage_book_now,
+.wbbm-hub-panel .mage_book_now button {
+    background: var(--wbbm-accent) !important;
+    border-color: var(--wbbm-accent) !important;
+    border-radius: 8px;
+    color: #fff !important;
+    font-weight: 600;
+}
+
+.wbbm-hub-panel .mage_book_now .mage_button:hover,
+.wbbm-hub-panel .mage_book_now_area .mage_button:hover,
+.wbbm-hub-panel .mage_button.mage_book_now:hover,
+.wbbm-hub-panel button.mage_book_now:hover,
+.wbbm-hub-panel .mage_book_now button:hover {
+    background: var(--wbbm-accent-dark) !important;
+    border-color: var(--wbbm-accent-dark) !important;
+}
+
+/* Quantity stepper */
+.wbbm-hub-panel .mage_form_group {
+    display: inline-flex;
+    align-items: center;
+    overflow: hidden;
+    border: 1px solid var(--wbbm-line);
+    border-radius: 8px;
+}
+
+.wbbm-hub-panel .mage_form_group .mage_qty_inc,
+.wbbm-hub-panel .mage_form_group .mage_qty_dec {
+    display: grid;
+    width: 38px;
+    height: 38px;
+    place-items: center;
+    color: var(--wbbm-ink);
+    background: var(--wbbm-soft);
+    cursor: pointer;
+    user-select: none;
+    transition: background .15s, color .15s;
+}
+
+.wbbm-hub-panel .mage_form_group .mage_qty_inc:hover,
+.wbbm-hub-panel .mage_form_group .mage_qty_dec:hover {
+    color: #fff;
+    background: var(--wbbm-accent);
+}
+
+.wbbm-hub-panel .mage_form_group .mage_qty_inc.mage_disabled,
+.wbbm-hub-panel .mage_form_group .mage_qty_dec.mage_disabled {
+    opacity: .4;
+    cursor: not-allowed;
+}
+
+.wbbm-hub-panel .mage_form_group input.mage_form {
+    width: 56px;
+    min-height: 38px;
+    margin: 0;
+    padding: 0;
+    background: #fff;
+    border: 0;
+    border-radius: 0;
+    text-align: center;
+}
+
+.wbbm-hub-panel .mage_form_group input.mage_form:focus {
+    box-shadow: none;
+}
+
+/* Sub total */
+.wbbm-hub-panel .mage_sub_total {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--wbbm-ink);
+    font-weight: 700;
+}
+
+.wbbm-hub-panel .mage_sub_total .mage_subtotal_figure {
+    color: var(--wbbm-accent-dark);
+    font-size: 18px;
+}
+
+.wbbm-hub-panel .mage_error {
+    border-color: var(--wbbm-danger) !important;
+}
