@@ -216,3 +216,245 @@
         }
     });
 }());
+
+/* =========================================================================
+   Instant tab switching for the Bus Configuration screen.
+
+   Swaps the toolbar + table in place instead of reloading the admin page.
+   Progressive enhancement: every tab link keeps its real href, so without
+   JS — or if a request fails — navigation still works as before.
+   ========================================================================= */
+(function () {
+    'use strict';
+
+    var cfg = window.wbbmConfig || null;
+    if (!cfg || !cfg.ajaxUrl) { return; }
+
+    var panel = document.querySelector('[data-wbbm-cfg-panel]');
+    var nav = document.querySelector('.wbbm-config-tabs');
+    if (!panel || !nav) { return; }
+
+    var cache = Object.create(null);
+    var seq = 0;
+
+    function fetchTab(tab) {
+        if (cache[tab]) { return Promise.resolve(cache[tab]); }
+
+        var body = new URLSearchParams();
+        body.set('action', 'wbbm_bus_config_tab');
+        body.set('nonce', cfg.nonce);
+        body.set('tab', tab);
+
+        return fetch(cfg.ajaxUrl, {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: body.toString()
+        })
+            .then(function (r) { return r.json(); })
+            .then(function (json) {
+                if (!json || !json.success) { throw new Error('failed'); }
+                cache[tab] = json.data;
+                return json.data;
+            });
+    }
+
+    function paint(data) {
+        panel.innerHTML = data.html;
+
+        Array.prototype.forEach.call(nav.querySelectorAll('[data-wbbm-cfg-tab]'), function (a) {
+            if (a.getAttribute('data-wbbm-cfg-tab') === data.tab) {
+                a.setAttribute('aria-current', 'page');
+            } else {
+                a.removeAttribute('aria-current');
+            }
+        });
+
+        // The header's Add button is per-resource.
+        var add = document.querySelector('[data-wbbm-cfg-add]');
+        if (add) {
+            if (data.canCreate) {
+                add.hidden = false;
+                add.href = data.addUrl;
+                var icon = add.querySelector('.dashicons');
+                add.textContent = data.addLabel;
+                if (icon) { add.insertBefore(icon, add.firstChild); }
+            } else {
+                add.hidden = true;
+            }
+        }
+
+        panel.classList.remove('is-loading');
+    }
+
+    nav.addEventListener('click', function (e) {
+        var a = e.target.closest('[data-wbbm-cfg-tab]');
+        if (!a || !nav.contains(a)) { return; }
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) { return; }
+
+        e.preventDefault();
+        var tab = a.getAttribute('data-wbbm-cfg-tab');
+        var token = ++seq;
+
+        if (cache[tab]) {
+            paint(cache[tab]);
+        } else {
+            panel.classList.add('is-loading');
+        }
+
+        fetchTab(tab)
+            .then(function (d) { if (token === seq) { paint(d); } })
+            .catch(function () { if (token === seq) { window.location.href = a.href; } });
+
+        var url = new URL(window.location.href);
+        url.searchParams.set('page', cfg.page);
+        url.searchParams.set('tab', tab);
+        url.searchParams.delete('s');
+        url.searchParams.delete('paged');
+        window.history.pushState({ wbbmCfgTab: tab }, '', url.toString());
+    });
+
+    // Warm the cache on intent.
+    nav.addEventListener('mouseover', function (e) {
+        var a = e.target.closest('[data-wbbm-cfg-tab]');
+        if (!a) { return; }
+        var tab = a.getAttribute('data-wbbm-cfg-tab');
+        if (!cache[tab]) { fetchTab(tab).catch(function () {}); }
+    });
+
+    window.addEventListener('popstate', function (e) {
+        if (e.state && e.state.wbbmCfgTab) {
+            fetchTab(e.state.wbbmCfgTab).then(paint).catch(function () { window.location.reload(); });
+        }
+    });
+
+    var current = nav.querySelector('[aria-current="page"]');
+    if (current) {
+        window.history.replaceState(
+            { wbbmCfgTab: current.getAttribute('data-wbbm-cfg-tab') },
+            '',
+            window.location.href
+        );
+    }
+
+    /* ---------------------------------------------------------------------
+       Modal save without a reload.
+
+       The form is posted to the very same URL it would post to normally, so
+       the server does its usual nonce check, capability check, validation
+       and save. Nothing is duplicated here:
+
+         - success  -> the handler redirects to ?notice=created|updated, so a
+                       redirected response URL is the success signal. The
+                       modal closes and the table is refreshed in place.
+         - invalid  -> the handler re-renders the page with $this->errors, so
+                       the error list is lifted out of that HTML and shown in
+                       the still-open modal.
+       ------------------------------------------------------------------- */
+    var modalEl = document.getElementById('wbbm-config-modal');
+
+    function activeTab() {
+        var a = nav.querySelector('[data-wbbm-cfg-tab][aria-current]');
+        return a ? a.getAttribute('data-wbbm-cfg-tab') : null;
+    }
+
+    function showErrors(form, html) {
+        var slot = form.querySelector('[data-wbbm-cfg-errors]');
+        if (!slot) { return; }
+
+        var list = slot.querySelector('ul');
+        if (list) { list.innerHTML = ''; }
+
+        var parsed = new DOMParser().parseFromString(html, 'text/html');
+        var incoming = parsed.querySelector('[data-wbbm-cfg-errors] ul');
+
+        if (incoming && list) {
+            list.innerHTML = incoming.innerHTML;
+        } else if (list) {
+            var li = document.createElement('li');
+            li.textContent = 'Could not save. Please check the form and try again.';
+            list.appendChild(li);
+        }
+
+        slot.removeAttribute('hidden');
+        slot.focus();
+    }
+
+    function flashNotice(text) {
+        var shell = document.querySelector('.wbbm-config-shell');
+        if (!shell || !panel) { return; }
+        var box = document.createElement('div');
+        box.className = 'wbbm-config-notice';
+        box.setAttribute('role', 'status');
+        box.textContent = text;
+        panel.insertBefore(box, panel.firstChild);
+        window.setTimeout(function () {
+            box.style.transition = 'opacity .3s';
+            box.style.opacity = '0';
+            window.setTimeout(function () { box.remove(); }, 320);
+        }, 4000);
+    }
+
+    document.addEventListener('submit', function (e) {
+        var form = e.target;
+        if (!(form instanceof HTMLFormElement)) { return; }
+        if (!form.hasAttribute('data-wbbm-cfg-form')) { return; }
+
+        // Let the browser surface its own validation first.
+        if (typeof form.checkValidity === 'function' && !form.checkValidity()) { return; }
+
+        e.preventDefault();
+
+        var tab = activeTab();
+        var buttons = form.querySelectorAll('button[type="submit"]');
+        Array.prototype.forEach.call(buttons, function (b) { b.disabled = true; });
+
+        var data = new FormData(form);
+        if (e.submitter && e.submitter.name) {
+            data.append(e.submitter.name, e.submitter.value || '');
+        }
+
+        fetch(form.action, {
+            method: 'POST',
+            credentials: 'same-origin',
+            body: data,
+            redirect: 'follow'
+        })
+            .then(function (r) {
+                return r.text().then(function (body) {
+                    return { url: r.url, body: body, ok: r.ok };
+                });
+            })
+            .then(function (res) {
+                Array.prototype.forEach.call(buttons, function (b) { b.disabled = false; });
+
+                var saved = /[?&]notice=(created|updated)/.test(res.url);
+                if (!saved) {
+                    showErrors(form, res.body);
+                    return;
+                }
+
+                // Close the modal, then repaint the table from the server.
+                if (modalEl) {
+                    modalEl.classList.remove('is-open');
+                    modalEl.hidden = true;
+                    document.body.classList.remove('wbbm-config-modal-open');
+                }
+
+                delete cache[tab];
+                panel.classList.add('is-loading');
+
+                return fetchTab(tab).then(function (d) {
+                    paint(d);
+                    flashNotice(/notice=created/.test(res.url)
+                        ? 'Item created.'
+                        : 'Item updated.');
+                });
+            })
+            .catch(function () {
+                Array.prototype.forEach.call(buttons, function (b) { b.disabled = false; });
+                panel.classList.remove('is-loading');
+                form.submit();   // Fall back to a normal post.
+            });
+    });
+})();

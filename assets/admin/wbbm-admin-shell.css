@@ -1,0 +1,1576 @@
+/**
+ * Shared admin shell for every Bus Booking Manager hub screen.
+ *
+ * Registered by the free plugin as the `wbbm-admin-shell` handle; the Pro
+ * plugin enqueues the same handle so both sides render one design system.
+ * Tokens mirror assets/admin/bus-configuration.css, which remains the
+ * reference implementation for the Bus Configuration screen.
+ *
+ * Everything is scoped under .wbbm-hub so no rule can leak into the rest of
+ * wp-admin. Legacy module markup is normalised inside .wbbm-hub-panel only.
+ */
+
+.wbbm-hub {
+    --wbbm-accent: #f97316;
+    --wbbm-accent-dark: #ea580c;
+    --wbbm-ink: #172033;
+    --wbbm-muted: #64748b;
+    --wbbm-line: #e2e8f0;
+    --wbbm-soft: #f8fafc;
+    --wbbm-danger: #dc2626;
+    --wbbm-ok: #047857;
+    --wbbm-warn: #b45309;
+
+    margin: 20px 20px 0 0;
+    color: var(--wbbm-ink);
+}
+
+/* ------------------------------------------------------------------ shell */
+.wbbm-hub-shell {
+    overflow: hidden;
+    background: #fff;
+    border: 1px solid var(--wbbm-line);
+    border-radius: 14px;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, .04);
+}
+
+.wbbm-hub-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 20px 24px;
+    background: linear-gradient(135deg, #fff 0%, #fffaf6 100%);
+}
+
+.wbbm-hub-heading {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    min-width: 0;
+}
+
+.wbbm-hub-mark {
+    display: grid;
+    flex: 0 0 44px;
+    width: 44px;
+    height: 44px;
+    place-items: center;
+    color: #fff;
+    background: var(--wbbm-accent);
+    border-radius: 12px;
+    box-shadow: 0 8px 18px rgba(249, 115, 22, .22);
+}
+
+.wbbm-hub-mark .dashicons {
+    width: 24px;
+    height: 24px;
+    font-size: 24px;
+}
+
+.wbbm-hub-heading h1 {
+    margin: 0;
+    padding: 0;
+    color: var(--wbbm-ink);
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.wbbm-hub-heading p {
+    margin: 4px 0 0;
+    color: var(--wbbm-muted);
+    font-size: 13px;
+}
+
+.wbbm-hub-header-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+/* ------------------------------------------------------------------- tabs */
+.wbbm-hub-tabs {
+    display: flex;
+    overflow-x: auto;
+    padding: 0 16px;
+    gap: 4px;
+    background: #fff;
+    border-top: 1px solid var(--wbbm-line);
+    border-bottom: 1px solid var(--wbbm-line);
+    scrollbar-width: thin;
+}
+
+.wbbm-hub-tabs a {
+    position: relative;
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    min-height: 52px;
+    padding: 0 15px;
+    gap: 8px;
+    color: var(--wbbm-muted);
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.wbbm-hub-tabs a:hover {
+    color: var(--wbbm-ink);
+}
+
+.wbbm-hub-tabs a[aria-current="page"] {
+    color: var(--wbbm-accent-dark);
+}
+
+.wbbm-hub-tabs a[aria-current="page"]::after {
+    position: absolute;
+    right: 12px;
+    bottom: -1px;
+    left: 12px;
+    height: 3px;
+    background: var(--wbbm-accent);
+    border-radius: 3px 3px 0 0;
+    content: "";
+}
+
+.wbbm-hub-tabs .dashicons {
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+}
+
+.wbbm-hub-tabs a:focus-visible,
+.wbbm-hub-button:focus-visible,
+.wbbm-hub-panel :focus-visible {
+    outline: 3px solid rgba(249, 115, 22, .28);
+    outline-offset: 2px;
+}
+
+/* --------------------------------------------------------------- subtitle */
+.wbbm-hub-subtitle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 24px 0;
+    color: var(--wbbm-muted);
+    font-size: 13px;
+}
+
+/* ---------------------------------------------------------------- notices */
+.wbbm-hub-notice {
+    display: flex;
+    align-items: center;
+    margin: 16px 24px 0;
+    padding: 11px 14px;
+    gap: 8px;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+.wbbm-hub-notice.is-success {
+    color: var(--wbbm-ok);
+    background: #ecfdf5;
+    border: 1px solid #a7f3d0;
+}
+
+.wbbm-hub-notice.is-error {
+    color: var(--wbbm-danger);
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+}
+
+.wbbm-hub-notice.is-info {
+    color: #1d4ed8;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+}
+
+/* ---------------------------------------------------------------- buttons */
+.wbbm-hub-button {
+    display: inline-flex;
+    box-sizing: border-box;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+    padding: 9px 15px;
+    gap: 7px;
+    color: var(--wbbm-ink);
+    background: #fff;
+    border: 1px solid var(--wbbm-line);
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 20px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: border-color .18s, background .18s, color .18s, transform .18s;
+}
+
+.wbbm-hub-button:hover,
+.wbbm-hub-button:focus {
+    color: var(--wbbm-accent-dark);
+    border-color: var(--wbbm-accent);
+    outline: none;
+}
+
+.wbbm-hub-button.is-primary {
+    color: #fff;
+    background: var(--wbbm-accent);
+    border-color: var(--wbbm-accent);
+}
+
+.wbbm-hub-button.is-primary:hover,
+.wbbm-hub-button.is-primary:focus {
+    color: #fff;
+    background: var(--wbbm-accent-dark);
+    border-color: var(--wbbm-accent-dark);
+    transform: translateY(-1px);
+}
+
+.wbbm-hub-button .dashicons {
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+}
+
+/* ------------------------------------------------------------ empty state */
+.wbbm-hub-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 54px 20px;
+    gap: 6px;
+    color: var(--wbbm-muted);
+    text-align: center;
+}
+
+.wbbm-hub-empty .dashicons {
+    width: 32px;
+    height: 32px;
+    color: var(--wbbm-line);
+    font-size: 32px;
+}
+
+.wbbm-hub-empty strong {
+    color: var(--wbbm-ink);
+    font-size: 15px;
+}
+
+/* =========================================================================
+   Panel: normalises legacy module markup rendered inside a hub tab.
+   Scoped to .wbbm-hub-panel so wp-admin elsewhere is untouched.
+   ========================================================================= */
+.wbbm-hub-panel {
+    padding: 20px 24px 24px;
+}
+
+/* Legacy modules open their own .wrap; neutralise its admin margins. */
+.wbbm-hub-panel .wrap,
+.wbbm-hub-panel .wbbm_page_wrapper {
+    margin: 0;
+    padding: 0;
+    max-width: none;
+}
+
+/* Module <h1>/<h2> duplicate the hub header; demote them. */
+.wbbm-hub-panel > .wrap > h1:first-child,
+.wbbm-hub-panel > h1:first-child {
+    margin: 0 0 14px;
+    padding: 0;
+    color: var(--wbbm-ink);
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.wbbm-hub-panel h2 {
+    margin: 22px 0 10px;
+    color: var(--wbbm-ink);
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.wbbm-hub-panel h2:first-child {
+    margin-top: 0;
+}
+
+.wbbm-hub-panel h3 {
+    margin: 18px 0 8px;
+    color: var(--wbbm-ink);
+    font-size: 14px;
+    font-weight: 700;
+}
+
+/* Cards ------------------------------------------------------------------ */
+.wbbm-hub-card {
+    margin: 0 0 16px;
+    padding: 18px 20px;
+    background: #fff;
+    border: 1px solid var(--wbbm-line);
+    border-radius: 12px;
+}
+
+.wbbm-hub-card > :first-child { margin-top: 0; }
+.wbbm-hub-card > :last-child { margin-bottom: 0; }
+
+/* Stat tiles ------------------------------------------------------------- */
+.wbbm-hub-stats {
+    display: grid;
+    margin: 0 0 18px;
+    gap: 12px;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+}
+
+.wbbm-hub-stat {
+    display: flex;
+    flex-direction: column;
+    padding: 14px 16px;
+    gap: 4px;
+    background: var(--wbbm-soft);
+    border: 1px solid var(--wbbm-line);
+    border-radius: 10px;
+}
+
+.wbbm-hub-stat span {
+    color: var(--wbbm-muted);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+}
+
+.wbbm-hub-stat strong {
+    color: var(--wbbm-ink);
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+/* Tables ----------------------------------------------------------------- */
+.wbbm-hub-panel table.widefat,
+.wbbm-hub-panel table.wp-list-table,
+.wbbm-hub-panel table.wbbm-hub-table {
+    width: 100%;
+    background: #fff;
+    border: 1px solid var(--wbbm-line);
+    border-collapse: separate;
+    border-radius: 12px;
+    border-spacing: 0;
+    box-shadow: none;
+}
+
+.wbbm-hub-panel table.widefat th,
+.wbbm-hub-panel table.wp-list-table th,
+.wbbm-hub-panel table.wbbm-hub-table th {
+    padding: 13px 16px;
+    color: var(--wbbm-muted);
+    background: #fbfdff;
+    border-bottom: 1px solid var(--wbbm-line);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-align: left;
+    text-transform: uppercase;
+}
+
+.wbbm-hub-panel table.widefat td,
+.wbbm-hub-panel table.wp-list-table td,
+.wbbm-hub-panel table.wbbm-hub-table td {
+    padding: 14px 16px;
+    color: #334155;
+    border-bottom: 1px solid var(--wbbm-line);
+    vertical-align: middle;
+}
+
+.wbbm-hub-panel table.widefat tbody tr:last-child td,
+.wbbm-hub-panel table.wp-list-table tbody tr:last-child td,
+.wbbm-hub-panel table.wbbm-hub-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.wbbm-hub-panel table.widefat tbody tr:hover td,
+.wbbm-hub-panel table.wbbm-hub-table tbody tr:hover td {
+    background: #fffdfb;
+}
+
+/* Wide tables scroll inside their own container, never the page. */
+.wbbm-hub-tablewrap {
+    overflow-x: auto;
+    max-width: 100%;
+}
+
+/* Forms ------------------------------------------------------------------ */
+.wbbm-hub-panel .form-table th {
+    padding: 16px 16px 16px 0;
+    color: var(--wbbm-ink);
+    font-weight: 600;
+}
+
+.wbbm-hub-panel .form-table td {
+    padding: 12px 0;
+}
+
+.wbbm-hub-panel input[type="text"],
+.wbbm-hub-panel input[type="search"],
+.wbbm-hub-panel input[type="email"],
+.wbbm-hub-panel input[type="url"],
+.wbbm-hub-panel input[type="number"],
+.wbbm-hub-panel input[type="date"],
+.wbbm-hub-panel input[type="datetime-local"],
+.wbbm-hub-panel input[type="password"],
+.wbbm-hub-panel select,
+.wbbm-hub-panel textarea {
+    box-sizing: border-box;
+    min-height: 40px;
+    padding: 8px 12px;
+    color: var(--wbbm-ink);
+    background: var(--wbbm-soft);
+    border: 1px solid var(--wbbm-line);
+    border-radius: 8px;
+    box-shadow: none;
+}
+
+.wbbm-hub-panel textarea {
+    min-height: 90px;
+}
+
+.wbbm-hub-panel input:focus,
+.wbbm-hub-panel select:focus,
+.wbbm-hub-panel textarea:focus {
+    background: #fff;
+    border-color: var(--wbbm-accent);
+    box-shadow: 0 0 0 2px rgba(249, 115, 22, .12);
+    outline: none;
+}
+
+/* Native WP buttons inside a panel adopt the hub look. */
+.wbbm-hub-panel .button-primary {
+    color: #fff;
+    background: var(--wbbm-accent);
+    border-color: var(--wbbm-accent);
+    border-radius: 8px;
+    box-shadow: none;
+    text-shadow: none;
+}
+
+.wbbm-hub-panel .button-primary:hover,
+.wbbm-hub-panel .button-primary:focus {
+    background: var(--wbbm-accent-dark);
+    border-color: var(--wbbm-accent-dark);
+    box-shadow: none;
+}
+
+.wbbm-hub-panel .button,
+.wbbm-hub-panel .button-secondary {
+    border-radius: 8px;
+}
+
+/* Status pills ----------------------------------------------------------- */
+.wbbm-hub-pill {
+    display: inline-flex;
+    padding: 5px 10px;
+    color: #475569;
+    background: #f1f5f9;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.wbbm-hub-pill.is-ok { color: var(--wbbm-ok); background: #ecfdf5; }
+.wbbm-hub-pill.is-warn { color: var(--wbbm-warn); background: #fffbeb; }
+.wbbm-hub-pill.is-bad { color: var(--wbbm-danger); background: #fef2f2; }
+
+/* ============================================================== responsive */
+@media screen and (max-width: 782px) {
+    .wbbm-hub {
+        margin: 12px 12px 0 0;
+    }
+
+    .wbbm-hub-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 14px;
+    }
+
+    .wbbm-hub-header-actions,
+    .wbbm-hub-header-actions .wbbm-hub-button {
+        width: 100%;
+    }
+
+    .wbbm-hub-panel {
+        padding: 16px 14px 20px;
+    }
+
+    .wbbm-hub-panel .form-table th,
+    .wbbm-hub-panel .form-table td {
+        display: block;
+        width: auto;
+        padding: 8px 0;
+    }
+
+    .wbbm-hub-panel input[type="text"],
+    .wbbm-hub-panel input[type="search"],
+    .wbbm-hub-panel input[type="email"],
+    .wbbm-hub-panel input[type="number"],
+    .wbbm-hub-panel input[type="date"],
+    .wbbm-hub-panel select,
+    .wbbm-hub-panel textarea {
+        width: 100%;
+        min-height: 44px;
+    }
+
+    .wbbm-hub-panel .button,
+    .wbbm-hub-panel .button-primary {
+        min-height: 44px;
+    }
+
+    /* Every hub table collapses into labelled cards. */
+    .wbbm-hub-panel table.wbbm-hub-table,
+    .wbbm-hub-panel table.wbbm-hub-table tbody,
+    .wbbm-hub-panel table.wbbm-hub-table tbody tr,
+    .wbbm-hub-panel table.wbbm-hub-table tbody td {
+        display: block;
+        width: 100%;
+    }
+
+    .wbbm-hub-panel table.wbbm-hub-table thead {
+        position: absolute;
+        overflow: hidden;
+        clip: rect(1px, 1px, 1px, 1px);
+        width: 1px;
+        height: 1px;
+    }
+
+    .wbbm-hub-panel table.wbbm-hub-table tbody tr {
+        margin: 0 0 12px;
+        border: 1px solid var(--wbbm-line);
+        border-radius: 10px;
+    }
+
+    .wbbm-hub-panel table.wbbm-hub-table tbody td {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 11px 14px;
+        gap: 14px;
+        text-align: right;
+    }
+
+    .wbbm-hub-panel table.wbbm-hub-table tbody td::before {
+        flex: 0 0 auto;
+        color: var(--wbbm-muted);
+        content: attr(data-label);
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: .04em;
+        text-align: left;
+        text-transform: uppercase;
+    }
+
+    .wbbm-hub-panel table.wbbm-hub-table tbody td:empty {
+        display: none;
+    }
+}
+
+/* =========================================================================
+   Admin notices, anchored by <hr class="wp-header-end"> inside the shell.
+   ========================================================================= */
+.wbbm-hub .wp-header-end {
+    margin: 0;
+    border: 0;
+    visibility: hidden;
+}
+
+.wbbm-hub > .notice,
+.wbbm-hub-shell > .notice,
+.wbbm-hub .wbbm-hub-shell > .updated,
+.wbbm-hub .wbbm-hub-shell > .error {
+    margin: 16px 24px 0;
+    border-radius: 8px;
+    box-shadow: none;
+}
+
+/* =========================================================================
+   Legacy settings panel: adopt the hub palette instead of its own pink.
+   Scoped to .wbbm-hub-panel, so the standalone page keeps its old look.
+   ========================================================================= */
+.wbbm-hub-panel .wbbm_settings_panel_header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 18px;
+    color: #fff;
+    background: var(--wbbm-accent);
+    border-radius: 12px 12px 0 0;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.wbbm-hub-panel .wbbm_settings_panel_header small {
+    padding: 3px 9px;
+    color: #fff;
+    background: rgba(255, 255, 255, .22);
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.wbbm-hub-panel .wbbm_settings_panel {
+    display: flex;
+    overflow: hidden;
+    max-width: 100%;
+    background: #fff;
+    border: 1px solid var(--wbbm-line);
+    border-top: 0;
+    border-radius: 0 0 12px 12px;
+}
+
+/* Section navigation down the left. */
+.wbbm-hub-panel .wbbm_settings_panel .nav-tab-wrapper {
+    display: flex;
+    flex: 0 0 230px;
+    flex-direction: column;
+    padding: 10px;
+    gap: 2px;
+    background: var(--wbbm-soft);
+    border: 0;
+    border-right: 1px solid var(--wbbm-line);
+}
+
+.wbbm-hub-panel .wbbm_settings_panel .nav-tab {
+    margin: 0;
+    padding: 11px 14px;
+    color: var(--wbbm-muted);
+    background: transparent;
+    border: 0;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.3;
+}
+
+.wbbm-hub-panel .wbbm_settings_panel .nav-tab:hover {
+    color: var(--wbbm-ink);
+    background: #fff;
+}
+
+.wbbm-hub-panel .wbbm_settings_panel .nav-tab-active,
+.wbbm-hub-panel .wbbm_settings_panel .nav-tab-active:hover {
+    color: #fff;
+    background: var(--wbbm-accent);
+}
+
+/* Option groups on the right. */
+.wbbm-hub-panel .wbbm_settings_panel .metabox-holder {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: 18px 20px;
+}
+
+.wbbm-hub-panel .wbbm_settings_panel .group h2:first-of-type {
+    margin: 0 0 14px;
+    font-size: 17px;
+}
+
+.wbbm-hub-panel .wbbm_settings_panel .form-table {
+    border: 1px solid var(--wbbm-line);
+    border-radius: 10px;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.wbbm-hub-panel .wbbm_settings_panel .form-table tr {
+    border-bottom: 1px solid var(--wbbm-line);
+}
+
+.wbbm-hub-panel .wbbm_settings_panel .form-table tr:last-child {
+    border-bottom: 0;
+}
+
+.wbbm-hub-panel .wbbm_settings_panel .form-table th {
+    width: 34%;
+    padding: 16px 18px;
+    background: #fbfdff;
+    text-transform: none;
+}
+
+.wbbm-hub-panel .wbbm_settings_panel .form-table th label {
+    color: var(--wbbm-ink);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.wbbm-hub-panel .wbbm_settings_panel .form-table td {
+    padding: 16px 18px;
+}
+
+.wbbm-hub-panel .wbbm_settings_panel .form-table .description {
+    margin-top: 6px;
+    color: var(--wbbm-muted);
+    font-size: 12px;
+    font-style: normal;
+}
+
+/* The submit row. */
+.wbbm-hub-panel .wbbm_settings_panel .submit,
+.wbbm-hub-panel .wbbm_settings_panel p.submit {
+    margin: 16px 0 0;
+    padding: 0;
+    text-align: right;
+}
+
+@media screen and (max-width: 782px) {
+    .wbbm-hub-panel .wbbm_settings_panel {
+        flex-direction: column;
+    }
+
+    .wbbm-hub-panel .wbbm_settings_panel .nav-tab-wrapper {
+        flex: 1 1 auto;
+        flex-direction: row;
+        overflow-x: auto;
+        border-right: 0;
+        border-bottom: 1px solid var(--wbbm-line);
+    }
+
+    .wbbm-hub-panel .wbbm_settings_panel .nav-tab {
+        white-space: nowrap;
+    }
+
+    .wbbm-hub-panel .wbbm_settings_panel .form-table th,
+    .wbbm-hub-panel .wbbm_settings_panel .form-table td {
+        display: block;
+        width: auto;
+    }
+}
+
+/* -------------------------------------------------------------------------
+   The hub palette follows the site's configured brand colour, which now
+   defaults to the same orange (see MP_Global_Style.php). A site that picks
+   its own colour in Style Settings recolours admin and frontend together,
+   rather than the two drifting apart.
+   ------------------------------------------------------------------------- */
+.wbbm-hub {
+    --wbbm-accent: var(--color_theme, #f97316);
+    --wbbm-accent-dark: var(--color_theme_cc, #ea580c);
+}
+
+/* Beat `.wbbm_settings_panel p.submit input` on specificity. */
+.wbbm-hub-panel .wbbm_settings_panel p.submit input,
+.wbbm-hub-panel p.submit input.button-primary {
+    padding: 10px 22px;
+    background: var(--wbbm-accent);
+    border-color: var(--wbbm-accent);
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.wbbm-hub-panel .wbbm_settings_panel p.submit input:hover,
+.wbbm-hub-panel p.submit input.button-primary:hover {
+    background: var(--wbbm-accent-dark);
+    border-color: var(--wbbm-accent-dark);
+}
+
+/* =========================================================================
+   Purchase Ticket module inside a hub.
+   ========================================================================= */
+.wbbm-hub-panel .wbbm-search-form-sec {
+    margin: 0 0 18px;
+    padding: 18px 20px;
+    background: var(--wbbm-soft);
+    border: 1px solid var(--wbbm-line);
+    border-radius: 12px;
+    box-shadow: none;
+}
+
+.wbbm-hub-panel .search-fields {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 14px;
+}
+
+.wbbm-hub-panel .search-fields .fields-li {
+    flex: 1 1 190px;
+    min-width: 0;
+}
+
+.wbbm-hub-panel .search-fields label {
+    display: block;
+    color: var(--wbbm-muted);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.wbbm-hub-panel .search-fields label .fa {
+    margin-right: 4px;
+    color: var(--wbbm-accent);
+}
+
+.wbbm-hub-panel .search-fields input[type="text"],
+.wbbm-hub-panel .search-fields select {
+    width: 100%;
+    margin-top: 6px;
+    background: #fff;
+}
+
+.wbbm-hub-panel .search-radio-sec {
+    display: flex;
+    margin-bottom: 8px;
+    gap: 14px;
+}
+
+.wbbm-hub-panel .search-radio-sec label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--wbbm-ink);
+    font-size: 13px;
+}
+
+.wbbm-hub-panel .search-fields button[type="submit"] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    padding: 9px 20px;
+    gap: 7px;
+    color: #fff;
+    background: var(--wbbm-accent);
+    border: 1px solid var(--wbbm-accent);
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .18s, transform .18s;
+}
+
+.wbbm-hub-panel .search-fields button[type="submit"]:hover {
+    background: var(--wbbm-accent-dark);
+    transform: translateY(-1px);
+}
+
+/* Results list: the red header bar is inline-styled, so override it. */
+.wbbm-hub-panel .mage-search-res-wrapper {
+    overflow: hidden;
+    border: 1px solid var(--wbbm-line);
+    border-radius: 12px;
+}
+
+.wbbm-hub-panel .mage-search-res-header {
+    padding: 12px 16px;
+    color: var(--wbbm-muted) !important;
+    background: #fbfdff !important;
+    border-bottom: 1px solid var(--wbbm-line);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+}
+
+.wbbm-hub-panel .mage-search-res-header span {
+    color: var(--wbbm-muted);
+}
+
+.wbbm-hub-panel .mage-bus-booking-wrapper {
+    padding: 16px;
+    border-bottom: 1px solid var(--wbbm-line);
+}
+
+.wbbm-hub-panel .mage-bus-booking-wrapper:last-child {
+    border-bottom: 0;
+}
+
+/* Empty states rendered by the module. */
+.wbbm-hub-panel .wbbm-purchase-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 48px 20px;
+    gap: 6px;
+    color: var(--wbbm-muted);
+    text-align: center;
+}
+
+.wbbm-hub-panel .wbbm-purchase-empty .dashicons {
+    width: 32px;
+    height: 32px;
+    color: var(--wbbm-line);
+    font-size: 32px;
+}
+
+.wbbm-hub-panel .wbbm-purchase-empty strong {
+    color: var(--wbbm-ink);
+    font-size: 15px;
+}
+
+/* Reports module inside a hub: it already carries its own scoped styling,
+   so only neutralise the outer spacing the hub panel now provides. */
+.wbbm-hub-panel .wbbm-report-page {
+    margin: 0;
+}
+
+.wbbm-hub-panel .wbbm-report-page .wbbm_page_filter_wrapper,
+.wbbm-hub-panel .wbbm-report-page .wbbm_page_content_wrapper {
+    box-shadow: none;
+}
+
+/* Search-result rows: neutral striping, hub-coloured action button. */
+.wbbm-hub-panel .mage-search-res-wrapper .mage-search-brief-row {
+    padding: 12px 16px;
+    background: #fff;
+    border-bottom: 1px solid var(--wbbm-line);
+}
+
+.wbbm-hub-panel .mage-search-res-wrapper .mage-search-brief-row:nth-child(even) {
+    background: var(--wbbm-soft);
+}
+
+.wbbm-hub-panel .mage-search-res-wrapper .mage-search-brief-row:last-child {
+    border-bottom: 0;
+}
+
+.wbbm-hub-panel .mage-search-brief-row .mage-bus-detail-action {
+    min-height: 40px;
+    padding: 9px 16px;
+    background: var(--wbbm-accent);
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+.wbbm-hub-panel .mage-search-brief-row .mage-bus-detail-action:hover {
+    background: var(--wbbm-accent-dark);
+}
+
+/* Radios and checkboxes keep their native rendering and intrinsic size; the
+   generic input sizing above is for text-like controls only. */
+.wbbm-hub-panel input[type="radio"],
+.wbbm-hub-panel input[type="checkbox"] {
+    flex: 0 0 auto;
+    box-sizing: border-box;
+    width: 18px;
+    min-width: 18px;
+    height: 18px;
+    min-height: 18px;
+    margin: 0;
+    padding: 0;
+}
+
+/* The frontend stylesheet forces `width: 40% !important` on these labels and
+   shifts the row up 25px; both have to be undone with equal weight here. */
+.wbbm-hub-panel .search-radio-sec {
+    position: static !important;
+    top: auto !important;
+    display: flex !important;
+    overflow: visible !important;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 18px;
+}
+
+.wbbm-hub-panel .fields-li .search-radio-sec label,
+.wbbm-hub-panel .search-fields .search-radio-sec label {
+    display: inline-flex !important;
+    flex: 0 0 auto;
+    align-items: center;
+    width: auto !important;
+    margin: 0 !important;
+    gap: 7px;
+    color: var(--wbbm-ink);
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.wbbm-hub-panel .search-radio-sec input[type="radio"] {
+    width: 17px !important;
+    min-width: 17px;
+    height: 17px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* The results header grid should not wrap its short labels. */
+.wbbm-hub-panel .mage-search-res-header--img span,
+.wbbm-hub-panel .mage-search-res-header--left span,
+.wbbm-hub-panel .mage-search-res-header--right span {
+    white-space: nowrap;
+}
+
+/* =========================================================================
+   Pro platform modules (changes, validator, waitlist, fleet, analytics,
+   webhooks) rendered inside a hub tab.
+   ========================================================================= */
+.wbbm-hub-panel .wbbm-pro-card,
+.wbbm-hub-panel .wbbm-pro-panel {
+    margin: 0 0 18px;
+    padding: 18px 20px;
+    background: #fff;
+    border: 1px solid var(--wbbm-line);
+    border-radius: 12px;
+    box-sizing: border-box;
+}
+
+.wbbm-hub-panel .wbbm-pro-card > :first-child,
+.wbbm-hub-panel .wbbm-pro-panel > :first-child { margin-top: 0; }
+.wbbm-hub-panel .wbbm-pro-card > :last-child,
+.wbbm-hub-panel .wbbm-pro-panel > :last-child { margin-bottom: 0; }
+
+/* Field grids: each cell stacks its label above its control. */
+.wbbm-hub-panel .wbbm-pro-grid {
+    display: grid;
+    margin: 0 0 16px;
+    gap: 14px;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+}
+
+.wbbm-hub-panel .wbbm-pro-grid > div,
+.wbbm-hub-panel .wbbm-pro-field {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    gap: 6px;
+}
+
+.wbbm-hub-panel .wbbm-pro-grid label,
+.wbbm-hub-panel .wbbm-pro-field label {
+    display: block;
+    color: var(--wbbm-muted);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.wbbm-hub-panel .wbbm-pro-grid label strong,
+.wbbm-hub-panel .wbbm-pro-field label strong {
+    color: var(--wbbm-muted);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.wbbm-hub-panel .wbbm-pro-grid select,
+.wbbm-hub-panel .wbbm-pro-grid input,
+.wbbm-hub-panel .wbbm-pro-field select,
+.wbbm-hub-panel .wbbm-pro-field input {
+    width: 100%;
+    max-width: 100%;
+}
+
+.wbbm-hub-panel .wbbm-pro-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
+.wbbm-hub-panel .wbbm-pro-responsive-table {
+    overflow-x: auto;
+    max-width: 100%;
+    -webkit-overflow-scrolling: touch;
+}
+
+.wbbm-hub-panel .wbbm-pro-responsive-table table {
+    min-width: 0;
+}
+
+/* Status pills used across the modules. */
+.wbbm-hub-panel .wbbm-pro-status {
+    display: inline-flex;
+    padding: 5px 10px;
+    color: #475569;
+    background: #f1f5f9;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.wbbm-hub-panel .wbbm-pro-status--active,
+.wbbm-hub-panel .wbbm-pro-status--completed,
+.wbbm-hub-panel .wbbm-pro-status--valid {
+    color: var(--wbbm-ok);
+    background: #ecfdf5;
+}
+
+.wbbm-hub-panel .wbbm-pro-status--cancelled,
+.wbbm-hub-panel .wbbm-pro-status--rejected,
+.wbbm-hub-panel .wbbm-pro-status--invalid {
+    color: var(--wbbm-danger);
+    background: #fef2f2;
+}
+
+.wbbm-hub-panel .wbbm-pro-notice {
+    margin: 0 0 14px;
+    padding: 11px 14px;
+    color: #1d4ed8;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+.wbbm-hub-panel .wbbm-pro-metric {
+    color: var(--wbbm-ink);
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+/* -------------------------------------------------------- toolbar/search */
+.wbbm-hub-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0 0 14px;
+    gap: 10px;
+}
+
+.wbbm-hub-search {
+    position: relative;
+    display: flex;
+    flex: 1 1 260px;
+    align-items: center;
+    max-width: 420px;
+}
+
+.wbbm-hub-search .dashicons {
+    position: absolute;
+    left: 12px;
+    color: var(--wbbm-muted);
+    pointer-events: none;
+}
+
+.wbbm-hub-search input[type="search"] {
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 42px;
+    margin: 0;
+    padding: 8px 14px 8px 38px;
+    background: var(--wbbm-soft);
+    border: 1px solid var(--wbbm-line);
+    border-radius: 8px;
+}
+
+.wbbm-hub-search input[type="search"]:focus {
+    background: #fff;
+    border-color: var(--wbbm-accent);
+    box-shadow: 0 0 0 2px rgba(249, 115, 22, .12);
+    outline: none;
+}
+
+.wbbm-hub-count {
+    color: var(--wbbm-muted);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* Rows hidden by the live filter. */
+.wbbm-hub-panel tr[data-wbbm-filtered="1"] {
+    display: none;
+}
+
+/* ------------------------------------------------------ ticket validator */
+.wbbm-hub-panel .wbbm-validator-row,
+.wbbm-validator-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 12px;
+}
+
+.wbbm-validator-field {
+    display: flex;
+    flex: 1 1 320px;
+    flex-direction: column;
+    min-width: 0;
+    gap: 6px;
+}
+
+.wbbm-validator-field label {
+    color: var(--wbbm-muted);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.wbbm-hub-panel .wbbm-validator-field input[type="text"] {
+    width: 100%;
+    min-height: 44px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 13px;
+}
+
+.wbbm-validator-actions {
+    display: flex;
+    flex: 0 0 auto;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.wbbm-validator-actions .wbbm-hub-button {
+    min-height: 44px;
+}
+
+.wbbm-validator-preview,
+.wbbm-validator-result {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    margin: 14px 0 0;
+    padding: 12px 14px;
+    gap: 10px 16px;
+    background: var(--wbbm-soft);
+    border: 1px solid var(--wbbm-line);
+    border-radius: 10px;
+    color: var(--wbbm-muted);
+    font-size: 13px;
+}
+
+.wbbm-validator-result {
+    margin: 0 0 16px;
+}
+
+.wbbm-validator-result.is-ok { background: #ecfdf5; border-color: #a7f3d0; }
+.wbbm-validator-result.is-warn { background: #fffbeb; border-color: #fde68a; }
+.wbbm-validator-result.is-bad { background: #fef2f2; border-color: #fecaca; }
+
+.wbbm-validator-result-badge {
+    padding: 5px 12px;
+    color: #fff;
+    background: var(--wbbm-muted);
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.wbbm-validator-result.is-ok .wbbm-validator-result-badge { background: var(--wbbm-ok); }
+.wbbm-validator-result.is-warn .wbbm-validator-result-badge { background: var(--wbbm-warn); }
+.wbbm-validator-result.is-bad .wbbm-validator-result-badge { background: var(--wbbm-danger); }
+
+.wbbm-validator-result-meta,
+.wbbm-validator-preview-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 16px;
+    color: var(--wbbm-ink);
+}
+
+.wbbm-validator-camera {
+    margin-top: 14px;
+}
+
+.wbbm-validator-camera video {
+    width: 100%;
+    max-width: 480px;
+    border-radius: 10px;
+}
+
+@media screen and (max-width: 782px) {
+    .wbbm-validator-actions,
+    .wbbm-validator-actions .wbbm-hub-button {
+        width: 100%;
+    }
+
+    .wbbm-hub-panel .wbbm-pro-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* The [hidden] attribute must beat the display rules above. */
+.wbbm-hub-panel [hidden],
+.wbbm-validator-preview[hidden],
+.wbbm-validator-camera[hidden] {
+    display: none !important;
+}
+
+.wbbm-hub-muted {
+    color: var(--wbbm-muted);
+}
+
+/* An empty-state row is a placeholder, never a data row. */
+.wbbm-hub-panel tr.wbbm-hub-empty-row td {
+    padding: 0;
+}
+
+/* --------------------------------------------------------- analytics bar */
+.wbbm-analytics-filters .wbbm-pro-grid {
+    max-width: 620px;
+}
+
+.wbbm-analytics-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0 0 18px;
+    gap: 10px;
+}
+
+.wbbm-analytics-bar form {
+    margin: 0;
+}
+
+@media screen and (max-width: 782px) {
+    .wbbm-analytics-bar,
+    .wbbm-analytics-bar .wbbm-pro-actions,
+    .wbbm-analytics-bar form,
+    .wbbm-analytics-bar .wbbm-hub-button {
+        width: 100%;
+    }
+}
+
+/* The purchase search card spans the panel; its fields share the full row. */
+.wbbm-hub-panel .wbbm-search-form-sec {
+    width: 100%;
+    max-width: none;
+    box-sizing: border-box;
+}
+
+.wbbm-hub-panel .wbbm-search-form-sec form {
+    width: 100%;
+    margin: 0;
+}
+
+.wbbm-hub-panel .search-fields {
+    width: 100%;
+}
+
+.wbbm-hub-panel .search-fields > .fields-li {
+    flex: 1 1 200px;
+}
+
+/* Radio row and submit sit together on the trailing edge of the row. */
+.wbbm-hub-panel .search-fields > .fields-li:last-child {
+    display: flex;
+    flex: 1 1 260px;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 14px;
+}
+
+.wbbm-hub-panel .search-fields > .fields-li:last-child button[type="submit"] {
+    margin-left: auto;
+}
+
+/* wc_price() nests its own spans; make them inherit the stat tile's type. */
+.wbbm-hub-stat strong .woocommerce-Price-amount,
+.wbbm-hub-stat strong .woocommerce-Price-currencySymbol,
+.wbbm-hub-stat strong bdi {
+    color: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+}
+
+/* Selects inside module toolbars must not clip their own text. */
+.wbbm-hub-panel select {
+    height: auto;
+    min-height: 40px;
+    line-height: 1.4;
+}
+
+/* =========================================================================
+   Plugin-wide theme layer.
+
+   The legacy stylesheets hardcode several palettes (green #22D02D /
+   rgb(59,201,124), red #EA2330, blue #1924c6, pink #f9e9e9 / #e91e63).
+   Rather than editing those vendor files, the colours are remapped here for
+   plugin admin screens only, keyed off the body.wbbm-admin class.
+
+   Semantics are preserved: primary ACTIONS become the brand colour, while
+   success/warning/danger STATUS colours stay meaningful.
+   ========================================================================= */
+body.wbbm-admin {
+    --wbbm-accent: var(--color_theme, #f97316);
+    --wbbm-accent-dark: var(--color_theme_cc, #ea580c);
+    --wbbm-ink: #172033;
+    --wbbm-muted: #64748b;
+    --wbbm-line: #e2e8f0;
+    --wbbm-soft: #f8fafc;
+    --wbbm-ok: #047857;
+    --wbbm-warn: #b45309;
+    --wbbm-danger: #dc2626;
+}
+
+/* --- primary action buttons: green/pink legacy -> brand ----------------- */
+body.wbbm-admin .wbbm_btn_new,
+body.wbbm-admin .wbbm_outer_export_csv,
+body.wbbm-admin .wbbm-export-csv,
+body.wbbm-admin .wbbm-passenger-export,
+body.wbbm-admin .mage-bus-detail-action,
+body.wbbm-admin .wbtm-button,
+body.wbbm-admin .themeButton {
+    background-color: var(--wbbm-accent);
+    border-color: var(--wbbm-accent);
+    border-radius: 8px;
+    color: #fff;
+}
+
+body.wbbm-admin .wbbm_btn_new:hover,
+body.wbbm-admin .wbbm_outer_export_csv:hover,
+body.wbbm-admin .wbbm-export-csv:hover,
+body.wbbm-admin .wbbm-passenger-export:hover,
+body.wbbm-admin .mage-bus-detail-action:hover,
+body.wbbm-admin .wbtm-button:hover,
+body.wbbm-admin .themeButton:hover {
+    background-color: var(--wbbm-accent-dark);
+    border-color: var(--wbbm-accent-dark);
+    color: #fff;
+}
+
+/* --- table heads: red legacy -> neutral -------------------------------- */
+body.wbbm-admin table.wbbm-passenger-list th,
+body.wbbm-admin table.wbbm-main-table th {
+    color: var(--wbbm-muted) !important;
+    background-color: #fbfdff;
+    font-size: 12px;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+}
+
+/* --- row striping: pink legacy -> neutral ------------------------------ */
+body.wbbm-admin table.wbbm-passenger-list tr:nth-child(odd),
+body.wbbm-admin table.wbbm-main-table tr:nth-child(odd) {
+    background-color: transparent;
+}
+
+body.wbbm-admin table.wbbm-passenger-list tr:hover,
+body.wbbm-admin table.wbbm-main-table tbody tr:hover {
+    background-color: #fffdfb !important;
+}
+
+/* --- summary tiles: solid blue legacy -> neutral cards ----------------- */
+body.wbbm-admin .wbbm-table-top .left .item {
+    color: var(--wbbm-ink);
+    background: var(--wbbm-soft);
+    border: 1px solid var(--wbbm-line);
+    border-radius: 10px;
+    box-shadow: none;
+}
+
+body.wbbm-admin .wbbm-table-top .left .item strong {
+    color: var(--wbbm-muted);
+}
+
+body.wbbm-admin .wbbm-table-top .left .item span {
+    color: var(--wbbm-ink);
+}
+
+/* --- filter chrome: pink legacy -> white ------------------------------- */
+body.wbbm-admin .wbbm_page_filter_inner {
+    background: #fff;
+    border-color: var(--wbbm-line);
+}
+
+/* --- settings panel header ties to the brand --------------------------- */
+body.wbbm-admin .wbbm_settings_panel_header {
+    background: var(--wbbm-accent);
+}
+
+/* --- status pills keep their meaning ----------------------------------- */
+body.wbbm-admin .wbbm-status-publish,
+body.wbbm-admin .status-publish {
+    color: var(--wbbm-ok);
+    background: #ecfdf5;
+}
+
+/* --- ID-scoped legacy rules need ID-strength answers -------------------- */
+body.wbbm-admin #csvExport,
+body.wbbm-admin a#add-faq-row.button,
+body.wbbm-admin a#add-bp-row.button,
+body.wbbm-admin a#add-price-row.button,
+body.wbbm-admin a#clone-operate-date.button,
+body.wbbm-admin #wbbm-single-settings-meta .wbbm_add_more_pickpoint,
+body.wbbm-admin #ttbm_add_meta_box .mpStyle .ppof-button,
+body.wbbm-admin #ttbm_add_meta_box .mpStyle .dButton {
+    background-color: var(--wbbm-accent);
+    border-color: var(--wbbm-accent);
+    border-radius: 8px;
+    color: #fff;
+}
+
+body.wbbm-admin #csvExport:hover,
+body.wbbm-admin a#add-faq-row.button:hover,
+body.wbbm-admin a#add-bp-row.button:hover,
+body.wbbm-admin a#add-price-row.button:hover,
+body.wbbm-admin a#clone-operate-date.button:hover,
+body.wbbm-admin #wbbm-single-settings-meta .wbbm_add_more_pickpoint:hover,
+body.wbbm-admin #ttbm_add_meta_box .mpStyle .ppof-button:hover,
+body.wbbm-admin #ttbm_add_meta_box .mpStyle .dButton:hover {
+    background-color: var(--wbbm-accent-dark);
+    border-color: var(--wbbm-accent-dark);
+    color: #fff;
+}
+
+body.wbbm-admin #ttbm_add_meta_box .mpStyle [data-tabs-target].active,
+body.wbbm-admin #ttbm_add_meta_box .mpStyle [data-tabs-target]:hover {
+    background-color: var(--wbbm-accent);
+    border-color: var(--wbbm-accent);
+    color: #fff;
+}
+
+/* ------------------------------------------------- instant tab switching */
+.wbbm-hub-panel {
+    position: relative;
+    min-height: 120px;
+    transition: opacity .12s ease;
+}
+
+.wbbm-hub-panel.is-loading {
+    opacity: .45;
+    pointer-events: none;
+}
+
+/* A thin progress bar under the tab strip while a panel is fetching. */
+.wbbm-hub-panel.is-loading::before {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--wbbm-accent), transparent);
+    background-size: 40% 100%;
+    background-repeat: no-repeat;
+    animation: wbbm-hub-progress 900ms linear infinite;
+    content: "";
+}
+
+@keyframes wbbm-hub-progress {
+    0%   { background-position: -40% 0; }
+    100% { background-position: 140% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .wbbm-hub-panel { transition: none; }
+    .wbbm-hub-panel.is-loading::before { animation: none; }
+}
+
+/* =========================================================================
+   Consistent panel rhythm.
+
+   Legacy modules carry their own top margins (.wbbm_page_filter_wrapper has
+   50px, .ticket-search 30px), which made each tab start at a different
+   height. The panel owns the spacing; the first block inside it never adds
+   its own.
+   ========================================================================= */
+.wbbm-hub-subtitle {
+    margin: 0;
+    padding: 14px 24px 0;
+}
+
+.wbbm-hub-panel {
+    padding-top: 16px;
+}
+
+/* First painted block in a panel: no stacked top margin, whatever it is. */
+.wbbm-hub-panel > *:first-child,
+.wbbm-hub-panel > *:first-child > *:first-child,
+.wbbm-hub-panel .wrap > *:first-child,
+.wbbm-hub-panel .wbbm_page_wrapper > *:first-child {
+    margin-top: 0 !important;
+}
+
+/* The two legacy offenders, wherever they sit in the tree. */
+.wbbm-hub-panel .wbbm_page_filter_wrapper,
+.wbbm-hub-panel .ticket-search {
+    margin-top: 0 !important;
+}

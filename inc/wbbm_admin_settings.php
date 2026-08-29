@@ -9,8 +9,19 @@ if (!class_exists('MAGE_WBBM_Setting_Controls')) :
     {
         private $settings_api;
 
+        /** The instance booted at load time, for hub delegation. */
+        private static $instance = null;
+
+        public static function instance()
+        {
+            return self::$instance;
+        }
+
         function __construct()
         {
+            if (null === self::$instance) {
+                self::$instance = $this;
+            }
             $this->settings_api = new MAGE_Setting_API();
             add_action('admin_init', array($this, 'admin_init'));
             add_action('admin_menu', array($this, 'admin_menu'));

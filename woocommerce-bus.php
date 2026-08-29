@@ -102,6 +102,10 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
     require_once(dirname(__FILE__) . "/inc/BusEditPageClass.php");
     require_once(dirname(__FILE__) . "/inc/class-wbbm-bus-configuration-page.php");
 
+    // Shared tabbed-hub shell, plus the hubs the free plugin owns.
+    require_once(dirname(__FILE__) . "/inc/class-wbbm-admin-hub.php");
+    require_once(dirname(__FILE__) . "/inc/class-wbbm-settings-hub.php");
+
     // Shuttle Service Files - Conditional loading
     if (function_exists('wbbm_get_option') && wbbm_get_option('wbbm_shuttle_module_enable', 'wbbm_general_setting_sec', 'off') === 'on') {
         require_once(dirname(__FILE__) . "/inc/wbbm_shuttle_cpt.php");
@@ -116,6 +120,7 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
         require_once(dirname(__FILE__) . "/inc/ShuttleCatEditPageClass.php");
         require_once(dirname(__FILE__) . "/inc/ShuttleStopListPageClass.php");
         require_once(dirname(__FILE__) . "/inc/ShuttleStopEditPageClass.php");
+        require_once(dirname(__FILE__) . "/inc/class-wbbm-shuttle-hub.php");
     }
     // Language Load
     add_action('init', 'wbbm_language_load');
@@ -928,15 +933,18 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
         ob_start();
         ?>
         <div class="search-fields">
+            <?php wp_nonce_field('bus_search_nonce_action', 'bus_search_nonce', false); ?>
             <div class="fields-li">
                 <label>
                     <i class="fa fa-map-marker" aria-hidden="true"></i> <?php esc_html_e('From', 'bus-booking-manager'); ?>
-                    <?php echo wp_kses_post(wbbm_get_bus_route_list('bus_start_route', $start)); ?></label>
+                    <?php echo wbbm_get_bus_route_list( // phpcs:ignore WordPress.Security.EscapingOutput.OutputNotEscaped -- Helper returns escaped markup; wp_kses_post() would strip the select.
+                        'bus_start_route', $start); ?></label>
             </div>
             <div class="fields-li">
                 <label>
                     <i class="fa fa-map-marker" aria-hidden="true"></i> <?php esc_html_e('To:', 'bus-booking-manager'); ?>
-                    <?php echo wp_kses_post(wbbm_get_bus_route_list('bus_end_route', $end)); ?>
+                    <?php echo wbbm_get_bus_route_list( // phpcs:ignore WordPress.Security.EscapingOutput.OutputNotEscaped -- Helper returns escaped markup; wp_kses_post() would strip the select.
+                        'bus_end_route', $end); ?>
                 </label>
             </div>
             <div class="fields-li">
@@ -949,7 +957,7 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
             <div class="fields-li return-date-sec">
                 <label for='r_date'>
                     <i class="fa fa-calendar" aria-hidden="true"></i> <?php esc_html_e('Return Date:', 'bus-booking-manager'); ?>
-                    <input type="text" id="r_date" name="r_date" value="">
+                    <input type="text" id="r_date" name="r_date" value="<?php echo esc_attr($r_date); ?>">
                 </label>
             </div>
             <?php
@@ -982,26 +990,23 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
             </div>
         </div>
         <script>
-            <?php
-			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- No nonce needed for search form display
-            if (isset($_GET['bus-r']) && sanitize_text_field(wp_unslash($_GET['bus-r'])) == 'oneway') { ?>
-                jQuery('.return-date-sec').hide();
-                <?php
-				// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- No nonce needed for search form display
-            } elseif (isset($_GET['bus-r']) && sanitize_text_field(wp_unslash($_GET['bus-r'])) == 'return') { ?>
-                jQuery('.return-date-sec').show();
-            <?php } else { ?>
-                jQuery('.return-date-sec').hide();
-            <?php } ?>
-            jQuery('#oneway').on('click', function() {
-                jQuery('.return-date-sec').hide();
-            });
-            jQuery('#return_date').on('click', function() {
-                jQuery('.return-date-sec').show();
+            jQuery(function ($) {
+                var $return = $('.return-date-sec');
+                <?php if ('return' === $busr) { ?>
+                    $return.show();
+                <?php } else { ?>
+                    $return.hide();
+                <?php } ?>
+                $('#oneway').on('click', function () {
+                    $return.hide();
+                });
+                $('#return_date').on('click', function () {
+                    $return.show();
+                });
             });
         </script>
         <?php
-        ob_get_clean();
+        echo ob_get_clean(); // phpcs:ignore WordPress.Security.EscapingOutput.OutputNotEscaped -- Buffer built from escaped output above.
     }
     function wbbm_get_seat_status($seat, $date, $bus_id, $start)
     {
@@ -1739,8 +1744,10 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
             return 'not-in-cart';
         }
     }
-    add_action('show_seat_form', 'wbbm_seat_form');
-    function wbbm_seat_form($start, $end, $price_arr, $return = false)
+    // Must declare 4 accepted args: do_action('show_seat_form', ...) would
+    // otherwise pass only the first and fatal on the missing parameters.
+    add_action('show_seat_form', 'wbbm_seat_form', 10, 4);
+    function wbbm_seat_form($start = '', $end = '', $price_arr = array(), $return = false)
     {
         $date = $return ? mage_get_isset('r_date') : mage_get_isset('j_date');
         // $available_seat = mage_available_seat(wbbm_convert_date_to_php($date));
@@ -1818,7 +1825,7 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
             <?php endif; ?>
         </div>
         <?php
-        ob_get_clean();
+        echo ob_get_clean(); // phpcs:ignore WordPress.Security.EscapingOutput.OutputNotEscaped -- Buffer built from escaped output above.
     }
     function wbbm_check_od_in_range($start_date, $end_date, $j_date)
     {

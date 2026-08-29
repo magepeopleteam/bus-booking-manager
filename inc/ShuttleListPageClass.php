@@ -11,8 +11,19 @@ if (!defined('ABSPATH')) {
  */
 class ShuttleListPageClass
 {
+    /** The instance booted at load time, for hub delegation. */
+    private static $instance = null;
+
+    public static function instance()
+    {
+        return self::$instance;
+    }
+
     public function __construct()
     {
+        if (null === self::$instance) {
+            self::$instance = $this;
+        }
         add_action('admin_menu', array($this, 'register_shuttle_list_page'), 1);
         add_action('admin_menu', array($this, 'reorder_shuttle_submenu'), 999);
         add_action('admin_enqueue_scripts', array($this, 'enqueue_assets'));
@@ -75,9 +86,26 @@ class ShuttleListPageClass
     /**
      * Enqueue CSS and JS
      */
+
+    /**
+     * Is this request for this module's screen?
+     *
+     * True on the module's own legacy page and on the Shuttle Manager tab
+     * that now hosts it, so assets and row actions work in both places.
+     */
+    private function is_module_request()
+    {
+        if (class_exists('WBBM_Admin_Hub')) {
+            return WBBM_Admin_Hub::is_module_screen('wbbm-shuttle-list', 'wbbm-shuttle-manager', 'shuttles', true);
+        }
+
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Screen check only.
+        return isset($_GET['page']) && 'wbbm-shuttle-list' === sanitize_key(wp_unslash($_GET['page']));
+    }
+
     public function enqueue_assets($hook)
     {
-        if (strpos($hook, 'wbbm-shuttle-list') === false) {
+        if (!$this->is_module_request()) {
             return;
         }
 
@@ -90,7 +118,7 @@ class ShuttleListPageClass
      */
     public function handle_shuttle_actions()
     {
-        if (isset($_GET['page']) && $_GET['page'] === 'wbbm-shuttle-list' && isset($_GET['action']) && $_GET['action'] === 'delete' && isset($_GET['post_id'])) {
+        if ($this->is_module_request() && isset($_GET['action']) && $_GET['action'] === 'delete' && isset($_GET['post_id'])) {
             $post_id = intval($_GET['post_id']);
             $post = get_post($post_id);
 

@@ -146,3 +146,13 @@ body.wbbm-config-modal-open { overflow: hidden; }
 @media (prefers-reduced-motion: reduce) {
     .wbbm-config-dialog, .wbbm-config-button, .wbbm-config-icon-button { animation: none; transition: none; }
 }
+
+/* In-page tab swap: dim the panel while the next tab is fetching. */
+[data-wbbm-cfg-panel] { transition: opacity .12s ease; }
+[data-wbbm-cfg-panel].is-loading { opacity: .45; pointer-events: none; }
+@media (prefers-reduced-motion: reduce) { [data-wbbm-cfg-panel] { transition: none; } }
+
+/* Inline confirmation after an in-place modal save. */
+.wbbm-config-notice[role="status"] {
+    margin: 16px 24px 0;
+}
