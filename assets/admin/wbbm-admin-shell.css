@@ -1669,3 +1669,52 @@ body.wbbm-admin #ttbm_add_meta_box .mpStyle [data-tabs-target]:hover {
 .wbbm-hub-panel .mage_error {
     border-color: var(--wbbm-danger) !important;
 }
+
+/* --------------------------------------- counter-sale customer details */
+.wbbm-hub-panel .wbbm-admin-customer {
+    margin: 14px 0 0;
+    padding: 14px 16px;
+    background: var(--wbbm-soft);
+    border: 1px solid var(--wbbm-line);
+    border-radius: 10px;
+}
+
+.wbbm-hub-panel .wbbm-admin-customer-title {
+    margin: 0 0 10px;
+    color: var(--wbbm-muted);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+}
+
+.wbbm-hub-panel .wbbm-admin-customer-grid {
+    display: grid;
+    gap: 12px;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.wbbm-hub-panel .wbbm-admin-customer-grid label {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin: 0;
+}
+
+.wbbm-hub-panel .wbbm-admin-customer-grid label span {
+    color: var(--wbbm-muted);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.wbbm-hub-panel .wbbm-admin-customer-grid input {
+    width: 100%;
+    min-height: 40px;
+    background: #fff;
+}
+
+@media screen and (max-width: 782px) {
+    .wbbm-hub-panel .wbbm-admin-customer-grid {
+        grid-template-columns: 1fr;
+    }
+}
