@@ -126,14 +126,6 @@ By default showing 20 bus per page. If you want to change it and set limit input
 [bus-list show='10']
 `
 
-**Shuttle Search:**
-To display shuttle routes to any page then need to use this shortcode.
-
-`
-[wbbm_shuttle_search]
-`
-
-
 **Available Addons**
 👉 [QR Code Checking and Ticket Validation](https://mage-people.com/product/multipurpose-bus-ticket-booking-pro-addon-qr-code/)
 

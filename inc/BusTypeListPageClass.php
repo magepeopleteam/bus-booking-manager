@@ -92,8 +92,8 @@ class BusTypeListPageClass
             return;
         }
 
-        wp_enqueue_style('shuttle-list-css', WBTM_PLUGIN_URL . 'assets/admin/shuttle-list.css', array(), time());
-        wp_enqueue_script('shuttle-list-js', WBTM_PLUGIN_URL . 'assets/admin/shuttle-list.js', array('jquery'), time(), true);
+        wp_enqueue_style('wbbm-list-css', WBTM_PLUGIN_URL . 'assets/admin/wbbm-list-tables.css', array(), time());
+        wp_enqueue_script('wbbm-list-js', WBTM_PLUGIN_URL . 'assets/admin/wbbm-list-tables.js', array('jquery'), time(), true);
     }
 
     /**
@@ -143,10 +143,10 @@ class BusTypeListPageClass
         $end_num = min($offset + $number, $total_terms);
 
         ?>
-        <div class="wrap shuttle-list-wrap">
-            <div class="shuttle-list-container-fullwidth">
+        <div class="wrap wbbm-list-wrap">
+            <div class="wbbm-list-container-fullwidth">
                 <!-- Header Section -->
-                <div class="shuttle-list-header">
+                <div class="wbbm-list-header">
                     <div class="header-left">
                         <div class="brand-logo">
                             <span class="dashicons fas fa-tags"></span>
@@ -163,8 +163,8 @@ class BusTypeListPageClass
                 </div>
 
                 <!-- Filters Card -->
-                <div class="shuttle-filters-card">
-                    <form method="get" action="<?php echo admin_url('admin.php'); ?>" id="shuttle-list-filter-form">
+                <div class="wbbm-list-filters-card">
+                    <form method="get" action="<?php echo admin_url('admin.php'); ?>" id="wbbm-list-filter-form">
                         <input type="hidden" name="post_type" value="wbbm_bus">
                         <input type="hidden" name="page" value="wbbm-bus-type-list">
 
@@ -188,12 +188,12 @@ class BusTypeListPageClass
                 </div>
 
                 <!-- Table Content -->
-                <div class="shuttle-list-table-card">
-                    <table class="shuttle-modern-table">
+                <div class="wbbm-list-table-card">
+                    <table class="wbbm-list-modern-table">
                         <thead>
                             <tr>
                                 <th class="col-check"><input type="checkbox" id="select-all"></th>
-                                <th class="col-shuttle" style="width: 300px;"><?php _e('Name', 'bus-booking-manager'); ?></th>
+                                <th class="col-bus" style="width: 300px;"><?php _e('Name', 'bus-booking-manager'); ?></th>
                                 <th class="col-category"><?php _e('Description', 'bus-booking-manager'); ?></th>
                                 <th class="col-stops"><?php _e('Slug', 'bus-booking-manager'); ?></th>
                                 <th class="col-capacity"><?php _e('Count', 'bus-booking-manager'); ?></th>
@@ -209,10 +209,10 @@ class BusTypeListPageClass
                                     ?>
                                     <tr>
                                         <td><input type="checkbox" name="term_ids[]" value="<?php echo esc_attr($term->term_id); ?>"></td>
-                                        <td class="shuttle-info-cell">
-                                            <div class="shuttle-details" style="padding-left: 0;">
-                                                <div class="shuttle-title"><a href="<?php echo esc_url($edit_url); ?>"><?php echo esc_html($term->name); ?></a></div>
-                                                <div class="shuttle-meta" style="font-size:12px; font-weight:normal;">
+                                        <td class="wbbm-list-info-cell">
+                                            <div class="wbbm-list-details" style="padding-left: 0;">
+                                                <div class="wbbm-list-title"><a href="<?php echo esc_url($edit_url); ?>"><?php echo esc_html($term->name); ?></a></div>
+                                                <div class="wbbm-list-meta" style="font-size:12px; font-weight:normal;">
                                                     <?php echo __('ID:', 'bus-booking-manager') . ' ' . esc_html($term->term_id); ?>
                                                 </div>
                                             </div>
@@ -250,7 +250,7 @@ class BusTypeListPageClass
 
                     <!-- Pagination -->
                     <?php if ($total_pages > 1) : ?>
-                        <div class="shuttle-pagination-area">
+                        <div class="wbbm-list-pagination-area">
                             <div class="pagination-info">
                                 <?php printf(__('Showing %d - %d of %d items', 'bus-booking-manager'), max(1, $start_num), $end_num, $total_terms); ?>
                             </div>

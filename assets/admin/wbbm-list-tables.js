@@ -1,7 +1,7 @@
 jQuery(document).ready(function ($) {
     // Select All Checkboxes
     $('#select-all').on('change', function () {
-        $('.shuttle-modern-table tbody input[type="checkbox"]').prop('checked', $(this).prop('checked'));
+        $('.wbbm-list-modern-table tbody input[type="checkbox"]').prop('checked', $(this).prop('checked'));
     });
 
     // Handle more button click (placeholder for dropdown)
@@ -12,16 +12,16 @@ jQuery(document).ready(function ($) {
 
     // Auto-submit status filter on change
     $('#status-filter').on('change', function () {
-        $('#shuttle-list-filter-form').submit();
+        $('#wbbm-list-filter-form').submit();
     });
 
-    // Expand Shuttle Stops
+    // Expand stops list
     $(document).on('click', '.stops-toggle-btn', function (e) {
         e.preventDefault();
         $(this).closest('.stops-list-wrapper').addClass('expanded');
     });
 
-    // Collapse Shuttle Stops
+    // Collapse stops list
     $(document).on('click', '.stops-collapse-btn', function (e) {
         e.preventDefault();
         $(this).closest('.stops-list-wrapper').removeClass('expanded');

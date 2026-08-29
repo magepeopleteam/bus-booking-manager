@@ -118,21 +118,17 @@ if (!class_exists('WBTM_Quick_Setup')) {
             if (isset($_POST['finish_quick_setup'])) {
                 $wbbm_cpt_label = isset($_POST['mpwpb_label']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_label'])) : 'Bus';
                 $wbbm_cpt_slug = isset($_POST['mpwpb_slug']) ? sanitize_text_field(wp_unslash($_POST['mpwpb_slug'])) : 'Bus';
-                $wbbm_service_type = isset($_POST['wbbm_service_type']) ? sanitize_text_field(wp_unslash($_POST['wbbm_service_type'])) : 'both';
 
                 $general_settings_data = get_option('wbbm_general_setting_sec');
                 $update_general_settings_arr = [
                     'wbbm_cpt_label' => $wbbm_cpt_label,
                     'wbbm_cpt_slug' => $wbbm_cpt_slug,
-                    'wbbm_service_type' => $wbbm_service_type,
                 ];
                 $new_general_settings_data = is_array($general_settings_data) ? array_replace($general_settings_data, $update_general_settings_arr) : $update_general_settings_arr;
                 update_option('wbbm_general_setting_sec', $new_general_settings_data);
                 update_option('wbbm_quick_setup_done', 'yes');
                 flush_rewrite_rules();
-                $service_type = wbbm_get_option('wbbm_service_type', 'wbbm_general_setting_sec', 'both');
-                $parent_slug = ($service_type === 'shuttle') ? 'edit.php?post_type=wbbm_shuttle' : 'edit.php?post_type=wbbm_bus';
-                wp_safe_redirect(esc_url(admin_url($parent_slug)));
+                wp_safe_redirect(esc_url(admin_url('edit.php?post_type=wbbm_bus')));
                 exit;
             }
 
@@ -249,19 +245,6 @@ if (!class_exists('WBTM_Quick_Setup')) {
                         <i class="info_text">
                             <span class="fas fa-info-circle"></span>
                             <?php esc_html_e('It will change the Bus Booking Manager slug on the entire plugin. Remember after changing this slug you need to flush permalinks. Just go to Settings->Permalinks hit the Save Settings button', 'bus-booking-manager'); ?>
-                        </i>
-                        <div class="divider"></div>
-                        <label class="fullWidth">
-                            <span class="min_300"><?php esc_html_e('Service Type:', 'bus-booking-manager'); ?></span>
-                            <div class="mp_radio_group">
-                                <label><input type="radio" name="wbbm_service_type" value="both" checked> <?php esc_html_e('Both (General Bus & Shuttle)', 'bus-booking-manager'); ?></label><br>
-                                <label><input type="radio" name="wbbm_service_type" value="bus"> <?php esc_html_e('General Bus Only', 'bus-booking-manager'); ?></label><br>
-                                <label><input type="radio" name="wbbm_service_type" value="shuttle"> <?php esc_html_e('Shuttle Service Only', 'bus-booking-manager'); ?></label>
-                            </div>
-                        </label>
-                        <i class="info_text">
-                            <span class="fas fa-info-circle"></span>
-                            <?php esc_html_e('Choose which services you want to enable. You can change this later in plugin settings.', 'bus-booking-manager'); ?>
                         </i>
                     </div>
                 </div>

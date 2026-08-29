@@ -17,18 +17,18 @@
     --sh-pending-text: #d97706;
 }
 
-.shuttle-list-wrap {
+.wbbm-list-wrap {
     margin: 20px 20px 0 0;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 }
 
-.shuttle-list-container {
+.wbbm-list-container {
     max-width: 100%;
     margin: 0 auto;
 }
 
 /* Header Section */
-.shuttle-list-header {
+.wbbm-list-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -87,7 +87,7 @@
 }
 
 /* Filters Card */
-.shuttle-filters-card {
+.wbbm-list-filters-card {
     background: #fff;
     padding: 20px 24px;
     border: 1px solid var(--sh-border);
@@ -236,7 +236,7 @@ select.form-control {
 }
 
 /* Table Section */
-.shuttle-list-table-card {
+.wbbm-list-table-card {
     background: #fff;
     border: 1px solid var(--sh-border);
     border-top: none;
@@ -244,12 +244,12 @@ select.form-control {
     overflow: hidden;
 }
 
-.shuttle-modern-table {
+.wbbm-list-modern-table {
     width: 100%;
     border-collapse: collapse;
 }
 
-.shuttle-modern-table th {
+.wbbm-list-modern-table th {
     background: #fff;
     padding: 16px 24px;
     text-align: left;
@@ -261,15 +261,15 @@ select.form-control {
     letter-spacing: 0.025em;
 }
 
-.shuttle-modern-table tr {
+.wbbm-list-modern-table tr {
     border-bottom: 1px solid var(--sh-border);
 }
-.shuttle-modern-table td {
+.wbbm-list-modern-table td {
     padding: 20px 24px;
     vertical-align: middle;
 }
 
-.shuttle-modern-table tr:last-child td {
+.wbbm-list-modern-table tr:last-child td {
     border-bottom: none;
 }
 
@@ -293,14 +293,14 @@ select.form-control {
     width: 150px;
 }
 
-/* Shuttle Info Cell */
-.shuttle-info-cell {
+/* List Info Cell */
+.wbbm-list-info-cell {
     display: flex;
     align-items: center;
     gap: 16px;
 }
 
-.shuttle-thumb {
+.wbbm-list-thumb {
     width: 56px;
     height: 56px;
     border-radius: 8px;
@@ -311,42 +311,42 @@ select.form-control {
     justify-content: center;
 }
 
-.shuttle-thumb img {
+.wbbm-list-thumb img {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
 
-.shuttle-thumb .dashicons {
+.wbbm-list-thumb .dashicons {
     font-size: 32px;
     color: #cbd5e1;
 }
 
-.shuttle-title {
+.wbbm-list-title {
     font-weight: 700;
     font-size: 16px;
     color: var(--sh-text-main);
     margin-bottom: 4px;
 }
 
-.shuttle-title a {
+.wbbm-list-title a {
     text-decoration: none;
     color: inherit;
     transition: color 0.2s;
 }
 
-.shuttle-title a:hover {
+.wbbm-list-title a:hover {
     color: var(--sh-primary);
 }
 
-.shuttle-meta {
+.wbbm-list-meta {
     font-size: 13px;
     color: var(--sh-text-main);
     font-weight: 500;
     margin-bottom: 2px;
 }
 
-.shuttle-sub-meta {
+.wbbm-list-sub-meta {
     font-size: 12px;
     color: var(--sh-text-soft);
 }
@@ -445,7 +445,7 @@ select.form-control {
 }
 
 /* Pagination Area */
-.shuttle-pagination-area {
+.wbbm-list-pagination-area {
     padding: 24px;
     display: flex;
     justify-content: space-between;
@@ -495,7 +495,7 @@ select.form-control {
 }
 
 /* Stops Display */
-.shuttle-stops-display {
+.wbbm-list-stops-display {
     max-width: 250px;
     font-size: 13px;
     line-height: 1.5;
@@ -519,79 +519,79 @@ select.form-control {
     transition: all 0.2s;
 }
 
-/* Shuttle Booking List Filters */
-.shuttle-booking-filters-grid {
+/* Booking List Filters */
+.wbbm-list-booking-filters-grid {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 12px;
     align-items: end;
 }
 
-.shuttle-booking-filters-grid .filter-group {
+.wbbm-list-booking-filters-grid .filter-group {
     min-width: 0;
 }
 
-.shuttle-booking-filters-grid .form-control {
+.wbbm-list-booking-filters-grid .form-control {
     width: 100%;
 }
 
-.shuttle-booking-filters-grid .booking-route-search {
+.wbbm-list-booking-filters-grid .booking-route-search {
     width: 100%;
 }
 
-.shuttle-booking-filters-grid .booking-route-search .dashicons {
+.wbbm-list-booking-filters-grid .booking-route-search .dashicons {
     left: 12px;
     top: 50%;
 }
 
-.shuttle-booking-filters-grid .booking-route-search input {
+.wbbm-list-booking-filters-grid .booking-route-search input {
     padding-left: 36px !important;
 }
 
-.shuttle-booking-filter-actions {
+.wbbm-list-booking-filter-actions {
     margin-top: 12px;
     display: flex;
     align-items: center;
     gap: 12px;
 }
 
-/* Shuttle Booking List Table Widths */
-.shuttle-modern-table .col-id {
+/* Booking List Table Widths */
+.wbbm-list-modern-table .col-id {
     width: 100px;
 }
 
-.shuttle-modern-table .col-shuttle {
+.wbbm-list-modern-table .col-bus {
     width: 200px;
 }
 
-.shuttle-modern-table .col-customer {
+.wbbm-list-modern-table .col-customer {
     width: 220px;
 }
 
-.shuttle-modern-table .col-journey {
+.wbbm-list-modern-table .col-journey {
     width: 180px;
 }
 
-.shuttle-modern-table .col-route {
+.wbbm-list-modern-table .col-route {
     width: 220px;
 }
 
-.shuttle-modern-table .col-passengers {
+.wbbm-list-modern-table .col-passengers {
     width: 140px;
 }
 
-.shuttle-modern-table .col-action {
+.wbbm-list-modern-table .col-action {
     width: 100px;
 }
 
 @media (max-width: 1024px) {
-    .shuttle-booking-filters-grid {
+    .wbbm-list-booking-filters-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
 
 @media (max-width: 640px) {
-    .shuttle-booking-filters-grid {
+    .wbbm-list-booking-filters-grid {
         grid-template-columns: 1fr;
     }
 }
@@ -648,4 +648,45 @@ select.form-control {
     padding: 60px !important;
     color: var(--sh-text-soft);
     font-style: italic;
+}
+/* ------------------------------------------------- remaining seats column */
+.wbbm-list-modern-table .col-remaining {
+    white-space: nowrap;
+}
+
+.remaining-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    line-height: 1.3;
+}
+
+.remaining-info .count {
+    color: #172033;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.remaining-info .sub {
+    color: #64748b;
+    font-size: 11px;
+}
+
+/* Tone tracks how full the vehicle is on the selected date. */
+.remaining-info.is-ok .count   { color: #047857; }
+.remaining-info.is-low .count  { color: #b45309; }
+.remaining-info.is-full .count { color: #dc2626; }
+
+.filters-row .seat-date-group input[type="date"] {
+    min-width: 160px;
+}
+
+.wbbm-list-modern-table .col-remaining-date {
+    display: block;
+    margin-top: 2px;
+    color: #94a3b8;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0;
+    text-transform: none;
 }
