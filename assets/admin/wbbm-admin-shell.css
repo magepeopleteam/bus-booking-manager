@@ -942,18 +942,12 @@
     background: var(--wbbm-accent-dark);
 }
 
-/* Radios and checkboxes keep their native rendering and intrinsic size; the
-   generic input sizing above is for text-like controls only. */
+/* Radios and checkboxes keep WordPress core's own sizing and checkmark.
+   Forcing a size here made the core tick (21px) overflow the box, so the
+   only thing overridden is flex stretching inside a flex row. */
 .wbbm-hub-panel input[type="radio"],
 .wbbm-hub-panel input[type="checkbox"] {
     flex: 0 0 auto;
-    box-sizing: border-box;
-    width: 18px;
-    min-width: 18px;
-    height: 18px;
-    min-height: 18px;
-    margin: 0;
-    padding: 0;
 }
 
 /* The frontend stylesheet forces `width: 40% !important` on these labels and
@@ -1573,4 +1567,201 @@ body.wbbm-admin #ttbm_add_meta_box .mpStyle [data-tabs-target]:hover {
 .wbbm-hub-panel .wbbm_page_filter_wrapper,
 .wbbm-hub-panel .ticket-search {
     margin-top: 0 !important;
+}
+
+/* ------------------------------------------- booking panel inside a hub */
+/* The expanded row is inline-styled with a pink tint on the frontend. */
+.wbbm-hub-panel .mage_search_list {
+    background-color: #fff !important;
+    border-top: 1px solid var(--wbbm-line);
+}
+
+.wbbm-hub-panel .mage_search_list .mage_bus_details,
+.wbbm-hub-panel .mage_search_list .mage_book_now_area {
+    border-color: var(--wbbm-line);
+}
+
+/* Book Now is a primary action: brand colour, not the legacy green. */
+.wbbm-hub-panel .mage_book_now .mage_button,
+.wbbm-hub-panel .mage_book_now_area .mage_button,
+.wbbm-hub-panel .mage_button.mage_book_now,
+.wbbm-hub-panel button.mage_book_now,
+.wbbm-hub-panel .mage_book_now button {
+    background: var(--wbbm-accent) !important;
+    border-color: var(--wbbm-accent) !important;
+    border-radius: 8px;
+    color: #fff !important;
+    font-weight: 600;
+}
+
+.wbbm-hub-panel .mage_book_now .mage_button:hover,
+.wbbm-hub-panel .mage_book_now_area .mage_button:hover,
+.wbbm-hub-panel .mage_button.mage_book_now:hover,
+.wbbm-hub-panel button.mage_book_now:hover,
+.wbbm-hub-panel .mage_book_now button:hover {
+    background: var(--wbbm-accent-dark) !important;
+    border-color: var(--wbbm-accent-dark) !important;
+}
+
+/* Quantity stepper */
+.wbbm-hub-panel .mage_form_group {
+    display: inline-flex;
+    align-items: center;
+    overflow: hidden;
+    border: 1px solid var(--wbbm-line);
+    border-radius: 8px;
+}
+
+.wbbm-hub-panel .mage_form_group .mage_qty_inc,
+.wbbm-hub-panel .mage_form_group .mage_qty_dec {
+    display: grid;
+    width: 38px;
+    height: 38px;
+    place-items: center;
+    color: var(--wbbm-ink);
+    background: var(--wbbm-soft);
+    cursor: pointer;
+    user-select: none;
+    transition: background .15s, color .15s;
+}
+
+.wbbm-hub-panel .mage_form_group .mage_qty_inc:hover,
+.wbbm-hub-panel .mage_form_group .mage_qty_dec:hover {
+    color: #fff;
+    background: var(--wbbm-accent);
+}
+
+.wbbm-hub-panel .mage_form_group .mage_qty_inc.mage_disabled,
+.wbbm-hub-panel .mage_form_group .mage_qty_dec.mage_disabled {
+    opacity: .4;
+    cursor: not-allowed;
+}
+
+.wbbm-hub-panel .mage_form_group input.mage_form {
+    width: 56px;
+    min-height: 38px;
+    margin: 0;
+    padding: 0;
+    background: #fff;
+    border: 0;
+    border-radius: 0;
+    text-align: center;
+}
+
+.wbbm-hub-panel .mage_form_group input.mage_form:focus {
+    box-shadow: none;
+}
+
+/* Sub total */
+.wbbm-hub-panel .mage_sub_total {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--wbbm-ink);
+    font-weight: 700;
+}
+
+.wbbm-hub-panel .mage_sub_total .mage_subtotal_figure {
+    color: var(--wbbm-accent-dark);
+    font-size: 18px;
+}
+
+.wbbm-hub-panel .mage_error {
+    border-color: var(--wbbm-danger) !important;
+}
+
+/* --------------------------------------- counter-sale customer details */
+.wbbm-hub-panel .wbbm-admin-customer {
+    margin: 14px 0 0;
+    padding: 14px 16px;
+    background: var(--wbbm-soft);
+    border: 1px solid var(--wbbm-line);
+    border-radius: 10px;
+}
+
+.wbbm-hub-panel .wbbm-admin-customer-title {
+    margin: 0 0 10px;
+    color: var(--wbbm-muted);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+}
+
+.wbbm-hub-panel .wbbm-admin-customer-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* One block per seat. */
+.wbbm-hub-panel .wbbm-admin-customer-row + .wbbm-admin-customer-row {
+    padding-top: 12px;
+    border-top: 1px dashed var(--wbbm-line);
+}
+
+.wbbm-hub-panel .wbbm-admin-customer-no {
+    margin-bottom: 8px;
+    color: var(--wbbm-accent-dark);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+}
+
+.wbbm-hub-panel .wbbm-admin-customer-grid {
+    display: grid;
+    gap: 12px;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.wbbm-hub-panel .wbbm-admin-customer-grid label {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin: 0;
+}
+
+.wbbm-hub-panel .wbbm-admin-customer-grid label span {
+    color: var(--wbbm-muted);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.wbbm-hub-panel .wbbm-admin-customer-grid input {
+    width: 100%;
+    min-height: 40px;
+    background: #fff;
+}
+
+@media screen and (max-width: 782px) {
+    .wbbm-hub-panel .wbbm-admin-customer-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Sub total and Book Now sat flush against each other. The row that holds
+   them is .mage_flex_equal; .mage_book_now is both the wrapper and the
+   button, so the wrapper is addressed as a direct child of that row. */
+.wbbm-hub-panel .mage_book_now_area .mage_flex_equal {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px;
+}
+
+.wbbm-hub-panel .mage_book_now_area .mage_sub_price {
+    flex: 1 1 180px;
+    margin: 0;
+}
+
+.wbbm-hub-panel .mage_book_now_area > .mage_flex_equal > div.mage_book_now {
+    flex: 0 0 auto;
+    margin: 0 0 0 auto;
+}
+
+.wbbm-hub-panel .mage_book_now_area button.mage_book_now {
+    min-width: 190px;
+    min-height: 44px;
+    padding: 10px 26px;
 }

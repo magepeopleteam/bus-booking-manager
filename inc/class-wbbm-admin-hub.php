@@ -82,7 +82,14 @@ abstract class WBBM_Admin_Hub
         add_action('admin_menu', array($this, 'register_page'), 20);
         add_action('admin_menu', array($this, 'remove_legacy_submenus'), 999);
         add_action('admin_enqueue_scripts', array($this, 'enqueue_assets'));
-        add_action('admin_init', array($this, 'redirect_legacy_pages'), 50);
+        /*
+         * Must run on admin_menu, not admin_init. wp-admin/includes/menu.php
+         * fires admin_menu (line 168) and then calls user_can_access_admin_page()
+         * (line 375), which 403s on any page whose submenu row has been
+         * removed — all of ours. admin_init runs later still, so a redirect
+         * there would never be reached.
+         */
+        add_action('admin_menu', array($this, 'redirect_legacy_pages'), 9999);
         add_filter('parent_file', array($this, 'parent_file'));
         add_filter('submenu_file', array($this, 'submenu_file'), 10, 2);
         add_action('wp_ajax_' . $this->ajax_action(), array($this, 'ajax_render_tab'));
