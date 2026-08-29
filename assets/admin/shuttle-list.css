@@ -649,3 +649,44 @@ select.form-control {
     color: var(--sh-text-soft);
     font-style: italic;
 }
+/* ------------------------------------------------- remaining seats column */
+.shuttle-modern-table .col-remaining {
+    white-space: nowrap;
+}
+
+.remaining-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    line-height: 1.3;
+}
+
+.remaining-info .count {
+    color: #172033;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.remaining-info .sub {
+    color: #64748b;
+    font-size: 11px;
+}
+
+/* Tone tracks how full the vehicle is on the selected date. */
+.remaining-info.is-ok .count   { color: #047857; }
+.remaining-info.is-low .count  { color: #b45309; }
+.remaining-info.is-full .count { color: #dc2626; }
+
+.filters-row .seat-date-group input[type="date"] {
+    min-width: 160px;
+}
+
+.shuttle-modern-table .col-remaining-date {
+    display: block;
+    margin-top: 2px;
+    color: #94a3b8;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0;
+    text-transform: none;
+}

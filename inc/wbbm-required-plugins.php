@@ -210,7 +210,7 @@ if (! class_exists('WBBM_Required_Plugins')) {
             }
 
             // MagePeople PDF Support
-            if (is_plugin_active('bus-booking-manager-pro/wbtm-pro.php') && $pdflibrary === 'mpdf') {
+            if (is_plugin_active('bus-booking-manager-pro/wbtm-pro.php') && $this->wbbm_needs_pdf_support_plugin()) {
                 if (! $this->wbbm_chk_plugin_folder_exist('magepeople-pdf-support-master')) {
                     $button_mpdf = '<a href="' . esc_url($this->wbbm_wp_plugin_installation_url('magepeople-pdf-support-master')) . '" class="wbbm_plugin_btn">' . esc_html__('Install', 'bus-booking-manager') . '</a>';
                 } elseif ($this->wbbm_chk_plugin_folder_exist('magepeople-pdf-support-master') && ! is_plugin_active('magepeople-pdf-support-master/mage-pdf.php')) {
@@ -317,10 +317,46 @@ if (! class_exists('WBBM_Required_Plugins')) {
             return wp_nonce_url($url, 'wbbm_plugin_install_action', 'wbbm_plugin_install_nonce');
         }
 
-        public function wbbm_required_plugin_list()
+        /**
+         * Is a separate PDF library plugin genuinely needed?
+         *
+         * WBBM_Pro_Pdf::generate_pdf() falls back to the bundled dompdf
+         * whenever mPDF is not loaded, so tickets are produced either way,
+         * and CSV export never used a PDF library at all. The support plugin
+         * is only really needed when no engine is available -- which is why
+         * this nagged on every screen: the callers read the configured
+         * library and then discarded it, hardcoding 'mpdf'.
+         *
+         * @return bool
+         */
+        public function wbbm_needs_pdf_support_plugin()
         {
             $pdfsetting = is_array(get_option('wbbm_pdf_setting_sec')) ? maybe_unserialize(get_option('wbbm_pdf_setting_sec')) : array();
-            $pdflibrary = 'mpdf';
+            $pdflibrary = isset($pdfsetting['wbtm_pdf_lib']) && in_array($pdfsetting['wbtm_pdf_lib'], array('mpdf', 'dompdf'), true)
+                ? $pdfsetting['wbtm_pdf_lib']
+                : 'mpdf';
+
+            if ('mpdf' !== $pdflibrary) {
+                return false;
+            }
+
+            if (class_exists('Mpdf\\Mpdf') || class_exists('mPDF')) {
+                return false;
+            }
+
+            // The fallback engine bundled with the Pro plugin.
+            if (class_exists('Dompdf\\Dompdf')) {
+                return false;
+            }
+            if (defined('WBBM_PRO_PLUGIN_DIR') && file_exists(WBBM_PRO_PLUGIN_DIR . 'dompdf/autoload.inc.php')) {
+                return false;
+            }
+
+            return true;
+        }
+
+        public function wbbm_required_plugin_list()
+        {
 
             $list = array();
 
@@ -330,7 +366,7 @@ if (! class_exists('WBBM_Required_Plugins')) {
             if (! $this->wbbm_chk_plugin_folder_exist('bus-booking-manager')) {
                 $list[] = esc_html__('Multipurpose Ticket Booking Manager', 'bus-booking-manager');
             }
-            if (is_plugin_active('bus-booking-manager-pro/wbtm-pro.php') && $pdflibrary === 'mpdf') {
+            if (is_plugin_active('bus-booking-manager-pro/wbtm-pro.php') && $this->wbbm_needs_pdf_support_plugin()) {
                 if (! $this->wbbm_chk_plugin_folder_exist('magepeople-pdf-support-master')) {
                     $list[] = esc_html__('MagePeople PDF Support', 'bus-booking-manager');
                 }
@@ -340,8 +376,6 @@ if (! class_exists('WBBM_Required_Plugins')) {
 
         public function wbbm_inactive_plugin_list()
         {
-            $pdfsetting = is_array(get_option('wbbm_pdf_setting_sec')) ? maybe_unserialize(get_option('wbbm_pdf_setting_sec')) : array();
-            $pdflibrary = 'mpdf';
 
             $list = array();
 
@@ -351,7 +385,7 @@ if (! class_exists('WBBM_Required_Plugins')) {
             if ($this->wbbm_chk_plugin_folder_exist('bus-booking-manager') && ! is_plugin_active('bus-booking-manager/woocommerce-bus.php')) {
                 $list[] = esc_html__('Multipurpose Ticket Booking Manager', 'bus-booking-manager');
             }
-            if (is_plugin_active('bus-booking-manager-pro/wbtm-pro.php') && $pdflibrary === 'mpdf') {
+            if (is_plugin_active('bus-booking-manager-pro/wbtm-pro.php') && $this->wbbm_needs_pdf_support_plugin()) {
                 if ($this->wbbm_chk_plugin_folder_exist('magepeople-pdf-support-master') && ! is_plugin_active('magepeople-pdf-support-master/mage-pdf.php')) {
                     $list[] = esc_html__('MagePeople PDF Support', 'bus-booking-manager');
                 }
