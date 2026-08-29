@@ -942,18 +942,12 @@
     background: var(--wbbm-accent-dark);
 }
 
-/* Radios and checkboxes keep their native rendering and intrinsic size; the
-   generic input sizing above is for text-like controls only. */
+/* Radios and checkboxes keep WordPress core's own sizing and checkmark.
+   Forcing a size here made the core tick (21px) overflow the box, so the
+   only thing overridden is flex stretching inside a flex row. */
 .wbbm-hub-panel input[type="radio"],
 .wbbm-hub-panel input[type="checkbox"] {
     flex: 0 0 auto;
-    box-sizing: border-box;
-    width: 18px;
-    min-width: 18px;
-    height: 18px;
-    min-height: 18px;
-    margin: 0;
-    padding: 0;
 }
 
 /* The frontend stylesheet forces `width: 40% !important` on these labels and

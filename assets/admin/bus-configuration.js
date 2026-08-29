@@ -259,8 +259,37 @@
             });
     }
 
+    /**
+     * Run <script> tags that arrived through innerHTML — assigning innerHTML
+     * parses them but never executes them, so inline initialisers (the icon
+     * picker, date fields) would otherwise stay dead after a swap.
+     */
+    function runScripts(container) {
+        Array.prototype.forEach.call(container.querySelectorAll('script'), function (old) {
+            var type = (old.getAttribute('type') || '').toLowerCase();
+            if (type && type !== 'text/javascript' && type !== 'application/javascript' && type !== 'module') {
+                return;
+            }
+            var fresh = document.createElement('script');
+            if (old.src) {
+                if (document.querySelector('script[src="' + old.src + '"]:not([data-wbbm-reinjected])')) {
+                    old.parentNode.removeChild(old);
+                    return;
+                }
+                fresh.src = old.src;
+                fresh.async = false;
+                fresh.setAttribute('data-wbbm-reinjected', '1');
+            } else {
+                fresh.textContent = old.textContent;
+            }
+            if (type) { fresh.type = old.type; }
+            old.parentNode.replaceChild(fresh, old);
+        });
+    }
+
     function paint(data) {
         panel.innerHTML = data.html;
+        runScripts(panel);
 
         Array.prototype.forEach.call(nav.querySelectorAll('[data-wbbm-cfg-tab]'), function (a) {
             if (a.getAttribute('data-wbbm-cfg-tab') === data.tab) {
@@ -285,6 +314,11 @@
         }
 
         panel.classList.remove('is-loading');
+
+        // Let module scripts re-bind to the freshly injected markup.
+        document.dispatchEvent(new CustomEvent('wbbm-hub:tab-loaded', {
+            detail: { tab: data.tab, panel: panel }
+        }));
     }
 
     nav.addEventListener('click', function (e) {

@@ -191,6 +191,43 @@
         });
     }
 
+    /**
+     * Run <script> tags that arrived through innerHTML.
+     *
+     * Assigning innerHTML parses scripts but never executes them, so every
+     * module that initialises itself inline (date pickers, select2, the
+     * icon picker) stayed dead after a panel swap. Re-creating each node
+     * makes the browser run it.
+     */
+    function runScripts(container) {
+        var scripts = container.querySelectorAll('script');
+
+        Array.prototype.forEach.call(scripts, function (old) {
+            var type = (old.getAttribute('type') || '').toLowerCase();
+            // Skip templates and JSON payloads; those are data, not code.
+            if (type && type !== 'text/javascript' && type !== 'application/javascript' && type !== 'module') {
+                return;
+            }
+
+            var fresh = document.createElement('script');
+            if (old.src) {
+                // An external file already on the page does not need re-running.
+                if (document.querySelector('script[src="' + old.src + '"]:not([data-wbbm-reinjected])')) {
+                    old.parentNode.removeChild(old);
+                    return;
+                }
+                fresh.src = old.src;
+                fresh.async = false;
+                fresh.setAttribute('data-wbbm-reinjected', '1');
+            } else {
+                fresh.textContent = old.textContent;
+            }
+            if (type) { fresh.type = old.type; }
+
+            old.parentNode.replaceChild(fresh, old);
+        });
+    }
+
     function paint(data) {
         var panel = panelEl();
         if (!panel) { return; }
@@ -209,6 +246,9 @@
         }
 
         setActive(data.tab);
+
+        // Inline initialisers shipped with the markup have to be run by hand.
+        runScripts(panel);
 
         // Re-run the enhancements that ran on first paint.
         init();
@@ -355,6 +395,49 @@
         }, 4000);
     }
 
+    /**
+     * Re-render the current tab from an in-panel filter/search form.
+     *
+     * The form's own fields become the query string, so server-side filtering
+     * behaves exactly as it would after a normal navigation — only without
+     * one.
+     */
+    function submitFilter(form) {
+        var panel = panelEl();
+        var tab = currentTab();
+        if (!panel || !tab) { form.submit(); return; }
+
+        var params = new URLSearchParams();
+        new FormData(form).forEach(function (v, k) {
+            // Routing keys are owned by the hub, not the module's form.
+            if (k === 'page' || k === 'post_type' || k === 'tab') { return; }
+            if (v === '' || v === null) { return; }
+            params.append(k, v);
+        });
+        var query = params.toString();
+
+        panel.classList.add('is-loading');
+
+        fetchTab(tab, query)
+            .then(function (d) {
+                panel.classList.remove('is-loading');
+                paint(d);
+
+                var url = new URL(window.location.href);
+                var keep = new URLSearchParams();
+                keep.set('post_type', new URLSearchParams(window.location.search).get('post_type') || 'wbbm_bus');
+                keep.set('page', cfg.page);
+                keep.set('tab', tab);
+                params.forEach(function (v, k) { keep.append(k, v); });
+                url.search = keep.toString();
+                window.history.pushState({ wbbmTab: tab, wbbmQuery: query }, '', url.toString());
+            })
+            .catch(function () {
+                panel.classList.remove('is-loading');
+                form.submit();   // Fall back to a normal navigation.
+            });
+    }
+
     function initForms() {
         if (!cfg || !cfg.action) { return; }
         var panel = panelEl();
@@ -367,6 +450,15 @@
 
             var method = (form.getAttribute('method') || 'get').toLowerCase();
             var action = form.getAttribute('action') || '';
+
+            /* A GET form inside a panel is a filter or a search. Re-render the
+               tab with its values instead of navigating: the module reads them
+               straight from $_GET, so results appear in place. */
+            if (method === 'get') {
+                e.preventDefault();
+                submitFilter(form);
+                return;
+            }
 
             // Only take over POSTs to admin-post.php; everything else keeps
             // its normal behaviour so nothing subtle breaks.
