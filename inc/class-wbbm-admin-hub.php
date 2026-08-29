@@ -433,13 +433,13 @@ abstract class WBBM_Admin_Hub
     /**
      * Screens this plugin owns, for the plugin-wide theme layer.
      *
-     * Covers hubs, the bus/shuttle post types and their edit screens.
+     * Covers hubs, the bus post types and their edit screens.
      */
     public static function is_plugin_screen()
     {
         $screen = function_exists('get_current_screen') ? get_current_screen() : null;
         if ($screen) {
-            $types = array('wbbm_bus', 'wbbm_shuttle', 'wbbm_vehicle', 'wbbm_booking');
+            $types = array('wbbm_bus', 'wbbm_vehicle', 'wbbm_booking');
             if (in_array($screen->post_type, $types, true)) {
                 return true;
             }

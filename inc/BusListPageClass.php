@@ -79,8 +79,8 @@ class BusListPageClass
             return;
         }
 
-        wp_enqueue_style('shuttle-list-css', WBTM_PLUGIN_URL . 'assets/admin/shuttle-list.css', array(), time());
-        wp_enqueue_script('shuttle-list-js', WBTM_PLUGIN_URL . 'assets/admin/shuttle-list.js', array('jquery'), time(), true);
+        wp_enqueue_style('wbbm-list-css', WBTM_PLUGIN_URL . 'assets/admin/wbbm-list-tables.css', array(), time());
+        wp_enqueue_script('wbbm-list-js', WBTM_PLUGIN_URL . 'assets/admin/wbbm-list-tables.js', array('jquery'), time(), true);
     }
 
     /**
@@ -227,10 +227,10 @@ class BusListPageClass
         ));
 
         ?>
-        <div class="wrap shuttle-list-wrap">
-            <div class="shuttle-list-container-fullwidth">
+        <div class="wrap wbbm-list-wrap">
+            <div class="wbbm-list-container-fullwidth">
                 <!-- Header Section -->
-                <div class="shuttle-list-header">
+                <div class="wbbm-list-header">
                     <div class="header-left">
                         <div class="brand-logo">
                             <span class="dashicons fas fa-bus"></span>
@@ -247,8 +247,8 @@ class BusListPageClass
                 </div>
 
                 <!-- Filters Card -->
-                <div class="shuttle-filters-card">
-                    <form method="get" action="<?php echo admin_url('edit.php'); ?>" id="shuttle-list-filter-form">
+                <div class="wbbm-list-filters-card">
+                    <form method="get" action="<?php echo admin_url('edit.php'); ?>" id="wbbm-list-filter-form">
                         <input type="hidden" name="post_type" value="wbbm_bus">
                         <input type="hidden" name="page" value="wbbm-bus-list">
 
@@ -287,12 +287,12 @@ class BusListPageClass
                 </div>
 
                 <!-- Table Content -->
-                <div class="shuttle-list-table-card">
-                    <table class="shuttle-modern-table">
+                <div class="wbbm-list-table-card">
+                    <table class="wbbm-list-modern-table">
                         <thead>
                             <tr>
                                 <th class="col-check"><input type="checkbox" id="select-all"></th>
-                                <th class="col-shuttle"><?php _e('Bus Name', 'bus-booking-manager'); ?></th>
+                                <th class="col-bus"><?php _e('Bus Name', 'bus-booking-manager'); ?></th>
                                 <th class="col-category"><?php _e('Category & Date', 'bus-booking-manager'); ?></th>
                                 <th class="col-stops"><?php _e('Route', 'bus-booking-manager'); ?></th>
                                 <th class="col-capacity"><?php _e('Capacity', 'bus-booking-manager'); ?></th>
@@ -349,17 +349,17 @@ class BusListPageClass
                                     ?>
                                     <tr>
                                         <td><input type="checkbox" name="bus_ids[]" value="<?php echo esc_attr($post_id); ?>"></td>
-                                        <td class="shuttle-info-cell" style="width: 250px;">
-                                            <div class="shuttle-thumb">
+                                        <td class="wbbm-list-info-cell" style="width: 250px;">
+                                            <div class="wbbm-list-thumb">
                                                 <?php if ($thumb_url) : ?>
                                                     <img src="<?php echo esc_url($thumb_url); ?>" alt="">
                                                 <?php else : ?>
                                                     <span class="dashicons dashicons-image-flip"></span>
                                                 <?php endif; ?>
                                             </div>
-                                            <div class="shuttle-details">
-                                                <div class="shuttle-title"><a href="<?php echo esc_url($edit_url); ?>"><?php the_title(); ?></a></div>
-                                                <div class="shuttle-meta" style="font-size:12px; font-weight:normal;">
+                                            <div class="wbbm-list-details">
+                                                <div class="wbbm-list-title"><a href="<?php echo esc_url($edit_url); ?>"><?php the_title(); ?></a></div>
+                                                <div class="wbbm-list-meta" style="font-size:12px; font-weight:normal;">
                                                     <?php
                                                     $bus_no = get_post_meta($post_id, 'wbbm_bus_no', true);
                                                     echo $bus_no ? __('Coach No:', 'bus-booking-manager') . ' ' . esc_html($bus_no) : __('ID:', 'bus-booking-manager') . ' ' . esc_html($post_id);
@@ -371,10 +371,10 @@ class BusListPageClass
                                             <div style="font-weight: 500; color: var(--sh-text-main); margin-bottom: 2px;">
                                                 <?php echo !empty($post_categories) ? esc_html(implode(', ', $post_categories)) : '—'; ?>
                                             </div>
-                                            <div class="shuttle-sub-meta" style="font-size:12px;"><?php echo get_the_date(); ?></div>
+                                            <div class="wbbm-list-sub-meta" style="font-size:12px;"><?php echo get_the_date(); ?></div>
                                         </td>
                                         <td>
-                                            <div class="shuttle-stops-display">
+                                            <div class="wbbm-list-stops-display">
                                                 <?php
                                                 if (!empty($route_pieces)) :
                                                     $count = count($route_pieces);
@@ -440,7 +440,7 @@ class BusListPageClass
 
                     <!-- Pagination -->
                     <?php if ($total_pages > 0) : ?>
-                        <div class="shuttle-pagination-area">
+                        <div class="wbbm-list-pagination-area">
                             <div class="pagination-info">
                                 <?php printf(__('Showing %d - %d of %d buses', 'bus-booking-manager'), max(1, $start_num), $end_num, $total_posts); ?>
                             </div>
