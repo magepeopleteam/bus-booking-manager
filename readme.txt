@@ -2,8 +2,8 @@
 Contributors: magepeopleteam, aamahin
 Tags: Bus Booking Manager, bus ticket booking for wordpress
 Requires at least: 4.5
-Stable tag: 5.0.1
-Version: 5.0.1
+Stable tag: 5.0.2
+Version: 5.0.2
 Tested up to: 6.9
 WC requires at least: 3.0
 WC tested up to: 10.0
@@ -165,6 +165,13 @@ Upload the Bus Booking Manager to your blog, Activate it, then use shortcode as 
 
 
 == Changelog ==
+
+= 5.0.2 =
+*Date - 29 August 2026*
+
+**Improvements:**
+- Consolidated bus types, stops, pickup points, features, and extension resources into a responsive Bus Configuration screen.
+- Added accessible no-JavaScript-compatible add/edit modals and capability-bound CRUD handling.
 
 = 1.0 =
 *Initial Release Date - 24 Sep 2018*
