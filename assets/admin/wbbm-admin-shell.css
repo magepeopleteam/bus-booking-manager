@@ -1688,6 +1688,27 @@ body.wbbm-admin #ttbm_add_meta_box .mpStyle [data-tabs-target]:hover {
     text-transform: uppercase;
 }
 
+.wbbm-hub-panel .wbbm-admin-customer-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* One block per seat. */
+.wbbm-hub-panel .wbbm-admin-customer-row + .wbbm-admin-customer-row {
+    padding-top: 12px;
+    border-top: 1px dashed var(--wbbm-line);
+}
+
+.wbbm-hub-panel .wbbm-admin-customer-no {
+    margin-bottom: 8px;
+    color: var(--wbbm-accent-dark);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+}
+
 .wbbm-hub-panel .wbbm-admin-customer-grid {
     display: grid;
     gap: 12px;
@@ -1717,4 +1738,30 @@ body.wbbm-admin #ttbm_add_meta_box .mpStyle [data-tabs-target]:hover {
     .wbbm-hub-panel .wbbm-admin-customer-grid {
         grid-template-columns: 1fr;
     }
+}
+
+/* Sub total and Book Now sat flush against each other. The row that holds
+   them is .mage_flex_equal; .mage_book_now is both the wrapper and the
+   button, so the wrapper is addressed as a direct child of that row. */
+.wbbm-hub-panel .mage_book_now_area .mage_flex_equal {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px;
+}
+
+.wbbm-hub-panel .mage_book_now_area .mage_sub_price {
+    flex: 1 1 180px;
+    margin: 0;
+}
+
+.wbbm-hub-panel .mage_book_now_area > .mage_flex_equal > div.mage_book_now {
+    flex: 0 0 auto;
+    margin: 0 0 0 auto;
+}
+
+.wbbm-hub-panel .mage_book_now_area button.mage_book_now {
+    min-width: 190px;
+    min-height: 44px;
+    padding: 10px 26px;
 }

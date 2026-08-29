@@ -107,7 +107,13 @@
     })
     // Extra Bag price qty change END
 
-    $('button.mage_book_now').on('click', function () {
+    /*
+     * Delegated: the button is type="button" and does nothing on its own --
+     * this handler validates and then triggers the hidden submit. Bound
+     * directly it was lost whenever results were re-rendered in place, which
+     * left Book Now completely inert after an in-page search.
+     */
+    $(document).on('click', 'button.mage_book_now', function () {
 
         $(this).parents('.mage_search_list').find('.mage-seat-available').hide();
         let ticket = 0;
