@@ -295,7 +295,15 @@ if (!class_exists('WBBM_Pricing_Routing')) {
             if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'wbbm_admin_ajax_nonce')) {
                 wp_send_json_error('Invalid nonce!');
             }
-            $post_id = isset($_POST['post_id']) ? sanitize_text_field(wp_unslash($_POST['post_id'])) : '';
+            $post_id = isset($_POST['post_id']) ? absint($_POST['post_id']) : 0;
+            /*
+             * The nonce alone was the only gate here, and it is printed on every
+             * admin screen -- including ones a subscriber can reach. A nonce says
+             * the request is genuine, not that the sender may edit this bus.
+             */
+            if (!current_user_can('edit_posts') || ($post_id && !current_user_can('edit_post', $post_id))) {
+                wp_send_json_error(__('Unauthorized', 'bus-booking-manager'), 403);
+            }
             $places = isset($_POST['places']) ? array_map('sanitize_text_field', wp_unslash($_POST['places'])) : [];
             $types = isset($_POST['types']) ? array_map('sanitize_text_field', wp_unslash($_POST['types'])) : [];
             $route_infos = [];
