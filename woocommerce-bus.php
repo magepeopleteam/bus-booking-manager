@@ -64,6 +64,37 @@ function wbbm_booking_list_table_create()
 }
 // run the install scripts upon plugin activation
 register_activation_hook(__FILE__, 'wbbm_booking_list_table_create');
+// Stamp written once the installer has run; bump to re-run it after a release.
+define('WBBM_INSTALL_VERSION', '5.0.2');
+/**
+ * Run the installer on sites where the activation hook never fired.
+ *
+ * register_activation_hook() only runs when a plugin is switched on explicitly. Copying files
+ * over an already-active plugin, importing a database and cloning a staging site all skip it,
+ * which leaves the booking table and the front-end pages missing with the plugin reporting
+ * itself as active. Re-check once per release instead, the way WBBM_Pro_Schema does.
+ *
+ * @return void
+ */
+function wbbm_maybe_install()
+{
+    if (WBBM_INSTALL_VERSION === get_option('wbbm_installed_version')) {
+        return;
+    }
+    // A concurrent request may already be installing, and creating the pages twice would
+    // leave duplicates behind. The lock expires on its own so a failed run is retried
+    // rather than blocking the installer for good.
+    if (get_transient('wbbm_install_lock')) {
+        return;
+    }
+    set_transient('wbbm_install_lock', 1, MINUTE_IN_SECONDS);
+
+    wbbm_booking_list_table_create();
+
+    update_option('wbbm_installed_version', WBBM_INSTALL_VERSION, false);
+    delete_transient('wbbm_install_lock');
+}
+add_action('plugins_loaded', 'wbbm_maybe_install', 20);
 // phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound
 define('WBTM_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('WBTM_PLUGIN_DIR', plugin_dir_path(__FILE__));
