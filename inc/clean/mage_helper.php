@@ -565,9 +565,9 @@ function mage_seat_price($id, $start, $end, $seat_type, $roundtrip = false)
 
                 if ($roundtrip) {
                     $roundtrip_price = $ticket_type . '_roundtrip';
-                    return isset($val[$roundtrip_price]) && $val[$roundtrip_price] > 0 ? $val[$roundtrip_price] : (isset($val[$ticket_type]) ? $val[$ticket_type] : 0);
+                    return isset($val[$roundtrip_price]) && $val[$roundtrip_price] > 0 ? (float) $val[$roundtrip_price] : (isset($val[$ticket_type]) ? (float) $val[$ticket_type] : 0);
                 } else {
-                    return isset($val[$ticket_type]) && $val[$ticket_type] > 0 ? $val[$ticket_type] : 0;
+                    return isset($val[$ticket_type]) && $val[$ticket_type] > 0 ? (float) $val[$ticket_type] : 0;
                 }
             }
         }
