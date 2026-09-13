@@ -85,6 +85,10 @@ function wbbm_hidden_input_field($name, $value)
 
 function wbbm_cart_qty($name)
 {
+    if (!class_exists('MP_Global_Function') || !MP_Global_Function::wbbm_use_wc() || !function_exists('WC') || !WC()->cart) {
+        return 0;
+    }
+
     $qty_type = ($name == 'adult_quantity') ? 'wbbm_total_adult_qt' : 'wbbm_total_child_qt';
     $product_id = get_the_id();
     $cart = WC()->cart->get_cart();
@@ -383,7 +387,7 @@ function mage_off_day_check($return)
 // Check if product is already in cart
 function mage_find_product_in_cart()
 {
-    if (!is_admin()) {
+    if (!is_admin() && class_exists('MP_Global_Function') && MP_Global_Function::wbbm_use_wc() && function_exists('WC') && WC()->cart) {
         $product_id = get_the_ID();
         $cart = WC()->cart->get_cart();
         foreach ($cart as $cart_item) {
@@ -409,6 +413,9 @@ function mage_available_seat($date)
 function wbbm_get_cart_item($bus_id, $date_var)
 {
     $wbbm_cart_qty = 0;
+    if (!class_exists('MP_Global_Function') || !MP_Global_Function::wbbm_use_wc() || !function_exists('WC') || !WC()->cart) {
+        return $wbbm_cart_qty;
+    }
     $cart_items = WC()->cart->get_cart();
     if (count($cart_items) > 0) {
         foreach ($cart_items as $cart_item) {
@@ -928,7 +935,7 @@ function wbbm_extra_services_section($bus_id)
                                         <input type="hidden" name='extra_service_name[]' value='<?php echo esc_attr($field['option_name']); ?>'>
                                     <?php }
                                 } else {
-                                    echo wp_kses_post(wc_price(wbbm_get_price_including_tax($bus_id, $field['option_price'])));
+                                    echo wp_kses_post(wbbm_price_html(wbbm_get_price_including_tax($bus_id, $field['option_price'])));
 
                                     if ($ext_left > 0) { ?>
                                         <p style="display: none;" class="price_jq"><?php echo esc_html($data_price > 0 ? $data_price : 0); ?></p>
@@ -958,11 +965,7 @@ function wbbm_get_price_including_tax($bus, $price, $args = array())
         'qty' => '',
         'price' => '',
     ));
-
-    $_product = get_post_meta($bus, 'link_wc_product', true) ? get_post_meta($bus, 'link_wc_product', true) : $bus;
     $qty = !empty($args['qty']) ? max(0.0, (float)$args['qty']) : 1;
-    $product = wc_get_product($_product);
-    $tax_with_price = get_option('woocommerce_tax_display_shop');
 
     if ($price === '') {
         return '';
@@ -971,6 +974,16 @@ function wbbm_get_price_including_tax($bus, $price, $args = array())
     }
 
     $line_price = $price * $qty;
+
+    // WooCommerce absent: no tax classes/rates to apply against -- the
+    // line price itself is the answer.
+    if (!class_exists('MP_Global_Function') || !MP_Global_Function::wbbm_use_wc()) {
+        return $line_price;
+    }
+
+    $_product = get_post_meta($bus, 'link_wc_product', true) ? get_post_meta($bus, 'link_wc_product', true) : $bus;
+    $product = wc_get_product($_product);
+    $tax_with_price = get_option('woocommerce_tax_display_shop');
     $return_price = $line_price;
 
     if ($product && $product->is_taxable()) {

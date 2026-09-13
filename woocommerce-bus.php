@@ -99,10 +99,23 @@ add_action('plugins_loaded', 'wbbm_maybe_install', 20);
 define('WBTM_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('WBTM_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('WBTM_PLUGIN_FILE', plugin_basename(__FILE__));
+// Defined unconditionally (moved out of the WooCommerce-active gate below):
+// admin screens that now load either way reference this constant.
+define('PLUGIN_ROOT', plugin_dir_url(__FILE__));
 include_once(ABSPATH . 'wp-admin/includes/plugin.php');
-if (is_plugin_active('woocommerce/woocommerce.php')) {
-	// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound
-    define('PLUGIN_ROOT', plugin_dir_url(__FILE__));
+// Always on, WooCommerce or not: the CPT, admin screens, shortcodes and
+// front-end booking flow no longer require WooCommerce. Only two kinds of
+// WooCommerce-only pieces stay in here rather than requiring their own
+// guard everywhere: (a) code hooked to a genuine woocommerce_* action or
+// filter, which is inert on its own -- WooCommerce is the only thing that
+// ever fires those, so nothing runs when it's absent -- and (b) the
+// hidden-linked-product / cart / order-status functions defined below,
+// none of which is ever called except from those same WooCommerce-only
+// hooks. Everything reachable from a non-WooCommerce-only hook (admin
+// screens, shortcodes, templates, wp_head/admin_head, template_redirect)
+// is guarded at the call site via MP_Global_Function::wbbm_use_wc() /
+// function_exists() / class_exists() instead.
+if (true) {
     require_once(dirname(__FILE__) . "/inc/class-mage-settings.php");
     require_once(dirname(__FILE__) . "/inc/wbbm_admin_settings.php");
     require_once(dirname(__FILE__) . "/inc/wbbm_cpt.php");
@@ -639,7 +652,12 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
                 $stores['product'] = 'WBBM_Product_Data_Store_CPT';
                 return $stores;
             }
-        } else {
+        } elseif (function_exists('wc_not_loaded')) {
+            // Only a real thing when WooCommerce itself is loaded but this
+            // one class is missing (e.g. a partial WooCommerce upgrade).
+            // When WooCommerce isn't installed at all, wc_not_loaded()
+            // doesn't exist either -- the plugin's own Quick Setup screen
+            // and per-bus Payment Method warning already cover that case.
             add_action('admin_notices', 'wc_not_loaded');
         }
     }
@@ -1903,6 +1921,12 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
     }
     function wbbm_on_post_publish($post_id, $post, $update)
     {
+        // Hooked to the generic wp_insert_post action (fires for every
+        // post, not just buses). A hidden linked product only makes sense
+        // for a bus that's actually set to WooCommerce Payment.
+        if ($post->post_type !== 'wbbm_bus' || !MP_Global_Function::wbbm_bus_wants_wc($post_id)) {
+            return;
+        }
         if ($post->post_type == 'wbbm_bus' && $post->post_status == 'publish' && empty(get_post_meta($post_id, 'check_if_run_once'))) {
             // ADD THE FORM INPUT TO $new_post ARRAY
             $new_post = array(
@@ -1955,6 +1979,11 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
     add_action('save_post', 'wbbm_wc_link_product_on_save', 99, 1);
     function wbbm_wc_link_product_on_save($post_id)
     {
+        // Hooked to the generic save_post action -- same reasoning as
+        // wbbm_on_post_publish() above.
+        if (get_post_type($post_id) !== 'wbbm_bus' || !MP_Global_Function::wbbm_bus_wants_wc($post_id)) {
+            return;
+        }
         if (get_post_type($post_id) == 'wbbm_bus') {
             //   if ( ! isset( $_POST['mep_event_reg_btn_nonce'] ) ||
             //   ! wp_verify_nonce( $_POST['mep_event_reg_btn_nonce'], 'mep_event_reg_btn_nonce' ) )
@@ -2017,9 +2046,6 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
             $query->set('tax_query', $tax_query);
         }
     }
-} else {
-    require_once WBTM_PLUGIN_DIR . '/inc/WBTM_Quick_Setup.php';
-    add_action('activated_plugin', 'wbbm_activation_redirect_setup', 90, 1);
 }
 function wbbm_activation_redirect($plugin)
 {
@@ -2027,15 +2053,6 @@ function wbbm_activation_redirect($plugin)
     if ($plugin == plugin_basename(__FILE__) && $wbbm_quick_setup_done != 'yes') {
         //require_once(dirname(__FILE__) . "/inc/wbbm_dummy_import.php");
         wp_safe_redirect(esc_url(admin_url('edit.php?post_type=wbbm_bus&page=wbbm_init_quick_setup')));
-        exit();
-    }
-}
-function wbbm_activation_redirect_setup($plugin)
-{
-    $wbbm_quick_setup_done = get_option('wbbm_quick_setup_done');
-    if ($plugin == plugin_basename(__FILE__) && $wbbm_quick_setup_done != 'yes') {
-        //require_once(dirname(__FILE__) . "/inc/wbbm_dummy_import.php");
-        wp_safe_redirect(esc_url(admin_url('admin.php?page=wbbm_init_quick_setup')));
         exit();
     }
 }

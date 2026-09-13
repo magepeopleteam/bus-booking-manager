@@ -236,7 +236,10 @@ class BusListPageClass
                             <span class="dashicons fas fa-bus"></span>
                         </div>
                         <div class="header-title-area">
-                            <h2><?php _e('All Bus Services', 'bus-booking-manager'); ?></h2>
+                            <h2>
+                                <?php _e('All Bus Services', 'bus-booking-manager'); ?>
+                                <span class="list-count-badge"><?php echo esc_html(number_format_i18n($total_posts)); ?></span>
+                            </h2>
                         </div>
                     </div>
                     <div class="header-right">
@@ -253,7 +256,7 @@ class BusListPageClass
                         <input type="hidden" name="page" value="wbbm-bus-list">
 
                         <div class="filters-row">
-                            <div class="filter-left" style="flex-grow:initial">
+                            <div class="filter-left">
                                 <div class="filter-group search-group">
                                     <span class="dashicons dashicons-search"></span>
                                     <input type="text" name="s" value="<?php echo esc_attr($s); ?>" placeholder="<?php _e('Search bus...', 'bus-booking-manager'); ?>" class="form-control">
@@ -277,7 +280,7 @@ class BusListPageClass
                                     <?php _e('Filter', 'bus-booking-manager'); ?>
                                 </button>
                                 <?php if ($s || $category || $stop) : ?>
-                                    <a href="<?php echo admin_url('edit.php?post_type=wbbm_bus&page=wbbm-bus-list'); ?>" class="btn btn-outline btn-sm" style="text-decoration:none;">
+                                    <a href="<?php echo admin_url('edit.php?post_type=wbbm_bus&page=wbbm-bus-list'); ?>" class="btn btn-outline btn-sm">
                                         <?php _e('Clear', 'bus-booking-manager'); ?>
                                     </a>
                                 <?php endif; ?>
@@ -288,6 +291,7 @@ class BusListPageClass
 
                 <!-- Table Content -->
                 <div class="wbbm-list-table-card">
+                    <div class="wbbm-list-table-scroll">
                     <table class="wbbm-list-modern-table">
                         <thead>
                             <tr>
@@ -349,7 +353,7 @@ class BusListPageClass
                                     ?>
                                     <tr>
                                         <td><input type="checkbox" name="bus_ids[]" value="<?php echo esc_attr($post_id); ?>"></td>
-                                        <td class="wbbm-list-info-cell" style="width: 250px;">
+                                        <td class="wbbm-list-info-cell col-bus">
                                             <div class="wbbm-list-thumb">
                                                 <?php if ($thumb_url) : ?>
                                                     <img src="<?php echo esc_url($thumb_url); ?>" alt="">
@@ -359,7 +363,7 @@ class BusListPageClass
                                             </div>
                                             <div class="wbbm-list-details">
                                                 <div class="wbbm-list-title"><a href="<?php echo esc_url($edit_url); ?>"><?php the_title(); ?></a></div>
-                                                <div class="wbbm-list-meta" style="font-size:12px; font-weight:normal;">
+                                                <div class="wbbm-list-meta">
                                                     <?php
                                                     $bus_no = get_post_meta($post_id, 'wbbm_bus_no', true);
                                                     echo $bus_no ? __('Coach No:', 'bus-booking-manager') . ' ' . esc_html($bus_no) : __('ID:', 'bus-booking-manager') . ' ' . esc_html($post_id);
@@ -368,10 +372,10 @@ class BusListPageClass
                                             </div>
                                         </td>
                                         <td>
-                                            <div style="font-weight: 500; color: var(--sh-text-main); margin-bottom: 2px;">
+                                            <div class="wbbm-list-category-name">
                                                 <?php echo !empty($post_categories) ? esc_html(implode(', ', $post_categories)) : '—'; ?>
                                             </div>
-                                            <div class="wbbm-list-sub-meta" style="font-size:12px;"><?php echo get_the_date(); ?></div>
+                                            <div class="wbbm-list-sub-meta"><?php echo esc_html(get_the_date()); ?></div>
                                         </td>
                                         <td>
                                             <div class="wbbm-list-stops-display">
@@ -388,7 +392,7 @@ class BusListPageClass
                                                         </div>
                                                         <?php if ($count > 2) : ?>
                                                             <div class="stops-hidden-content">
-                                                                <div class="stops-full-list" style="margin-top: 8px;">
+                                                                <div class="stops-full-list">
                                                                     <?php echo esc_html(implode(' ➝ ', $route_pieces)); ?>
                                                                 </div>
                                                                 <button type="button" class="stops-collapse-btn"><?php _e('Collapse', 'bus-booking-manager'); ?></button>
@@ -409,6 +413,7 @@ class BusListPageClass
                                             <?php if ($total_seats > 0) : ?>
                                                 <div class="remaining-info <?php echo esc_attr($remaining_class); ?>">
                                                     <span class="count"><?php echo esc_html(number_format_i18n($remaining_seats)); ?></span>
+                                                    <span class="mini-bar"><span style="width: <?php echo esc_attr(round($remaining_ratio * 100)); ?>%"></span></span>
                                                     <span class="sub"><?php
                                                         /* translators: 1: seats sold, 2: total seats. */
                                                         echo esc_html(sprintf(__('%1$s of %2$s sold', 'bus-booking-manager'), number_format_i18n($sold_seats), number_format_i18n($total_seats)));
@@ -432,11 +437,25 @@ class BusListPageClass
                                 wp_reset_postdata(); ?>
                             <?php else : ?>
                                 <tr>
-                                    <td colspan="7" class="no-results"><?php _e('No buses found.', 'bus-booking-manager'); ?></td>
+                                    <td colspan="8" class="wbbm-list-empty-state">
+                                        <div class="empty-icon"><span class="dashicons dashicons-tickets-alt"></span></div>
+                                        <h3><?php echo $s || $category || $stop ? esc_html__('No buses match your filters', 'bus-booking-manager') : esc_html__('No buses yet', 'bus-booking-manager'); ?></h3>
+                                        <p>
+                                            <?php echo $s || $category || $stop
+                                                ? esc_html__('Try a different search term or clear the filters above.', 'bus-booking-manager')
+                                                : esc_html__('Add your first bus to start taking bookings.', 'bus-booking-manager'); ?>
+                                        </p>
+                                        <?php if (!$s && !$category && !$stop) : ?>
+                                            <a href="<?php echo esc_url(admin_url('edit.php?post_type=wbbm_bus&page=wbbm-bus-edit')); ?>" class="btn btn-primary">
+                                                <span class="dashicons dashicons-plus"></span> <?php esc_html_e('Add New Bus', 'bus-booking-manager'); ?>
+                                            </a>
+                                        <?php endif; ?>
+                                    </td>
                                 </tr>
                             <?php endif; ?>
                         </tbody>
                     </table>
+                    </div>
 
                     <!-- Pagination -->
                     <?php if ($total_pages > 0) : ?>

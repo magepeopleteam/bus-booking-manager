@@ -318,6 +318,15 @@ class BusEditPageClass
                 update_post_meta($post_id, 'wbbm_seat_available', 'off');
             }
 
+            // Payment Method: never persist "woocommerce" unless WooCommerce
+            // is actually active -- the UI already warns about this, this
+            // is the server-side enforcement of the same rule.
+            $payment_method = isset($_POST['wbbm_payment_method']) ? sanitize_key(wp_unslash($_POST['wbbm_payment_method'])) : 'offline';
+            if ($payment_method !== 'woocommerce' || !class_exists('MP_Global_Function') || !MP_Global_Function::wbbm_use_wc()) {
+                $payment_method = 'offline';
+            }
+            update_post_meta($post_id, '_wbbm_payment_method', $payment_method);
+
             // Save Route & Price (Step 2)
             if (isset($_POST['wbtm_route_place'])) {
                 $previous_cities = array_filter(array_map('trim', explode(',', (string) get_post_meta($post_id, 'wbbm_pickpoint_selected_city', true))));
@@ -791,6 +800,8 @@ class BusEditPageClass
                     </div>
                 </div>
 
+                <?php $this->render_payment_notice($post_id); ?>
+
                 <form id="bus-edit-form" method="post" action="">
                     <?php wp_nonce_field('wbbm_bus_save', 'wbbm_bus_nonce'); ?>
                     <input type="hidden" name="post_id" value="<?php echo esc_attr($post_id); ?>">
@@ -836,8 +847,11 @@ class BusEditPageClass
                                     <div class="bus-switches">
                                         <div class="switch-group">
                                             <div class="switch-label">
-                                                <strong><?php _e('Price Zero Allow', 'bus-booking-manager'); ?></strong>
-                                                <p><?php _e('Show zero price option as ticket type', 'bus-booking-manager'); ?></p>
+                                                <span class="switch-icon"><span class="dashicons dashicons-tag"></span></span>
+                                                <span>
+                                                    <strong><?php _e('Price Zero Allow', 'bus-booking-manager'); ?></strong>
+                                                    <p><?php _e('Show zero price option as ticket type', 'bus-booking-manager'); ?></p>
+                                                </span>
                                             </div>
                                             <label class="bus-switch">
                                                 <input type="checkbox" name="price_zero_allow" value="on" <?php checked($price_zero, 'on'); ?>>
@@ -846,8 +860,11 @@ class BusEditPageClass
                                         </div>
                                         <div class="switch-group">
                                             <div class="switch-label">
-                                                <strong><?php _e('Sell Off', 'bus-booking-manager'); ?></strong>
-                                                <p><?php _e('Turn off ticket selling for this bus', 'bus-booking-manager'); ?></p>
+                                                <span class="switch-icon"><span class="dashicons dashicons-controls-pause"></span></span>
+                                                <span>
+                                                    <strong><?php _e('Sell Off', 'bus-booking-manager'); ?></strong>
+                                                    <p><?php _e('Turn off ticket selling for this bus', 'bus-booking-manager'); ?></p>
+                                                </span>
                                             </div>
                                             <label class="bus-switch">
                                                 <input type="checkbox" name="sell_off" value="on" <?php checked($sell_off, 'on'); ?>>
@@ -856,8 +873,11 @@ class BusEditPageClass
                                         </div>
                                         <div class="switch-group">
                                             <div class="switch-label">
-                                                <strong><?php _e('Show Seat Available', 'bus-booking-manager'); ?></strong>
-                                                <p><?php _e('Display ticket availability status', 'bus-booking-manager'); ?></p>
+                                                <span class="switch-icon"><span class="dashicons dashicons-visibility"></span></span>
+                                                <span>
+                                                    <strong><?php _e('Show Seat Available', 'bus-booking-manager'); ?></strong>
+                                                    <p><?php _e('Display ticket availability status', 'bus-booking-manager'); ?></p>
+                                                </span>
                                             </div>
                                             <label class="bus-switch">
                                                 <input type="checkbox" name="seat_available" value="on" <?php checked($seat_avail, 'on'); ?>>
@@ -886,6 +906,8 @@ class BusEditPageClass
                                     </div>
                                     <input type="hidden" name="bus_thumbnail_id" id="bus_thumbnail_id" value="<?php echo esc_attr($thumb_id); ?>">
                                 </div>
+
+                                <?php $this->render_payment_method_card($post_id); ?>
 
                                 <div class="bus-card">
                                     <h3><?php _e('Bus Stops', 'bus-booking-manager'); ?></h3>
@@ -955,6 +977,8 @@ class BusEditPageClass
                     <button type="submit" name="save_bus" class="btn btn-primary final-save" style="display: none;"><?php _e('Final Save & Finish', 'bus-booking-manager'); ?> &checkmark;</button>
                 </div>
             </div>
+
+            <?php $this->render_payment_modal($post_id); ?>
             </form>
         </div>
         </div>
@@ -1226,10 +1250,341 @@ class BusEditPageClass
     }
 
     /**
+     * True when this bus is set to WooCommerce Payment but WooCommerce
+     * itself isn't actually usable right now -- i.e. nothing will really
+     * take a payment for it. Shared by the sidebar summary, the notice
+     * banner and the modal so all three agree on the same state.
+     */
+    private function payment_needs_attention($post_id)
+    {
+        $payment_method = $post_id ? get_post_meta($post_id, '_wbbm_payment_method', true) : '';
+        $payment_method = $payment_method === 'woocommerce' ? 'woocommerce' : 'offline';
+        $wc_ready = class_exists('MP_Global_Function') && MP_Global_Function::wbbm_use_wc();
+
+        return 'woocommerce' === $payment_method && !$wc_ready;
+    }
+
+    /**
+     * Payment Method summary card (Step 1 sidebar): shows the bus's
+     * current payment method and a Configure button that opens the modal
+     * below -- the same "small status card + popup to actually change it"
+     * split used for this in booking-and-rental-manager-for-woocommerce.
+     */
+    private function render_payment_method_card($post_id)
+    {
+        $payment_method = $post_id ? get_post_meta($post_id, '_wbbm_payment_method', true) : '';
+        $payment_method = $payment_method === 'woocommerce' ? 'woocommerce' : 'offline';
+        $is_wc = 'woocommerce' === $payment_method;
+        ?>
+        <div class="bus-card wbbm-payment-card">
+            <h3><?php _e('Payment Method', 'bus-booking-manager'); ?></h3>
+
+            <div class="wbbm-payment-summary" id="wbbm-payment-summary">
+                <span class="wbbm-payment-summary-icon" id="wbbm-payment-summary-icon">
+                    <span class="dashicons <?php echo $is_wc ? 'dashicons-cart' : 'dashicons-money-alt'; ?>"></span>
+                </span>
+                <span>
+                    <strong id="wbbm-payment-summary-label"><?php echo $is_wc ? esc_html__('WooCommerce Payment', 'bus-booking-manager') : esc_html__('Offline Payment', 'bus-booking-manager'); ?></strong>
+                    <small id="wbbm-payment-summary-sub"><?php echo $is_wc ? esc_html__('Sell tickets through WooCommerce checkout', 'bus-booking-manager') : esc_html__('Manual / bank transfer, no WooCommerce needed', 'bus-booking-manager'); ?></small>
+                </span>
+            </div>
+
+            <button type="button" class="btn btn-outline wbbm-payment-configure-btn" data-wbbm-payment-modal-open>
+                <span class="dashicons dashicons-admin-generic"></span> <?php _e('Configure', 'bus-booking-manager'); ?>
+            </button>
+        </div>
+        <?php
+    }
+
+    /**
+     * "No payment method is currently configured" banner -- shown right
+     * under the step bar, same placement/behaviour as
+     * RBFW_Payment_Settings::render_editor_payment_notice() in
+     * booking-and-rental-manager-for-woocommerce: always in the DOM so JS
+     * can slide it open/closed without a reload, just hidden when there's
+     * nothing to warn about.
+     */
+    private function render_payment_notice($post_id)
+    {
+        $hidden = !$this->payment_needs_attention($post_id);
+        ?>
+        <div class="wbbm-payment-notice" id="wbbm-payment-notice"<?php echo $hidden ? ' style="display:none;"' : ''; ?>>
+            <span class="wbbm-payment-notice__icon" aria-hidden="true">
+                <span class="dashicons dashicons-warning"></span>
+            </span>
+            <span class="wbbm-payment-notice__text">
+                <?php esc_html_e('No payment method is currently configured.', 'bus-booking-manager'); ?>
+            </span>
+            <a href="#" class="wbbm-payment-notice-link" data-wbbm-payment-modal-open>
+                <?php esc_html_e('Please configure a payment method to accept bookings.', 'bus-booking-manager'); ?>
+                <span class="dashicons dashicons-arrow-right-alt2" aria-hidden="true"></span>
+            </a>
+        </div>
+        <?php
+    }
+
+    /**
+     * Payment Method popup: the actual Offline/WooCommerce choice. Kept
+     * inside the bus-edit-form (unlike the rental plugin's version, which
+     * deliberately moves its modal outside the item editor's wrapper) so
+     * the radio inside it still posts with the rest of the normal Save —
+     * this plugin saves the whole form in one request, it doesn't have a
+     * separate real-time settings-save AJAX layer to hook into.
+     */
+    private function render_payment_modal($post_id)
+    {
+        $payment_method = $post_id ? get_post_meta($post_id, '_wbbm_payment_method', true) : '';
+        $payment_method = $payment_method === 'woocommerce' ? 'woocommerce' : 'offline';
+        $wc_ready = class_exists('MP_Global_Function') && MP_Global_Function::wbbm_use_wc();
+        ?>
+        <div class="wbbm-payment-modal" id="wbbm-payment-modal" style="display:none;">
+            <div class="wbbm-payment-modal-box">
+                <div class="wbbm-payment-modal-head">
+                    <h2><?php esc_html_e('Payment Method', 'bus-booking-manager'); ?></h2>
+                    <button type="button" class="wbbm-payment-modal-close" aria-label="<?php esc_attr_e('Close', 'bus-booking-manager'); ?>">&times;</button>
+                </div>
+                <div class="wbbm-payment-modal-body">
+                    <p class="description"><?php esc_html_e('How customers pay when they book this bus.', 'bus-booking-manager'); ?></p>
+
+                    <div class="wbbm-bm-cards">
+                        <label class="wbbm-bm-card <?php echo 'offline' === $payment_method ? 'is-selected' : ''; ?>">
+                            <input type="radio" name="wbbm_payment_method" value="offline" <?php checked($payment_method, 'offline'); ?>>
+                            <span class="wbbm-bm-card-icon"><span class="dashicons dashicons-money-alt"></span></span>
+                            <strong><?php esc_html_e('Offline Payment', 'bus-booking-manager'); ?></strong>
+                            <small><?php esc_html_e('Manual / bank transfer, no WooCommerce needed', 'bus-booking-manager'); ?></small>
+                        </label>
+
+                        <label class="wbbm-bm-card <?php echo ('woocommerce' === $payment_method ? 'is-selected' : '') . ($wc_ready ? '' : ' is-disabled'); ?>">
+                            <input type="radio" id="wbbm_payment_method_wc" name="wbbm_payment_method" value="woocommerce" <?php checked($payment_method, 'woocommerce'); ?> <?php disabled(!$wc_ready); ?>>
+                            <span class="wbbm-bm-card-icon"><span class="dashicons dashicons-cart"></span></span>
+                            <strong><?php esc_html_e('WooCommerce Payment', 'bus-booking-manager'); ?></strong>
+                            <small><?php esc_html_e('Sell tickets through WooCommerce checkout', 'bus-booking-manager'); ?></small>
+                            <?php if (!$wc_ready) : ?>
+                                <button type="button" class="wbbm-bm-card-cta" data-wbbm-wc-install>
+                                    <span class="dashicons dashicons-download"></span>
+                                    <?php esc_html_e('Requires WooCommerce — Install & Activate', 'bus-booking-manager'); ?>
+                                </button>
+                            <?php endif; ?>
+                        </label>
+                    </div>
+
+                    <?php if (!$wc_ready) : ?>
+                        <p class="wbbm-payment-modal-empty">
+                            <?php esc_html_e("WooCommerce isn't installed yet, so this bus will keep using Offline Payment until it is.", 'bus-booking-manager'); ?>
+                        </p>
+                    <?php endif; ?>
+
+                    <?php /*
+                     * Same WooCommerce Payment Methods list (enable/disable
+                     * toggles + "Configure" opening the real gateway
+                     * settings in a modal) as the global Payments settings
+                     * section -- literally the same static method, so this
+                     * popup and that section can never drift apart. Shown
+                     * only while "WooCommerce Payment" is the selected card.
+                     */ ?>
+                    <?php if (class_exists('WBBM_Settings_Hub')) : ?>
+                        <div data-mode-section="woocommerce" <?php echo 'woocommerce' === $payment_method ? '' : 'style="display:none"'; ?>>
+                            <?php WBBM_Settings_Hub::render_wc_gateway_section(); ?>
+                        </div>
+                    <?php endif; ?>
+                </div>
+                <div class="wbbm-payment-modal-foot">
+                    <button type="button" class="btn btn-primary wbbm-payment-modal-done"><?php esc_html_e('Done', 'bus-booking-manager'); ?></button>
+                </div>
+            </div>
+        </div>
+
+        <?php $this->render_wc_install_modal(); ?>
+
+        <script>
+            (function () {
+                var modal = document.getElementById('wbbm-payment-modal');
+                var notice = document.getElementById('wbbm-payment-notice');
+                var summary = document.getElementById('wbbm-payment-summary');
+                var summaryIcon = summary ? summary.querySelector('.dashicons') : null;
+                var summaryLabel = document.getElementById('wbbm-payment-summary-label');
+                var summarySub = document.getElementById('wbbm-payment-summary-sub');
+                var wcReady = <?php echo $wc_ready ? 'true' : 'false'; ?>;
+                var copy = {
+                    offline: { label: <?php echo wp_json_encode(__('Offline Payment', 'bus-booking-manager')); ?>, sub: <?php echo wp_json_encode(__('Manual / bank transfer, no WooCommerce needed', 'bus-booking-manager')); ?>, icon: 'dashicons-money-alt' },
+                    woocommerce: { label: <?php echo wp_json_encode(__('WooCommerce Payment', 'bus-booking-manager')); ?>, sub: <?php echo wp_json_encode(__('Sell tickets through WooCommerce checkout', 'bus-booking-manager')); ?>, icon: 'dashicons-cart' }
+                };
+                if (!modal) { return; }
+
+                function openModal(e) {
+                    if (e) { e.preventDefault(); }
+                    modal.style.display = 'flex';
+                }
+                function closeModal() {
+                    modal.style.display = 'none';
+                }
+                function syncFromSelection() {
+                    var checked = modal.querySelector('input[name="wbbm_payment_method"]:checked');
+                    var mode = checked ? checked.value : 'offline';
+
+                    modal.querySelectorAll('.wbbm-bm-card').forEach(function (card) {
+                        var input = card.querySelector('input[name="wbbm_payment_method"]');
+                        card.classList.toggle('is-selected', !!input && input.value === mode);
+                    });
+
+                    modal.querySelectorAll('[data-mode-section]').forEach(function (section) {
+                        section.style.display = section.getAttribute('data-mode-section') === mode ? '' : 'none';
+                    });
+
+                    if (summaryLabel && copy[mode]) {
+                        summaryLabel.textContent = copy[mode].label;
+                        summarySub.textContent = copy[mode].sub;
+                        if (summaryIcon) {
+                            summaryIcon.className = 'dashicons ' + copy[mode].icon;
+                        }
+                    }
+
+                    if (notice) {
+                        var needsAttention = mode === 'woocommerce' && !wcReady;
+                        notice.style.display = needsAttention ? '' : 'none';
+                    }
+                }
+
+                document.querySelectorAll('[data-wbbm-payment-modal-open]').forEach(function (trigger) {
+                    trigger.addEventListener('click', openModal);
+                });
+                modal.querySelector('.wbbm-payment-modal-close').addEventListener('click', closeModal);
+                modal.querySelector('.wbbm-payment-modal-done').addEventListener('click', closeModal);
+                modal.addEventListener('click', function (e) {
+                    if (e.target === modal) { closeModal(); }
+                });
+                document.addEventListener('keydown', function (e) {
+                    if (e.key === 'Escape' && modal.style.display !== 'none') { closeModal(); }
+                });
+                modal.querySelectorAll('input[name="wbbm_payment_method"]').forEach(function (input) {
+                    input.addEventListener('change', syncFromSelection);
+                });
+            })();
+        </script>
+        <?php
+    }
+
+    /**
+     * "Requires WooCommerce" install/activate flow: installs (if needed)
+     * and activates WooCommerce over AJAX with a progress modal, instead
+     * of sending the admin off to the Quick Setup page. No client-side
+     * timeout is set on the request, and the server side raises its own
+     * execution limit for the duration of the install -- a slow download
+     * shouldn't get cut off.
+     */
+    private function render_wc_install_modal()
+    {
+        ?>
+        <div class="wbbm-wc-install-modal" id="wbbm-wc-install-modal">
+            <div class="wbbm-wc-install-box">
+                <div class="wbbm-wc-install-icon"><span class="dashicons dashicons-download"></span></div>
+                <h3><?php esc_html_e('Installing WooCommerce', 'bus-booking-manager'); ?></h3>
+                <p><?php esc_html_e("This can take a moment on a slow connection -- don't close this window.", 'bus-booking-manager'); ?></p>
+                <div class="wbbm-wc-install-progress-track"><div class="wbbm-wc-install-progress-bar" id="wbbm-wc-install-bar"></div></div>
+                <div class="wbbm-wc-install-meta">
+                    <span class="wbbm-wc-install-status" id="wbbm-wc-install-status"><?php esc_html_e('Contacting WordPress.org…', 'bus-booking-manager'); ?></span>
+                    <span class="wbbm-wc-install-pct" id="wbbm-wc-install-pct">0%</span>
+                </div>
+            </div>
+        </div>
+        <script>
+            (function () {
+                var modal = document.getElementById('wbbm-wc-install-modal');
+                var bar = document.getElementById('wbbm-wc-install-bar');
+                var status = document.getElementById('wbbm-wc-install-status');
+                var pct = document.getElementById('wbbm-wc-install-pct');
+                if (!modal || !bar || !status) { return; }
+
+                document.querySelectorAll('[data-wbbm-wc-install]').forEach(function (btn) {
+                    btn.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        if (btn.disabled) { return; }
+                        btn.disabled = true;
+
+                        modal.classList.add('is-open');
+                        bar.classList.remove('is-done');
+                        status.className = 'wbbm-wc-install-status';
+
+                        // There's no chunked/byte-level progress available from
+                        // one plain admin-ajax call, so this ticks a simulated
+                        // percentage through named stages while the real
+                        // request is in flight, holding just short of 100%
+                        // until the actual response lands -- it never fakes
+                        // "done" before the server says so.
+                        var stages = [
+                            { pct: 25, text: <?php echo wp_json_encode(__('Downloading WooCommerce…', 'bus-booking-manager')); ?> },
+                            { pct: 55, text: <?php echo wp_json_encode(__('Installing WooCommerce…', 'bus-booking-manager')); ?> },
+                            { pct: 80, text: <?php echo wp_json_encode(__('Activating WooCommerce…', 'bus-booking-manager')); ?> }
+                        ];
+                        var current = 4;
+                        var stageIdx = 0;
+                        status.textContent = <?php echo wp_json_encode(__('Contacting WordPress.org…', 'bus-booking-manager')); ?>;
+                        bar.style.width = current + '%';
+                        if (pct) { pct.textContent = current + '%'; }
+
+                        var tick = setInterval(function () {
+                            var ceiling = stageIdx < stages.length ? stages[stageIdx].pct : 92;
+                            if (current < ceiling) {
+                                current += 1;
+                                bar.style.width = current + '%';
+                                if (pct) { pct.textContent = current + '%'; }
+                            } else if (stageIdx < stages.length) {
+                                status.textContent = stages[stageIdx].text;
+                                stageIdx++;
+                            }
+                        }, 80);
+
+                        var xhr = new XMLHttpRequest();
+                        // No xhr.timeout is set on purpose -- this can run long.
+                        xhr.open('POST', <?php echo wp_json_encode(admin_url('admin-ajax.php')); ?>, true);
+                        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                        xhr.onload = function () {
+                            clearInterval(tick);
+                            var res = null;
+                            try { res = JSON.parse(xhr.responseText); } catch (err) { /* leave res null */ }
+                            btn.disabled = false;
+                            if (res && res.success) {
+                                bar.classList.add('is-done');
+                                if (pct) { pct.textContent = '100%'; }
+                                status.className = 'wbbm-wc-install-status is-success';
+                                status.textContent = (res.data && res.data.message) || <?php echo wp_json_encode(__('Done! Reloading…', 'bus-booking-manager')); ?>;
+                                setTimeout(function () { window.location.reload(); }, 900);
+                            } else {
+                                status.className = 'wbbm-wc-install-status is-error';
+                                status.textContent = (res && res.data && res.data.message) || <?php echo wp_json_encode(__('Something went wrong. Please try again.', 'bus-booking-manager')); ?>;
+                            }
+                        };
+                        xhr.onerror = function () {
+                            clearInterval(tick);
+                            btn.disabled = false;
+                            status.className = 'wbbm-wc-install-status is-error';
+                            status.textContent = <?php echo wp_json_encode(__('Connection error. Please try again.', 'bus-booking-manager')); ?>;
+                        };
+                        xhr.send('action=wbbm_install_activate_woocommerce&nonce=' + encodeURIComponent(<?php echo wp_json_encode(wp_create_nonce('wbbm_wc_install')); ?>));
+                    });
+                });
+            })();
+        </script>
+        <?php
+    }
+
+    /**
      * Render Step 5: Tax
      */
     private function render_step_5($post_id)
     {
+        if (!class_exists('MP_Global_Function') || !MP_Global_Function::wbbm_use_wc()) {
+            ?>
+            <div class="bus-edit-content">
+                <div class="bus-card">
+                    <h3><?php _e('Tax Configuration', 'bus-booking-manager'); ?></h3>
+                    <p><?php _e('Tax settings are managed through WooCommerce and only apply to buses set to WooCommerce Payment. Install and activate WooCommerce to configure tax classes.', 'bus-booking-manager'); ?></p>
+                </div>
+            </div>
+            <?php
+            return;
+        }
+
         $tax_status = get_post_meta($post_id, 'wbtm_bus_tax_status', true);
         $tax_status = $tax_status !== '' ? $tax_status : get_post_meta($post_id, '_tax_status', true);
         $tax_status = $tax_status !== '' ? $tax_status : 'none';

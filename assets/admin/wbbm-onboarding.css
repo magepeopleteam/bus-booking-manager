@@ -1,0 +1,283 @@
+/*
+ * Onboarding / Quick Setup screen.
+ * Scoped entirely under .wbbm-onboard-* so it can be loaded admin-wide
+ * (like the rest of this plugin's admin assets) without touching any
+ * other screen.
+ */
+
+.wbbm-onboard-page {
+    background: radial-gradient(circle at 15% 10%, #fff4e8 0%, rgba(255, 244, 232, 0) 45%),
+        radial-gradient(circle at 85% 0%, #fde9d8 0%, rgba(253, 233, 216, 0) 40%),
+        linear-gradient(135deg, #fff8f2 0%, #fef3ec 45%, #fdf0f7 100%);
+    padding: 40px 20px;
+    min-height: calc(100vh - 100px);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+.wbbm-onboard-card {
+    background: var(--color_white, #fff);
+    width: 100%;
+    max-width: 760px;
+    margin: 0 auto;
+    border-radius: 18px;
+    box-shadow: 0 1px 2px rgba(23, 32, 51, .04), 0 24px 48px -12px rgba(23, 32, 51, .12);
+    padding: 44px 48px 32px;
+}
+
+@media only screen and (max-width: 700px) {
+    .wbbm-onboard-page { padding: 20px 12px; }
+    .wbbm-onboard-card { padding: 28px 20px 24px; border-radius: 14px; }
+}
+
+.wbbm-onboard-svg {
+    display: block;
+    flex: 0 0 auto;
+}
+
+/* ---- Brand header ---- */
+.wbbm-onboard-brand {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 28px;
+}
+
+.wbbm-onboard-brand .wbbm-onboard-logo {
+    width: 34px;
+    height: 34px;
+    border-radius: 9px;
+    background: linear-gradient(135deg, var(--color_theme, #f97316), #fb923c);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    box-shadow: 0 6px 14px rgba(249, 115, 22, .28);
+}
+
+.wbbm-onboard-brand span.wbbm-onboard-brand-name {
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--d_color, #172033);
+    letter-spacing: -.01em;
+}
+
+/* ---- Hero ---- */
+.wbbm-onboard-hero {
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.wbbm-onboard-hero h2 {
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: -.01em;
+    color: var(--d_color, #172033);
+    margin-bottom: 10px;
+}
+
+.wbbm-onboard-hero p {
+    font-size: 15px;
+    color: #64748b;
+    max-width: 480px;
+    margin: 0 auto;
+}
+
+/* ---- Feature grid ---- */
+.wbbm-onboard-features {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-bottom: 24px;
+}
+
+@media only screen and (max-width: 640px) {
+    .wbbm-onboard-features { grid-template-columns: 1fr; }
+}
+
+.wbbm-onboard-feature {
+    background: #faf7f4;
+    border: 1px solid #f1e7dd;
+    border-radius: 14px;
+    padding: 20px 16px;
+    text-align: center;
+}
+
+.wbbm-onboard-feature .wbbm-onboard-feature-icon {
+    width: 42px;
+    height: 42px;
+    margin: 0 auto 12px;
+    border-radius: 11px;
+    background: #fff0e2;
+    color: var(--color_theme, #f97316);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 17px;
+}
+
+.wbbm-onboard-feature h4 {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--d_color, #172033);
+    margin-bottom: 4px;
+}
+
+.wbbm-onboard-feature p {
+    font-size: 12.5px;
+    color: #7a8296;
+    line-height: 1.4;
+    margin: 0;
+}
+
+/* ---- WooCommerce status card ---- */
+.wbbm-onboard-woo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin-bottom: 28px;
+}
+
+.wbbm-onboard-woo-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: var(--d_color, #172033);
+}
+
+.wbbm-onboard-woo-label .wbbm-onboard-woo-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    background: #ecf3ff;
+    color: #6148ba;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    flex: 0 0 auto;
+}
+
+.wbbm-onboard-woo-label strong { font-weight: 600; }
+.wbbm-onboard-woo-label small { display: block; color: #7a8296; font-weight: 400; font-size: 12px; }
+
+.wbbm-onboard-woo .textSuccess {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.wbbm-onboard-woo-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    flex: 0 0 auto;
+    border: none;
+    border-radius: 999px;
+    padding: 9px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: transform .12s ease, box-shadow .12s ease;
+}
+
+.wbbm-onboard-woo-btn svg {
+    width: 15px;
+    height: 15px;
+}
+
+.wbbm-onboard-woo-btn:hover {
+    transform: translateY(-1px);
+}
+
+.wbbm-onboard-woo-btn-install {
+    background: linear-gradient(135deg, #f59e0b, #ea580c);
+    color: #fff;
+    box-shadow: 0 6px 14px rgba(234, 88, 12, .28);
+}
+
+.wbbm-onboard-woo-btn-install:hover {
+    color: #fff;
+    box-shadow: 0 8px 18px rgba(234, 88, 12, .34);
+}
+
+.wbbm-onboard-woo-btn-activate {
+    background: linear-gradient(135deg, var(--color_theme, #f97316), #fb923c);
+    color: #fff;
+    box-shadow: 0 6px 14px rgba(249, 115, 22, .28);
+}
+
+.wbbm-onboard-woo-btn-activate:hover {
+    color: #fff;
+    box-shadow: 0 8px 18px rgba(249, 115, 22, .34);
+}
+
+/* ---- Actions ---- */
+.wbbm-onboard-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.wbbm-onboard-btn {
+    border-radius: 9px;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 11px 22px;
+    cursor: pointer;
+    transition: transform .12s ease, box-shadow .12s ease, background-color .12s ease;
+    border: 1px solid transparent;
+    line-height: 1.4;
+}
+
+.wbbm-onboard-btn-ghost {
+    background: #f1f5f9;
+    color: #475569;
+    border-color: #e2e8f0;
+}
+
+.wbbm-onboard-btn-ghost:hover { background: #e7ecf1; color: #475569; }
+
+.wbbm-onboard-btn-primary {
+    background: linear-gradient(135deg, var(--color_theme, #f97316), #fb923c);
+    color: #fff;
+    box-shadow: 0 8px 18px rgba(249, 115, 22, .28);
+}
+
+.wbbm-onboard-btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 22px rgba(249, 115, 22, .34);
+    color: #fff;
+}
+
+.wbbm-onboard-btn-primary[disabled] {
+    opacity: .5;
+    cursor: not-allowed;
+    box-shadow: none;
+    pointer-events: none;
+}
+
+/* Hide the numbered stepper + generic prev/next footer while the welcome
+   screen is showing, so it reads as one clean hero card. They reappear
+   automatically once the General/Done tabs are reached. Browsers without
+   :has() support just keep showing the stepper -- a harmless fallback. */
+.mpTabsNext:has(.tabsContentNext [data-tabs-next="#mpwpb_qs_welcome"].active) .tabListsNext,
+.mpTabsNext:has(.tabsContentNext [data-tabs-next="#mpwpb_qs_welcome"].active) > .justifyBetween {
+    display: none;
+}

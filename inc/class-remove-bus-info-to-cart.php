@@ -10,6 +10,10 @@ add_action('template_redirect', 'wbbm_cart_item_have_two_way_route', 10);
 // Main Function
 function wbbm_cart_item_have_two_way_route()
 {
+    if (!function_exists('is_cart') || !function_exists('is_checkout')) {
+        return;
+    }
+
     global $woocommerce;
 
     if (is_cart() || is_checkout()) {

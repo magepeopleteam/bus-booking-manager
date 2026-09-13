@@ -15,7 +15,10 @@ if (! class_exists('WBBM_Required_Plugins')) {
     {
         public function __construct()
         {
-            add_action('admin_notices', array($this, 'wbbm_admin_notices'));
+            // The site-wide "required plugin inactive" nag is retired --
+            // the Payment Method notice banner and the Payments settings
+            // section now cover WooCommerce status contextually, right
+            // where it matters, instead of on every admin screen.
             add_action('admin_menu', array($this, 'wbbm_plugins_admin_menu'));
             add_action('admin_init', array($this, 'wbbm_plugin_activate'));
             add_action('admin_init', array($this, 'wbbm_plugin_install'));
@@ -395,6 +398,14 @@ if (! class_exists('WBBM_Required_Plugins')) {
 
         public function wbbm_admin_notices()
         {
+            // The Quick Setup screen already has its own WooCommerce
+            // install/activate card built in -- this notice would just
+            // duplicate it there.
+            $current_page = isset($_GET['page']) ? sanitize_text_field(wp_unslash($_GET['page'])) : '';
+            if (in_array($current_page, array('wbbm_bus', 'wbbm_init_quick_setup', 'wbtm_quick_setup'), true)) {
+                return;
+            }
+
             $pdfsetting = is_array(get_option('wbbm_pdf_setting_sec')) ? maybe_unserialize(get_option('wbbm_pdf_setting_sec')) : array();
             $pdflibrary = isset($pdfsetting['wbtm_pdf_lib']) ? $pdfsetting['wbtm_pdf_lib'] : 'mpdf';
 

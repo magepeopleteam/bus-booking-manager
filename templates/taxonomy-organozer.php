@@ -48,7 +48,7 @@ $wbbm_term_id = isset($wbbm_queried_obj->term_id) ? intval($wbbm_queried_obj->te
                 <li><strong><?php esc_html_e('Total Seat:', 'bus-booking-manager'); ?></strong> <?php echo esc_html(get_post_meta(get_the_ID(), 'wbbm_total_seat', true)); ?></li>
                 <li><strong><?php esc_html_e('Start From:', 'bus-booking-manager'); ?></strong> <?php echo esc_html($start); ?></li>
                 <li><strong><?php esc_html_e('End at:', 'bus-booking-manager'); ?></strong> <?php echo esc_html($end); ?></li>
-                <li><strong><?php esc_html_e('Fare:', 'bus-booking-manager'); ?></strong> <?php echo wp_kses_post(wc_price(wbbm_get_bus_price($start, $end, $wbbm_price_arr))); ?></li>
+                <li><strong><?php esc_html_e('Fare:', 'bus-booking-manager'); ?></strong> <?php echo wp_kses_post(wbbm_price_html(wbbm_get_bus_price($start, $end, $wbbm_price_arr))); ?></li>
             </ul>
 
             <a href="<?php echo esc_url(get_permalink()); ?>" class='btn wbbm-bus-list-btn'><?php esc_html_e('Book Now', 'bus-booking-manager'); ?></a>

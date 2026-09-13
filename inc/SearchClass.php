@@ -25,7 +25,7 @@ class SearchClass extends CommonClass
 
             // Verify the nonce
             if (! $nonce || ! wp_verify_nonce($nonce, 'bus_search_nonce_action')) {
-                wc_add_notice(__('Security check failed. Please try again. 111', 'bus-booking-manager'), 'error');
+                if (function_exists('wc_add_notice')) { wc_add_notice(__('Security check failed. Please try again. 111', 'bus-booking-manager'), 'error'); }
                 return false;
             }
 
@@ -125,7 +125,7 @@ class SearchClass extends CommonClass
 
         // Verify the nonce
             if (! $nonce || ! wp_verify_nonce($nonce, 'bus_search_nonce_action')) {
-                wc_add_notice(__('Security check failed. Please try again. 222', 'bus-booking-manager'), 'error');
+                if (function_exists('wc_add_notice')) { wc_add_notice(__('Security check failed. Please try again. 222', 'bus-booking-manager'), 'error'); }
                 return false;
             }
             ?>
@@ -168,7 +168,7 @@ class SearchClass extends CommonClass
         </div>
         <div class="mage_mini_cart mage_hidden">
             <p><?php echo esc_html(wbbm_get_option('wbbm_total_text', 'wbbm_label_setting_sec', __('Total', 'bus-booking-manager'))); ?></p>
-            <p class="mage_total"><strong><span><?php echo wp_kses_post(wc_price(0)); ?></span></strong></p>
+            <p class="mage_total"><strong><span><?php echo wp_kses_post(wbbm_price_html(0)); ?></span></strong></p>
         </div>
         <?php }
         do_action('wbbm_prevent_form_resubmission');
@@ -181,7 +181,7 @@ class SearchClass extends CommonClass
 
         // Verify the nonce
         if (! $nonce || ! wp_verify_nonce($nonce, 'bus_search_nonce_action')) {
-            wc_add_notice(__('Security check failed. Please try again. 333', 'bus-booking-manager'), 'error');
+            if (function_exists('wc_add_notice')) { wc_add_notice(__('Security check failed. Please try again. 333', 'bus-booking-manager'), 'error'); }
             return false;
         }
         do_action('wbbm_woocommerce_before_single_product');
@@ -251,7 +251,7 @@ class SearchClass extends CommonClass
 
         // Verify the nonce
         if (! $nonce || ! wp_verify_nonce($nonce, 'bus_search_nonce_action')) {
-            wc_add_notice(__('Security check failed. Please try again. 44', 'bus-booking-manager'), 'error');
+            if (function_exists('wc_add_notice')) { wc_add_notice(__('Security check failed. Please try again. 44', 'bus-booking-manager'), 'error'); }
             return false;
         }
 
@@ -374,7 +374,7 @@ class SearchClass extends CommonClass
                             <?php } ?>
                         <div>
                             <strong class="mage-sm-show"><?php echo esc_html(wbbm_get_option('wbbm_fare_text', 'wbbm_label_setting_sec', __('Fare', 'bus-booking-manager'))); ?></strong>
-                            <?php echo wp_kses_post(wc_price($seat_price_adult)); ?> / <?php echo esc_html(wbbm_get_option('wbbm_seat_text', 'wbbm_label_setting_sec', __('Seat', 'bus-booking-manager'))); ?>
+                            <?php echo wp_kses_post(wbbm_price_html($seat_price_adult)); ?> / <?php echo esc_html(wbbm_get_option('wbbm_seat_text', 'wbbm_label_setting_sec', __('Seat', 'bus-booking-manager'))); ?>
                         </div>
                             <?php if (isset($general_setting['wbbm_seat_column_switch']) && $general_setting['wbbm_seat_column_switch'] == 'on') { ?>
                                 <?php if ($seat_available && $seat_available == 'on') : ?>
@@ -441,7 +441,7 @@ class SearchClass extends CommonClass
                                     </p>
                                     <p>
                                         <strong><?php echo esc_html(wbbm_get_option('wbbm_fare_text', 'wbbm_label_setting_sec', __('Fare', 'bus-booking-manager'))); ?></strong>:
-                                        <?php echo wp_kses_post(wc_price($seat_price_adult)) . ' / ' . esc_html(wbbm_get_option('wbbm_seat_text', 'wbbm_label_setting_sec', __('Seat', 'bus-booking-manager'))); ?>
+                                        <?php echo wp_kses_post(wbbm_price_html($seat_price_adult)) . ' / ' . esc_html(wbbm_get_option('wbbm_seat_text', 'wbbm_label_setting_sec', __('Seat', 'bus-booking-manager'))); ?>
                                     </p>
                                         <?php if ($in_cart) { ?>
                                         <p class="already_cart"><?php echo esc_html(wbbm_get_option('wbbm_item_in_cart_text', 'wbbm_label_setting_sec', __('Item has been added to cart', 'bus-booking-manager'))); ?></p>
@@ -455,7 +455,7 @@ class SearchClass extends CommonClass
                                         <div>
                                             <p>
                                                 <strong><?php echo esc_html(wbbm_get_option('wbbm_adult_text', 'wbbm_label_setting_sec', __('Adult :', 'bus-booking-manager'))); ?></strong>
-                                                <?php echo wp_kses_post(wc_price($seat_price_adult)); ?>/
+                                                <?php echo wp_kses_post(wbbm_price_html($seat_price_adult)); ?>/
                                                 <small><?php echo esc_html(wbbm_get_option('wbbm_ticket_text', 'wbbm_label_setting_sec', __('Ticket', 'bus-booking-manager'))); ?></small>
                                             </p>
                                         </div>
@@ -468,7 +468,7 @@ class SearchClass extends CommonClass
                                         <div class="mage_center_space">
                                             <p>
                                                 <strong><?php echo esc_html(wbbm_get_option('wbbm_child_text', 'wbbm_label_setting_sec', __('Child :', 'bus-booking-manager'))); ?></strong>
-                                                    <?php echo wp_kses_post(wc_price($seat_price_child)); ?>/
+                                                    <?php echo wp_kses_post(wbbm_price_html($seat_price_child)); ?>/
                                                 <small><?php echo esc_html(wbbm_get_option('wbbm_ticket_text', 'wbbm_label_setting_sec', __('Ticket', 'bus-booking-manager'))); ?></small>
                                             </p>
                                                 <?php mage_qty_box($seat_price_child, 'child_quantity', false); ?>
@@ -479,7 +479,7 @@ class SearchClass extends CommonClass
                                         <div class="mage_center_space">
                                             <p>
                                                 <strong><?php echo esc_html(wbbm_get_option('wbbm_infant_text', 'wbbm_label_setting_sec', __('Infant :', 'bus-booking-manager'))); ?></strong>
-                                                <?php echo wp_kses_post(wc_price($seat_price_infant)); ?>/
+                                                <?php echo wp_kses_post(wbbm_price_html($seat_price_infant)); ?>/
                                                 <small><?php echo esc_html(wbbm_get_option('wbbm_ticket_text', 'wbbm_label_setting_sec', __('Ticket', 'bus-booking-manager'))); ?></small>
                                             </p>
                                             <?php mage_qty_box($seat_price_infant, 'infant_quantity', false); ?>
@@ -490,7 +490,7 @@ class SearchClass extends CommonClass
                                         <div class="mage_center_space">
                                             <p>
                                                 <strong><?php echo esc_html(wbbm_get_option('wbbm_entire_bus_text', 'wbbm_label_setting_sec')) ? esc_html(wbbm_get_option('wbbm_entire_bus_text', 'wbbm_label_setting_sec')) : esc_html__('Entire Bus', 'bus-booking-manager') . ':'; ?></strong>
-                                                <?php echo wp_kses_post(wc_price($seat_price_entire)); ?>
+                                                <?php echo wp_kses_post(wbbm_price_html($seat_price_entire)); ?>
                                             </p>
                                             <?php echo wp_kses_post(wbbm_entire_switch($seat_price_entire, 'entire_quantity', false)); ?>
                                         </div>
@@ -594,7 +594,7 @@ class SearchClass extends CommonClass
                                         <p>
                                             <strong><?php echo esc_html(wbbm_get_option('wbbm_adult_text', 'wbbm_label_setting_sec', __('Adult', 'bus-booking-manager')));
                                             echo ':'; ?></strong>
-                                            <?php echo wp_kses_post(wc_price($seat_price_adult)); ?>/
+                                            <?php echo wp_kses_post(wbbm_price_html($seat_price_adult)); ?>/
                                             <small><?php echo esc_html(wbbm_get_option('wbbm_ticket_text', 'wbbm_label_setting_sec', __('Ticket', 'bus-booking-manager'))); ?></small>
                                         </p>
                                     </div>
@@ -607,7 +607,7 @@ class SearchClass extends CommonClass
                                         <p>
                                             <strong><?php echo esc_html(wbbm_get_option('wbbm_child_text', 'wbbm_label_setting_sec', __('Child', 'bus-booking-manager')));
                                             echo ':'; ?></strong>
-                                            <?php echo wp_kses_post(wc_price($seat_price_child)); ?>/
+                                            <?php echo wp_kses_post(wbbm_price_html($seat_price_child)); ?>/
                                             <small><?php echo esc_html(wbbm_get_option('wbbm_ticket_text', 'wbbm_label_setting_sec', __('Ticket', 'bus-booking-manager'))); ?></small>
                                         </p>
                                         <?php mage_qty_box($seat_price_child, 'child_quantity', false); ?>
@@ -619,7 +619,7 @@ class SearchClass extends CommonClass
                                         <p>
                                             <strong><?php echo esc_html(wbbm_get_option('wbbm_infant_text', 'wbbm_label_setting_sec', __('Infant', 'bus-booking-manager')));
                                             echo ':'; ?></strong>
-                                            <?php echo wp_kses_post(wc_price($seat_price_infant)); ?>/
+                                            <?php echo wp_kses_post(wbbm_price_html($seat_price_infant)); ?>/
                                             <small><?php echo esc_html(wbbm_get_option('wbbm_ticket_text', 'wbbm_label_setting_sec', __('Ticket', 'bus-booking-manager'))); ?></small>
                                         </p>
                                         <?php mage_qty_box($seat_price_infant, 'infant_quantity', false); ?>
@@ -630,7 +630,7 @@ class SearchClass extends CommonClass
                                     <div class="mage_center_space">
                                         <p>
                                             <strong><?php echo esc_html(wbbm_get_option('wbbm_entire_bus_text', 'wbbm_label_setting_sec')) ? esc_html(wbbm_get_option('wbbm_entire_bus_text', 'wbbm_label_setting_sec')) : esc_html__('Entire Bus', 'bus-booking-manager') . ':'; ?></strong>
-                                            <?php echo wp_kses_post(wc_price($seat_price_entire)); ?>
+                                            <?php echo wp_kses_post(wbbm_price_html($seat_price_entire)); ?>
                                         </p>
                                         <?php echo wp_kses_post(wbbm_entire_switch($seat_price_entire, 'entire_quantity', false)); ?>
                                     </div>
@@ -738,7 +738,7 @@ class SearchClass extends CommonClass
 
             // Verify the nonce
             if (! $nonce || ! wp_verify_nonce($nonce, 'bus_search_nonce_action')) {
-                wc_add_notice(__('Security check failed. Please try again.', 'bus-booking-manager'), 'error');
+                if (function_exists('wc_add_notice')) { wc_add_notice(__('Security check failed. Please try again.', 'bus-booking-manager'), 'error'); }
                 return false;
             }
             // Sanitize input from the query parameters
@@ -825,6 +825,7 @@ class SearchClass extends CommonClass
                 <?php
                 if ($single_bus) {
                     $end_stops = get_post_meta(get_the_ID(), 'wbbm_bus_prices', true);
+                    $end_stops = is_array($end_stops) ? $end_stops : array();
                     $end_stops = array_values(array_reduce($end_stops, function ($r, $a) {
                         if (!isset($r[$a['wbbm_bus_dp_price_stop']])) {
                             $r[$a['wbbm_bus_dp_price_stop']] = $a;
