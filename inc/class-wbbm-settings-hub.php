@@ -163,7 +163,7 @@ final class WBBM_Settings_Hub extends WBBM_Admin_Hub
         ));
     }
 
-    /** Instant-save for the Offline Payment Message fields. */
+    /** Instant-save for the Offline Payment settings: enable toggle, Heading/Instructions, and the payment-types repeater. */
     public function ajax_save_offline_message()
     {
         check_ajax_referer('wbbm_payment_ajax', 'nonce');
@@ -174,8 +174,36 @@ final class WBBM_Settings_Hub extends WBBM_Admin_Hub
 
         $settings = get_option('wbbm_payment_settings');
         $settings = is_array($settings) ? $settings : array();
+        $settings['offline_enabled'] = !empty($_POST['offline_enabled']) && 'yes' === $_POST['offline_enabled'];
         $settings['offline_label'] = isset($_POST['offline_label']) ? sanitize_text_field(wp_unslash($_POST['offline_label'])) : '';
         $settings['offline_instructions'] = isset($_POST['offline_instructions']) ? sanitize_textarea_field(wp_unslash($_POST['offline_instructions'])) : '';
+
+        // Payment-types repeater: posted as a JSON array of {label,
+        // instructions, enabled} from the client (built fresh from whatever
+        // rows are in the DOM at save time, added/removed rows included),
+        // decoded and re-sanitized field-by-field here rather than trusted
+        // as-is.
+        $methods = array();
+        $raw_methods = isset($_POST['offline_methods']) ? json_decode(wp_unslash($_POST['offline_methods']), true) : array();
+        if (is_array($raw_methods)) {
+            foreach ($raw_methods as $item) {
+                if (!is_array($item)) {
+                    continue;
+                }
+                $label = isset($item['label']) ? sanitize_text_field($item['label']) : '';
+                if ('' === $label) {
+                    continue;
+                }
+                $methods[] = array(
+                    'slug'         => sanitize_title($label),
+                    'label'        => $label,
+                    'instructions' => isset($item['instructions']) ? sanitize_text_field($item['instructions']) : '',
+                    'enabled'      => !empty($item['enabled']),
+                );
+            }
+        }
+        $settings['offline_methods'] = $methods;
+
         update_option('wbbm_payment_settings', $settings);
 
         wp_send_json_success(array(
@@ -186,14 +214,18 @@ final class WBBM_Settings_Hub extends WBBM_Admin_Hub
     /**
      * Is there actually something that can take a payment for the given
      * flow right now? WooCommerce: at least one enabled gateway. Offline:
-     * always true, it doesn't depend on anything external.
+     * the Enable toggle is on (defaults on for sites that set an offline
+     * label before this toggle existed, so existing configurations don't
+     * suddenly read as "off").
      */
     private function mode_has_gateway($mode)
     {
         if ('offline' === $mode) {
             $settings = get_option('wbbm_payment_settings');
-            $label = is_array($settings) && isset($settings['offline_label']) ? trim($settings['offline_label']) : '';
-            return '' !== $label;
+            $settings = is_array($settings) ? $settings : array();
+            $label = isset($settings['offline_label']) ? trim($settings['offline_label']) : '';
+            $enabled = !array_key_exists('offline_enabled', $settings) || !empty($settings['offline_enabled']);
+            return $enabled && '' !== $label;
         }
 
         if (!function_exists('WC') || !WC()->payment_gateways()) {
@@ -303,8 +335,6 @@ final class WBBM_Settings_Hub extends WBBM_Admin_Hub
         $settings = get_option('wbbm_payment_settings');
         $settings = is_array($settings) ? $settings : array();
         $default_method = isset($settings['default_payment_method']) && 'woocommerce' === $settings['default_payment_method'] ? 'woocommerce' : 'offline';
-        $offline_label = isset($settings['offline_label']) ? $settings['offline_label'] : __('Pay Offline', 'bus-booking-manager');
-        $offline_instructions = isset($settings['offline_instructions']) ? $settings['offline_instructions'] : '';
 
         $wc_ready = class_exists('MP_Global_Function') && MP_Global_Function::wbbm_use_wc();
         $has_gateway = $this->mode_has_gateway($default_method);
@@ -366,21 +396,7 @@ final class WBBM_Settings_Hub extends WBBM_Admin_Hub
         </div>
 
         <div data-mode-section="offline" <?php echo 'offline' === $default_method ? '' : 'style="display:none"'; ?>>
-            <h3><?php esc_html_e('Offline Payment Message', 'bus-booking-manager'); ?></h3>
-            <p class="description"><?php esc_html_e('Shown to customers who book a bus using Offline Payment. Saves instantly.', 'bus-booking-manager'); ?></p>
-
-            <div class="form-group" style="margin-bottom:16px;">
-                <label for="wbbm_offline_label" style="display:block;font-weight:600;margin-bottom:6px;"><?php esc_html_e('Heading', 'bus-booking-manager'); ?></label>
-                <input type="text" id="wbbm_offline_label" class="form-control" style="width:100%;max-width:420px;" value="<?php echo esc_attr($offline_label); ?>" placeholder="<?php esc_attr_e('e.g. Pay Offline / Bank Transfer', 'bus-booking-manager'); ?>">
-            </div>
-
-            <div class="form-group" style="margin-bottom:12px;">
-                <label for="wbbm_offline_instructions" style="display:block;font-weight:600;margin-bottom:6px;"><?php esc_html_e('Instructions', 'bus-booking-manager'); ?></label>
-                <textarea id="wbbm_offline_instructions" class="form-control" rows="4" style="width:100%;max-width:420px;" placeholder="<?php esc_attr_e('e.g. Please transfer the fare to account #1234 and bring your receipt when boarding.', 'bus-booking-manager'); ?>"><?php echo esc_textarea($offline_instructions); ?></textarea>
-            </div>
-
-            <button type="button" class="btn btn-primary" id="wbbm-save-offline-message"><?php esc_html_e('Save Changes', 'bus-booking-manager'); ?></button>
-            <span class="wbbm-pay-saved-msg" id="wbbm-offline-saved-msg"></span>
+            <?php self::render_offline_payment_section(); ?>
         </div>
 
         <style>
@@ -494,35 +510,10 @@ final class WBBM_Settings_Hub extends WBBM_Admin_Hub
             // called from the per-bus Payment Method popup, so this used to
             // be duplicated per caller; it isn't wired up again here.
 
-            var saveOfflineBtn = document.getElementById('wbbm-save-offline-message');
-            var savedMsg = document.getElementById('wbbm-offline-saved-msg');
-            if (saveOfflineBtn) {
-                saveOfflineBtn.addEventListener('click', function () {
-                    var label = document.getElementById('wbbm_offline_label').value;
-                    var instructions = document.getElementById('wbbm_offline_instructions').value;
-
-                    var xhr = new XMLHttpRequest();
-                    xhr.open('POST', ajaxUrl, true);
-                    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-                    xhr.onload = function () {
-                        var res;
-                        try { res = JSON.parse(xhr.responseText); } catch (err) { return; }
-                        if (savedMsg) {
-                            savedMsg.textContent = (res && res.success)
-                                ? <?php echo wp_json_encode(__('Saved.', 'bus-booking-manager')); ?>
-                                : <?php echo wp_json_encode(__('Could not save -- try again.', 'bus-booking-manager')); ?>;
-                            savedMsg.className = 'wbbm-pay-saved-msg' + (res && res.success ? ' is-ok' : ' is-error');
-                            setTimeout(function () { savedMsg.textContent = ''; }, 2500);
-                        }
-                        if (res && res.success && warning) {
-                            warning.style.display = res.data.has_gateway ? 'none' : '';
-                        }
-                    };
-                    xhr.send('action=wbbm_save_offline_message&nonce=' + encodeURIComponent(nonce) +
-                        '&offline_label=' + encodeURIComponent(label) +
-                        '&offline_instructions=' + encodeURIComponent(instructions));
-                });
-            }
+            // Same story for the Offline side: the Enable toggle,
+            // Heading/Instructions, the payment-types repeater, and its Save
+            // are all inside render_offline_payment_section() now -- also
+            // called from the per-bus Payment Method popup.
 
             var wcInstallModal = document.getElementById('wbbm-wc-install-modal');
             var wcInstallBar = document.getElementById('wbbm-wc-install-bar');
@@ -818,6 +809,165 @@ final class WBBM_Settings_Hub extends WBBM_Admin_Hub
             document.addEventListener('keydown', function (e) {
                 if (e.key === 'Escape' && gwModal.classList.contains('is-open')) { closeGwModal(); }
             });
+        })();
+        </script>
+        <?php
+    }
+
+    /**
+     * Offline Payment settings: Enable toggle, Heading/Instructions message,
+     * and the Payment Types repeater (add/remove named methods like Bank
+     * Transfer/Cash/Cheque, each with its own note). Static and
+     * self-contained for the same reason as render_wc_gateway_section() --
+     * used from both this Payments settings section and the per-bus Payment
+     * Method popup, so they can't drift apart.
+     */
+    public static function render_offline_payment_section()
+    {
+        $settings = get_option('wbbm_payment_settings');
+        $settings = is_array($settings) ? $settings : array();
+        $offline_label = isset($settings['offline_label']) ? $settings['offline_label'] : __('Pay Offline', 'bus-booking-manager');
+        $offline_instructions = isset($settings['offline_instructions']) ? $settings['offline_instructions'] : '';
+        $offline_enabled = !array_key_exists('offline_enabled', $settings) || !empty($settings['offline_enabled']);
+        $offline_methods = isset($settings['offline_methods']) && is_array($settings['offline_methods']) ? $settings['offline_methods'] : array();
+        ?>
+        <div class="wbbm-offline-toggle-row">
+            <div>
+                <strong><?php esc_html_e('Enable Offline Payment', 'bus-booking-manager'); ?></strong>
+                <p class="description"><?php esc_html_e('Let customers pay offline (bank transfer, cash, pay on boarding).', 'bus-booking-manager'); ?></p>
+            </div>
+            <label class="bus-switch">
+                <input type="checkbox" id="wbbm_offline_enabled" <?php checked($offline_enabled); ?>>
+                <span class="slider round"></span>
+            </label>
+        </div>
+
+        <h3><?php esc_html_e('Offline Payment Message', 'bus-booking-manager'); ?></h3>
+        <p class="description"><?php esc_html_e('Shown to customers who book a bus using Offline Payment. Saves instantly.', 'bus-booking-manager'); ?></p>
+
+        <div class="form-group" style="margin-bottom:16px;">
+            <label for="wbbm_offline_label" style="display:block;font-weight:600;margin-bottom:6px;"><?php esc_html_e('Heading', 'bus-booking-manager'); ?></label>
+            <input type="text" id="wbbm_offline_label" class="form-control" style="width:100%;max-width:420px;" value="<?php echo esc_attr($offline_label); ?>" placeholder="<?php esc_attr_e('e.g. Pay Offline / Bank Transfer', 'bus-booking-manager'); ?>">
+        </div>
+
+        <div class="form-group" style="margin-bottom:20px;">
+            <label for="wbbm_offline_instructions" style="display:block;font-weight:600;margin-bottom:6px;"><?php esc_html_e('Instructions', 'bus-booking-manager'); ?></label>
+            <textarea id="wbbm_offline_instructions" class="form-control" rows="4" style="width:100%;max-width:420px;" placeholder="<?php esc_attr_e('e.g. Please transfer the fare to account #1234 and bring your receipt when boarding.', 'bus-booking-manager'); ?>"><?php echo esc_textarea($offline_instructions); ?></textarea>
+        </div>
+
+        <div class="wbbm-pm-repeater">
+            <label style="display:block;font-weight:600;margin-bottom:6px;"><?php esc_html_e('Payment Types', 'bus-booking-manager'); ?></label>
+            <p class="description"><?php esc_html_e('The ways customers can pay you directly -- e.g. Bank Transfer, Cash, Cheque. Each can have its own note shown alongside it.', 'bus-booking-manager'); ?></p>
+
+            <div class="wbbm-pm-body" id="wbbm-offline-methods-body">
+                <?php foreach ($offline_methods as $method) : ?>
+                    <?php
+                    $m_label = isset($method['label']) ? $method['label'] : '';
+                    $m_instructions = isset($method['instructions']) ? $method['instructions'] : '';
+                    $m_enabled = !empty($method['enabled']);
+                    ?>
+                    <div class="wbbm-pm-row">
+                        <label class="bus-switch wbbm-pm-enabled-switch">
+                            <input type="checkbox" class="wbbm-pm-enabled" <?php checked($m_enabled); ?>>
+                            <span class="slider round"></span>
+                        </label>
+                        <input type="text" class="form-control wbbm-pm-label" value="<?php echo esc_attr($m_label); ?>" placeholder="<?php esc_attr_e('Label, e.g. Bank Transfer', 'bus-booking-manager'); ?>">
+                        <input type="text" class="form-control wbbm-pm-instructions" value="<?php echo esc_attr($m_instructions); ?>" placeholder="<?php esc_attr_e('Note shown with this option (optional)', 'bus-booking-manager'); ?>">
+                        <button type="button" class="wbbm-pm-remove" aria-label="<?php esc_attr_e('Remove', 'bus-booking-manager'); ?>">&times;</button>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+            <button type="button" class="btn btn-outline" id="wbbm-offline-methods-add">+ <?php esc_html_e('Add payment type', 'bus-booking-manager'); ?></button>
+        </div>
+
+        <p style="margin-top:20px;">
+            <button type="button" class="btn btn-primary" id="wbbm-save-offline-message"><?php esc_html_e('Save Changes', 'bus-booking-manager'); ?></button>
+            <span class="wbbm-pay-saved-msg" id="wbbm-offline-saved-msg"></span>
+        </p>
+        <script>
+        (function () {
+            var ajaxUrl = <?php echo wp_json_encode(admin_url('admin-ajax.php')); ?>;
+            var nonce = <?php echo wp_json_encode(wp_create_nonce('wbbm_payment_ajax')); ?>;
+            // Only present on the Payments settings section, not the per-bus
+            // popup -- null-guarded below, so a no-op there.
+            var warning = document.getElementById('wbbm-pay-warning');
+
+            var methodsBody = document.getElementById('wbbm-offline-methods-body');
+            var addMethodBtn = document.getElementById('wbbm-offline-methods-add');
+            function newMethodRow() {
+                var row = document.createElement('div');
+                row.className = 'wbbm-pm-row';
+                row.innerHTML = '<label class="bus-switch wbbm-pm-enabled-switch"><input type="checkbox" class="wbbm-pm-enabled" checked><span class="slider round"></span></label>' +
+                    '<input type="text" class="form-control wbbm-pm-label" placeholder="<?php echo esc_js(__('Label, e.g. Bank Transfer', 'bus-booking-manager')); ?>">' +
+                    '<input type="text" class="form-control wbbm-pm-instructions" placeholder="<?php echo esc_js(__('Note shown with this option (optional)', 'bus-booking-manager')); ?>">' +
+                    '<button type="button" class="wbbm-pm-remove" aria-label="<?php echo esc_js(__('Remove', 'bus-booking-manager')); ?>">&times;</button>';
+                return row;
+            }
+            if (addMethodBtn && methodsBody) {
+                addMethodBtn.addEventListener('click', function () {
+                    var row = newMethodRow();
+                    methodsBody.appendChild(row);
+                    var labelInput = row.querySelector('.wbbm-pm-label');
+                    if (labelInput) { labelInput.focus(); }
+                });
+            }
+            if (methodsBody) {
+                methodsBody.addEventListener('click', function (e) {
+                    var btn = e.target.closest('.wbbm-pm-remove');
+                    if (!btn) { return; }
+                    var row = btn.closest('.wbbm-pm-row');
+                    if (row) { row.remove(); }
+                });
+            }
+
+            var saveOfflineBtn = document.getElementById('wbbm-save-offline-message');
+            var savedMsg = document.getElementById('wbbm-offline-saved-msg');
+            if (saveOfflineBtn) {
+                saveOfflineBtn.addEventListener('click', function () {
+                    var enabledInput = document.getElementById('wbbm_offline_enabled');
+                    var enabled = enabledInput && enabledInput.checked ? 'yes' : 'no';
+                    var label = document.getElementById('wbbm_offline_label').value;
+                    var instructions = document.getElementById('wbbm_offline_instructions').value;
+                    var methods = [];
+                    if (methodsBody) {
+                        methodsBody.querySelectorAll('.wbbm-pm-row').forEach(function (row) {
+                            var labelInput = row.querySelector('.wbbm-pm-label');
+                            var instrInput = row.querySelector('.wbbm-pm-instructions');
+                            var enabledCheck = row.querySelector('.wbbm-pm-enabled');
+                            var rowLabel = labelInput ? labelInput.value.trim() : '';
+                            if (!rowLabel) { return; } // blank rows are dropped, not saved
+                            methods.push({
+                                label: rowLabel,
+                                instructions: instrInput ? instrInput.value : '',
+                                enabled: !!(enabledCheck && enabledCheck.checked)
+                            });
+                        });
+                    }
+
+                    var xhr = new XMLHttpRequest();
+                    xhr.open('POST', ajaxUrl, true);
+                    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                    xhr.onload = function () {
+                        var res;
+                        try { res = JSON.parse(xhr.responseText); } catch (err) { return; }
+                        if (savedMsg) {
+                            savedMsg.textContent = (res && res.success)
+                                ? <?php echo wp_json_encode(__('Saved.', 'bus-booking-manager')); ?>
+                                : <?php echo wp_json_encode(__('Could not save -- try again.', 'bus-booking-manager')); ?>;
+                            savedMsg.className = 'wbbm-pay-saved-msg' + (res && res.success ? ' is-ok' : ' is-error');
+                            setTimeout(function () { savedMsg.textContent = ''; }, 2500);
+                        }
+                        if (res && res.success && warning) {
+                            warning.style.display = res.data.has_gateway ? 'none' : '';
+                        }
+                    };
+                    xhr.send('action=wbbm_save_offline_message&nonce=' + encodeURIComponent(nonce) +
+                        '&offline_enabled=' + encodeURIComponent(enabled) +
+                        '&offline_label=' + encodeURIComponent(label) +
+                        '&offline_instructions=' + encodeURIComponent(instructions) +
+                        '&offline_methods=' + encodeURIComponent(JSON.stringify(methods)));
+                });
+            }
         })();
         </script>
         <?php

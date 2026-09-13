@@ -1375,14 +1375,19 @@ class BusEditPageClass
                     <?php endif; ?>
 
                     <?php /*
-                     * Same WooCommerce Payment Methods list (enable/disable
+                     * Same Offline Payment settings (Enable toggle,
+                     * Heading/Instructions, Payment Types repeater) and
+                     * WooCommerce Payment Methods list (enable/disable
                      * toggles + "Configure" opening the real gateway
                      * settings in a modal) as the global Payments settings
-                     * section -- literally the same static method, so this
-                     * popup and that section can never drift apart. Shown
-                     * only while "WooCommerce Payment" is the selected card.
+                     * section -- literally the same static methods, so this
+                     * popup and that section can never drift apart. Each is
+                     * shown only while its card is the selected one.
                      */ ?>
                     <?php if (class_exists('WBBM_Settings_Hub')) : ?>
+                        <div data-mode-section="offline" <?php echo 'offline' === $payment_method ? '' : 'style="display:none"'; ?>>
+                            <?php WBBM_Settings_Hub::render_offline_payment_section(); ?>
+                        </div>
                         <div data-mode-section="woocommerce" <?php echo 'woocommerce' === $payment_method ? '' : 'style="display:none"'; ?>>
                             <?php WBBM_Settings_Hub::render_wc_gateway_section(); ?>
                         </div>
