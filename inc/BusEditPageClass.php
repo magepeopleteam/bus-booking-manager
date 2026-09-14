@@ -765,10 +765,10 @@ class BusEditPageClass
                             <span class="dashicons dashicons-arrow-left-alt"></span>
                             <?php _e('Back to List', 'bus-booking-manager'); ?>
                         </a>
-                        <h2><?php echo $post_id ? __('Edit Bus', 'bus-booking-manager') . ': ' . esc_html($title) : __('Add New Bus', 'bus-booking-manager'); ?></h2>
-                        <span class="bus-status-badge <?php echo esc_attr($status_class); ?>"><?php echo esc_html($status_label); ?></span>
                     </div>
+                    <h2><?php echo $post_id ? __('Edit Bus', 'bus-booking-manager') . ': ' . esc_html($title) : __('Add New Bus', 'bus-booking-manager'); ?></h2>
                     <div class="header-actions">
+                        <span class="bus-status-badge <?php echo esc_attr($status_class); ?>"><?php echo esc_html($status_label); ?></span>
                         <button type="button" id="save-bus-draft" class="btn btn-secondary"><?php _e('Save as Draft', 'bus-booking-manager'); ?></button>
                         <button type="button" id="save-bus-publish" class="btn btn-primary"><?php echo ($current_status === 'publish') ? __('Save', 'bus-booking-manager') : __('Publish', 'bus-booking-manager'); ?></button>
                     </div>
@@ -778,22 +778,22 @@ class BusEditPageClass
                 <div class="bus-steps-nav">
                     <div class="bus-steps-list">
                         <?php
+                        // Features, Tax and Custom Fields used to each be
+                        // their own step (4, 5, 6) -- merged into one
+                        // "Advanced" step whose content stacks all three
+                        // sections one after another, instead of splitting
+                        // them across separate tabs.
                         $steps = array(
                             1 => __('Basic', 'bus-booking-manager'),
                             2 => __('Route & Price', 'bus-booking-manager'),
                             3 => __('Day Schedule', 'bus-booking-manager'),
-                            4 => __('Features', 'bus-booking-manager'),
-                            5 => __('Tax', 'bus-booking-manager'),
-                            6 => __('Custom Fields', 'bus-booking-manager')
+                            4 => __('Advanced', 'bus-booking-manager'),
                         );
                         foreach ($steps as $step_id => $label) : ?>
                             <div class="step-item <?php echo $current_step === $step_id ? 'active' : ($current_step > $step_id ? 'completed' : ''); ?>" data-step="<?php echo $step_id; ?>">
                                 <div class="step-number"><?php echo $current_step > $step_id ? '✓' : $step_id; ?></div>
                                 <div class="step-label">
                                     <?php echo $label; ?>
-                                    <?php if ($step_id === 6) : ?>
-                                        <span class="pro-badge-nav">PRO</span>
-                                    <?php endif; ?>
                                 </div>
                             </div>
                         <?php endforeach; ?>
@@ -951,20 +951,39 @@ class BusEditPageClass
                         <?php $this->render_step_3($post_id); ?>
                     </div>
 
-                    <!-- Step 4: Features -->
+                    <!--
+                        Step 4: Advanced (Features, Tax and Custom Fields
+                        stacked one after another). One shared two-column
+                        layout for all three sections, not one grid per
+                        section -- see render_step_4_left()'s docblock for
+                        why: it keeps a short section's left column from
+                        being forced to match the height of a taller one's
+                        right column further down.
+                    -->
                     <div class="bus-step-content <?php echo $current_step === 4 ? 'active' : ''; ?>" id="step-4-content">
-                        <?php $this->render_step_4($post_id); ?>
-                    </div>
+                        <div class="bus-edit-content">
+                            <div class="bus-edit-left">
+                                <div class="bus-advanced-section">
+                                    <h2 class="bus-advanced-section-title"><?php _e('Features', 'bus-booking-manager'); ?></h2>
+                                    <?php $this->render_step_4_left($post_id); ?>
+                                </div>
 
-                    <!-- Step 5: Tax -->
-                    <div class="bus-step-content <?php echo $current_step === 5 ? 'active' : ''; ?>" id="step-5-content">
-                        <?php $this->render_step_5($post_id); ?>
-                    </div>
+                                <div class="bus-advanced-section">
+                                    <h2 class="bus-advanced-section-title"><?php _e('Tax', 'bus-booking-manager'); ?></h2>
+                                    <?php $this->render_step_5_left($post_id); ?>
+                                </div>
 
-                    <!-- Step 6: Passenger List -->
-                    <div class="bus-step-content <?php echo $current_step === 6 ? 'active' : ''; ?>" id="step-6-content">
-                        <?php $this->render_step_6($post_id); ?>
+                                <div class="bus-advanced-section">
+                                    <h2 class="bus-advanced-section-title"><?php _e('Custom Fields', 'bus-booking-manager'); ?></h2>
+                                    <?php $this->render_step_6($post_id); ?>
+                                </div>
+                            </div>
 
+                            <div class="bus-edit-right">
+                                <?php $this->render_step_4_right($post_id); ?>
+                                <?php $this->render_step_5_right($post_id); ?>
+                            </div>
+                        </div>
                     </div>
 
             </div>
@@ -997,12 +1016,7 @@ class BusEditPageClass
         <div class="bus-edit-content">
             <div class="bus-edit-left">
                 <div class="bus-card" data-pickpoints-options='<?php echo esc_attr(wp_json_encode($pickpoints)); ?>'>
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                        <h3 style="margin: 0; border: none; padding: 0;"><?php _e('Route Management', 'bus-booking-manager'); ?></h3>
-                        <button type="button" class="btn btn-secondary btn-sm add-route-item">
-                            <span class="dashicons dashicons-plus"></span> <?php _e('Add Stop', 'bus-booking-manager'); ?>
-                        </button>
-                    </div>
+                    <h3 style="margin: 0 0 20px; border: none; padding: 0;"><?php _e('Route Management', 'bus-booking-manager'); ?></h3>
 
                     <div id="route-items-container" class="route-sortable">
                         <?php if (!empty($route_info)) : ?>
@@ -1018,6 +1032,10 @@ class BusEditPageClass
                     <script type="text/template" id="route-item-template">
                         <?php $this->render_route_item('{{index}}', [], $bus_stops, $pickpoints, $post_id); ?>
                     </script>
+
+                    <button type="button" class="btn btn-secondary btn-sm add-route-item btn-repeater-add">
+                        <span class="dashicons dashicons-plus"></span> <?php _e('Add Stop', 'bus-booking-manager'); ?>
+                    </button>
                 </div>
 
                 <div class="bus-card">
@@ -1075,20 +1093,28 @@ class BusEditPageClass
      */
 
     /**
-     * Render Step 4: Features
+     * Features section, stacked inside the "Advanced" step (step 4) along
+     * with Tax (render_step_5_left()/_right()) and Custom Fields
+     * (render_step_6).
+     *
+     * Split into _left()/_right() rather than one method emitting its own
+     * <div class="bus-edit-content"> -- the Advanced step now shares ONE
+     * two-column layout across all three merged sections instead of
+     * giving each its own, specifically so a short column in one section
+     * (e.g. Features' single card) doesn't get stuck matching the height
+     * of a much taller one two doors down: every left-column block just
+     * flows straight into the next section's left-column block,
+     * independently of how tall the right column is.
      */
-    private function render_step_4($post_id)
+    private function render_step_4_left($post_id)
     {
         $selected_features = wp_get_object_terms($post_id, 'wbbm_bus_feature', array('fields' => 'ids')) ?: [];
-        $extra_services = get_post_meta($post_id, 'mep_events_extra_prices', true) ?: [];
 
         $available_features = get_terms(array(
             'taxonomy'   => 'wbbm_bus_feature',
             'hide_empty' => false,
         ));
         ?>
-        <div class="bus-edit-content">
-            <div class="bus-edit-left">
                 <div class="bus-card">
                     <h3><?php _e('Bus Features', 'bus-booking-manager'); ?></h3>
                     <div class="features-grid">
@@ -1110,45 +1136,16 @@ class BusEditPageClass
                         <?php endif; ?>
                     </div>
                 </div>
+        <?php
+    }
 
-                <!-- <div class="bus-card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                        <h3 style="margin: 0; border: none; padding: 0;"><?php //_e('Extra Services', 'bus-booking-manager');
-                        ?></h3>
-                        <button type="button" class="btn btn-secondary btn-sm add-extra-service">
-                            <span class="dashicons dashicons-plus"></span> <?php //_e('Add Extra Service', 'bus-booking-manager');
-                            ?>
-                        </button>
-                    </div>
-
-                    <div id="extra-services-container">
-                        <?php //if (!empty($extra_services)) :
-                        ?>
-                            <?php //foreach ($extra_services as $service) :
-                            ?>
-                                <?php //$this->render_extra_service_item($service);
-                                ?>
-                            <?php //endforeach;
-                            ?>
-                        <?php //else :
-                        ?>
-                            <?php //$this->render_extra_service_item();
-                            ?>
-                        <?php //endif;
-                        ?>
-                    </div>
-                    
-
-                    <!-- Template for new items -->
-                <!-- <script type="text/template" id="extra-service-template">
-                        <?php //$this->render_extra_service_item();
-                        ?>
-                    </script> -->
-                <!-- </div> -->
-
-            </div>
-
-            <div class="bus-edit-right">
+    private function render_step_4_right($post_id)
+    {
+        $available_features = get_terms(array(
+            'taxonomy'   => 'wbbm_bus_feature',
+            'hide_empty' => false,
+        ));
+        ?>
                 <div class="bus-card">
                     <h3><?php _e('Bus Features', 'bus-booking-manager'); ?></h3>
                     <div class="inline-taxonomy-list-wrap">
@@ -1182,49 +1179,46 @@ class BusEditPageClass
                         <?php _e('Features are displayed as icons on the bus details page. Extra services can be selected by passengers during booking.', 'bus-booking-manager'); ?>
                     </p>
                 </div>
-            </div>
-        </div>
         <?php
     }
 
     /**
-     * Render Step 6: Custom Fields
+     * Custom Fields section, stacked inside the "Advanced" step (step 4)
+     * after Features and Tax. Left-column-only (no right-column
+     * counterpart) -- render_step_4_right()/render_step_5_right() are the
+     * only contributors to the shared right column.
      */
     private function render_step_6($post_id)
     {
         ?>
-        <div class="bus-edit-content">
-            <div class="bus-edit-left" style="width: 100%;">
-                <div class="bus-card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                        <h3 style="margin: 0; border: none; padding: 0;"><?php _e('Passenger Registration', 'bus-booking-manager'); ?></h3>
-                    </div>
-
-                    <?php
-                    if (has_action('wbbm_after_meta_box_tab_content')) {
-                        do_action('wbbm_after_meta_box_tab_content', $post_id);
-                    } else {
-                        ?>
-                        <div class="pro-placeholder-content">
-                            <div class="pro-placeholder-inner">
-                                <div class="pro-icon-wrap">
-                                    <span class="dashicons dashicons-lock"></span>
-                                    <span class="pro-tag"><?php _e('PRO', 'bus-booking-manager'); ?></span>
-                                </div>
-                                <h2><?php _e('Passenger Registration & Custom Fields', 'bus-booking-manager'); ?></h2>
-                                <p><?php _e('This feature requires the Bus Booking Manager PRO version. Unlock advanced passenger registration, custom fields, and more.', 'bus-booking-manager'); ?></p>
-                                <a href="#" target="_blank" class="btn btn-primary btn-pro-upgrade">
-                                    <span class="dashicons dashicons-external"></span>
-                                    <?php _e('Upgrade to PRO', 'bus-booking-manager'); ?>
-                                </a>
-                            </div>
-                        </div>
-                        <?php
-                    }
-                    ?>
-
-                </div>
+        <div class="bus-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 style="margin: 0; border: none; padding: 0;"><?php _e('Passenger Registration', 'bus-booking-manager'); ?></h3>
             </div>
+
+            <?php
+            if (has_action('wbbm_after_meta_box_tab_content')) {
+                do_action('wbbm_after_meta_box_tab_content', $post_id);
+            } else {
+                ?>
+                <div class="pro-placeholder-content">
+                    <div class="pro-placeholder-inner">
+                        <div class="pro-icon-wrap">
+                            <span class="dashicons dashicons-lock"></span>
+                        </div>
+                        <span class="pro-tag"><?php _e('PRO FEATURE', 'bus-booking-manager'); ?></span>
+                        <h2><?php _e('Passenger Registration & Custom Fields', 'bus-booking-manager'); ?></h2>
+                        <p><?php _e('This feature requires the Bus Booking Manager PRO version. Unlock advanced passenger registration, custom fields, and more.', 'bus-booking-manager'); ?></p>
+                        <a href="#" target="_blank" class="btn btn-primary btn-pro-upgrade">
+                            <?php _e('Upgrade to PRO', 'bus-booking-manager'); ?>
+                            <span class="dashicons dashicons-arrow-right-alt"></span>
+                        </a>
+                    </div>
+                </div>
+                <?php
+            }
+            ?>
+
         </div>
         <?php
     }
@@ -1574,17 +1568,19 @@ class BusEditPageClass
     }
 
     /**
-     * Render Step 5: Tax
+     * Tax section, stacked inside the "Advanced" step (step 4) between
+     * Features and Custom Fields. Split into _left()/_right() for the same
+     * reason as render_step_4_left()/_right() above -- one shared
+     * two-column layout for the whole Advanced step instead of one per
+     * section.
      */
-    private function render_step_5($post_id)
+    private function render_step_5_left($post_id)
     {
         if (!class_exists('MP_Global_Function') || !MP_Global_Function::wbbm_use_wc()) {
             ?>
-            <div class="bus-edit-content">
-                <div class="bus-card">
-                    <h3><?php _e('Tax Configuration', 'bus-booking-manager'); ?></h3>
-                    <p><?php _e('Tax settings are managed through WooCommerce and only apply to buses set to WooCommerce Payment. Install and activate WooCommerce to configure tax classes.', 'bus-booking-manager'); ?></p>
-                </div>
+            <div class="bus-card">
+                <h3><?php _e('Tax Configuration', 'bus-booking-manager'); ?></h3>
+                <p><?php _e('Tax settings are managed through WooCommerce and only apply to buses set to WooCommerce Payment. Install and activate WooCommerce to configure tax classes.', 'bus-booking-manager'); ?></p>
             </div>
             <?php
             return;
@@ -1598,40 +1594,44 @@ class BusEditPageClass
 
         $tax_classes = WC_Tax::get_tax_classes();
         ?>
-        <div class="bus-edit-content">
-            <div class="bus-edit-left">
-                <div class="bus-card">
-                    <h3><?php _e('Tax Configuration', 'bus-booking-manager'); ?></h3>
-                    <div class="bus-grid">
-                        <div class="form-group">
-                            <label for="wbtm_bus_tax_status"><?php _e('Tax Status', 'bus-booking-manager'); ?></label>
-                            <select name="wbtm_bus_tax_status" id="wbtm_bus_tax_status" class="form-control">
-                                <option value="taxable" <?php selected($tax_status, 'taxable'); ?>><?php _e('Taxable', 'bus-booking-manager'); ?></option>
-                                <option value="shipping" <?php selected($tax_status, 'shipping'); ?>><?php _e('Shipping only', 'bus-booking-manager'); ?></option>
-                                <option value="none" <?php selected($tax_status, 'none'); ?>><?php _e('None', 'bus-booking-manager'); ?></option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="wbtm_bus_tax_class"><?php _e('Tax Class', 'bus-booking-manager'); ?></label>
-                            <select name="wbtm_bus_tax_class" id="wbtm_bus_tax_class" class="form-control">
-                                <option value="" <?php selected($tax_class, ''); ?>><?php _e('Standard', 'bus-booking-manager'); ?></option>
-                                <?php foreach ($tax_classes as $class) : ?>
-                                    <option value="<?php echo esc_attr(sanitize_title($class)); ?>" <?php selected($tax_class, sanitize_title($class)); ?>><?php echo esc_html($class); ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                    </div>
+        <div class="bus-card">
+            <h3><?php _e('Tax Configuration', 'bus-booking-manager'); ?></h3>
+            <div class="bus-grid">
+                <div class="form-group">
+                    <label for="wbtm_bus_tax_status"><?php _e('Tax Status', 'bus-booking-manager'); ?></label>
+                    <select name="wbtm_bus_tax_status" id="wbtm_bus_tax_status" class="form-control">
+                        <option value="taxable" <?php selected($tax_status, 'taxable'); ?>><?php _e('Taxable', 'bus-booking-manager'); ?></option>
+                        <option value="shipping" <?php selected($tax_status, 'shipping'); ?>><?php _e('Shipping only', 'bus-booking-manager'); ?></option>
+                        <option value="none" <?php selected($tax_status, 'none'); ?>><?php _e('None', 'bus-booking-manager'); ?></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="wbtm_bus_tax_class"><?php _e('Tax Class', 'bus-booking-manager'); ?></label>
+                    <select name="wbtm_bus_tax_class" id="wbtm_bus_tax_class" class="form-control">
+                        <option value="" <?php selected($tax_class, ''); ?>><?php _e('Standard', 'bus-booking-manager'); ?></option>
+                        <?php foreach ($tax_classes as $class) : ?>
+                            <option value="<?php echo esc_attr(sanitize_title($class)); ?>" <?php selected($tax_class, sanitize_title($class)); ?>><?php echo esc_html($class); ?></option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
             </div>
+        </div>
+        <?php
+    }
 
-            <div class="bus-edit-right">
-                <div class="bus-card">
-                    <h3><?php _e('Tax Info', 'bus-booking-manager'); ?></h3>
-                    <p style="font-size: 13px; color: var(--bus-text-light);">
-                        <?php _e('Configure how taxes should be applied to this bus service. This integrates with standard WooCommerce tax settings.', 'bus-booking-manager'); ?>
-                    </p>
-                </div>
-            </div>
+    private function render_step_5_right($post_id)
+    {
+        if (!class_exists('MP_Global_Function') || !MP_Global_Function::wbbm_use_wc()) {
+            // Nothing to configure, so nothing to explain on the right
+            // either -- the left column's notice already covers it.
+            return;
+        }
+        ?>
+        <div class="bus-card">
+            <h3><?php _e('Tax Info', 'bus-booking-manager'); ?></h3>
+            <p style="font-size: 13px; color: var(--bus-text-light);">
+                <?php _e('Configure how taxes should be applied to this bus service. This integrates with standard WooCommerce tax settings.', 'bus-booking-manager'); ?>
+            </p>
         </div>
         <?php
     }
@@ -1733,7 +1733,6 @@ class BusEditPageClass
                             <h3><?php esc_html_e('Specific Operational Dates', 'bus-booking-manager'); ?></h3>
                             <p><?php esc_html_e('When dates are added here, this bus can only be booked on those dates.', 'bus-booking-manager'); ?></p>
                         </div>
-                        <button type="button" class="btn btn-secondary btn-sm add-bus-on-date"><span class="dashicons dashicons-plus"></span> <?php esc_html_e('Add Date', 'bus-booking-manager'); ?></button>
                     </div>
                     <div id="bus-on-dates-container">
                         <?php foreach (!empty($bus_on_dates) ? $bus_on_dates : array('') as $date) : ?>
@@ -1744,14 +1743,12 @@ class BusEditPageClass
                         <?php endforeach; ?>
                     </div>
                     <script type="text/template" id="bus-on-date-template"><div class="bus-on-date-item"><input type="date" name="wbtm_bus_on_date[]" class="form-control" value=""><button type="button" class="btn btn-secondary remove-bus-on-date" aria-label="<?php esc_attr_e('Remove date', 'bus-booking-manager'); ?>"><span class="dashicons dashicons-trash"></span></button></div></script>
+                    <button type="button" class="btn btn-secondary btn-sm add-bus-on-date btn-repeater-add"><span class="dashicons dashicons-plus"></span> <?php esc_html_e('Add Date', 'bus-booking-manager'); ?></button>
                 </div>
 
                 <div class="bus-card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <div style="margin-bottom: 20px;">
                         <h3 style="margin: 0; border: none; padding: 0;"><?php _e('Off-day Schedule', 'bus-booking-manager'); ?></h3>
-                        <button type="button" class="btn btn-secondary btn-sm add-offday-item">
-                            <span class="dashicons dashicons-plus"></span> <?php _e('Add Off-day Slot', 'bus-booking-manager'); ?>
-                        </button>
                     </div>
 
                     <div id="offday-items-container">
@@ -1768,6 +1765,10 @@ class BusEditPageClass
                     <script type="text/template" id="offday-item-template">
                         <?php $this->render_offday_item(); ?>
                     </script>
+
+                    <button type="button" class="btn btn-secondary btn-sm add-offday-item btn-repeater-add">
+                        <span class="dashicons dashicons-plus"></span> <?php _e('Add Off-day Slot', 'bus-booking-manager'); ?>
+                    </button>
                 </div>
             </div>
 
@@ -1838,10 +1839,25 @@ class BusEditPageClass
         $type = isset($data['type']) ? $data['type'] : 'both';
         $next_day = isset($data['next_day']) ? $data['next_day'] : 0;
         ?>
+        <?php
+        $type_labels = array(
+            'bp'   => __('Boarding', 'bus-booking-manager'),
+            'dp'   => __('Dropping', 'bus-booking-manager'),
+            'both' => __('Both', 'bus-booking-manager'),
+        );
+        $type_label = isset($type_labels[$type]) ? $type_labels[$type] : $type_labels['both'];
+        ?>
         <div class="route-item" data-index="<?php echo $index; ?>">
             <div class="route-item-header">
                 <span class="dashicons dashicons-menu drag-handle"></span>
                 <span class="stop-name-display"><?php echo $place ?: __('New Stop', 'bus-booking-manager'); ?></span>
+                <div class="route-item-meta">
+                    <span class="route-meta-time">
+                        <span class="dashicons dashicons-clock" aria-hidden="true"></span>
+                        <span class="route-meta-time-text"><?php echo $time ? esc_html($time) : '--:--'; ?></span>
+                    </span>
+                    <span class="route-meta-type type-<?php echo esc_attr($type); ?>"><?php echo esc_html($type_label); ?></span>
+                </div>
                 <div class="route-item-actions">
                     <button type="button" class="remove-route-item"><span class="dashicons dashicons-trash"></span></button>
                     <span class="dashicons dashicons-arrow-down-alt2 toggle-route-item"></span>

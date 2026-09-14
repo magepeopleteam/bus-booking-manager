@@ -203,7 +203,12 @@ jQuery(document).ready(function ($) {
             prevBtn.show().data('prev', step - 1);
         }
 
-        if (step === 6) {
+        // Last step is whatever the nav actually renders (4 now that
+        // Features/Tax/Custom Fields are merged into one "Advanced" step),
+        // read from the DOM instead of a number that has to be kept in
+        // sync by hand every time a step is added, removed or merged.
+        const totalSteps = $('.step-item').length;
+        if (step === totalSteps) {
             nextBtn.hide();
             finalSaveBtn.show();
         } else {
@@ -341,14 +346,31 @@ jQuery(document).ready(function ($) {
 
     $(document).on('change', '.route-type-select', function () {
         const type = $(this).val();
-        const nextDayWrap = $(this).closest('.route-item').find('.next-day-wrap');
+        const item = $(this).closest('.route-item');
+        const nextDayWrap = item.find('.next-day-wrap');
 
         if (type === 'dp' || type === 'both') {
             nextDayWrap.slideDown();
         } else {
             nextDayWrap.slideUp();
         }
+
+        const typeBadge = item.find('.route-meta-type');
+        typeBadge
+            .text($(this).find('option:selected').text())
+            .attr('class', 'route-meta-type type-' + type);
+
         reloadPricingMatrix();
+    });
+
+    // Time and Type are shown on the collapsed header row (next to the
+    // stop name) so every stop's schedule is visible at a glance without
+    // expanding each one -- keep that read-only summary in sync as the
+    // real Time field is edited underneath it.
+    $(document).on('input change', 'input[name="wbtm_route_time[]"]', function () {
+        const value = $(this).val();
+        const timeText = $(this).closest('.route-item').find('.route-meta-time-text');
+        timeText.text(value || '--:--');
     });
 
     function reloadPricingMatrix() {

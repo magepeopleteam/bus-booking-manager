@@ -96,6 +96,10 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    /* Anchors the absolutely-centered <h2> below to this bar rather than
+       the page, so it stays visually centered no matter how wide the
+       back-button or header-actions groups on either side are. */
+    position: relative;
     background: var(--bus-card-bg);
     padding: 15px 25px;
     border-radius: 12px;
@@ -108,6 +112,11 @@
     margin: 0;
     font-size: 24px;
     font-weight: 700;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    white-space: nowrap;
 }
 
 .back-btn {
@@ -160,6 +169,7 @@
 
 .header-actions {
     display: flex;
+    align-items: center;
     gap: 10px;
 }
 
@@ -175,7 +185,18 @@
 
 .bus-steps-list {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
+    /* Was flex items at flex:1 spread edge-to-edge with justify-content:
+       space-between -- fine with 6 steps, but with the Features/Tax/Custom
+       Fields merge down to 4 steps that stretched each item across a much
+       wider share of the bar, pushing the outer circles way in from the
+       edges and leaving the connector line below (anchored to the bar's
+       own edges, not the circles) overshooting past both ends. Sizing this
+       row to its own content and centering it keeps the steps grouped
+       together regardless of the step count. */
+    width: fit-content;
+    margin: 0 auto;
+    gap: 90px;
     position: relative;
 }
 
@@ -183,8 +204,10 @@
     content: '';
     position: absolute;
     top: 18px;
-    left: 40px;
-    right: 40px;
+    /* Half the 36px step-number circle, so the line starts/ends at the
+       first/last circle's own center instead of the row's outer edge. */
+    left: 18px;
+    right: 18px;
     height: 2px;
     background: #e2e8f0;
     z-index: 1;
@@ -195,7 +218,6 @@
     flex-direction: column;
     align-items: center;
     z-index: 2;
-    flex: 1;
     position: relative;
 }
 
@@ -255,79 +277,95 @@
 }
 
 /* PRO Placeholder Content */
+/* ---- PRO upsell placeholder (Custom Fields, and anywhere else a PRO-only
+   feature needs an inline upgrade prompt): was a heavy dashed-border box
+   with a huge bare lock icon, a badge overlapping it, and a CTA shadowed
+   in blue -- inconsistent with this plugin's actual orange brand color
+   and busier than a "this needs an upgrade" notice needs to be. Redesigned
+   for a quieter, single solid-border card with a small icon chip (same
+   treatment as .wbbm-bm-card-icon elsewhere), a plain uppercase label
+   instead of a badge, and a CTA in the real brand color. ---- */
 .pro-placeholder-content {
-    padding: 60px 20px;
+    padding: 48px 24px;
     text-align: center;
-    background: #f9fafb;
-    border: 2px dashed #e5e7eb;
+    background: var(--bus-card-bg);
+    border: 1px solid var(--bus-border);
     border-radius: 12px;
-    margin: 20px 0;
 }
 
 .pro-placeholder-inner {
-    max-width: 500px;
+    max-width: 380px;
     margin: 0 auto;
 }
 
 .pro-icon-wrap {
-    position: relative;
-    display: inline-block;
-    margin-bottom: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: #f1f5f9;
+    color: #94a3b8;
+    margin-bottom: 16px;
 }
 
 .pro-icon-wrap .dashicons-lock {
-    font-size: 64px;
-    width: 64px;
-    height: 64px;
-    color: #9ca3af;
+    font-size: 22px;
+    width: 22px;
+    height: 22px;
 }
 
-.pro-icon-wrap .pro-tag {
-    position: absolute;
-    top: -5px;
-    right: -15px;
-    background: #FFD700;
-    color: #000;
+.pro-tag {
+    display: inline-block;
     font-size: 11px;
-    font-weight: 800;
-    padding: 2px 6px;
-    border-radius: 4px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    font-weight: 700;
+    letter-spacing: .04em;
+    color: var(--bus-primary);
+    background: #fff1e6;
+    padding: 3px 10px;
+    border-radius: 100px;
+    margin-bottom: 12px;
 }
 
 .pro-placeholder-inner h2 {
-    font-size: 24px;
-    color: #111827;
-    margin-bottom: 12px;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--bus-text);
+    margin: 0 0 8px;
     border: none !important;
     padding: 0 !important;
 }
 
 .pro-placeholder-inner p {
-    font-size: 16px;
-    color: #4b5563;
+    font-size: 13.5px;
+    color: var(--bus-text-light);
     line-height: 1.6;
-    margin-bottom: 30px;
+    margin: 0 0 24px;
 }
 
 .btn-pro-upgrade {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    padding: 12px 24px !important;
-    font-size: 16px !important;
+    gap: 6px;
+    padding: 10px 20px !important;
+    font-size: 13.5px !important;
     font-weight: 600 !important;
     background: var(--bus-primary) !important;
     border: none !important;
     border-radius: 8px !important;
-    box-shadow: 0 4px 6px rgba(59, 130, 246, 0.2);
-    transition: all 0.2s;
+    box-shadow: none;
+    transition: background-color .15s;
+}
+
+.btn-pro-upgrade .dashicons {
+    font-size: 15px;
+    width: 15px;
+    height: 15px;
 }
 
 .btn-pro-upgrade:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(59, 130, 246, 0.3);
-    opacity: 0.9;
+    background: var(--bus-primary-hover) !important;
 }
 
 /* Layout */
@@ -335,6 +373,13 @@
     display: grid;
     grid-template-columns: 1fr 300px;
     gap: 25px;
+    /* Grid columns stretch to match the tallest one by default -- harmless
+       on its own, but on steps where one side has much less content (e.g.
+       Features: one small card on the left next to three stacked cards on
+       the right) it left a big block of empty space under the shorter
+       column before the next section could start. Each column should only
+       be as tall as its own content. */
+    align-items: start;
 }
 
 .bus-card {
@@ -352,6 +397,35 @@
     font-weight: 600;
     border-bottom: 1px solid #f1f5f9;
     padding-bottom: 15px;
+}
+
+/* ---- "Advanced" step: Features, Tax and Custom Fields stacked one after
+   another instead of on their own separate steps. Each keeps its own
+   render_step_* markup/cards unchanged; this just labels and separates
+   the three groups so it still reads as three sections, not one blob. ---- */
+.bus-advanced-section + .bus-advanced-section {
+    margin-top: 10px;
+    padding-top: 30px;
+    border-top: 1px solid var(--bus-border);
+}
+
+.bus-advanced-section-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 16px;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--bus-text);
+}
+
+.bus-advanced-section-title::before {
+    content: '';
+    width: 4px;
+    height: 20px;
+    border-radius: 4px;
+    background: var(--bus-primary);
+    flex-shrink: 0;
 }
 
 /* Form Elements */
@@ -922,13 +996,97 @@ label.switch input:checked+.slider:before {
     animation: fadeIn 0.4s ease;
 }
 
-/* Step 2: Route & Price */
+/* Step 2: Route & Price -- stops as a vertical timeline (numbered circle
+   markers connected by a line, like the step nav at the top of this page
+   but running down instead of across) instead of a plain stacked list of
+   bordered boxes. The number itself is a CSS counter, not written by PHP
+   or JS anywhere -- it's automatically correct after adding, removing or
+   drag-reordering stops with zero extra code to keep it in sync. */
+#route-items-container {
+    counter-reset: route-stop;
+}
+
+/* Shared "add another item" affordance for any repeated-field list in this
+   editor (route stops, operational dates, off-day slots, ...) -- sits
+   below the list instead of up in the card's title row, so the list of
+   items reads top-to-bottom and this is clearly "add one more" rather
+   than a header-level action. */
+.btn-repeater-add {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    margin-top: 16px;
+    padding: 13px !important;
+    font-size: 13.5px !important;
+    font-weight: 600 !important;
+    color: var(--bus-text-light) !important;
+    background: #f8fafc !important;
+    border: 1.5px dashed var(--bus-border) !important;
+    border-radius: 10px !important;
+    transition: color .15s, border-color .15s, background-color .15s;
+}
+
+.btn-repeater-add .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+}
+
+.btn-repeater-add:hover {
+    color: var(--bus-primary) !important;
+    border-color: var(--bus-primary) !important;
+    background: #fff8f2 !important;
+}
+
 .route-item {
-    background: #fff;
-    border: 1px solid var(--bus-border);
-    border-radius: 8px;
-    margin-bottom: 15px;
-    overflow: hidden;
+    position: relative;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    margin-bottom: 0;
+    padding: 0 0 20px 46px;
+    overflow: visible;
+}
+
+.route-item:last-child {
+    padding-bottom: 0;
+}
+
+/* The connecting line, drawn from just below one marker to the next. */
+.route-item::before {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 32px;
+    bottom: 0;
+    width: 2px;
+    background: var(--bus-border);
+}
+
+.route-item:last-child::before {
+    display: none;
+}
+
+/* The numbered circle marker itself. */
+.route-item::after {
+    counter-increment: route-stop;
+    content: counter(route-stop);
+    position: absolute;
+    left: 0;
+    top: 6px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--bus-primary);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
 }
 
 .route-item-header {
@@ -936,6 +1094,8 @@ label.switch input:checked+.slider:before {
     align-items: center;
     padding: 12px 15px;
     background: #f8fafc;
+    border: 1px solid var(--bus-border);
+    border-radius: 8px 8px 0 0;
     cursor: pointer;
 }
 
@@ -948,6 +1108,57 @@ label.switch input:checked+.slider:before {
 .stop-name-display {
     font-weight: 600;
     flex-grow: 1;
+}
+
+/* Time + Type summary shown right on the collapsed header row, so every
+   stop's schedule is scannable at a glance without expanding each one. */
+.route-item-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-right: 10px;
+    flex-shrink: 0;
+}
+
+.route-meta-time {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--bus-text-light);
+    font-variant-numeric: tabular-nums;
+}
+
+.route-meta-time .dashicons {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+}
+
+.route-meta-type {
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: .03em;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border-radius: 100px;
+    white-space: nowrap;
+}
+
+.route-meta-type.type-bp {
+    background: #ecfdf5;
+    color: #059669;
+}
+
+.route-meta-type.type-dp {
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+.route-meta-type.type-both {
+    background: #eff6ff;
+    color: #2563eb;
 }
 
 .route-item-actions {
@@ -979,7 +1190,10 @@ label.switch input:checked+.slider:before {
 .route-item-body {
     padding: 20px;
     display: none;
-    border-top: 1px solid var(--bus-border);
+    background: #fff;
+    border: 1px solid var(--bus-border);
+    border-top: none;
+    border-radius: 0 0 8px 8px;
 }
 
 .next-day-wrap {
@@ -1388,6 +1602,24 @@ label.switch input:checked+.slider:before {
     .bus-card-heading-row {
         align-items: stretch;
         flex-direction: column;
+    }
+
+    /* The centered <h2> is absolutely positioned for desktop's 3-slot
+       layout (back button / title / actions all on one row) -- that
+       breaks the column stack above, so drop back to a normal in-flow,
+       centered block once things wrap. */
+    .bus-edit-header h2 {
+        position: static;
+        transform: none;
+        text-align: center;
+        white-space: normal;
+        margin: 8px 0;
+    }
+
+    .bus-steps-list {
+        gap: 24px;
+        flex-wrap: wrap;
+        row-gap: 16px;
     }
 
     .bus-grid,
