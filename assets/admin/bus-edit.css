@@ -713,19 +713,23 @@ label.switch input:checked+.slider:before {
     transition: all 0.3s;
 }
 
-/* Inline Pickup Points (Step 2) */
+/* Inline Pickup Points (Step 2) -- was a flat, muddy gray box sitting
+   flush against the fields above it with tight 6px gaps between rows;
+   redesigned as a proper white card with clear separation from what's
+   above, an actual header row, and consistent spacing throughout. */
 .route-pickup-points-wrap {
-    background: #e4e4e8;
-    padding: 10px;
-    border-radius: 8px;
-    border: 1px solid #eef2f7;
+    margin-top: 18px;
+    background: var(--bus-card-bg);
+    padding: 14px;
+    border-radius: 10px;
+    border: 1px solid var(--bus-border);
 }
 
 .route-pickup-points-wrap h4 {
     margin: 0;
     font-size: 13px;
-    color: #334155;
-    font-weight: 600;
+    color: var(--bus-text);
+    font-weight: 700;
 }
 
 .pickup-points-head {
@@ -759,31 +763,35 @@ label.switch input:checked+.slider:before {
 }
 
 .pickup-points-list {
-    margin-top: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--bus-border);
 }
 
 .pickup-point-item {
-    background: #fff;
-    padding: 6px;
-    border-radius: 6px;
-    margin-bottom: 6px;
+    background: #f8fafc;
+    padding: 10px;
+    border-radius: 8px;
     display: grid;
     grid-template-columns: minmax(120px, 1fr) 120px 32px;
-    gap: 6px;
+    gap: 8px;
     align-items: center;
-    border: 1px solid transparent;
+    border: 1px solid var(--bus-border);
     transition: all 0.2s;
 }
 
 .pickup-point-item:hover {
-    border-color: #e2e8f0;
+    border-color: var(--bus-primary);
     background: #fff;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
 }
 
 .pickup-point-item .form-control.sm {
-    height: 30px;
-    font-size: 12px;
+    height: 32px;
+    font-size: 12.5px;
     padding: 4px 8px;
     border-radius: 6px;
 }
@@ -1967,6 +1975,127 @@ label.switch input:checked+.slider:before {
     justify-content: flex-end;
 }
 
+/* Small link-style trigger sitting in a card's title row (top-right
+   corner), e.g. "+ Add Stoppage" on the Route Management card. */
+.btn-add-stoppage-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    /* Right-aligned under the Stop select instead of left -- margin-left:
+       auto pushes this shrink-wrapped flex box to the right edge of its
+       .form-group without needing the parent to be a flex container. */
+    width: fit-content;
+    margin: 6px 0 0 auto;
+    background: none;
+    border: none;
+    padding: 4px 2px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--bus-primary);
+    cursor: pointer;
+}
+
+.btn-add-stoppage-link:hover {
+    color: var(--bus-primary-hover);
+    text-decoration: underline;
+}
+
+.btn-add-stoppage-link .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+}
+
+/* Small generic prompt modal (Add Stoppage today, reusable for any future
+   "one field, quick add" popup) -- same chrome as .wbbm-payment-modal but
+   sized for a single form field rather than a whole settings form. */
+.wbbm-stop-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, .55);
+    z-index: 100001;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.wbbm-stop-modal.is-open {
+    display: flex;
+}
+
+.wbbm-stop-modal-box {
+    background: #fff;
+    border-radius: 12px;
+    max-width: 420px;
+    width: 100%;
+    box-shadow: 0 24px 60px rgba(15, 23, 42, .35);
+    max-height: 86vh;
+    overflow-y: auto;
+}
+
+/* Wider variant for content-heavier modals (e.g. the Offline Payment
+   Configure modal, which also carries the Payment Types repeater). */
+.wbbm-stop-modal-wide .wbbm-stop-modal-box {
+    max-width: 560px;
+}
+
+/* Custom Payment Method Configure modals (Offline/Stripe/PayPal) can be
+   opened from within the per-bus Payment Method popup
+   (.wbbm-payment-modal, z-index 100001), so they need to paint above it --
+   and above the WooCommerce gateway iframe Configure modal (100010) too,
+   since both live in the same settings page. */
+.wbbm-cgw-modal {
+    z-index: 100020;
+}
+
+.wbbm-stop-modal-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--bus-border);
+}
+
+.wbbm-stop-modal-head h2 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--bus-text);
+}
+
+.wbbm-stop-modal-close {
+    border: none;
+    background: transparent;
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+    color: var(--bus-text-light);
+    padding: 4px 8px;
+}
+
+.wbbm-stop-modal-close:hover {
+    color: var(--bus-text);
+}
+
+.wbbm-stop-modal-body {
+    padding: 18px 20px 4px;
+}
+
+.wbbm-stop-modal-body .description {
+    margin: 0 0 16px;
+    color: var(--bus-text-light);
+    font-size: 13px;
+}
+
+.wbbm-stop-modal-foot {
+    padding: 14px 20px 18px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
 /* Mode-selector cards, reused inside the modal */
 .wbbm-bm-cards {
     display: grid;
@@ -2260,11 +2389,20 @@ label.switch input:checked+.slider:before {
     border-radius: 100px;
     background: #f1f5f9;
     color: #64748b;
+    white-space: nowrap;
 }
 
 .wbbm-gw-status.is-on {
     background: #ecfdf5;
     color: #059669;
+}
+
+/* Toggled on but still missing the API keys it needs to actually take a
+   payment -- distinct from a plain "ENABLED" so it's never mistaken for
+   already working (see WBBM_Settings_Hub::render_offline_payment_section()). */
+.wbbm-gw-status.is-needs-setup {
+    background: #fffbeb;
+    color: #b45309;
 }
 
 .wbbm-gw-configure {

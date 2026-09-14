@@ -64,6 +64,9 @@ final class WBBM_Settings_Hub extends WBBM_Admin_Hub
         add_action('wp_ajax_wbbm_save_default_payment_mode', array($this, 'ajax_save_default_payment_mode'));
         add_action('wp_ajax_wbbm_toggle_wc_gateway', array($this, 'ajax_toggle_wc_gateway'));
         add_action('wp_ajax_wbbm_save_offline_message', array($this, 'ajax_save_offline_message'));
+        add_action('wp_ajax_wbbm_toggle_custom_gateway', array($this, 'ajax_toggle_custom_gateway'));
+        add_action('wp_ajax_wbbm_save_stripe_settings', array($this, 'ajax_save_stripe_settings'));
+        add_action('wp_ajax_wbbm_save_paypal_settings', array($this, 'ajax_save_paypal_settings'));
     }
 
     /**
@@ -207,25 +210,147 @@ final class WBBM_Settings_Hub extends WBBM_Admin_Hub
         update_option('wbbm_payment_settings', $settings);
 
         wp_send_json_success(array(
+            'configured'  => self::is_gateway_configured('offline'),
+            'has_gateway' => $this->mode_has_gateway('offline'),
+        ));
+    }
+
+    /**
+     * Is this one gateway (offline/stripe/paypal) enabled AND has the
+     * minimum config it needs to actually take a payment -- the per-row
+     * counterpart to mode_has_gateway('offline'), which only answers "is
+     * at least one of the three usable".
+     *
+     * Deliberately STRICTER than, and independent from,
+     * wbbm_get_active_custom_gateways() (inc/wbbm-offline-booking.php) --
+     * that one only gates on the enable toggle, on purpose, so the
+     * frontend picker can be previewed before real API keys are entered.
+     * This one still requires real keys, because its whole job is to warn
+     * *this admin* when a gateway is switched on but not actually ready
+     * to take a payment yet (the "NEEDS API KEYS" pill).
+     */
+    private static function is_gateway_configured($gateway)
+    {
+        $settings = get_option('wbbm_payment_settings');
+        $settings = is_array($settings) ? $settings : array();
+
+        if ('offline' === $gateway) {
+            $enabled = !array_key_exists('offline_enabled', $settings) || !empty($settings['offline_enabled']);
+            $label = isset($settings['offline_label']) ? trim($settings['offline_label']) : '';
+            return $enabled && '' !== $label;
+        }
+
+        if ('stripe' === $gateway) {
+            return !empty($settings['stripe_enabled']) && !empty($settings['stripe_secret_key']);
+        }
+
+        if ('paypal' === $gateway) {
+            return !empty($settings['paypal_enabled']) && !empty($settings['paypal_client_id']) && !empty($settings['paypal_secret']);
+        }
+
+        return false;
+    }
+
+    /**
+     * Enable/disable one of the three Custom Payment Method gateways
+     * (offline/stripe/paypal) in place -- same instant-toggle pattern as
+     * ajax_toggle_wc_gateway(), just against wbbm_payment_settings instead
+     * of a WC_Payment_Gateway object.
+     */
+    public function ajax_toggle_custom_gateway()
+    {
+        check_ajax_referer('wbbm_payment_ajax', 'nonce');
+
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(array('message' => __('Insufficient permissions.', 'bus-booking-manager')));
+        }
+
+        $gateway = isset($_POST['gateway']) ? sanitize_key(wp_unslash($_POST['gateway'])) : '';
+        if (!in_array($gateway, array('offline', 'stripe', 'paypal'), true)) {
+            wp_send_json_error(array('message' => __('Unknown payment gateway.', 'bus-booking-manager')));
+        }
+
+        $enabled = !empty($_POST['enabled']) && 'yes' === $_POST['enabled'];
+
+        $settings = get_option('wbbm_payment_settings');
+        $settings = is_array($settings) ? $settings : array();
+        $settings[$gateway . '_enabled'] = $enabled;
+        update_option('wbbm_payment_settings', $settings);
+
+        wp_send_json_success(array(
+            'enabled'     => $enabled ? 'yes' : 'no',
+            'configured'  => self::is_gateway_configured($gateway),
+            'has_gateway' => $this->mode_has_gateway('offline'),
+        ));
+    }
+
+    /** Instant-save for the Stripe Configure modal. */
+    public function ajax_save_stripe_settings()
+    {
+        check_ajax_referer('wbbm_payment_ajax', 'nonce');
+
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(array('message' => __('Insufficient permissions.', 'bus-booking-manager')));
+        }
+
+        $settings = get_option('wbbm_payment_settings');
+        $settings = is_array($settings) ? $settings : array();
+        if (!empty($_POST['currency_code'])) {
+            $settings['currency_code'] = strtoupper(sanitize_text_field(wp_unslash($_POST['currency_code'])));
+        }
+        $settings['stripe_publishable_key'] = isset($_POST['stripe_publishable_key']) ? sanitize_text_field(wp_unslash($_POST['stripe_publishable_key'])) : '';
+        $settings['stripe_secret_key'] = isset($_POST['stripe_secret_key']) ? sanitize_text_field(wp_unslash($_POST['stripe_secret_key'])) : '';
+        $settings['stripe_test_mode'] = !empty($_POST['stripe_test_mode']) && 'yes' === $_POST['stripe_test_mode'];
+        update_option('wbbm_payment_settings', $settings);
+
+        wp_send_json_success(array(
+            'configured'  => self::is_gateway_configured('stripe'),
+            'has_gateway' => $this->mode_has_gateway('offline'),
+        ));
+    }
+
+    /** Instant-save for the PayPal Configure modal. */
+    public function ajax_save_paypal_settings()
+    {
+        check_ajax_referer('wbbm_payment_ajax', 'nonce');
+
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(array('message' => __('Insufficient permissions.', 'bus-booking-manager')));
+        }
+
+        $settings = get_option('wbbm_payment_settings');
+        $settings = is_array($settings) ? $settings : array();
+        $settings['paypal_client_id'] = isset($_POST['paypal_client_id']) ? sanitize_text_field(wp_unslash($_POST['paypal_client_id'])) : '';
+        $settings['paypal_secret'] = isset($_POST['paypal_secret']) ? sanitize_text_field(wp_unslash($_POST['paypal_secret'])) : '';
+        $settings['paypal_sandbox_mode'] = !empty($_POST['paypal_sandbox_mode']) && 'yes' === $_POST['paypal_sandbox_mode'];
+        update_option('wbbm_payment_settings', $settings);
+
+        wp_send_json_success(array(
+            'configured'  => self::is_gateway_configured('paypal'),
             'has_gateway' => $this->mode_has_gateway('offline'),
         ));
     }
 
     /**
      * Is there actually something that can take a payment for the given
-     * flow right now? WooCommerce: at least one enabled gateway. Offline:
-     * the Enable toggle is on (defaults on for sites that set an offline
-     * label before this toggle existed, so existing configurations don't
-     * suddenly read as "off").
+     * flow right now? WooCommerce: at least one enabled gateway. Custom
+     * Payment Method ("offline" mode, despite the name -- see the class
+     * docblock on render_offline_payment_section()): at least one of the
+     * three gateways (Offline/Stripe/PayPal) is enabled and has the
+     * minimum config it needs to actually take a payment.
      */
     private function mode_has_gateway($mode)
     {
         if ('offline' === $mode) {
-            $settings = get_option('wbbm_payment_settings');
-            $settings = is_array($settings) ? $settings : array();
-            $label = isset($settings['offline_label']) ? trim($settings['offline_label']) : '';
-            $enabled = !array_key_exists('offline_enabled', $settings) || !empty($settings['offline_enabled']);
-            return $enabled && '' !== $label;
+            // True "is any gateway actually ready" check -- deliberately
+            // stricter than the frontend picker's own gate
+            // (wbbm_get_active_custom_gateways(), enabled-only by design so
+            // it can be previewed before real keys exist). This banner's
+            // job is the opposite: telling the admin nothing can really
+            // take a payment yet, so it has to require real keys too.
+            return self::is_gateway_configured('offline')
+                || self::is_gateway_configured('stripe')
+                || self::is_gateway_configured('paypal');
         }
 
         if (!function_exists('WC') || !WC()->payment_gateways()) {
@@ -356,8 +481,8 @@ final class WBBM_Settings_Hub extends WBBM_Admin_Hub
                 <input type="radio" name="wbbm_default_payment_method_display" value="offline" <?php checked($default_method, 'offline'); ?>>
                 <?php if ('offline' === $default_method) : ?><span class="wbbm-bm-card-active"><?php esc_html_e('ACTIVE', 'bus-booking-manager'); ?></span><?php endif; ?>
                 <span class="wbbm-bm-card-icon"><span class="dashicons dashicons-money-alt"></span></span>
-                <strong><?php esc_html_e('Offline Payment', 'bus-booking-manager'); ?></strong>
-                <small><?php esc_html_e('Manual / bank transfer, no WooCommerce needed', 'bus-booking-manager'); ?></small>
+                <strong><?php esc_html_e('Custom Payment Method', 'bus-booking-manager'); ?></strong>
+                <small><?php esc_html_e('Offline, Stripe and/or PayPal -- no WooCommerce needed', 'bus-booking-manager'); ?></small>
             </label>
             <label class="wbbm-bm-card <?php echo ('woocommerce' === $default_method ? 'is-selected' : '') . ($wc_ready ? '' : ' is-disabled'); ?>" data-mode="woocommerce">
                 <input type="radio" name="wbbm_default_payment_method_display" value="woocommerce" <?php checked($default_method, 'woocommerce'); ?> <?php disabled(!$wc_ready); ?>>
@@ -380,7 +505,7 @@ final class WBBM_Settings_Hub extends WBBM_Admin_Hub
                 <?php if ('woocommerce' === $default_method) : ?>
                     <?php esc_html_e("WooCommerce mode is selected, but no WooCommerce payment gateway is enabled yet. Customers won't be able to complete a booking until you enable one below.", 'bus-booking-manager'); ?>
                 <?php else : ?>
-                    <?php esc_html_e('Offline Payment is selected but has no message configured yet -- add one below so customers know what to do.', 'bus-booking-manager'); ?>
+                    <?php esc_html_e('Custom Payment Method is selected but no gateway (Offline/Stripe/PayPal) is enabled and configured yet -- set one up below so customers can pay.', 'bus-booking-manager'); ?>
                 <?php endif; ?>
             </span>
         </div>
@@ -388,7 +513,7 @@ final class WBBM_Settings_Hub extends WBBM_Admin_Hub
         <div class="wbbm-pay-configuring" id="wbbm-pay-configuring">
             <span class="dashicons <?php echo 'woocommerce' === $default_method ? 'dashicons-cart' : 'dashicons-money-alt'; ?>"></span>
             <?php esc_html_e("You're configuring:", 'bus-booking-manager'); ?>
-            <strong id="wbbm-pay-configuring-label"><?php echo 'woocommerce' === $default_method ? esc_html__('WooCommerce Checkout', 'bus-booking-manager') : esc_html__('Offline Payment', 'bus-booking-manager'); ?></strong>
+            <strong id="wbbm-pay-configuring-label"><?php echo 'woocommerce' === $default_method ? esc_html__('WooCommerce Checkout', 'bus-booking-manager') : esc_html__('Custom Payment Method', 'bus-booking-manager'); ?></strong>
         </div>
 
         <div data-mode-section="woocommerce" <?php echo 'woocommerce' === $default_method ? '' : 'style="display:none"'; ?>>
@@ -442,9 +567,9 @@ final class WBBM_Settings_Hub extends WBBM_Admin_Hub
             var configuringIcon = document.querySelector('#wbbm-pay-configuring .dashicons');
             var copy = {
                 offline: {
-                    label: <?php echo wp_json_encode(__('Offline Payment', 'bus-booking-manager')); ?>,
+                    label: <?php echo wp_json_encode(__('Custom Payment Method', 'bus-booking-manager')); ?>,
                     icon: 'dashicons-money-alt',
-                    warn: <?php echo wp_json_encode(__('Offline Payment is selected but has no message configured yet -- add one below so customers know what to do.', 'bus-booking-manager')); ?>
+                    warn: <?php echo wp_json_encode(__('Custom Payment Method is selected but no gateway (Offline/Stripe/PayPal) is enabled and configured yet -- set one up below so customers can pay.', 'bus-booking-manager')); ?>
                 },
                 woocommerce: {
                     label: <?php echo wp_json_encode(__('WooCommerce Checkout', 'bus-booking-manager')); ?>,
@@ -826,64 +951,236 @@ final class WBBM_Settings_Hub extends WBBM_Admin_Hub
     {
         $settings = get_option('wbbm_payment_settings');
         $settings = is_array($settings) ? $settings : array();
+
         $offline_label = isset($settings['offline_label']) ? $settings['offline_label'] : __('Pay Offline', 'bus-booking-manager');
         $offline_instructions = isset($settings['offline_instructions']) ? $settings['offline_instructions'] : '';
         $offline_enabled = !array_key_exists('offline_enabled', $settings) || !empty($settings['offline_enabled']);
         $offline_methods = isset($settings['offline_methods']) && is_array($settings['offline_methods']) ? $settings['offline_methods'] : array();
+
+        $stripe_enabled = !empty($settings['stripe_enabled']);
+        $stripe_publishable_key = isset($settings['stripe_publishable_key']) ? $settings['stripe_publishable_key'] : '';
+        $stripe_secret_key = isset($settings['stripe_secret_key']) ? $settings['stripe_secret_key'] : '';
+        $stripe_test_mode = !array_key_exists('stripe_test_mode', $settings) || !empty($settings['stripe_test_mode']);
+
+        $paypal_enabled = !empty($settings['paypal_enabled']);
+        $paypal_client_id = isset($settings['paypal_client_id']) ? $settings['paypal_client_id'] : '';
+        $paypal_secret = isset($settings['paypal_secret']) ? $settings['paypal_secret'] : '';
+        $paypal_sandbox_mode = !array_key_exists('paypal_sandbox_mode', $settings) || !empty($settings['paypal_sandbox_mode']);
+
+        // Shared by both real gateways (an ISO 4217 code, e.g. USD/EUR) --
+        // there's no such setting anywhere else in the plugin today, since
+        // Offline payment only ever needed a display symbol
+        // (MP_Global_Function::format_price()), not a currency code an
+        // external API can charge in. Edited once, in the Stripe modal, so
+        // Stripe and PayPal can never disagree with each other about it.
+        $currency_code = !empty($settings['currency_code']) ? strtoupper($settings['currency_code']) : 'USD';
+
+        // Toggled "on" isn't the same as "has real keys yet" -- this pill
+        // uses the STRICT check (is_gateway_configured(): enabled AND has
+        // keys) on purpose, so the admin still gets warned a gateway won't
+        // really take a payment, even though the frontend picker itself
+        // now shows any *enabled* gateway regardless of keys (see
+        // wbbm_get_active_custom_gateways()'s own docblock for why).
+        $offline_configured = self::is_gateway_configured('offline');
+        $stripe_configured = self::is_gateway_configured('stripe');
+        $paypal_configured = self::is_gateway_configured('paypal');
+
+        /**
+         * @param bool $enabled    The row's own enable toggle.
+         * @param bool $configured Enabled AND has the minimum fields it needs.
+         */
+        $wbbm_cgw_pill = function ($enabled, $configured) {
+            if ($configured) {
+                return array('is-on', __('ENABLED', 'bus-booking-manager'));
+            }
+            if ($enabled) {
+                return array('is-needs-setup', __('NEEDS API KEYS', 'bus-booking-manager'));
+            }
+            return array('', __('DISABLED', 'bus-booking-manager'));
+        };
         ?>
-        <div class="wbbm-offline-toggle-row">
-            <div>
-                <strong><?php esc_html_e('Enable Offline Payment', 'bus-booking-manager'); ?></strong>
-                <p class="description"><?php esc_html_e('Let customers pay offline (bank transfer, cash, pay on boarding).', 'bus-booking-manager'); ?></p>
+        <div class="wbbm-gw-accordion">
+            <div class="wbbm-gw-accordion-header" id="wbbm-cgw-accordion-header">
+                <?php esc_html_e('Custom Payment Methods', 'bus-booking-manager'); ?>
+                <span class="dashicons dashicons-arrow-up-alt2"></span>
             </div>
-            <label class="bus-switch">
-                <input type="checkbox" id="wbbm_offline_enabled" <?php checked($offline_enabled); ?>>
-                <span class="slider round"></span>
-            </label>
-        </div>
+            <div class="wbbm-gw-accordion-body" id="wbbm-cgw-accordion-body">
+                <p class="description" style="margin-top:0;"><?php esc_html_e('When more than one of these is enabled, customers booking a Custom Payment Method bus choose which one to pay with.', 'bus-booking-manager'); ?></p>
 
-        <h3><?php esc_html_e('Offline Payment Message', 'bus-booking-manager'); ?></h3>
-        <p class="description"><?php esc_html_e('Shown to customers who book a bus using Offline Payment. Saves instantly.', 'bus-booking-manager'); ?></p>
-
-        <div class="form-group" style="margin-bottom:16px;">
-            <label for="wbbm_offline_label" style="display:block;font-weight:600;margin-bottom:6px;"><?php esc_html_e('Heading', 'bus-booking-manager'); ?></label>
-            <input type="text" id="wbbm_offline_label" class="form-control" style="width:100%;max-width:420px;" value="<?php echo esc_attr($offline_label); ?>" placeholder="<?php esc_attr_e('e.g. Pay Offline / Bank Transfer', 'bus-booking-manager'); ?>">
-        </div>
-
-        <div class="form-group" style="margin-bottom:20px;">
-            <label for="wbbm_offline_instructions" style="display:block;font-weight:600;margin-bottom:6px;"><?php esc_html_e('Instructions', 'bus-booking-manager'); ?></label>
-            <textarea id="wbbm_offline_instructions" class="form-control" rows="4" style="width:100%;max-width:420px;" placeholder="<?php esc_attr_e('e.g. Please transfer the fare to account #1234 and bring your receipt when boarding.', 'bus-booking-manager'); ?>"><?php echo esc_textarea($offline_instructions); ?></textarea>
-        </div>
-
-        <div class="wbbm-pm-repeater">
-            <label style="display:block;font-weight:600;margin-bottom:6px;"><?php esc_html_e('Payment Types', 'bus-booking-manager'); ?></label>
-            <p class="description"><?php esc_html_e('The ways customers can pay you directly -- e.g. Bank Transfer, Cash, Cheque. Each can have its own note shown alongside it.', 'bus-booking-manager'); ?></p>
-
-            <div class="wbbm-pm-body" id="wbbm-offline-methods-body">
-                <?php foreach ($offline_methods as $method) : ?>
-                    <?php
-                    $m_label = isset($method['label']) ? $method['label'] : '';
-                    $m_instructions = isset($method['instructions']) ? $method['instructions'] : '';
-                    $m_enabled = !empty($method['enabled']);
-                    ?>
-                    <div class="wbbm-pm-row">
-                        <label class="bus-switch wbbm-pm-enabled-switch">
-                            <input type="checkbox" class="wbbm-pm-enabled" <?php checked($m_enabled); ?>>
+                <div class="wbbm-gw-row">
+                    <div class="wbbm-gw-row-top">
+                        <label class="bus-switch">
+                            <input type="checkbox" class="wbbm-cgw-toggle" data-gateway="offline" <?php checked($offline_enabled); ?>>
                             <span class="slider round"></span>
                         </label>
-                        <input type="text" class="form-control wbbm-pm-label" value="<?php echo esc_attr($m_label); ?>" placeholder="<?php esc_attr_e('Label, e.g. Bank Transfer', 'bus-booking-manager'); ?>">
-                        <input type="text" class="form-control wbbm-pm-instructions" value="<?php echo esc_attr($m_instructions); ?>" placeholder="<?php esc_attr_e('Note shown with this option (optional)', 'bus-booking-manager'); ?>">
-                        <button type="button" class="wbbm-pm-remove" aria-label="<?php esc_attr_e('Remove', 'bus-booking-manager'); ?>">&times;</button>
+                        <strong><?php esc_html_e('Offline Payment', 'bus-booking-manager'); ?></strong>
+                        <?php list($wbbm_offline_pill_class, $wbbm_offline_pill_text) = $wbbm_cgw_pill($offline_enabled, $offline_configured); ?>
+                        <span class="wbbm-gw-status <?php echo esc_attr($wbbm_offline_pill_class); ?>"><?php echo esc_html($wbbm_offline_pill_text); ?></span>
+                        <button type="button" class="btn btn-outline wbbm-cgw-configure" data-gateway="offline"><?php esc_html_e('Configure', 'bus-booking-manager'); ?></button>
                     </div>
-                <?php endforeach; ?>
+                    <p class="wbbm-gw-desc"><?php esc_html_e('Manual payment -- bank transfer, cash, pay on boarding. No online charge; you confirm payment yourself in the Offline Bookings list.', 'bus-booking-manager'); ?></p>
+                </div>
+
+                <div class="wbbm-gw-row">
+                    <div class="wbbm-gw-row-top">
+                        <label class="bus-switch">
+                            <input type="checkbox" class="wbbm-cgw-toggle" data-gateway="stripe" <?php checked($stripe_enabled); ?>>
+                            <span class="slider round"></span>
+                        </label>
+                        <strong><?php esc_html_e('Stripe', 'bus-booking-manager'); ?></strong>
+                        <?php list($wbbm_stripe_pill_class, $wbbm_stripe_pill_text) = $wbbm_cgw_pill($stripe_enabled, $stripe_configured); ?>
+                        <span class="wbbm-gw-status <?php echo esc_attr($wbbm_stripe_pill_class); ?>"><?php echo esc_html($wbbm_stripe_pill_text); ?></span>
+                        <button type="button" class="btn btn-outline wbbm-cgw-configure" data-gateway="stripe"><?php esc_html_e('Configure', 'bus-booking-manager'); ?></button>
+                    </div>
+                    <p class="wbbm-gw-desc"><?php esc_html_e('Real card payment via Stripe Checkout -- the customer pays on a secure Stripe page and the booking confirms automatically once paid.', 'bus-booking-manager'); ?></p>
+                </div>
+
+                <div class="wbbm-gw-row">
+                    <div class="wbbm-gw-row-top">
+                        <label class="bus-switch">
+                            <input type="checkbox" class="wbbm-cgw-toggle" data-gateway="paypal" <?php checked($paypal_enabled); ?>>
+                            <span class="slider round"></span>
+                        </label>
+                        <strong><?php esc_html_e('PayPal', 'bus-booking-manager'); ?></strong>
+                        <?php list($wbbm_paypal_pill_class, $wbbm_paypal_pill_text) = $wbbm_cgw_pill($paypal_enabled, $paypal_configured); ?>
+                        <span class="wbbm-gw-status <?php echo esc_attr($wbbm_paypal_pill_class); ?>"><?php echo esc_html($wbbm_paypal_pill_text); ?></span>
+                        <button type="button" class="btn btn-outline wbbm-cgw-configure" data-gateway="paypal"><?php esc_html_e('Configure', 'bus-booking-manager'); ?></button>
+                    </div>
+                    <p class="wbbm-gw-desc"><?php esc_html_e('Real payment via PayPal Checkout -- the customer approves payment on PayPal and the booking confirms automatically once captured.', 'bus-booking-manager'); ?></p>
+                </div>
             </div>
-            <button type="button" class="btn btn-outline" id="wbbm-offline-methods-add">+ <?php esc_html_e('Add payment type', 'bus-booking-manager'); ?></button>
         </div>
 
-        <p style="margin-top:20px;">
-            <button type="button" class="btn btn-primary" id="wbbm-save-offline-message"><?php esc_html_e('Save Changes', 'bus-booking-manager'); ?></button>
-            <span class="wbbm-pay-saved-msg" id="wbbm-offline-saved-msg"></span>
-        </p>
+        <?php /*
+         * Each "Configure" button opens its own small modal with that
+         * gateway's own fields -- unlike the WooCommerce gateway list's
+         * Configure (an iframe onto an external WC screen), these are this
+         * plugin's own settings, so a plain modal is enough. Reuses the
+         * exact chrome already built for .wbbm-stop-modal (Add Stoppage),
+         * plus a z-index bump (.wbbm-cgw-modal) so it always renders above
+         * the per-bus Payment Method popup this section is also embedded
+         * in (BusEditPageClass::render_payment_modal()).
+         */ ?>
+
+        <div class="wbbm-stop-modal wbbm-cgw-modal" id="wbbm-cgw-modal-offline">
+            <div class="wbbm-stop-modal-box wbbm-stop-modal-wide">
+                <div class="wbbm-stop-modal-head">
+                    <h2><?php esc_html_e('Configure Offline Payment', 'bus-booking-manager'); ?></h2>
+                    <button type="button" class="wbbm-stop-modal-close wbbm-cgw-modal-close" aria-label="<?php esc_attr_e('Close', 'bus-booking-manager'); ?>">&times;</button>
+                </div>
+                <div class="wbbm-stop-modal-body">
+                    <div class="form-group" style="margin-bottom:16px;">
+                        <label for="wbbm_offline_label" style="display:block;font-weight:600;margin-bottom:6px;"><?php esc_html_e('Heading', 'bus-booking-manager'); ?></label>
+                        <input type="text" id="wbbm_offline_label" class="form-control" style="width:100%;" value="<?php echo esc_attr($offline_label); ?>" placeholder="<?php esc_attr_e('e.g. Pay Offline / Bank Transfer', 'bus-booking-manager'); ?>">
+                    </div>
+                    <div class="form-group" style="margin-bottom:20px;">
+                        <label for="wbbm_offline_instructions" style="display:block;font-weight:600;margin-bottom:6px;"><?php esc_html_e('Instructions', 'bus-booking-manager'); ?></label>
+                        <textarea id="wbbm_offline_instructions" class="form-control" rows="4" style="width:100%;" placeholder="<?php esc_attr_e('e.g. Please transfer the fare to account #1234 and bring your receipt when boarding.', 'bus-booking-manager'); ?>"><?php echo esc_textarea($offline_instructions); ?></textarea>
+                    </div>
+                    <div class="wbbm-pm-repeater">
+                        <label style="display:block;font-weight:600;margin-bottom:6px;"><?php esc_html_e('Payment Types', 'bus-booking-manager'); ?></label>
+                        <p class="description"><?php esc_html_e('The ways customers can pay you directly -- e.g. Bank Transfer, Cash, Cheque. Each can have its own note shown alongside it.', 'bus-booking-manager'); ?></p>
+                        <div class="wbbm-pm-body" id="wbbm-offline-methods-body">
+                            <?php foreach ($offline_methods as $method) : ?>
+                                <?php
+                                $m_label = isset($method['label']) ? $method['label'] : '';
+                                $m_instructions = isset($method['instructions']) ? $method['instructions'] : '';
+                                $m_enabled = !empty($method['enabled']);
+                                ?>
+                                <div class="wbbm-pm-row">
+                                    <label class="bus-switch wbbm-pm-enabled-switch">
+                                        <input type="checkbox" class="wbbm-pm-enabled" <?php checked($m_enabled); ?>>
+                                        <span class="slider round"></span>
+                                    </label>
+                                    <input type="text" class="form-control wbbm-pm-label" value="<?php echo esc_attr($m_label); ?>" placeholder="<?php esc_attr_e('Label, e.g. Bank Transfer', 'bus-booking-manager'); ?>">
+                                    <input type="text" class="form-control wbbm-pm-instructions" value="<?php echo esc_attr($m_instructions); ?>" placeholder="<?php esc_attr_e('Note shown with this option (optional)', 'bus-booking-manager'); ?>">
+                                    <button type="button" class="wbbm-pm-remove" aria-label="<?php esc_attr_e('Remove', 'bus-booking-manager'); ?>">&times;</button>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                        <button type="button" class="btn btn-outline" id="wbbm-offline-methods-add">+ <?php esc_html_e('Add payment type', 'bus-booking-manager'); ?></button>
+                    </div>
+                </div>
+                <div class="wbbm-stop-modal-foot">
+                    <span class="wbbm-pay-saved-msg" id="wbbm-offline-saved-msg"></span>
+                    <button type="button" class="btn btn-primary" id="wbbm-save-offline-message"><?php esc_html_e('Save', 'bus-booking-manager'); ?></button>
+                </div>
+            </div>
+        </div>
+
+        <div class="wbbm-stop-modal wbbm-cgw-modal" id="wbbm-cgw-modal-stripe">
+            <div class="wbbm-stop-modal-box">
+                <div class="wbbm-stop-modal-head">
+                    <h2><?php esc_html_e('Configure Stripe', 'bus-booking-manager'); ?></h2>
+                    <button type="button" class="wbbm-stop-modal-close wbbm-cgw-modal-close" aria-label="<?php esc_attr_e('Close', 'bus-booking-manager'); ?>">&times;</button>
+                </div>
+                <div class="wbbm-stop-modal-body">
+                    <p class="description"><?php esc_html_e('From your Stripe Dashboard -- Developers > API keys.', 'bus-booking-manager'); ?></p>
+                    <div class="form-group">
+                        <label for="wbbm_cgw_currency_code"><?php esc_html_e('Currency code', 'bus-booking-manager'); ?></label>
+                        <input type="text" id="wbbm_cgw_currency_code" class="form-control" style="max-width:100px;" maxlength="3" value="<?php echo esc_attr($currency_code); ?>" placeholder="USD">
+                        <p class="description"><?php esc_html_e('3-letter ISO code (e.g. USD, EUR, GBP) -- also used for PayPal.', 'bus-booking-manager'); ?></p>
+                    </div>
+                    <div class="form-group">
+                        <label for="wbbm_stripe_publishable_key"><?php esc_html_e('Publishable key', 'bus-booking-manager'); ?></label>
+                        <input type="text" id="wbbm_stripe_publishable_key" class="form-control" value="<?php echo esc_attr($stripe_publishable_key); ?>" placeholder="pk_test_...">
+                    </div>
+                    <div class="form-group">
+                        <label for="wbbm_stripe_secret_key"><?php esc_html_e('Secret key', 'bus-booking-manager'); ?></label>
+                        <input type="password" id="wbbm_stripe_secret_key" class="form-control" value="<?php echo esc_attr($stripe_secret_key); ?>" placeholder="sk_test_...">
+                    </div>
+                    <div class="wbbm-offline-toggle-row">
+                        <div>
+                            <strong><?php esc_html_e('Test mode', 'bus-booking-manager'); ?></strong>
+                            <p class="description"><?php esc_html_e('Off once you switch to live keys.', 'bus-booking-manager'); ?></p>
+                        </div>
+                        <label class="bus-switch">
+                            <input type="checkbox" id="wbbm_stripe_test_mode" <?php checked($stripe_test_mode); ?>>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="wbbm-stop-modal-foot">
+                    <span class="wbbm-pay-saved-msg" id="wbbm-stripe-saved-msg"></span>
+                    <button type="button" class="btn btn-primary" id="wbbm-save-stripe-settings"><?php esc_html_e('Save', 'bus-booking-manager'); ?></button>
+                </div>
+            </div>
+        </div>
+
+        <div class="wbbm-stop-modal wbbm-cgw-modal" id="wbbm-cgw-modal-paypal">
+            <div class="wbbm-stop-modal-box">
+                <div class="wbbm-stop-modal-head">
+                    <h2><?php esc_html_e('Configure PayPal', 'bus-booking-manager'); ?></h2>
+                    <button type="button" class="wbbm-stop-modal-close wbbm-cgw-modal-close" aria-label="<?php esc_attr_e('Close', 'bus-booking-manager'); ?>">&times;</button>
+                </div>
+                <div class="wbbm-stop-modal-body">
+                    <p class="description"><?php esc_html_e('From your PayPal Developer Dashboard -- Apps & Credentials.', 'bus-booking-manager'); ?></p>
+                    <div class="form-group">
+                        <label for="wbbm_paypal_client_id"><?php esc_html_e('Client ID', 'bus-booking-manager'); ?></label>
+                        <input type="text" id="wbbm_paypal_client_id" class="form-control" value="<?php echo esc_attr($paypal_client_id); ?>">
+                    </div>
+                    <div class="form-group">
+                        <label for="wbbm_paypal_secret"><?php esc_html_e('Secret', 'bus-booking-manager'); ?></label>
+                        <input type="password" id="wbbm_paypal_secret" class="form-control" value="<?php echo esc_attr($paypal_secret); ?>">
+                    </div>
+                    <div class="wbbm-offline-toggle-row">
+                        <div>
+                            <strong><?php esc_html_e('Sandbox mode', 'bus-booking-manager'); ?></strong>
+                            <p class="description"><?php esc_html_e('Off once you switch to a live app.', 'bus-booking-manager'); ?></p>
+                        </div>
+                        <label class="bus-switch">
+                            <input type="checkbox" id="wbbm_paypal_sandbox_mode" <?php checked($paypal_sandbox_mode); ?>>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="wbbm-stop-modal-foot">
+                    <span class="wbbm-pay-saved-msg" id="wbbm-paypal-saved-msg"></span>
+                    <button type="button" class="btn btn-primary" id="wbbm-save-paypal-settings"><?php esc_html_e('Save', 'bus-booking-manager'); ?></button>
+                </div>
+            </div>
+        </div>
+
         <script>
         (function () {
             var ajaxUrl = <?php echo wp_json_encode(admin_url('admin-ajax.php')); ?>;
@@ -892,6 +1189,94 @@ final class WBBM_Settings_Hub extends WBBM_Admin_Hub
             // popup -- null-guarded below, so a no-op there.
             var warning = document.getElementById('wbbm-pay-warning');
 
+            // Three states, not two: configured (green, actually usable),
+            // enabled-but-missing-keys (amber -- won't show up for
+            // customers yet), or disabled. Mirrors the PHP-rendered pill's
+            // own $wbbm_cgw_pill() logic exactly, and is reused by both the
+            // enable toggle and every Configure modal's Save button below
+            // (saving valid keys can flip a row straight from amber to
+            // green without a page reload).
+            function updateGatewayPill(gateway, enabled, configured) {
+                var toggle = document.querySelector('.wbbm-cgw-toggle[data-gateway="' + gateway + '"]');
+                var row = toggle ? toggle.closest('.wbbm-gw-row') : null;
+                var pill = row ? row.querySelector('.wbbm-gw-status') : null;
+                if (!pill) { return; }
+
+                var label, cls;
+                if (configured) {
+                    label = <?php echo wp_json_encode(__('ENABLED', 'bus-booking-manager')); ?>;
+                    cls = 'is-on';
+                } else if (enabled) {
+                    label = <?php echo wp_json_encode(__('NEEDS API KEYS', 'bus-booking-manager')); ?>;
+                    cls = 'is-needs-setup';
+                } else {
+                    label = <?php echo wp_json_encode(__('DISABLED', 'bus-booking-manager')); ?>;
+                    cls = '';
+                }
+                pill.textContent = label;
+                pill.className = 'wbbm-gw-status' + (cls ? ' ' + cls : '');
+            }
+
+            // Enable/disable toggles, shared by all three gateway rows.
+            document.querySelectorAll('.wbbm-cgw-toggle').forEach(function (toggle) {
+                toggle.addEventListener('change', function () {
+                    var gateway = toggle.getAttribute('data-gateway');
+                    var enabled = toggle.checked ? 'yes' : 'no';
+
+                    var xhr = new XMLHttpRequest();
+                    xhr.open('POST', ajaxUrl, true);
+                    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                    xhr.onload = function () {
+                        var res;
+                        try { res = JSON.parse(xhr.responseText); } catch (err) { return; }
+                        if (!res || !res.success) { return; }
+                        updateGatewayPill(gateway, res.data.enabled === 'yes', !!res.data.configured);
+                        if (warning) {
+                            warning.style.display = res.data.has_gateway ? 'none' : '';
+                        }
+                    };
+                    xhr.send('action=wbbm_toggle_custom_gateway&nonce=' + encodeURIComponent(nonce) + '&gateway=' + encodeURIComponent(gateway) + '&enabled=' + encodeURIComponent(enabled));
+                });
+            });
+
+            var accHeader = document.getElementById('wbbm-cgw-accordion-header');
+            var accBody = document.getElementById('wbbm-cgw-accordion-body');
+            if (accHeader && accBody) {
+                accHeader.addEventListener('click', function () {
+                    var isOpen = accBody.style.display !== 'none';
+                    accBody.style.display = isOpen ? 'none' : '';
+                    accHeader.classList.toggle('is-collapsed', isOpen);
+                });
+            }
+
+            // "Configure" opens the matching gateway's own modal.
+            document.querySelectorAll('.wbbm-cgw-configure').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    var modal = document.getElementById('wbbm-cgw-modal-' + btn.getAttribute('data-gateway'));
+                    if (modal) {
+                        modal.classList.add('is-open');
+                        document.body.classList.add('wbbm-modal-open');
+                    }
+                });
+            });
+            function closeCgwModal(modal) {
+                modal.classList.remove('is-open');
+                document.body.classList.remove('wbbm-modal-open');
+            }
+            document.querySelectorAll('.wbbm-cgw-modal-close').forEach(function (btn) {
+                btn.addEventListener('click', function () { closeCgwModal(btn.closest('.wbbm-cgw-modal')); });
+            });
+            document.querySelectorAll('.wbbm-cgw-modal').forEach(function (modal) {
+                modal.addEventListener('click', function (e) {
+                    if (e.target === modal) { closeCgwModal(modal); }
+                });
+            });
+            document.addEventListener('keydown', function (e) {
+                if (e.key !== 'Escape') { return; }
+                document.querySelectorAll('.wbbm-cgw-modal.is-open').forEach(closeCgwModal);
+            });
+
+            // --- Offline Configure modal: Heading/Instructions/Payment Types ---
             var methodsBody = document.getElementById('wbbm-offline-methods-body');
             var addMethodBtn = document.getElementById('wbbm-offline-methods-add');
             function newMethodRow() {
@@ -920,14 +1305,47 @@ final class WBBM_Settings_Hub extends WBBM_Admin_Hub
                 });
             }
 
+            function saveViaAjax(button, msgEl, action, gateway, extraFields) {
+                button.addEventListener('click', function () {
+                    var data = 'action=' + encodeURIComponent(action) + '&nonce=' + encodeURIComponent(nonce);
+                    var fields = extraFields();
+                    Object.keys(fields).forEach(function (key) {
+                        data += '&' + key + '=' + encodeURIComponent(fields[key]);
+                    });
+
+                    var xhr = new XMLHttpRequest();
+                    xhr.open('POST', ajaxUrl, true);
+                    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                    xhr.onload = function () {
+                        var res;
+                        try { res = JSON.parse(xhr.responseText); } catch (err) { return; }
+                        if (msgEl) {
+                            msgEl.textContent = (res && res.success)
+                                ? <?php echo wp_json_encode(__('Saved.', 'bus-booking-manager')); ?>
+                                : <?php echo wp_json_encode(__('Could not save -- try again.', 'bus-booking-manager')); ?>;
+                            msgEl.className = 'wbbm-pay-saved-msg' + (res && res.success ? ' is-ok' : ' is-error');
+                            setTimeout(function () { msgEl.textContent = ''; }, 2500);
+                        }
+                        if (res && res.success) {
+                            // Saving valid keys here is what can flip this
+                            // row's pill from "NEEDS API KEYS" to "ENABLED"
+                            // without a reload -- the toggle's own current
+                            // checked state doesn't change from a Configure
+                            // save, only res.data.configured can.
+                            var toggle = document.querySelector('.wbbm-cgw-toggle[data-gateway="' + gateway + '"]');
+                            updateGatewayPill(gateway, !!(toggle && toggle.checked), !!res.data.configured);
+                        }
+                        if (res && res.success && warning) {
+                            warning.style.display = res.data.has_gateway ? 'none' : '';
+                        }
+                    };
+                    xhr.send(data);
+                });
+            }
+
             var saveOfflineBtn = document.getElementById('wbbm-save-offline-message');
-            var savedMsg = document.getElementById('wbbm-offline-saved-msg');
             if (saveOfflineBtn) {
-                saveOfflineBtn.addEventListener('click', function () {
-                    var enabledInput = document.getElementById('wbbm_offline_enabled');
-                    var enabled = enabledInput && enabledInput.checked ? 'yes' : 'no';
-                    var label = document.getElementById('wbbm_offline_label').value;
-                    var instructions = document.getElementById('wbbm_offline_instructions').value;
+                saveViaAjax(saveOfflineBtn, document.getElementById('wbbm-offline-saved-msg'), 'wbbm_save_offline_message', 'offline', function () {
                     var methods = [];
                     if (methodsBody) {
                         methodsBody.querySelectorAll('.wbbm-pm-row').forEach(function (row) {
@@ -943,29 +1361,35 @@ final class WBBM_Settings_Hub extends WBBM_Admin_Hub
                             });
                         });
                     }
-
-                    var xhr = new XMLHttpRequest();
-                    xhr.open('POST', ajaxUrl, true);
-                    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-                    xhr.onload = function () {
-                        var res;
-                        try { res = JSON.parse(xhr.responseText); } catch (err) { return; }
-                        if (savedMsg) {
-                            savedMsg.textContent = (res && res.success)
-                                ? <?php echo wp_json_encode(__('Saved.', 'bus-booking-manager')); ?>
-                                : <?php echo wp_json_encode(__('Could not save -- try again.', 'bus-booking-manager')); ?>;
-                            savedMsg.className = 'wbbm-pay-saved-msg' + (res && res.success ? ' is-ok' : ' is-error');
-                            setTimeout(function () { savedMsg.textContent = ''; }, 2500);
-                        }
-                        if (res && res.success && warning) {
-                            warning.style.display = res.data.has_gateway ? 'none' : '';
-                        }
+                    return {
+                        offline_enabled: (document.querySelector('#wbbm-cgw-modal-offline .wbbm-cgw-toggle') || { checked: true }).checked ? 'yes' : 'no',
+                        offline_label: document.getElementById('wbbm_offline_label').value,
+                        offline_instructions: document.getElementById('wbbm_offline_instructions').value,
+                        offline_methods: JSON.stringify(methods)
                     };
-                    xhr.send('action=wbbm_save_offline_message&nonce=' + encodeURIComponent(nonce) +
-                        '&offline_enabled=' + encodeURIComponent(enabled) +
-                        '&offline_label=' + encodeURIComponent(label) +
-                        '&offline_instructions=' + encodeURIComponent(instructions) +
-                        '&offline_methods=' + encodeURIComponent(JSON.stringify(methods)));
+                });
+            }
+
+            var saveStripeBtn = document.getElementById('wbbm-save-stripe-settings');
+            if (saveStripeBtn) {
+                saveViaAjax(saveStripeBtn, document.getElementById('wbbm-stripe-saved-msg'), 'wbbm_save_stripe_settings', 'stripe', function () {
+                    return {
+                        currency_code: document.getElementById('wbbm_cgw_currency_code').value,
+                        stripe_publishable_key: document.getElementById('wbbm_stripe_publishable_key').value,
+                        stripe_secret_key: document.getElementById('wbbm_stripe_secret_key').value,
+                        stripe_test_mode: document.getElementById('wbbm_stripe_test_mode').checked ? 'yes' : 'no'
+                    };
+                });
+            }
+
+            var savePaypalBtn = document.getElementById('wbbm-save-paypal-settings');
+            if (savePaypalBtn) {
+                saveViaAjax(savePaypalBtn, document.getElementById('wbbm-paypal-saved-msg'), 'wbbm_save_paypal_settings', 'paypal', function () {
+                    return {
+                        paypal_client_id: document.getElementById('wbbm_paypal_client_id').value,
+                        paypal_secret: document.getElementById('wbbm_paypal_secret').value,
+                        paypal_sandbox_mode: document.getElementById('wbbm_paypal_sandbox_mode').checked ? 'yes' : 'no'
+                    };
                 });
             }
         })();

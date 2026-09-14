@@ -18,7 +18,6 @@ div.mage_row {
 ul.mage_route_list li,
 .mage_container label {
     display: block;
-    width: 100%;
 }
 
 .mage_container ul {
@@ -33,6 +32,68 @@ div.mage_hidden {
 .mage_error {
     background-color: red !important;
     color: #fff !important;
+}
+
+/* Offline booking result banner (see templates/single-bus.php and
+   inc/wbbm-offline-booking.php) -- a plain success/error notice shown
+   after a non-WooCommerce booking attempt redirects back to the bus page. */
+.mage_notice {
+    margin: 0 0 20px;
+    padding: 14px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.mage_notice p {
+    margin: 0 0 6px;
+}
+
+.mage_notice p:last-child {
+    margin-bottom: 0;
+}
+
+.mage_notice-success {
+    background: #ecfdf5;
+    border: 1px solid #a7f3d0;
+    color: #065f46;
+}
+
+.mage_notice-error {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #991b1b;
+}
+
+.wbbm-offline-booking-details {
+    width: 100%;
+    margin: 10px 0;
+    border-collapse: collapse;
+    font-size: 13.5px;
+}
+
+.wbbm-offline-booking-details th,
+.wbbm-offline-booking-details td {
+    padding: 6px 8px;
+    text-align: left;
+    border-bottom: 1px solid rgba(6, 95, 70, .15);
+}
+
+.wbbm-offline-booking-details th {
+    font-weight: 600;
+    width: 40%;
+}
+
+.wbbm-offline-booking-details tr:last-child th,
+.wbbm-offline-booking-details tr:last-child td {
+    border-bottom: none;
+}
+
+.wbbm-offline-booking-total th,
+.wbbm-offline-booking-total td {
+    font-weight: 700;
+    font-size: 15px;
+    border-top: 1px solid rgba(6, 95, 70, .3);
 }
 
 .mage_disabled {
@@ -511,6 +572,318 @@ flex-direction: column;
 
 .mage_book_now_area {
     margin: 15px 0 0 0;
+}
+
+/* Contact fields shown in place of the WooCommerce add-to-cart step for a
+   bus set to Offline Payment (see inc/clean/layout/book-now-area.php). */
+.mage_offline_contact_fields {
+    width: 100%;
+    margin: 0 0 12px;
+    text-align: left;
+}
+
+.mage_offline_instructions {
+    margin: 0 0 10px;
+    font-size: 12.5px;
+    color: #6b7280;
+}
+
+/* Only rendered at all when more than one of Offline/Stripe/PayPal is
+   enabled (see wbbm_get_active_custom_gateways()) -- a single-gateway site
+   (today's default) never sees this markup, so its booking modal looks
+   exactly as it always did. */
+.mage_offline_gateway_picker_heading {
+    margin: 0 0 14px;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: .03em;
+    color: #6b7280;
+}
+
+h4.mage_offline_gateway_picker_heading {
+    margin-bottom: 20px !important;
+}
+
+.mage_offline_gateway_picker {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 12px;
+    margin: 0 0 16px;
+}
+
+.mage_offline_gateway_card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 16px 10px 14px;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 12.5px;
+    font-weight: 600;
+    text-align: center;
+    color: #374151;
+    background: #fff;
+    transition: border-color .15s ease, background-color .15s ease, box-shadow .15s ease, transform .15s ease;
+}
+
+.mage_offline_gateway_card:hover {
+    border-color: #fdba74;
+    transform: translateY(-1px);
+}
+
+.mage_offline_gateway_card.is-selected {
+    border-color: #f97316;
+    background: #fff7ed;
+    color: #9a3412;
+    box-shadow: 0 0 0 3px rgba(249, 115, 22, .14);
+}
+
+/* Small checkmark badge in the corner, the same "this one's picked" signal
+   as the admin mode-selector cards (.wbbm-bm-card-active) use elsewhere in
+   this plugin, just a plain dot+check here since there's no room for a
+   text pill at this size. */
+.mage_offline_gateway_card.is-selected::after {
+    /* Sits fully inside the card's own box (not poking above/past its
+       edge) -- .mage_offline_modal_box scrolls (overflow-y:auto) when the
+       modal's content is taller than the viewport, and anything hanging
+       outside a card's bounds gets flatly clipped by that scroll container
+       the moment the card scrolls near its top edge, which a negative
+       offset here used to do. */
+    content: '\2713';
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #f97316;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 16px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .2);
+}
+
+.mage_offline_gateway_card input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Icon sits in its own rounded badge, matching the same treatment the
+   admin mode-selector cards give theirs (.wbbm-bm-card-icon), just sized
+   down to fit this more compact frontend card. */
+.mage_offline_gateway_card .fas,
+.mage_offline_gateway_card .fab {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 9px;
+    background: #f1f5f9;
+    color: #64748b;
+    font-size: 15px;
+    transition: background-color .15s ease, color .15s ease;
+}
+
+.mage_offline_gateway_card.is-selected .fas,
+.mage_offline_gateway_card.is-selected .fab {
+    background: #ffe4cc;
+    color: #c2410c;
+}
+
+.mage_offline_unavailable {
+    padding: 10px 14px;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+    color: #991b1b;
+    font-size: 13px;
+}
+
+.mage_offline_input {
+    display: block;
+    width: 100%;
+    margin: 0 0 8px;
+    padding: 9px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.mage_offline_input:focus {
+    outline: none;
+    border-color: #f97316;
+}
+
+/* The generic .mage_error utility above (solid red fill) reads fine on a
+   quantity box but is too jarring on a text field -- a red border + light
+   red tint is enough here. */
+.mage_offline_input.mage_error {
+    background-color: #fef2f2 !important;
+    color: inherit !important;
+    border-color: #ef4444 !important;
+}
+
+/* Stripe's `card` Element, mounted in-page (js/mage_style.js) when Card
+   (Stripe) is the selected payment method -- styled to match
+   .mage_offline_input above so it doesn't look like a different form. */
+.mage_stripe_card_box {
+    margin: 0 0 12px;
+}
+
+.mage_stripe_card_label {
+    display: block;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #374151;
+    margin: 0 0 6px;
+}
+
+.mage_stripe_card_element {
+    padding: 10px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background: #fff;
+    box-sizing: border-box;
+}
+
+.mage_stripe_card_errors {
+    margin: 6px 0 0;
+    font-size: 12.5px;
+    color: #ef4444;
+}
+
+/* "Book Now" confirmation modal for Offline Payment buses -- opened by
+   js/mage_style.js's wbbmOpenOfflineModal() instead of submitting
+   immediately, so the customer sees a fare/tax breakdown and enters their
+   contact details before the booking is actually recorded. */
+.mage_offline_modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, .55);
+    z-index: 100010;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.mage_offline_modal.is-open {
+    display: flex;
+}
+
+.mage_offline_modal_box {
+    background: #fff;
+    border-radius: 12px;
+    max-width: 560px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    text-align: left;
+    box-shadow: 0 24px 60px rgba(15, 23, 42, .35);
+}
+
+.mage_offline_modal_head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.mage_offline_modal_head strong {
+    font-size: 16px;
+}
+
+.mage_offline_modal_close {
+    border: none;
+    background: transparent;
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+    color: #6b7280;
+    padding: 4px 8px;
+}
+
+.mage_offline_modal_close:hover {
+    color: #111827;
+}
+
+.mage_offline_modal_body {
+    padding: 16px 20px;
+}
+
+.mage_offline_summary {
+    margin: 0 0 16px;
+    padding: 12px 14px;
+    background: #f8fafc;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+}
+
+.mage_offline_summary h4 {
+    margin: 0 0 8px;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: .03em;
+    color: #6b7280;
+}
+
+.mage_offline_summary_row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 13.5px;
+    padding: 4px 0;
+}
+
+.mage_offline_summary_subtotal,
+.mage_offline_summary_tax {
+    border-top: 1px dashed #d1d5db;
+    margin-top: 4px;
+    padding-top: 8px;
+}
+
+.mage_offline_summary_total {
+    border-top: 1px solid #d1d5db;
+    margin-top: 4px;
+    padding-top: 8px;
+    font-weight: 700;
+    font-size: 15px;
+}
+
+.mage_offline_modal_foot {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 14px 20px 18px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.mage_offline_result_heading {
+    margin: 0 0 4px;
+    font-weight: 700;
+    color: #065f46;
+}
+
+.mage_offline_modal_result .wbbm-offline-booking-details {
+    color: inherit;
+}
+
+.mage_offline_submit_error {
+    margin: 10px 0 0;
+    padding: 8px 10px;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 6px;
+    color: #991b1b;
+    font-size: 13px;
 }
 
 .mage_sub_price,

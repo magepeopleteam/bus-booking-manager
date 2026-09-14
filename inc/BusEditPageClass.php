@@ -510,6 +510,11 @@ class BusEditPageClass
                 update_post_meta($post_id, 'wbtm_bus_tax_class', $tax_class);
                 update_post_meta($post_id, '_tax_class', $tax_class);
             }
+            if (isset($_POST['wbbm_offline_tax_rate'])) {
+                $offline_tax_rate = (float) wp_unslash($_POST['wbbm_offline_tax_rate']);
+                $offline_tax_rate = max(0, $offline_tax_rate);
+                update_post_meta($post_id, '_wbbm_offline_tax_rate', $offline_tax_rate);
+            }
 
             // Thumbnail
             if (isset($_POST['bus_thumbnail_id'])) {
@@ -980,6 +985,7 @@ class BusEditPageClass
                             </div>
 
                             <div class="bus-edit-right">
+                                <?php $this->render_payment_method_card($post_id); ?>
                                 <?php $this->render_step_4_right($post_id); ?>
                                 <?php $this->render_step_5_right($post_id); ?>
                             </div>
@@ -1038,6 +1044,38 @@ class BusEditPageClass
                     </button>
                 </div>
 
+                <?php /*
+                 * "Add Stoppage" popup: adds a brand-new value to the
+                 * wbbm_bus_stops taxonomy (the options list every "Stop"
+                 * dropdown below draws from), so a stop doesn't have to
+                 * exist ahead of time -- reuses the exact same
+                 * wbbm_add_inline_stop AJAX action and success handling
+                 * already wired up for the Bus Stops sidebar on the Basic
+                 * step (see #add-inline-stop-btn in bus-edit.js), just
+                 * triggered from a modal instead of an inline sidebar
+                 * form, so both stay in sync with each other automatically.
+                 */ ?>
+                <div class="wbbm-stop-modal" id="wbbm-stop-modal">
+                    <div class="wbbm-stop-modal-box">
+                        <div class="wbbm-stop-modal-head">
+                            <h2><?php esc_html_e('Add Stoppage', 'bus-booking-manager'); ?></h2>
+                            <button type="button" class="wbbm-stop-modal-close" id="close-add-stoppage-modal" aria-label="<?php esc_attr_e('Close', 'bus-booking-manager'); ?>">&times;</button>
+                        </div>
+                        <div class="wbbm-stop-modal-body">
+                            <p class="description"><?php esc_html_e('Adds a new stop to the list every "Stop" dropdown below can choose from.', 'bus-booking-manager'); ?></p>
+                            <div class="form-group">
+                                <label for="new-stop-name-modal"><?php esc_html_e('Stop name', 'bus-booking-manager'); ?></label>
+                                <input type="text" id="new-stop-name-modal" class="form-control" placeholder="<?php esc_attr_e('e.g. Munich', 'bus-booking-manager'); ?>">
+                            </div>
+                            <div id="stop-modal-message" style="font-size: 12.5px; font-weight: 600; min-height: 18px;"></div>
+                        </div>
+                        <div class="wbbm-stop-modal-foot">
+                            <button type="button" class="btn btn-secondary" id="cancel-add-stoppage"><?php esc_html_e('Cancel', 'bus-booking-manager'); ?></button>
+                            <button type="button" class="btn btn-primary" id="save-add-stoppage"><?php esc_html_e('Add Stop', 'bus-booking-manager'); ?></button>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="bus-card">
                     <h3><?php _e('Pricing Matrix', 'bus-booking-manager'); ?></h3>
                     <div id="pricing-matrix-container">
@@ -1047,6 +1085,7 @@ class BusEditPageClass
             </div>
 
             <div class="bus-edit-right">
+                <?php $this->render_payment_method_card($post_id); ?>
                 <div class="bus-card">
                     <h3><?php _e('Pickup Points', 'bus-booking-manager'); ?></h3>
                     <div class="inline-taxonomy-list-wrap">
@@ -1259,10 +1298,19 @@ class BusEditPageClass
     }
 
     /**
-     * Payment Method summary card (Step 1 sidebar): shows the bus's
-     * current payment method and a Configure button that opens the modal
-     * below -- the same "small status card + popup to actually change it"
-     * split used for this in booking-and-rental-manager-for-woocommerce.
+     * Payment Method summary card: shows the bus's current payment method
+     * and a Configure button that opens the modal below -- the same
+     * "small status card + popup to actually change it" split used for
+     * this in booking-and-rental-manager-for-woocommerce.
+     *
+     * Rendered on every step's sidebar (not just Step 1), so every part
+     * that needs to live-update when the modal's selection changes is
+     * addressed by class rather than a unique id -- an id can only ever
+     * belong to one element, so with four copies on the page,
+     * getElementById()-based syncing would only ever keep the first one
+     * (Step 1's) in sync and leave the other three stale. The JS in
+     * render_payment_modal() updates every matching element via
+     * querySelectorAll() instead.
      */
     private function render_payment_method_card($post_id)
     {
@@ -1273,13 +1321,13 @@ class BusEditPageClass
         <div class="bus-card wbbm-payment-card">
             <h3><?php _e('Payment Method', 'bus-booking-manager'); ?></h3>
 
-            <div class="wbbm-payment-summary" id="wbbm-payment-summary">
-                <span class="wbbm-payment-summary-icon" id="wbbm-payment-summary-icon">
+            <div class="wbbm-payment-summary">
+                <span class="wbbm-payment-summary-icon">
                     <span class="dashicons <?php echo $is_wc ? 'dashicons-cart' : 'dashicons-money-alt'; ?>"></span>
                 </span>
                 <span>
-                    <strong id="wbbm-payment-summary-label"><?php echo $is_wc ? esc_html__('WooCommerce Payment', 'bus-booking-manager') : esc_html__('Offline Payment', 'bus-booking-manager'); ?></strong>
-                    <small id="wbbm-payment-summary-sub"><?php echo $is_wc ? esc_html__('Sell tickets through WooCommerce checkout', 'bus-booking-manager') : esc_html__('Manual / bank transfer, no WooCommerce needed', 'bus-booking-manager'); ?></small>
+                    <strong class="wbbm-payment-summary-label"><?php echo $is_wc ? esc_html__('WooCommerce Payment', 'bus-booking-manager') : esc_html__('Custom Payment Method', 'bus-booking-manager'); ?></strong>
+                    <small class="wbbm-payment-summary-sub"><?php echo $is_wc ? esc_html__('Sell tickets through WooCommerce checkout', 'bus-booking-manager') : esc_html__('Offline, Stripe and/or PayPal -- no WooCommerce needed', 'bus-booking-manager'); ?></small>
                 </span>
             </div>
 
@@ -1344,8 +1392,8 @@ class BusEditPageClass
                         <label class="wbbm-bm-card <?php echo 'offline' === $payment_method ? 'is-selected' : ''; ?>">
                             <input type="radio" name="wbbm_payment_method" value="offline" <?php checked($payment_method, 'offline'); ?>>
                             <span class="wbbm-bm-card-icon"><span class="dashicons dashicons-money-alt"></span></span>
-                            <strong><?php esc_html_e('Offline Payment', 'bus-booking-manager'); ?></strong>
-                            <small><?php esc_html_e('Manual / bank transfer, no WooCommerce needed', 'bus-booking-manager'); ?></small>
+                            <strong><?php esc_html_e('Custom Payment Method', 'bus-booking-manager'); ?></strong>
+                            <small><?php esc_html_e('Offline, Stripe and/or PayPal -- no WooCommerce needed', 'bus-booking-manager'); ?></small>
                         </label>
 
                         <label class="wbbm-bm-card <?php echo ('woocommerce' === $payment_method ? 'is-selected' : '') . ($wc_ready ? '' : ' is-disabled'); ?>">
@@ -1364,7 +1412,7 @@ class BusEditPageClass
 
                     <?php if (!$wc_ready) : ?>
                         <p class="wbbm-payment-modal-empty">
-                            <?php esc_html_e("WooCommerce isn't installed yet, so this bus will keep using Offline Payment until it is.", 'bus-booking-manager'); ?>
+                            <?php esc_html_e("WooCommerce isn't installed yet, so this bus will keep using Custom Payment Method until it is.", 'bus-booking-manager'); ?>
                         </p>
                     <?php endif; ?>
 
@@ -1388,7 +1436,8 @@ class BusEditPageClass
                     <?php endif; ?>
                 </div>
                 <div class="wbbm-payment-modal-foot">
-                    <button type="button" class="btn btn-primary wbbm-payment-modal-done"><?php esc_html_e('Done', 'bus-booking-manager'); ?></button>
+                    <button type="button" class="btn btn-outline wbbm-payment-modal-close-btn"><?php esc_html_e('Close', 'bus-booking-manager'); ?></button>
+                    <button type="button" class="btn btn-primary wbbm-payment-modal-save"><?php esc_html_e('Save', 'bus-booking-manager'); ?></button>
                 </div>
             </div>
         </div>
@@ -1399,13 +1448,12 @@ class BusEditPageClass
             (function () {
                 var modal = document.getElementById('wbbm-payment-modal');
                 var notice = document.getElementById('wbbm-payment-notice');
-                var summary = document.getElementById('wbbm-payment-summary');
-                var summaryIcon = summary ? summary.querySelector('.dashicons') : null;
-                var summaryLabel = document.getElementById('wbbm-payment-summary-label');
-                var summarySub = document.getElementById('wbbm-payment-summary-sub');
+                // One of these per step's sidebar now, not just Step 1's --
+                // update every copy, not just the first.
+                var summaries = document.querySelectorAll('.wbbm-payment-summary');
                 var wcReady = <?php echo $wc_ready ? 'true' : 'false'; ?>;
                 var copy = {
-                    offline: { label: <?php echo wp_json_encode(__('Offline Payment', 'bus-booking-manager')); ?>, sub: <?php echo wp_json_encode(__('Manual / bank transfer, no WooCommerce needed', 'bus-booking-manager')); ?>, icon: 'dashicons-money-alt' },
+                    offline: { label: <?php echo wp_json_encode(__('Custom Payment Method', 'bus-booking-manager')); ?>, sub: <?php echo wp_json_encode(__('Offline, Stripe and/or PayPal -- no WooCommerce needed', 'bus-booking-manager')); ?>, icon: 'dashicons-money-alt' },
                     woocommerce: { label: <?php echo wp_json_encode(__('WooCommerce Payment', 'bus-booking-manager')); ?>, sub: <?php echo wp_json_encode(__('Sell tickets through WooCommerce checkout', 'bus-booking-manager')); ?>, icon: 'dashicons-cart' }
                 };
                 if (!modal) { return; }
@@ -1430,12 +1478,15 @@ class BusEditPageClass
                         section.style.display = section.getAttribute('data-mode-section') === mode ? '' : 'none';
                     });
 
-                    if (summaryLabel && copy[mode]) {
-                        summaryLabel.textContent = copy[mode].label;
-                        summarySub.textContent = copy[mode].sub;
-                        if (summaryIcon) {
-                            summaryIcon.className = 'dashicons ' + copy[mode].icon;
-                        }
+                    if (copy[mode]) {
+                        summaries.forEach(function (summary) {
+                            var label = summary.querySelector('.wbbm-payment-summary-label');
+                            var sub = summary.querySelector('.wbbm-payment-summary-sub');
+                            var icon = summary.querySelector('.dashicons');
+                            if (label) { label.textContent = copy[mode].label; }
+                            if (sub) { sub.textContent = copy[mode].sub; }
+                            if (icon) { icon.className = 'dashicons ' + copy[mode].icon; }
+                        });
                     }
 
                     if (notice) {
@@ -1448,7 +1499,24 @@ class BusEditPageClass
                     trigger.addEventListener('click', openModal);
                 });
                 modal.querySelector('.wbbm-payment-modal-close').addEventListener('click', closeModal);
-                modal.querySelector('.wbbm-payment-modal-done').addEventListener('click', closeModal);
+                // "Close" just dismisses -- the radio selection (and
+                // anything saved inside the Configure modals, which already
+                // save themselves instantly over AJAX) stays exactly as it
+                // was, same as the "x" button. "Save" additionally triggers
+                // the bus editor's own real Save/Publish button (whichever
+                // one of the payment method is selected here only takes
+                // effect once that full save actually runs) and closes once
+                // it's kicked off, instead of making the admin hunt for that
+                // button themselves after picking a payment method here.
+                modal.querySelector('.wbbm-payment-modal-close-btn').addEventListener('click', closeModal);
+                var saveBtn = modal.querySelector('.wbbm-payment-modal-save');
+                if (saveBtn) {
+                    saveBtn.addEventListener('click', function () {
+                        var publishBtn = document.getElementById('save-bus-publish');
+                        if (publishBtn) { publishBtn.click(); }
+                        closeModal();
+                    });
+                }
                 modal.addEventListener('click', function (e) {
                     if (e.target === modal) { closeModal(); }
                 });
@@ -1576,11 +1644,25 @@ class BusEditPageClass
      */
     private function render_step_5_left($post_id)
     {
-        if (!class_exists('MP_Global_Function') || !MP_Global_Function::wbbm_use_wc()) {
+        $wants_wc = class_exists('MP_Global_Function') && MP_Global_Function::wbbm_bus_wants_wc($post_id);
+
+        if (!$wants_wc) {
+            // Offline Payment buses have no WooCommerce order to attach a
+            // real tax class to -- a simple flat percentage on top of the
+            // fare, applied server-side in inc/wbbm-offline-booking.php, is
+            // the offline equivalent of the WC tax step below. Shown
+            // whether WooCommerce itself is active or not, since this is a
+            // per-bus payment-method choice, not a site-wide one.
+            $tax_rate = get_post_meta($post_id, '_wbbm_offline_tax_rate', true);
+            $tax_rate = '' !== $tax_rate ? $tax_rate : 0;
             ?>
             <div class="bus-card">
                 <h3><?php _e('Tax Configuration', 'bus-booking-manager'); ?></h3>
-                <p><?php _e('Tax settings are managed through WooCommerce and only apply to buses set to WooCommerce Payment. Install and activate WooCommerce to configure tax classes.', 'bus-booking-manager'); ?></p>
+                <p class="description"><?php _e('This bus uses Custom Payment Method, so there is no WooCommerce order to attach a tax class to. Set a flat percentage to add on top of the fare instead.', 'bus-booking-manager'); ?></p>
+                <div class="form-group" style="max-width:220px;">
+                    <label for="wbbm_offline_tax_rate"><?php _e('Tax rate (%)', 'bus-booking-manager'); ?></label>
+                    <input type="number" step="0.01" min="0" name="wbbm_offline_tax_rate" id="wbbm_offline_tax_rate" class="form-control" value="<?php echo esc_attr($tax_rate); ?>" placeholder="0.00">
+                </div>
             </div>
             <?php
             return;
@@ -1773,6 +1855,7 @@ class BusEditPageClass
             </div>
 
             <div class="bus-edit-right">
+                <?php $this->render_payment_method_card($post_id); ?>
                 <div class="bus-card">
                     <h3><?php _e('Schedule Info', 'bus-booking-manager'); ?></h3>
                     <ul style="font-size: 13px; color: var(--bus-text-light); padding-left: 15px;">
@@ -1873,6 +1956,9 @@ class BusEditPageClass
                                 <option value="<?php echo esc_attr($stop->name); ?>" <?php selected($stop->name, $place); ?>><?php echo esc_html($stop->name); ?></option>
                             <?php endforeach; ?>
                         </select>
+                        <button type="button" class="btn-add-stoppage-link">
+                            <span class="dashicons dashicons-plus-alt2"></span> <?php _e('Add Stoppage', 'bus-booking-manager'); ?>
+                        </button>
                     </div>
                     <div class="form-group">
                         <label><?php _e('Time', 'bus-booking-manager'); ?></label>

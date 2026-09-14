@@ -90,6 +90,125 @@ $wbbm_off_date_status = false;
                 wc_print_notices();
             }
             ?>
+            <?php
+            // Offline booking result banner -- inc/wbbm-offline-booking.php
+            // redirects back here (PRG pattern) with one of these two query
+            // args after a non-WooCommerce booking attempt. The success
+            // token looks up a short-lived transient holding the actual
+            // booking summary (route/date/seats/price) -- the redirect
+            // itself can't carry $_POST data, and WooCommerce's own
+            // order-received page solves the same problem by reading the
+            // order back by id.
+            // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+            if (!empty($_GET['wbbm_offline_booked'])) {
+                // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+                $wbbm_offline_token = sanitize_text_field(wp_unslash($_GET['wbbm_offline_booked']));
+                $wbbm_offline_summary = get_transient('wbbm_offline_booking_' . $wbbm_offline_token);
+
+                $wbbm_pay_settings = get_option('wbbm_payment_settings');
+                $wbbm_pay_settings = is_array($wbbm_pay_settings) ? $wbbm_pay_settings : array();
+                $wbbm_offline_instructions = !empty($wbbm_pay_settings['offline_instructions']) ? $wbbm_pay_settings['offline_instructions'] : '';
+                ?>
+                <div class="mage_notice mage_notice-success wbbm-offline-booked-notice">
+                    <p><strong><?php esc_html_e('Booking received — we\'ll contact you to confirm payment.', 'bus-booking-manager'); ?></strong></p>
+                    <?php if (is_array($wbbm_offline_summary)) : ?>
+                        <table class="wbbm-offline-booking-details">
+                            <tr>
+                                <th><?php esc_html_e('Booking reference', 'bus-booking-manager'); ?></th>
+                                <td>#<?php echo esc_html($wbbm_offline_summary['reference']); ?></td>
+                            </tr>
+                            <tr>
+                                <th><?php esc_html_e('Bus', 'bus-booking-manager'); ?></th>
+                                <td><?php echo esc_html($wbbm_offline_summary['bus_name']); ?></td>
+                            </tr>
+                            <tr>
+                                <th><?php esc_html_e('Route', 'bus-booking-manager'); ?></th>
+                                <td><?php echo esc_html($wbbm_offline_summary['start'] . ' → ' . $wbbm_offline_summary['end']); ?></td>
+                            </tr>
+                            <tr>
+                                <th><?php esc_html_e('Journey date', 'bus-booking-manager'); ?></th>
+                                <td><?php echo esc_html($wbbm_offline_summary['journey_date']); ?></td>
+                            </tr>
+                            <tr>
+                                <th><?php esc_html_e('Seats', 'bus-booking-manager'); ?></th>
+                                <td>
+                                    <?php
+                                    $wbbm_seat_bits = array();
+                                    if ($wbbm_offline_summary['entire']) {
+                                        $wbbm_seat_bits[] = __('Entire bus', 'bus-booking-manager');
+                                    } else {
+                                        if ($wbbm_offline_summary['adult']) {
+                                            /* translators: %d: number of adult seats */
+                                            $wbbm_seat_bits[] = sprintf(__('%d adult', 'bus-booking-manager'), $wbbm_offline_summary['adult']);
+                                        }
+                                        if ($wbbm_offline_summary['child']) {
+                                            /* translators: %d: number of child seats */
+                                            $wbbm_seat_bits[] = sprintf(__('%d child', 'bus-booking-manager'), $wbbm_offline_summary['child']);
+                                        }
+                                        if ($wbbm_offline_summary['infant']) {
+                                            /* translators: %d: number of infant seats */
+                                            $wbbm_seat_bits[] = sprintf(__('%d infant', 'bus-booking-manager'), $wbbm_offline_summary['infant']);
+                                        }
+                                    }
+                                    echo esc_html(implode(', ', $wbbm_seat_bits));
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th><?php esc_html_e('Subtotal', 'bus-booking-manager'); ?></th>
+                                <td><?php echo wp_kses_post(wbbm_price_html($wbbm_offline_summary['subtotal'])); ?></td>
+                            </tr>
+                            <?php if ($wbbm_offline_summary['tax_amount'] > 0) : ?>
+                                <tr>
+                                    <th>
+                                        <?php
+                                        /* translators: %s: tax rate percentage */
+                                        echo esc_html(sprintf(__('Tax (%s%%)', 'bus-booking-manager'), $wbbm_offline_summary['tax_rate']));
+                                        ?>
+                                    </th>
+                                    <td><?php echo wp_kses_post(wbbm_price_html($wbbm_offline_summary['tax_amount'])); ?></td>
+                                </tr>
+                            <?php endif; ?>
+                            <tr class="wbbm-offline-booking-total">
+                                <th><?php esc_html_e('Total', 'bus-booking-manager'); ?></th>
+                                <td><?php echo wp_kses_post(wbbm_price_html($wbbm_offline_summary['total_price'])); ?></td>
+                            </tr>
+                        </table>
+                    <?php endif; ?>
+                    <?php if ($wbbm_offline_instructions) : ?>
+                        <p><?php echo esc_html($wbbm_offline_instructions); ?></p>
+                    <?php endif; ?>
+                </div>
+                <?php
+            } elseif (isset($_GET['wbbm_offline_error'])) {
+                // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+                $wbbm_offline_error_code = sanitize_key(wp_unslash($_GET['wbbm_offline_error']));
+                $wbbm_offline_errors = array(
+                    'invalid_nonce'         => __('Your session expired -- please try booking again.', 'bus-booking-manager'),
+                    'invalid_bus'           => __('This bus could not be found.', 'bus-booking-manager'),
+                    'wrong_payment_mode'    => __('This bus is not set up for offline booking.', 'bus-booking-manager'),
+                    'missing_contact_info'  => __('Please fill in your name, phone and a valid email address.', 'bus-booking-manager'),
+                    'missing_route_fields'  => __('Please choose your boarding and dropping points and travel date.', 'bus-booking-manager'),
+                    'no_seats_selected'     => __('Please select at least one seat.', 'bus-booking-manager'),
+                    'sold_out'              => __('Sorry, not enough seats are available for this selection.', 'bus-booking-manager'),
+                    'insert_failed'         => __('Something went wrong recording your booking -- please try again.', 'bus-booking-manager'),
+                    'booking_not_found'     => __('We could not find that booking -- please try again.', 'bus-booking-manager'),
+                    'payment_cancelled'     => __('Payment was cancelled -- your booking was not confirmed.', 'bus-booking-manager'),
+                    'payment_not_completed' => __('Payment could not be confirmed -- your booking was not confirmed. If you were charged, please contact us.', 'bus-booking-manager'),
+                    'stripe_not_configured' => __('Card payment is not available right now -- please choose another payment method.', 'bus-booking-manager'),
+                    'paypal_not_configured' => __('PayPal is not available right now -- please choose another payment method.', 'bus-booking-manager'),
+                    'stripe_intent_failed'  => __('Could not start the card payment -- please try again.', 'bus-booking-manager'),
+                    'invalid_request'       => __('Something went wrong -- please try again.', 'bus-booking-manager'),
+                    'paypal_order_failed'   => __('Could not start the PayPal payment -- please try again.', 'bus-booking-manager'),
+                );
+                $wbbm_offline_error_msg = isset($wbbm_offline_errors[$wbbm_offline_error_code]) ? $wbbm_offline_errors[$wbbm_offline_error_code] : __('Something went wrong -- please try again.', 'bus-booking-manager');
+                ?>
+                <div class="mage_notice mage_notice-error wbbm-offline-booked-notice">
+                    <p><?php echo esc_html($wbbm_offline_error_msg); ?></p>
+                </div>
+                <?php
+            }
+            ?>
             <div class="mage_search_list <?php echo esc_attr($WbbmIn_cart ? 'booked' : ''); ?>"
                  data-seat-available="<?php echo esc_attr($Wbbm_available_seat); ?>">
                 <form action="" method="post">

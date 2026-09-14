@@ -504,6 +504,17 @@ select.form-control {
     color: var(--sh-pending-text);
 }
 
+/* Offline booking payment-status pills (inc/BusOfflineBookingListPageClass.php) */
+.status-confirmed {
+    background: var(--sh-success-bg);
+    color: var(--sh-success-text);
+}
+
+.status-cancelled {
+    background: var(--sh-draft-bg);
+    color: var(--sh-draft-text);
+}
+
 /* ---------------------------------------------------------- Action cell */
 .action-buttons {
     display: flex;

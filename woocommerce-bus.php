@@ -145,6 +145,9 @@ if (true) {
     require_once(dirname(__FILE__) . "/inc/BusListPageClass.php");
     require_once(dirname(__FILE__) . "/inc/BusEditPageClass.php");
     require_once(dirname(__FILE__) . "/inc/class-wbbm-bus-configuration-page.php");
+    require_once(dirname(__FILE__) . "/inc/wbbm-offline-booking.php");
+    require_once(dirname(__FILE__) . "/inc/wbbm-custom-gateway-checkout.php");
+    require_once(dirname(__FILE__) . "/inc/BusOfflineBookingListPageClass.php");
 
     // Shared tabbed-hub shell, plus the hubs the free plugin owns.
     require_once(dirname(__FILE__) . "/inc/class-wbbm-admin-hub.php");
@@ -1334,10 +1337,23 @@ if (true) {
         unset($all_stops[$pos2]);
         return $all_stops;
     }
-    function wbbm_add_passenger($order_id, $bus_id, $user_id, $start, $next_stops, $end, $user_name, $user_email, $user_phone, $user_gender, $user_dob, $nationality, $flight_arrival_no, $flight_departure_no, $extra_bag_quantity, $user_address, $user_type, $b_time, $j_time, $adult, $adult_per_price, $child, $child_per_price, $infant, $infant_per_price, $entire, $entire_per_price, $total_price, $item_quantity, $j_date, $add_datetime, $pickpoint, $status)
+    /**
+     * $payment_method / $payment_status are new optional trailing params
+     * (added for offline-payment support -- see inc/wbbm-offline-booking.php)
+     * so the existing WooCommerce call site below (which never passes them)
+     * keeps working unchanged. $payment_status defaults to derived-from-
+     * $status when not given, so old WooCommerce bookings still get a
+     * sensible value instead of nothing.
+     */
+    function wbbm_add_passenger($order_id, $bus_id, $user_id, $start, $next_stops, $end, $user_name, $user_email, $user_phone, $user_gender, $user_dob, $nationality, $flight_arrival_no, $flight_departure_no, $extra_bag_quantity, $user_address, $user_type, $b_time, $j_time, $adult, $adult_per_price, $child, $child_per_price, $infant, $infant_per_price, $entire, $entire_per_price, $total_price, $item_quantity, $j_date, $add_datetime, $pickpoint, $status, $payment_method = 'woocommerce', $payment_status = null)
     {
         $add_datetime = current_time("Y-m-d h:i:s");
         $post_title = 'Booking #' . $order_id . ' - ' . $user_name;
+
+        if (null === $payment_status) {
+            $payment_status = (1 === (int) $status) ? 'confirmed' : 'pending';
+        }
+
         $post_data = array(
             'post_title'  => $post_title,
             'post_type'   => 'wbbm_booking',
@@ -1378,10 +1394,12 @@ if (true) {
                 '_wbbm_booking_date' => $add_datetime,
                 '_wbbm_status' => $status,
                 '_wbbm_pickpoint' => $pickpoint,
+                '_wbbm_payment_method' => $payment_method,
+                '_wbbm_payment_status' => $payment_status,
             ),
         );
 
-        wp_insert_post($post_data);
+        return wp_insert_post($post_data);
     }
     add_action('woocommerce_store_api_checkout_order_processed', 'api_checkout_order_processed', 10, 1);
     add_action('woocommerce_checkout_order_processed', 'wbbm_add_passenger_to_db', 10, 3);
