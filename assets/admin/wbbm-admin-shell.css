@@ -2652,3 +2652,104 @@ body.wbbm-admin .wbbm-hub .wbbm-hub-tabs a[data-wbbm-tab="go-pro"]:hover {
 .wbbm-hub-panel .wbbm_settings_panel {
     padding: 20px 0 0;
 }
+
+
+/* ==================================================================
+   PRO-locked controls
+   ------------------------------------------------------------------
+   Features that need the PRO plugin stay visible so they are
+   discoverable, rendered inert with a PRO badge rather than hidden.
+
+   These live in the hub shell stylesheet, not the Bookings one: the
+   locked tabs appear in the hub nav on every tab, and the locked
+   panel renders on a tab where the Bookings sheet is not enqueued.
+   ================================================================== */
+
+.wbbm-pro-badge {
+    display: inline-flex;
+    align-items: center;
+    margin-left: 7px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: var(--sh-primary, #b30c3b);
+    color: #fff;
+    font-size: 9.5px;
+    font-style: normal;
+    font-weight: 700;
+    letter-spacing: .06em;
+    line-height: 1.4;
+    text-transform: uppercase;
+}
+
+.wrap .btn.wbbm-pro-locked,
+.wrap .btn.wbbm-pro-locked:hover {
+    /* keep the button's shape, drop every affordance that says "clickable" */
+    background: #f1f5f9 !important;
+    background-image: none !important;
+    border-color: var(--sh-border, #e6e9ef) !important;
+    color: var(--sh-text-soft, #64748b) !important;
+    box-shadow: none !important;
+    transform: none !important;
+    cursor: not-allowed;
+    opacity: 1;
+}
+
+.wrap .btn.wbbm-pro-locked .wbbm-pro-badge {
+    background: var(--sh-text-soft, #64748b);
+}
+
+/* ---- locked hub tab ---- */
+.wbbm-hub-tabs .wbbm-hub-tab-locked {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    cursor: not-allowed;
+    opacity: .72;
+}
+
+.wbbm-hub-tabs .wbbm-hub-tab-locked .wbbm-pro-badge {
+    background: var(--sh-text-soft, #64748b);
+}
+
+/* ---- panel shown if a locked tab is reached by direct URL ---- */
+.wbbm-hub-locked-panel {
+    padding: 56px 24px;
+    text-align: center;
+    color: var(--sh-text-soft, #64748b);
+}
+
+.wbbm-hub-locked-panel .dashicons {
+    width: 34px;
+    height: 34px;
+    font-size: 34px;
+    color: var(--sh-primary, #b30c3b);
+}
+
+.wbbm-hub-locked-panel h2 {
+    margin: 12px 0 6px;
+    font-size: 18px;
+    color: var(--sh-text-main, #17203a);
+}
+
+.wbbm-hub-locked-panel p {
+    margin: 0;
+    font-size: 13.5px;
+}
+
+/* Row action buttons are small squares, so the PRO marker rides the
+   corner as a dot rather than sitting beside the icon as a word. */
+.wrap .action-btn.wbbm-pro-locked {
+    position: relative;
+    cursor: not-allowed;
+    opacity: .55;
+}
+
+.wrap .action-btn.wbbm-pro-locked .wbbm-pro-badge--dot {
+    position: absolute;
+    top: -5px;
+    right: -6px;
+    margin: 0;
+    padding: 1px 4px;
+    font-size: 8px;
+    letter-spacing: .04em;
+}

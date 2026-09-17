@@ -35,6 +35,7 @@ class BusOfflineBookingListPageClass
     public function __construct()
     {
         add_action('admin_menu', array($this, 'register_page'));
+        add_action('admin_menu', array($this, 'hide_menu_row'), 999);
         add_action('admin_enqueue_scripts', array($this, 'enqueue_assets'));
         add_action('admin_init', array($this, 'handle_actions'));
     }
@@ -49,6 +50,20 @@ class BusOfflineBookingListPageClass
             self::PAGE_SLUG,
             array($this, 'render_page')
         );
+    }
+
+    /**
+     * Drop this page's row from the menu.
+     *
+     * The Bookings hub is the "Booking list" entry users see now. The page
+     * stays registered rather than being dropped altogether so its existing
+     * URLs, row actions and nonce targets keep resolving, and so its
+     * capability check still runs -- exactly how WBBM_Admin_Hub retires the
+     * screens it absorbs.
+     */
+    public function hide_menu_row()
+    {
+        remove_submenu_page('edit.php?post_type=wbbm_bus', self::PAGE_SLUG);
     }
 
     public function enqueue_assets($hook)

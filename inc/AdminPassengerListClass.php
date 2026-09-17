@@ -26,13 +26,22 @@ class AdminPassengerListClass
         return class_exists('WBBM_Pro_Passenger_Export');
     }
 
+    /**
+     * Passenger filtering is a PRO feature. AdminPurchaseTicketClass is used as
+     * the probe simply because it is the class PRO always loads on this screen.
+     */
+    protected function filters_available()
+    {
+        return class_exists('AdminPurchaseTicketClass');
+    }
+
     /** The View Ticket screen a row's ticket-PDF link points at. */
     protected function ticket_screen_available()
     {
         return function_exists('wbbm_gen_ticket');
     }
 
-    /** Styles for the export dialog on this screen and its hub tab. */
+    /** Styles for this screen and its hub tab. */
     public function enqueue_assets()
     {
         $on_screen = class_exists('WBBM_Admin_Hub')
@@ -44,14 +53,31 @@ class AdminPassengerListClass
             return;
         }
 
-        $rel = 'assets/admin/wbbm-bookings-pages.css';
-        $file = WBTM_PLUGIN_DIR . $rel;
-        wp_enqueue_style(
-            'wbbm-admin-pages',
-            WBTM_PLUGIN_URL . $rel,
-            array('dashicons'),
-            file_exists($file) ? filemtime($file) : '1.0.0'
+        /*
+         * This screen renders inside .wrap.wbbm-list-wrap, exactly like the
+         * Bus/Stop/Type list screens, and leans on the same design system for
+         * its header, table, buttons, badges, filters and pagination. While
+         * the page lived in PRO those names were supplied by PRO's
+         * admin_style.css, which is loaded across the whole admin -- so with
+         * PRO switched off the screen lost its styling. Loading this plugin's
+         * own list stylesheet supplies all of it, and because that sheet is
+         * scoped to .wrap.wbbm-list-wrap it also wins over PRO's generic
+         * copies, so the screen looks the same whether PRO is active or not.
+         */
+        $sheets = array(
+            'wbbm-list-css'    => 'assets/admin/wbbm-list-tables.css',
+            'wbbm-admin-pages' => 'assets/admin/wbbm-bookings-pages.css',
         );
+
+        foreach ($sheets as $handle => $rel) {
+            $file = WBTM_PLUGIN_DIR . $rel;
+            wp_enqueue_style(
+                $handle,
+                WBTM_PLUGIN_URL . $rel,
+                array('dashicons'),
+                file_exists($file) ? filemtime($file) : '1.0.0'
+            );
+        }
     }
 
     function wbbm_passenger_list_menu()
@@ -373,18 +399,46 @@ class AdminPassengerListClass
                         <?php // The legacy j_date mirror stays; the filter script writes to it. ?>
                         <input type="hidden" id="ja_date" value="<?php echo esc_attr($j_date ? $j_date : ''); ?>">
                         <?php if ($this->export_available()) : ?>
-                        <button type="button" class="btn btn-outline" data-wbbm-export-open>
-                            <span class="dashicons dashicons-download" style="margin-top:2px;"></span> <?php _e('Export', 'bus-booking-manager'); ?>
-                        </button>
+                            <button type="button" class="btn btn-outline" data-wbbm-export-open>
+                                <span class="dashicons dashicons-download" style="margin-top:2px;"></span> <?php _e('Export', 'bus-booking-manager'); ?>
+                            </button>
+                        <?php else : ?>
+                            <?php /* Shown so the feature is discoverable, but inert until PRO is active. */ ?>
+                            <button type="button" class="btn btn-outline wbbm-pro-locked" disabled aria-disabled="true"
+                                    title="<?php esc_attr_e('Available in the PRO version', 'bus-booking-manager'); ?>">
+                                <span class="dashicons dashicons-download" style="margin-top:2px;"></span> <?php _e('Export', 'bus-booking-manager'); ?>
+                                <em class="wbbm-pro-badge"><?php esc_html_e('PRO', 'bus-booking-manager'); ?></em>
+                            </button>
                         <?php endif; ?>
-                        <button type="button" class="btn btn-primary btn-filter-toggle">
-                            <span class="dashicons dashicons-filter"></span> <?php _e('Show Filters', 'bus-booking-manager'); ?>
-                        </button>
+                        <?php if ($this->filters_available()) : ?>
+                            <button type="button" class="btn btn-primary btn-filter-toggle">
+                                <span class="dashicons dashicons-filter"></span> <?php _e('Show Filters', 'bus-booking-manager'); ?>
+                            </button>
+                        <?php else : ?>
+                            <button type="button" class="btn btn-primary wbbm-pro-locked" disabled aria-disabled="true"
+                                    title="<?php esc_attr_e('Available in the PRO version', 'bus-booking-manager'); ?>">
+                                <span class="dashicons dashicons-filter"></span> <?php _e('Show Filters', 'bus-booking-manager'); ?>
+                                <em class="wbbm-pro-badge"><?php esc_html_e('PRO', 'bus-booking-manager'); ?></em>
+                            </button>
+                        <?php endif; ?>
                     </div>
                 </div>
                 <?php
                 $is_filter_empty = (empty($bus_id) && empty($j_date) && empty($b_date) && empty($order_id) && empty($_GET['user_name']) && empty($_GET['user_email']) && empty($_GET['user_phone']));
                 ?>
+                <?php
+                /*
+                 * The filter form is a PRO feature and its Show Filters button
+                 * is disabled above without PRO, so the form is left out too --
+                 * otherwise it could still be driven straight from the URL.
+                 * The card itself is then only worth rendering for the removed
+                 * list, whose Go Back link lives in it; without this the free
+                 * plugin drew an empty card with a stray Go Back button on the
+                 * normal view.
+                 */
+                $wbbm_show_filter_card = ('removed-list' === $class_name) || $this->filters_available();
+                ?>
+                <?php if ($wbbm_show_filter_card) : ?>
                 <div class="wbbm-list-filters-card mage-custom-filter-area <?php echo $is_filter_empty ? 'collapsed' : ''; ?>">
                     <?php if ($class_name != 'removed-list') : ?>
                         <form action="<?php echo get_admin_url(); ?>edit.php?post_type=wbbm_bus&page=passenger_list" method="get">
@@ -578,6 +632,7 @@ class AdminPassengerListClass
                         </div>
                     <?php endif; ?>
                 </div>
+                <?php endif; // $wbbm_show_filter_card ?>
             </div> <!-- End wbbm-admin-card -->
             <?php
             $passenger_list_custom_field = is_array(get_option('wbbm_passenger_list_field_sec')) ? maybe_unserialize(get_option('wbbm_passenger_list_field_sec')) : array();
@@ -1100,7 +1155,14 @@ class AdminPassengerListClass
                         <a onClick="return deleteConfirm()" href="<?php echo esc_url(wp_nonce_url(admin_url('edit.php?post_type=wbbm_bus&page=passenger_list&req_type=delete_permanently&id=' . absint($_passger->booking_id)), 'wbbm_booking_action')); ?>" title="<?php esc_attr_e('Delete Permanently', 'bus-booking-manager'); ?>" class="action-btn delete-btn"><span class="dashicons dashicons-trash"></span></a>
                     <?php else : ?>
                         <?php if ($this->ticket_screen_available()) : ?>
-                        <a href="<?php echo get_admin_url(); ?>edit.php?post_type=wbbm_bus&page=create_ticket&pin=<?php echo $pin; ?>" title="<?php _e('Download Ticket', 'bus-booking-manager'); ?>" class="action-btn"><span class="dashicons dashicons-pdf"></span></a>
+                            <a href="<?php echo get_admin_url(); ?>edit.php?post_type=wbbm_bus&page=create_ticket&pin=<?php echo $pin; ?>" title="<?php _e('Download Ticket', 'bus-booking-manager'); ?>" class="action-btn"><span class="dashicons dashicons-pdf"></span></a>
+                        <?php else : ?>
+                            <?php /* Same treatment as Export and Show Filters: visible, inert, marked PRO. */ ?>
+                            <span class="action-btn wbbm-pro-locked" aria-disabled="true"
+                                  title="<?php esc_attr_e('Download Ticket - available in the PRO version', 'bus-booking-manager'); ?>">
+                                <span class="dashicons dashicons-pdf"></span>
+                                <em class="wbbm-pro-badge wbbm-pro-badge--dot" aria-label="<?php esc_attr_e('PRO', 'bus-booking-manager'); ?>"><?php esc_html_e('PRO', 'bus-booking-manager'); ?></em>
+                            </span>
                         <?php endif; ?>
                         <a onClick="return deleteConfirm()" href="<?php echo esc_url(wp_nonce_url(admin_url('edit.php?post_type=wbbm_bus&page=passenger_list&req_type=delete&id=' . absint($_passger->booking_id)), 'wbbm_booking_action')); ?>" title="<?php esc_attr_e('Delete', 'bus-booking-manager'); ?>" class="action-btn delete-btn"><span class="dashicons dashicons-trash"></span></a>
                     <?php endif; ?>
