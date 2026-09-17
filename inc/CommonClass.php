@@ -60,18 +60,7 @@ class CommonClass
 
     public function convert_datepicker_dateformat()
     {
-        $date_format = get_option('date_format');
-        $dformat = str_replace('d', 'dd', $date_format);
-        $dformat = str_replace('m', 'mm', $dformat);
-        $dformat = str_replace('Y', 'yy', $dformat);
-
-        if (in_array($date_format, ['Y-m-d', 'm/d/Y', 'd/m/Y', 'Y/d/m', 'Y-d-m'])) {
-            return str_replace('/', '-', $dformat);
-        } elseif (in_array($date_format, ['Y.m.d', 'm.d.Y', 'd.m.Y', 'Y.d.m'])) {
-            return str_replace('.', '-', $dformat);
-        } else {
-            return 'yy-mm-dd';
-        }
+        return wbbm_php_to_jquery_dateformat(get_option('date_format'));
     }
 
     // Function to get page slug

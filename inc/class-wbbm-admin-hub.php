@@ -410,6 +410,7 @@ abstract class WBBM_Admin_Hub
         self::register_shell_style();
         wp_enqueue_style('wbbm-admin-shell');
         wp_enqueue_script('wbbm-admin-shell');
+        wp_enqueue_script('wbbm-settings-enhance');
 
         $tabs = array();
         foreach ($this->tabs(true) as $key => $tab) {
@@ -475,6 +476,7 @@ abstract class WBBM_Admin_Hub
         self::register_shell_style();
         wp_enqueue_style('wbbm-admin-shell');
         wp_enqueue_script('wbbm-admin-shell');
+        wp_enqueue_script('wbbm-settings-enhance');
     }
 
     public static function body_class($classes)
@@ -500,8 +502,10 @@ abstract class WBBM_Admin_Hub
 
         $css_rel = 'assets/admin/wbbm-admin-shell.css';
         $js_rel = 'assets/admin/wbbm-admin-shell.js';
+        $enhance_rel = 'assets/admin/wbbm-settings-enhance.js';
         $css = WBTM_PLUGIN_DIR . $css_rel;
         $js = WBTM_PLUGIN_DIR . $js_rel;
+        $enhance = WBTM_PLUGIN_DIR . $enhance_rel;
 
         wp_register_style(
             'wbbm-admin-shell',
@@ -514,6 +518,19 @@ abstract class WBBM_Admin_Hub
             WBTM_PLUGIN_URL . $js_rel,
             array(),
             file_exists($js) ? filemtime($js) : '1.0.0',
+            true
+        );
+
+        /*
+         * Progressive enhancement for the settings forms: On/Off selects
+         * become switches and long sections get a search box. Separate handle
+         * so a hub screen without settings forms simply does nothing with it.
+         */
+        wp_register_script(
+            'wbbm-settings-enhance',
+            WBTM_PLUGIN_URL . $enhance_rel,
+            array('wbbm-admin-shell'),
+            file_exists($enhance) ? filemtime($enhance) : '1.0.0',
             true
         );
     }
@@ -571,7 +588,6 @@ abstract class WBBM_Admin_Hub
                 <?php // Anchor for WP admin notices; keeps them out of the header. ?>
                 <hr class="wp-header-end">
 
-                <p class="wbbm-hub-subtitle" data-wbbm-subtitle<?php echo empty($tab['description']) ? ' hidden' : ''; ?>><?php echo esc_html(isset($tab['description']) ? $tab['description'] : ''); ?></p>
 
                 <div class="wbbm-hub-panel wbbm-hub-panel--<?php echo esc_attr($tab_key); ?>" data-wbbm-panel>
                     <?php $this->render_tab($tab_key, $tab); ?>

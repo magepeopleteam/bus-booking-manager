@@ -25,7 +25,7 @@ if (! class_exists('MP_Global_Style')) {
              * Style Settings still overrides every one of these.
              */
             $default_color   = MP_Global_Function::get_style_settings('default_text_color', '#172033');
-            $theme_color     = MP_Global_Function::get_style_settings('theme_color', '#f97316');
+            $theme_color     = MP_Global_Function::get_style_settings('theme_color', '#b30c3b');
             $alternate_color = MP_Global_Function::get_style_settings('theme_alternate_color', '#fff');
             $warning_color   = MP_Global_Function::get_style_settings('warning_color', '#b45309');
             $default_fs      = MP_Global_Function::get_style_settings('default_font_size', '14') . 'px';

@@ -305,11 +305,113 @@ if ( ! class_exists( 'MP_Global_Function' ) ) {
             return self::get_settings( 'mp_basic_license_settings', $key, $default );
         }
 
+        /**
+         * True only when WooCommerce is active. The one helper feature code
+         * should branch WooCommerce-only behaviour on (pricing/tax math,
+         * cart/order integration, the hidden linked product, etc.) -- as
+         * opposed to wbbm_check_woocommerce(), which also distinguishes
+         * "installed but inactive" for onboarding UI.
+         */
+        public static function wbbm_use_wc(): bool {
+            return 1 === self::wbbm_check_woocommerce();
+        }
+
+        /**
+         * Should this specific bus use WooCommerce (vs. Offline Payment)?
+         * True only when WooCommerce is active AND the bus is set to it.
+         *
+         * Reads the just-submitted $_POST value first (the bus-save hooks
+         * that call this fire before BusEditPageClass::handle_bus_save()
+         * has written the new meta, so the stored value would still be
+         * last request's), falling back to the stored meta, and finally --
+         * for a bus saved before this setting existed at all -- inferring
+         * "woocommerce" from whether it already has a hidden linked
+         * product, so existing WooCommerce-mode buses don't silently
+         * revert to Offline the moment this code ships.
+         */
+        /**
+         * Normalise a booking-flow value to its canonical name.
+         *
+         * The custom flow is called 'custom'; 'offline' is the name it shipped
+         * under and is still what sites have stored, so it keeps resolving to
+         * the same thing. Applies to the bus-level flow and the global setting
+         * ONLY -- on a booking post the same meta key holds the gateway
+         * (offline/stripe/paypal), which this must never be used on.
+         *
+         * @return string 'custom', 'woocommerce', or '' when unrecognised.
+         */
+        public static function wbbm_flow_name( $value ): string {
+            $value = sanitize_key( (string) $value );
+
+            if ( 'woocommerce' === $value ) {
+                return 'woocommerce';
+            }
+
+            if ( 'custom' === $value || 'offline' === $value ) {
+                return 'custom';
+            }
+
+            return '';
+        }
+
+        public static function wbbm_bus_wants_wc( $post_id ): bool {
+            if ( ! self::wbbm_use_wc() ) {
+                return false;
+            }
+
+            /*
+             * The booking flow is a site-wide choice, made once in
+             * Settings > Payments. It used to be stored per bus as well, which
+             * meant a site could be set to WooCommerce while individual buses
+             * quietly stayed on the custom drawer. Per-bus values are no
+             * longer read or written; $post_id is kept so the many callers do
+             * not have to change, and so a bus can be given its own flow again
+             * later without another signature change.
+             */
+            $settings = get_option( 'wbbm_payment_settings' );
+            if ( is_array( $settings ) && ! empty( $settings['default_payment_method'] ) ) {
+                $flow = self::wbbm_flow_name( $settings['default_payment_method'] );
+                if ( '' !== $flow ) {
+                    return 'woocommerce' === $flow;
+                }
+            }
+
+            // Nothing chosen yet: a bus that already has a linked WooCommerce
+            // product was plainly set up for it before this setting existed.
+            return (bool) get_post_meta( $post_id, 'link_wc_product', true );
+        }
+
+        /**
+         * Plain-PHP price formatter used when WooCommerce isn't active, so
+         * price display never depends on it. Mirrors wc_price()'s output
+         * shape closely enough for this plugin's templates/admin screens.
+         */
+        public static function format_price( $amount ): string {
+            $decimals   = intval( get_option( 'wbbm_price_num_decimals', 2 ) );
+            $dec_point  = get_option( 'wbbm_price_decimal_sep', '.' );
+            $thousands  = get_option( 'wbbm_price_thousand_sep', ',' );
+            $symbol     = get_option( 'wbbm_currency_symbol', '$' );
+            $formatted  = number_format( (float) $amount, $decimals, $dec_point, $thousands );
+
+            return esc_html( $symbol . $formatted );
+        }
+
         public static function price_convert_raw( $price ) {
             $price = wp_strip_all_tags( $price );
-            $price = str_replace( get_woocommerce_currency_symbol(), '', $price );
-            $price = str_replace( wc_get_price_thousand_separator(), 't_s', $price );
-            $price = str_replace( wc_get_price_decimal_separator(), 'd_s', $price );
+
+            if ( self::wbbm_use_wc() ) {
+                $currency_symbol   = get_woocommerce_currency_symbol();
+                $thousand_separator = wc_get_price_thousand_separator();
+                $decimal_separator  = wc_get_price_decimal_separator();
+            } else {
+                $currency_symbol    = get_option( 'wbbm_currency_symbol', '$' );
+                $thousand_separator = get_option( 'wbbm_price_thousand_sep', ',' );
+                $decimal_separator  = get_option( 'wbbm_price_decimal_sep', '.' );
+            }
+
+            $price = str_replace( $currency_symbol, '', $price );
+            $price = str_replace( $thousand_separator, 't_s', $price );
+            $price = str_replace( $decimal_separator, 'd_s', $price );
             $price = str_replace( 't_s', '', $price );
             $price = str_replace( 'd_s', '.', $price );
             $price = str_replace( '&nbsp;', '', $price );
@@ -318,16 +420,11 @@ if ( ! class_exists( 'MP_Global_Function' ) ) {
         }
 
         public static function wc_price( $post_id, $price, $args = array() ): string {
-            $num_of_decimal = intval( get_option( 'woocommerce_price_num_decimals', 2 ) ); // Ensure it's an integer
-            $args           = wp_parse_args( $args, array(
+            $args = wp_parse_args( $args, array(
                     'qty'   => '',
                     'price' => '',
             ) );
-
-            $_product       = self::get_post_info( $post_id, 'link_wc_product', $post_id );
-            $product        = wc_get_product( $_product );
-            $qty            = '' !== $args['qty'] ? max( 0.0, (float) $args['qty'] ) : 1;
-            $tax_with_price = get_option( 'woocommerce_tax_display_shop' );
+            $qty = '' !== $args['qty'] ? max( 0.0, (float) $args['qty'] ) : 1;
 
             if ( '' === $price ) {
                 return '';
@@ -335,8 +432,19 @@ if ( ! class_exists( 'MP_Global_Function' ) ) {
                 return '0.00';
             }
 
-            $line_price   = (float) $price * (int) $qty;
-            $return_price = $line_price;
+            $line_price = (float) $price * (int) $qty;
+
+            // WooCommerce absent: no product/tax data to price against --
+            // just format the line total with the plugin's own settings.
+            if ( ! self::wbbm_use_wc() ) {
+                return self::format_price( $line_price );
+            }
+
+            $num_of_decimal = intval( get_option( 'woocommerce_price_num_decimals', 2 ) ); // Ensure it's an integer
+            $_product       = self::get_post_info( $post_id, 'link_wc_product', $post_id );
+            $product        = wc_get_product( $_product );
+            $tax_with_price = get_option( 'woocommerce_tax_display_shop' );
+            $return_price   = $line_price;
 
             if ( $product && $product->is_taxable() ) {
                 if ( ! wc_prices_include_tax() ) {
@@ -460,7 +568,11 @@ if ( ! class_exists( 'MP_Global_Function' ) ) {
         }
 
         public static function wc_product_sku( $product_id ) {
-            return $product_id ? new WC_Product( intval( $product_id ) ) : null; // Ensure product ID is an integer
+            if ( ! $product_id || ! self::wbbm_use_wc() || ! class_exists( 'WC_Product' ) ) {
+                return null;
+            }
+
+            return new WC_Product( intval( $product_id ) ); // Ensure product ID is an integer
         }
 
         public static function all_tax_list(): array {
@@ -1126,6 +1238,25 @@ if ( ! class_exists( 'MP_Global_Function' ) ) {
     }
 
     new MP_Global_Function();
+}
+
+if ( ! function_exists( 'wbbm_price_html' ) ) {
+    /**
+     * Format a plain numeric amount for display -- WooCommerce's own
+     * wc_price() when it's active, MP_Global_Function::format_price()
+     * otherwise. Use this (not wc_price() directly) anywhere the value
+     * being formatted is already a final number rather than something
+     * that needs product/tax lookups (that's what
+     * MP_Global_Function::wc_price()/wbbm_get_price_including_tax()
+     * are for).
+     */
+    function wbbm_price_html( $amount ): string {
+        if ( class_exists( 'MP_Global_Function' ) && MP_Global_Function::wbbm_use_wc() && function_exists( 'wc_price' ) ) {
+            return wc_price( $amount );
+        }
+
+        return class_exists( 'MP_Global_Function' ) ? MP_Global_Function::format_price( $amount ) : esc_html( number_format( (float) $amount, 2 ) );
+    }
 }
 
 if ( ! function_exists( 'dd' ) ) {

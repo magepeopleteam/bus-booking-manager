@@ -2,7 +2,11 @@
 
 /**
  * Bus Route Data Migration Class
- * Migrates old separate boarding/dropping point data to unified route structure
+ * Migrates old separate boarding/dropping point data to unified route structure.
+ *
+ * Runs automatically in the background the next time an admin screen loads --
+ * no button to click, no action required. A single dismissible notice
+ * confirms it happened, once, after the fact.
  */
 
 if (!defined('ABSPATH')) {
@@ -17,203 +21,104 @@ if (!class_exists('WBBM_Route_Migration')) {
 
         public function __construct()
         {
-            // Admin notice
-            add_action('admin_notices', [$this, 'migration_admin_notice']);
+            // Runs on every admin screen load (cheap: a "nothing to do"
+            // result is cached for a few minutes so it isn't re-checking
+            // on every single request) so any bus added later with
+            // old-format data -- a restore, an import, the demo-data
+            // seeder -- gets picked up too, not just a one-time pass.
+            add_action('admin_init', [$this, 'maybe_auto_migrate'], 20);
 
-            // AJAX handlers
-            add_action('wp_ajax_wbbm_run_route_migration', [$this, 'ajax_run_migration']);
-            add_action('wp_ajax_wbbm_dismiss_migration_notice', [$this, 'ajax_dismiss_notice']);
+            // Also run immediately at activation, so a fresh
+            // activate/reactivate finishes migrating right away instead
+            // of waiting for the next admin page load.
+            add_action('activated_plugin', [$this, 'maybe_auto_migrate_on_activation'], 5, 1);
+
+            add_action('admin_notices', [$this, 'migration_done_notice']);
+        }
+
+        public function maybe_auto_migrate_on_activation($plugin)
+        {
+            if (defined('WBTM_PLUGIN_FILE') && $plugin !== WBTM_PLUGIN_FILE) {
+                return;
+            }
+            $this->maybe_auto_migrate(true);
         }
 
         /**
-         * Display admin notice for migration
+         * Run the migration automatically -- no button, no admin action.
+         * Guarded by a short "nothing to do" cache (so a fresh install
+         * with zero buses doesn't re-run this query on every request) and
+         * a short lock (so two overlapping requests can't both migrate at
+         * once). Pass $force to skip the "nothing to do" cache -- used at
+         * plugin activation, so it finishes instantly rather than waiting
+         * out the cache window.
          */
-        public function migration_admin_notice()
+        public function maybe_auto_migrate($force = false)
         {
-            // Only show to administrators
             if (!current_user_can('manage_options')) {
                 return;
             }
 
-            // Check if notice was dismissed
-            if (get_option('wbbm_route_migration_notice_dismissed', false)) {
+            if (get_transient('wbbm_route_migration_lock')) {
                 return;
             }
 
-            // Check if there are buses that need migration
-            $needs_migration = $this->count_buses_needing_migration();
-
-            if ($needs_migration === 0) {
+            if (!$force && get_transient('wbbm_route_migration_nothing_to_do')) {
                 return;
             }
 
+            if ($this->count_buses_needing_migration() === 0) {
+                set_transient('wbbm_route_migration_nothing_to_do', 1, 5 * MINUTE_IN_SECONDS);
+                return;
+            }
+
+            set_transient('wbbm_route_migration_lock', 1, MINUTE_IN_SECONDS);
+
+            $this->dry_run = false;
+            $this->log = [];
+            $result = $this->migrate_all_buses();
+
+            update_option('wbbm_route_migration_summary', $result['stats']);
+            delete_transient('wbbm_route_migration_lock');
+            delete_transient('wbbm_route_migration_nothing_to_do');
+
+            // Shown once on the next admin_notices pass, then cleared.
+            if ($result['stats']['migrated'] > 0) {
+                set_transient('wbbm_route_migration_done_notice', $result['stats'], DAY_IN_SECONDS);
+            }
+        }
+
+        /**
+         * One-time, informational-only notice -- nothing to click to make
+         * the migration happen, it already ran. Dismissing it (WordPress's
+         * standard is-dismissible close button) is just cosmetic.
+         */
+        public function migration_done_notice()
+        {
+            if (!current_user_can('manage_options')) {
+                return;
+            }
+
+            $stats = get_transient('wbbm_route_migration_done_notice');
+            if (!$stats) {
+                return;
+            }
+
+            // Show it exactly once.
+            delete_transient('wbbm_route_migration_done_notice');
             ?>
-            <div class="notice notice-warning is-dismissible wbbm-migration-notice" id="wbbm-route-migration-notice">
-                <h3><?php esc_html_e('Bus Booking Manager - Route Data Migration', 'bus-booking-manager'); ?></h3>
+            <div class="notice notice-success is-dismissible">
                 <p>
                     <?php
                     printf(
-                        esc_html__('We found %d bus(es) with old route data structure. Please migrate to the new unified route system for better compatibility.', 'bus-booking-manager'),
-                        $needs_migration
+                        /* translators: %d: number of buses migrated */
+                        esc_html__('Bus Booking Manager automatically updated route data for %d bus(es) to the new format. Your old data was preserved -- no action needed.', 'bus-booking-manager'),
+                        (int) $stats['migrated']
                     );
                     ?>
                 </p>
-                <p>
-                    <strong><?php esc_html_e('Note:', 'bus-booking-manager'); ?></strong>
-                    <?php esc_html_e('Your old data will be preserved. This is a safe operation.', 'bus-booking-manager'); ?>
-                </p>
-                <p>
-                    <!-- <button type="button" class="button button-primary" id="wbbm-migration-dry-run">
-                        <span class="dashicons dashicons-search" style="vertical-align: middle;"></span>
-                        <?php // esc_html_e('Test Migration (Dry Run)', 'bus-booking-manager'); ?>
-                    </button> -->
-                    <button type="button" class="button button-primary button-hero" id="wbbm-migration-run" style="background: #2271b1;">
-                        <span class="dashicons dashicons-update" style="vertical-align: middle;"></span>
-                        <?php esc_html_e('Run Migration Now', 'bus-booking-manager'); ?>
-                    </button>
-                    <button type="button" class="button" id="wbbm-migration-dismiss">
-                        <?php esc_html_e('Dismiss Notice', 'bus-booking-manager'); ?>
-                    </button>
-                </p>
-                <div id="wbbm-migration-progress" style="display:none; margin-top: 15px;">
-                    <div style="background: #fff; padding: 15px; border: 1px solid #ccc; border-radius: 4px;">
-                        <h4 id="wbbm-migration-status"><?php esc_html_e('Processing...', 'bus-booking-manager'); ?></h4>
-                        <div id="wbbm-migration-log" style="max-height: 300px; overflow-y: auto; font-family: monospace; font-size: 12px; background: #f5f5f5; padding: 10px; border-radius: 3px;"></div>
-                    </div>
-                </div>
             </div>
-
-            <script type="text/javascript">
-            jQuery(document).ready(function($) {
-                // Dry run
-                $('#wbbm-migration-dry-run').on('click', function() {
-                    if (!confirm('<?php esc_html_e('Run migration test without saving changes?', 'bus-booking-manager'); ?>')) {
-                        return;
-                    }
-                    runMigration(true);
-                });
-
-                // Actual migration
-                $('#wbbm-migration-run').on('click', function() {
-                    if (!confirm('<?php esc_html_e('Are you sure you want to migrate bus route data? This will create new route info for all buses.', 'bus-booking-manager'); ?>')) {
-                        return;
-                    }
-                    runMigration(false);
-                });
-
-                // Dismiss notice
-                $('#wbbm-migration-dismiss').on('click', function() {
-                    $.ajax({
-                        url: ajaxurl,
-                        type: 'POST',
-                        data: {
-                            action: 'wbbm_dismiss_migration_notice',
-                            nonce: '<?php echo esc_js(wp_create_nonce('wbbm_migration_nonce')); ?>'
-                        },
-                        success: function(response) {
-                            $('#wbbm-route-migration-notice').fadeOut();
-                        }
-                    });
-                });
-
-                function runMigration(dryRun) {
-                    var $progress = $('#wbbm-migration-progress');
-                    var $log = $('#wbbm-migration-log');
-                    var $status = $('#wbbm-migration-status');
-                    var $buttons = $('#wbbm-migration-dry-run, #wbbm-migration-run, #wbbm-migration-dismiss');
-
-                    $buttons.prop('disabled', true);
-                    $progress.show();
-                    $log.html('');
-                    $status.text(dryRun ? '<?php esc_html_e('Running test migration...', 'bus-booking-manager'); ?>' : '<?php esc_html_e('Running migration...', 'bus-booking-manager'); ?>');
-
-                    $.ajax({
-                        url: ajaxurl,
-                        type: 'POST',
-                        data: {
-                            action: 'wbbm_run_route_migration',
-                            dry_run: dryRun ? 1 : 0,
-                            nonce: '<?php echo esc_js(wp_create_nonce('wbbm_migration_nonce')); ?>'
-                        },
-                        success: function(response) {
-                            if (response.success) {
-                                $status.html('<span style="color: green;">✓ ' + response.data.message + '</span>');
-                                
-                                // Display log
-                                if (response.data.log && response.data.log.length > 0) {
-                                    $.each(response.data.log, function(i, entry) {
-                                        var color = entry.type === 'error' ? 'red' : (entry.type === 'warning' ? 'orange' : '#333');
-                                        $log.append('<div style="color: ' + color + '; margin-bottom: 5px;">[' + entry.type.toUpperCase() + '] ' + entry.message + '</div>');
-                                    });
-                                }
-
-                                if (!dryRun) {
-                                    setTimeout(function() {
-                                        location.reload();
-                                    }, 3000);
-                                }
-                            } else {
-                                $status.html('<span style="color: red;">✗ ' + response.data.message + '</span>');
-                            }
-                        },
-                        error: function() {
-                            $status.html('<span style="color: red;">✗ <?php esc_html_e('Migration failed. Please try again.', 'bus-booking-manager'); ?></span>');
-                        },
-                        complete: function() {
-                            $buttons.prop('disabled', false);
-                        }
-                    });
-                }
-            });
-            </script>
-
-            <style>
-                .wbbm-migration-notice h3 {
-                    margin: 0.5em 0;
-                }
-                .wbbm-migration-notice .button {
-                    margin-right: 10px;
-                }
-            </style>
             <?php
-        }
-
-        /**
-         * AJAX handler for running migration
-         */
-        public function ajax_run_migration()
-        {
-            check_ajax_referer('wbbm_migration_nonce', 'nonce');
-
-            if (!current_user_can('manage_options')) {
-                wp_send_json_error(['message' => __('Insufficient permissions.', 'bus-booking-manager')]);
-            }
-
-            $this->dry_run = isset($_POST['dry_run']) && $_POST['dry_run'] == '1';
-            $this->log = [];
-
-            $result = $this->migrate_all_buses();
-
-            wp_send_json_success([
-                'message' => $result['message'],
-                'log' => $this->log,
-                'stats' => $result['stats']
-            ]);
-        }
-
-        /**
-         * AJAX handler for dismissing notice
-         */
-        public function ajax_dismiss_notice()
-        {
-            check_ajax_referer('wbbm_migration_nonce', 'nonce');
-
-            if (!current_user_can('manage_options')) {
-                wp_send_json_error(['message' => __('Insufficient permissions.', 'bus-booking-manager')]);
-            }
-
-            update_option('wbbm_route_migration_notice_dismissed', true);
-            wp_send_json_success();
         }
 
         /**

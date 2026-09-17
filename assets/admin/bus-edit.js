@@ -203,7 +203,12 @@ jQuery(document).ready(function ($) {
             prevBtn.show().data('prev', step - 1);
         }
 
-        if (step === 6) {
+        // Last step is whatever the nav actually renders (4 now that
+        // Features/Tax/Custom Fields are merged into one "Advanced" step),
+        // read from the DOM instead of a number that has to be kept in
+        // sync by hand every time a step is added, removed or merged.
+        const totalSteps = $('.step-item').length;
+        if (step === totalSteps) {
             nextBtn.hide();
             finalSaveBtn.show();
         } else {
@@ -341,14 +346,31 @@ jQuery(document).ready(function ($) {
 
     $(document).on('change', '.route-type-select', function () {
         const type = $(this).val();
-        const nextDayWrap = $(this).closest('.route-item').find('.next-day-wrap');
+        const item = $(this).closest('.route-item');
+        const nextDayWrap = item.find('.next-day-wrap');
 
         if (type === 'dp' || type === 'both') {
             nextDayWrap.slideDown();
         } else {
             nextDayWrap.slideUp();
         }
+
+        const typeBadge = item.find('.route-meta-type');
+        typeBadge
+            .text($(this).find('option:selected').text())
+            .attr('class', 'route-meta-type type-' + type);
+
         reloadPricingMatrix();
+    });
+
+    // Time and Type are shown on the collapsed header row (next to the
+    // stop name) so every stop's schedule is visible at a glance without
+    // expanding each one -- keep that read-only summary in sync as the
+    // real Time field is edited underneath it.
+    $(document).on('input change', 'input[name="wbtm_route_time[]"]', function () {
+        const value = $(this).val();
+        const timeText = $(this).closest('.route-item').find('.route-meta-time-text');
+        timeText.text(value || '--:--');
     });
 
     function reloadPricingMatrix() {
@@ -549,20 +571,18 @@ jQuery(document).ready(function ($) {
         frame.open();
     });
 
-    // --- Step 1: Inline Stop Addition ---
-    $(document).on('click', '#add-inline-stop-btn', function () {
-        const nameInput = $('#new-stop-name');
-        const name = nameInput.val().trim();
-        const messageDiv = $('#inline-stop-message');
-        const btn = $(this);
-
+    // --- Add a new wbbm_bus_stops term over AJAX, and push it into every
+    // place on this page that offers a "Stop" to pick from. Shared by the
+    // Bus Stops sidebar (Basic step) and the "Add Stoppage" popup (Route
+    // Management, Route & Price step) -- one place to keep both in sync.
+    function addBusStop(name, $btn, btnIdleHtml, $messageEl, onSuccess) {
         if (!name) {
-            messageDiv.html('<span style="color:red;">Please enter a stop name</span>');
+            if ($messageEl) { $messageEl.html('<span style="color:red;">Please enter a stop name</span>'); }
             return;
         }
 
-        btn.prop('disabled', true).html('<span class="spinner is-active" style="float:none; margin:0 5px 0 0;"></span> Adding...');
-        messageDiv.empty();
+        $btn.prop('disabled', true).html('<span class="spinner is-active" style="float:none; margin:0 5px 0 0;"></span> Adding...');
+        if ($messageEl) { $messageEl.empty(); }
 
         $.ajax({
             url: wbbm_bus_edit.ajax_url,
@@ -573,11 +593,13 @@ jQuery(document).ready(function ($) {
                 term_name: name
             },
             success: function (response) {
-                btn.prop('disabled', false).html('<span class="dashicons dashicons-plus"></span> Add New Stop');
+                $btn.prop('disabled', false).html(btnIdleHtml);
                 if (response.success) {
-                    nameInput.val('');
                     const displayMsg = response.data.message || 'Stop added successfully!';
-                    messageDiv.html('<span style="color:green;">✓ ' + displayMsg + '</span>');
+                    if ($messageEl) {
+                        $messageEl.html('<span style="color:green;">✓ ' + displayMsg + '</span>');
+                        setTimeout(() => $messageEl.fadeOut(300, () => $messageEl.empty().show()), 5000);
+                    }
 
                     // Update Step 1 sidebar list
                     const stopsList = $('#bus-stops-list');
@@ -609,16 +631,61 @@ jQuery(document).ready(function ($) {
                         $('#pickup-city-selector').trigger('change');
                     }
 
-                    setTimeout(() => messageDiv.fadeOut(300, () => messageDiv.empty().show()), 5000);
-                } else {
-                    messageDiv.html('<span style="color:red;">Error: ' + (response.data || 'Unknown error') + '</span>');
+                    if (typeof onSuccess === 'function') { onSuccess(response.data); }
+                } else if ($messageEl) {
+                    $messageEl.html('<span style="color:red;">Error: ' + (response.data || 'Unknown error') + '</span>');
                 }
             },
             error: function () {
-                btn.prop('disabled', false).html('<span class="dashicons dashicons-plus"></span> Add New Stop');
-                messageDiv.html('<span style="color:red;">Server error occurred</span>');
+                $btn.prop('disabled', false).html(btnIdleHtml);
+                if ($messageEl) { $messageEl.html('<span style="color:red;">Server error occurred</span>'); }
             }
         });
+    }
+
+    // --- Step 1: Inline Stop Addition (sidebar form) ---
+    $(document).on('click', '#add-inline-stop-btn', function () {
+        const nameInput = $('#new-stop-name');
+        const idleHtml = '<span class="dashicons dashicons-plus"></span> Add New Stop';
+        addBusStop(nameInput.val().trim(), $(this), idleHtml, $('#inline-stop-message'), function () {
+            nameInput.val('');
+        });
+    });
+
+    // --- Route Management: "Add Stoppage" popup ---
+    // .btn-add-stoppage-link now sits inline after the "Stop" select on
+    // every route item (not a single header link), so this is bound by
+    // class -- one trigger per route item, all opening the same modal.
+    $(document).on('click', '.btn-add-stoppage-link', function () {
+        $('#wbbm-stop-modal').addClass('is-open');
+        $('#new-stop-name-modal').val('').trigger('focus');
+        $('#stop-modal-message').empty();
+    });
+
+    function closeStoppageModal() {
+        $('#wbbm-stop-modal').removeClass('is-open');
+    }
+
+    $(document).on('click', '#cancel-add-stoppage, .wbbm-stop-modal-close', closeStoppageModal);
+    $(document).on('click', '#wbbm-stop-modal', function (e) {
+        if (e.target.id === 'wbbm-stop-modal') { closeStoppageModal(); }
+    });
+    $(document).on('keydown', function (e) {
+        if (e.key === 'Escape' && $('#wbbm-stop-modal').hasClass('is-open')) { closeStoppageModal(); }
+    });
+
+    $(document).on('click', '#save-add-stoppage', function () {
+        const nameInput = $('#new-stop-name-modal');
+        addBusStop(nameInput.val().trim(), $(this), 'Add Stop', $('#stop-modal-message'), function (data) {
+            setTimeout(closeStoppageModal, 700);
+        });
+    });
+
+    $(document).on('keydown', '#new-stop-name-modal', function (e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            $('#save-add-stoppage').trigger('click');
+        }
     });
     // --- Step 2: Sidebar Pickup Point Addition ---
     $(document).on('click', '#add-inline-pickpoint-btn', function () {

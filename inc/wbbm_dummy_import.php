@@ -305,6 +305,15 @@ if (!class_exists('wbbm_dummy_import')) {
                                 'wbbm_bus_category' => get_term_by('name', 'Non AC', 'wbbm_bus_cat') ? get_term_by('name', 'Non AC', 'wbbm_bus_cat')->term_id : '',
                                 'wbbm_bus_no' => 'Flixbus-01',
                                 'wbbm_total_seat' => '27',
+                                // Modern unified route structure (what Route Management / Pricing
+                                // Matrix actually read) -- seeded directly instead of relying on the
+                                // legacy-to-modern migration to build it from bp/next stops below.
+                                'wbbm_route_info' => array(
+                                    array('place' => 'Paris', 'time' => '12:00', 'type' => 'bp', 'next_day' => 0),
+                                    array('place' => 'Frankfurt', 'time' => '12:20', 'type' => 'both', 'next_day' => 0),
+                                    array('place' => 'Hamburg', 'time' => '12:30', 'type' => 'both', 'next_day' => 0),
+                                    array('place' => 'Berlin', 'time' => '22:30', 'type' => 'dp', 'next_day' => 0),
+                                ),
                                 'wbbm_price_zero_allow' => 'off',
                                 'wbbm_sell_off' => 'off',
                                 'wbbm_seat_available' => 'on',
@@ -472,6 +481,12 @@ if (!class_exists('wbbm_dummy_import')) {
                                 'wbbm_bus_category' => get_term_by('name', 'AC', 'wbbm_bus_cat') ? get_term_by('name', 'Non AC', 'wbbm_bus_cat')->term_id : '',
                                 'wbbm_bus_no' => 'Megabus-01',
                                 'wbbm_total_seat' => '27',
+                                'wbbm_route_info' => array(
+                                    array('place' => 'Paris', 'time' => '11:00', 'type' => 'bp', 'next_day' => 0),
+                                    array('place' => 'Frankfurt', 'time' => '12:20', 'type' => 'bp', 'next_day' => 0),
+                                    array('place' => 'Hamburg', 'time' => '12:30', 'type' => 'bp', 'next_day' => 0),
+                                    array('place' => 'Berlin', 'time' => '21:30', 'type' => 'dp', 'next_day' => 0),
+                                ),
                                 'wbbm_price_zero_allow' => 'off',
                                 'wbbm_sell_off' => 'off',
                                 'wbbm_seat_available' => 'on',
@@ -631,6 +646,12 @@ if (!class_exists('wbbm_dummy_import')) {
                                 'wbbm_bus_category' => get_term_by('name', 'Non AC', 'wbbm_bus_cat') ? get_term_by('name', 'Non AC', 'wbbm_bus_cat')->term_id : '',
                                 'wbbm_bus_no' => 'BYDbus-01',
                                 'wbbm_total_seat' => '27',
+                                'wbbm_route_info' => array(
+                                    array('place' => 'Berlin', 'time' => '10:00', 'type' => 'bp', 'next_day' => 0),
+                                    array('place' => 'Hamburg', 'time' => '10:15', 'type' => 'both', 'next_day' => 0),
+                                    array('place' => 'Frankfurt', 'time' => '10:30', 'type' => 'both', 'next_day' => 0),
+                                    array('place' => 'Paris', 'time' => '21:10', 'type' => 'dp', 'next_day' => 0),
+                                ),
                                 'wbbm_price_zero_allow' => 'off',
                                 'wbbm_sell_off' => 'off',
                                 'wbbm_seat_available' => 'on',
@@ -809,6 +830,12 @@ if (!class_exists('wbbm_dummy_import')) {
                                 'wbbm_bus_category' => get_term_by('name', 'AC', 'wbbm_bus_cat') ? get_term_by('name', 'Non AC', 'wbbm_bus_cat')->term_id : '',
                                 'wbbm_bus_no' => 'RED-01',
                                 'wbbm_total_seat' => '27',
+                                'wbbm_route_info' => array(
+                                    array('place' => 'Berlin', 'time' => '10:00', 'type' => 'bp', 'next_day' => 0),
+                                    array('place' => 'Hamburg', 'time' => '10:15', 'type' => 'both', 'next_day' => 0),
+                                    array('place' => 'Frankfurt', 'time' => '10:30', 'type' => 'both', 'next_day' => 0),
+                                    array('place' => 'Paris', 'time' => '22:10', 'type' => 'dp', 'next_day' => 0),
+                                ),
                                 'wbbm_price_zero_allow' => 'off',
                                 'wbbm_sell_off' => 'off',
                                 'wbbm_seat_available' => 'on',
@@ -987,6 +1014,12 @@ if (!class_exists('wbbm_dummy_import')) {
                                 'wbbm_bus_category' => get_term_by('name', 'Non AC', 'wbbm_bus_cat') ? get_term_by('name', 'Non AC', 'wbbm_bus_cat')->term_id : '',
                                 'wbbm_bus_no' => 'Bonanza-01',
                                 'wbbm_total_seat' => '27',
+                                'wbbm_route_info' => array(
+                                    array('place' => 'Berlin', 'time' => '07:00', 'type' => 'bp', 'next_day' => 0),
+                                    array('place' => 'Hamburg', 'time' => '08:00', 'type' => 'both', 'next_day' => 0),
+                                    array('place' => 'Frankfurt', 'time' => '08:30', 'type' => 'both', 'next_day' => 0),
+                                    array('place' => 'Paris', 'time' => '22:00', 'type' => 'dp', 'next_day' => 0),
+                                ),
                                 'wbbm_price_zero_allow' => 'off',
                                 'wbbm_sell_off' => 'off',
                                 'wbbm_seat_available' => 'on',

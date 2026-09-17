@@ -99,10 +99,23 @@ add_action('plugins_loaded', 'wbbm_maybe_install', 20);
 define('WBTM_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('WBTM_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('WBTM_PLUGIN_FILE', plugin_basename(__FILE__));
+// Defined unconditionally (moved out of the WooCommerce-active gate below):
+// admin screens that now load either way reference this constant.
+define('PLUGIN_ROOT', plugin_dir_url(__FILE__));
 include_once(ABSPATH . 'wp-admin/includes/plugin.php');
-if (is_plugin_active('woocommerce/woocommerce.php')) {
-	// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound
-    define('PLUGIN_ROOT', plugin_dir_url(__FILE__));
+// Always on, WooCommerce or not: the CPT, admin screens, shortcodes and
+// front-end booking flow no longer require WooCommerce. Only two kinds of
+// WooCommerce-only pieces stay in here rather than requiring their own
+// guard everywhere: (a) code hooked to a genuine woocommerce_* action or
+// filter, which is inert on its own -- WooCommerce is the only thing that
+// ever fires those, so nothing runs when it's absent -- and (b) the
+// hidden-linked-product / cart / order-status functions defined below,
+// none of which is ever called except from those same WooCommerce-only
+// hooks. Everything reachable from a non-WooCommerce-only hook (admin
+// screens, shortcodes, templates, wp_head/admin_head, template_redirect)
+// is guarded at the call site via MP_Global_Function::wbbm_use_wc() /
+// function_exists() / class_exists() instead.
+if (true) {
     require_once(dirname(__FILE__) . "/inc/class-mage-settings.php");
     require_once(dirname(__FILE__) . "/inc/wbbm_admin_settings.php");
     require_once(dirname(__FILE__) . "/inc/wbbm_cpt.php");
@@ -132,10 +145,22 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
     require_once(dirname(__FILE__) . "/inc/BusListPageClass.php");
     require_once(dirname(__FILE__) . "/inc/BusEditPageClass.php");
     require_once(dirname(__FILE__) . "/inc/class-wbbm-bus-configuration-page.php");
+    require_once(dirname(__FILE__) . "/inc/wbbm-offline-booking.php");
+    require_once(dirname(__FILE__) . "/inc/wbbm-custom-gateway-checkout.php");
+    require_once(dirname(__FILE__) . "/inc/BusOfflineBookingListPageClass.php");
 
     // Shared tabbed-hub shell, plus the hubs the free plugin owns.
     require_once(dirname(__FILE__) . "/inc/class-wbbm-admin-hub.php");
     require_once(dirname(__FILE__) . "/inc/class-wbbm-settings-hub.php");
+
+    // Bookings page. The Passenger List belongs to this plugin; the hub's
+    // other tabs come from PRO when it is active.
+    require_once(dirname(__FILE__) . "/inc/wbbm_booking_status.php");
+    require_once(dirname(__FILE__) . "/inc/wbbm_passenger_list.php");
+    if (!class_exists('AdminPassengerListClass')) {
+        require_once(dirname(__FILE__) . "/inc/AdminPassengerListClass.php");
+    }
+    require_once(dirname(__FILE__) . "/inc/class-wbbm-bookings-hub.php");
 
     // Language Load
     add_action('init', 'wbbm_language_load');
@@ -639,7 +664,12 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
                 $stores['product'] = 'WBBM_Product_Data_Store_CPT';
                 return $stores;
             }
-        } else {
+        } elseif (function_exists('wc_not_loaded')) {
+            // Only a real thing when WooCommerce itself is loaded but this
+            // one class is missing (e.g. a partial WooCommerce upgrade).
+            // When WooCommerce isn't installed at all, wc_not_loaded()
+            // doesn't exist either -- the plugin's own Quick Setup screen
+            // and per-bus Payment Method warning already cover that case.
             add_action('admin_notices', 'wc_not_loaded');
         }
     }
@@ -1316,10 +1346,23 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
         unset($all_stops[$pos2]);
         return $all_stops;
     }
-    function wbbm_add_passenger($order_id, $bus_id, $user_id, $start, $next_stops, $end, $user_name, $user_email, $user_phone, $user_gender, $user_dob, $nationality, $flight_arrival_no, $flight_departure_no, $extra_bag_quantity, $user_address, $user_type, $b_time, $j_time, $adult, $adult_per_price, $child, $child_per_price, $infant, $infant_per_price, $entire, $entire_per_price, $total_price, $item_quantity, $j_date, $add_datetime, $pickpoint, $status)
+    /**
+     * $payment_method / $payment_status are new optional trailing params
+     * (added for offline-payment support -- see inc/wbbm-offline-booking.php)
+     * so the existing WooCommerce call site below (which never passes them)
+     * keeps working unchanged. $payment_status defaults to derived-from-
+     * $status when not given, so old WooCommerce bookings still get a
+     * sensible value instead of nothing.
+     */
+    function wbbm_add_passenger($order_id, $bus_id, $user_id, $start, $next_stops, $end, $user_name, $user_email, $user_phone, $user_gender, $user_dob, $nationality, $flight_arrival_no, $flight_departure_no, $extra_bag_quantity, $user_address, $user_type, $b_time, $j_time, $adult, $adult_per_price, $child, $child_per_price, $infant, $infant_per_price, $entire, $entire_per_price, $total_price, $item_quantity, $j_date, $add_datetime, $pickpoint, $status, $payment_method = 'woocommerce', $payment_status = null)
     {
         $add_datetime = current_time("Y-m-d h:i:s");
         $post_title = 'Booking #' . $order_id . ' - ' . $user_name;
+
+        if (null === $payment_status) {
+            $payment_status = (1 === (int) $status) ? 'confirmed' : 'pending';
+        }
+
         $post_data = array(
             'post_title'  => $post_title,
             'post_type'   => 'wbbm_booking',
@@ -1360,10 +1403,12 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
                 '_wbbm_booking_date' => $add_datetime,
                 '_wbbm_status' => $status,
                 '_wbbm_pickpoint' => $pickpoint,
+                '_wbbm_payment_method' => $payment_method,
+                '_wbbm_payment_status' => $payment_status,
             ),
         );
 
-        wp_insert_post($post_data);
+        return wp_insert_post($post_data);
     }
     add_action('woocommerce_store_api_checkout_order_processed', 'api_checkout_order_processed', 10, 1);
     add_action('woocommerce_checkout_order_processed', 'wbbm_add_passenger_to_db', 10, 3);
@@ -1836,22 +1881,60 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
         }
         return $page;
     }
+    /**
+     * Translate a PHP date format into a jQuery UI datepicker one.
+     *
+     * Settings > General accepts any PHP format, so the whole alphabet has to
+     * be handled rather than a handful of known strings: anything outside the
+     * map is emitted as a literal (quoted when it is a letter, which the
+     * datepicker would otherwise read as a token). Tokens with no datepicker
+     * equivalent -- the ordinal suffix S, ISO week W, weekday numbers -- are
+     * dropped, because printing them raw would corrupt the parse.
+     */
+    function wbbm_php_to_jquery_dateformat($php_format)
+    {
+        $map = array(
+            'd' => 'dd', 'j' => 'd', 'D' => 'D', 'l' => 'DD',
+            'F' => 'MM', 'M' => 'M', 'm' => 'mm', 'n' => 'm',
+            'Y' => 'yy', 'y' => 'y', 'o' => 'yy', 'z' => 'o',
+            'N' => '', 'S' => '', 'w' => '', 'W' => '', 't' => '', 'L' => '',
+        );
+
+        // split per character, not per byte -- localised formats such as the
+        // Japanese default Yå¹´næjæ¥ are multibyte
+        $chars = preg_split('//u', (string) $php_format, -1, PREG_SPLIT_NO_EMPTY) ?: array();
+        $out = '';
+        $length = count($chars);
+
+        for ($i = 0; $i < $length; $i++) {
+            $char = $chars[$i];
+
+            if ($char === '\\') {
+                $i++;
+                if ($i < $length) {
+                    $out .= "'" . str_replace("'", "''", $chars[$i]) . "'";
+                }
+                continue;
+            }
+
+            if (array_key_exists($char, $map)) {
+                $out .= $map[$char];
+            } elseif ($char === "'") {
+                $out .= "''";
+            } elseif (preg_match('/^[A-Za-z]$/', $char)) {
+                // a token the datepicker does not know -- keep it as text
+                $out .= "'" . $char . "'";
+            } else {
+                $out .= $char;
+            }
+        }
+
+        return $out !== '' ? $out : 'yy-mm-dd';
+    }
+
     function wbbm_convert_datepicker_dateformat()
     {
-        $date_format = get_option('date_format');
-        // return $date_format;
-        // $php_d     = array('F', 'j', 'Y', 'm','d','D','M','y');
-        // $js_d   = array('d', 'M', 'yy','mm','dd','tt','mm','yy');
-        $dformat = str_replace('d', 'dd', $date_format);
-        $dformat = str_replace('m', 'mm', $dformat);
-        $dformat = str_replace('Y', 'yy', $dformat);
-        if ($date_format == 'Y-m-d' || $date_format == 'm/d/Y' || $date_format == 'd/m/Y' || $date_format == 'Y/d/m' || $date_format == 'Y-d-m') {
-            return str_replace('/', '-', $dformat);
-        } elseif ($date_format == 'Y.m.d' || $date_format == 'm.d.Y' || $date_format == 'd.m.Y' || $date_format == 'Y.d.m' || $date_format == 'Y.d.m') {
-            return str_replace('.', '-', $dformat);
-        } else {
-            return 'yy-mm-dd';
-        }
+        return wbbm_php_to_jquery_dateformat(get_option('date_format'));
     }
     function wbbm_convert_date_to_php($date, $to = 'Y-m-d')
     {
@@ -1903,6 +1986,12 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
     }
     function wbbm_on_post_publish($post_id, $post, $update)
     {
+        // Hooked to the generic wp_insert_post action (fires for every
+        // post, not just buses). A hidden linked product only makes sense
+        // for a bus that's actually set to WooCommerce Payment.
+        if ($post->post_type !== 'wbbm_bus' || !MP_Global_Function::wbbm_bus_wants_wc($post_id)) {
+            return;
+        }
         if ($post->post_type == 'wbbm_bus' && $post->post_status == 'publish' && empty(get_post_meta($post_id, 'check_if_run_once'))) {
             // ADD THE FORM INPUT TO $new_post ARRAY
             $new_post = array(
@@ -1955,6 +2044,11 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
     add_action('save_post', 'wbbm_wc_link_product_on_save', 99, 1);
     function wbbm_wc_link_product_on_save($post_id)
     {
+        // Hooked to the generic save_post action -- same reasoning as
+        // wbbm_on_post_publish() above.
+        if (get_post_type($post_id) !== 'wbbm_bus' || !MP_Global_Function::wbbm_bus_wants_wc($post_id)) {
+            return;
+        }
         if (get_post_type($post_id) == 'wbbm_bus') {
             //   if ( ! isset( $_POST['mep_event_reg_btn_nonce'] ) ||
             //   ! wp_verify_nonce( $_POST['mep_event_reg_btn_nonce'], 'mep_event_reg_btn_nonce' ) )
@@ -2017,9 +2111,6 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
             $query->set('tax_query', $tax_query);
         }
     }
-} else {
-    require_once WBTM_PLUGIN_DIR . '/inc/WBTM_Quick_Setup.php';
-    add_action('activated_plugin', 'wbbm_activation_redirect_setup', 90, 1);
 }
 function wbbm_activation_redirect($plugin)
 {
@@ -2027,15 +2118,6 @@ function wbbm_activation_redirect($plugin)
     if ($plugin == plugin_basename(__FILE__) && $wbbm_quick_setup_done != 'yes') {
         //require_once(dirname(__FILE__) . "/inc/wbbm_dummy_import.php");
         wp_safe_redirect(esc_url(admin_url('edit.php?post_type=wbbm_bus&page=wbbm_init_quick_setup')));
-        exit();
-    }
-}
-function wbbm_activation_redirect_setup($plugin)
-{
-    $wbbm_quick_setup_done = get_option('wbbm_quick_setup_done');
-    if ($plugin == plugin_basename(__FILE__) && $wbbm_quick_setup_done != 'yes') {
-        //require_once(dirname(__FILE__) . "/inc/wbbm_dummy_import.php");
-        wp_safe_redirect(esc_url(admin_url('admin.php?page=wbbm_init_quick_setup')));
         exit();
     }
 }

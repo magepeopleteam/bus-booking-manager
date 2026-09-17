@@ -40,8 +40,8 @@ class NextDateClass extends CommonClass
             $next_date = $return ? $tab_date_r : $tab_date;
             $next_date_text = $next_date;
             ?>
-            <div class="mage_default_xs">
-                <ul class="mage_list_inline flexEqual mage_next_date">
+            <div class="mage_default_xs wbbm-modern-search wbbm-daterail">
+                <ul class="mage_list_inline flexEqual mage_next_date" aria-label="<?php esc_attr_e('Nearby departure dates', 'bus-booking-manager'); ?>">
                     <?php
                     // create a nonce for next-date links
                     $next_date_link_nonce = wp_create_nonce('bus_search_nonce_action');
@@ -92,7 +92,7 @@ class NextDateClass extends CommonClass
                                 data-jdate="<?php echo esc_attr($next_date); ?>"
                                 data-rdate="<?php echo esc_attr($return ? $next_date : $r_date); ?>"
                             >
-                                <?php echo esc_html($this->wbbm_get_datetime($next_date, 'date-text')); ?>
+                                <?php echo $this->wbbm_next_date_parts($next_date); ?>
                             </a>
                         </li>
 
@@ -145,8 +145,8 @@ class NextDateClass extends CommonClass
 
         if ($wbtm_bus_on_dates && $show_operational_on_day === 'yes') {
             ?>
-            <div class="mage_default_xs">
-                <ul class="mage_list_inline flexEqual mage_next_date">
+            <div class="mage_default_xs wbbm-modern-search wbbm-daterail">
+                <ul class="mage_list_inline flexEqual mage_next_date" aria-label="<?php esc_attr_e('Nearby departure dates', 'bus-booking-manager'); ?>">
                     <?php
                         // Create nonce
                         $bus_search_nonce = wp_create_nonce('bus_search_nonce_action');
@@ -200,7 +200,7 @@ class NextDateClass extends CommonClass
                             <?php if (! in_array($j_date, $wbtm_bus_on_dates_arr, true) && $i === 0) : ?>
                                     <li class="mage_active">
                                         <a href="#">
-                                            <?php echo esc_html($this->wbbm_get_datetime($j_date, 'date-text')); ?>
+                                            <?php echo $this->wbbm_next_date_parts($j_date); ?>
                                         </a>
                                     </li>
                             <?php endif; ?>
@@ -214,7 +214,7 @@ class NextDateClass extends CommonClass
                                         data-jdate="<?php echo esc_attr($return ? $j_date : $ondate); ?>"
                                         data-rdate="<?php echo esc_attr($return ? $ondate : $r_date); ?>"
                                     >
-                                    <?php echo esc_html($this->wbbm_get_datetime($ondate, 'date-text')); ?>
+                                    <?php echo $this->wbbm_next_date_parts($ondate); ?>
                                     </a>
                                 </li>
 
@@ -240,8 +240,8 @@ class NextDateClass extends CommonClass
             $next_date_text = $next_date;
 
             ?>
-            <div class="mage_default_xs">
-                <ul class="mage_list_inline flexEqual mage_next_date">
+            <div class="mage_default_xs wbbm-modern-search wbbm-daterail">
+                <ul class="mage_list_inline flexEqual mage_next_date" aria-label="<?php esc_attr_e('Nearby departure dates', 'bus-booking-manager'); ?>">
                     <?php
                         $bus_search_nonce = wp_create_nonce('bus_search_nonce_action');
 
@@ -296,7 +296,7 @@ class NextDateClass extends CommonClass
                                     data-jdate="<?php echo esc_attr($return ? $j_date : $next_date); ?>"
                                     data-rdate="<?php echo esc_attr($return ? $next_date : $r_date); ?>"
                                 >
-                                    <?php echo esc_html($this->wbbm_get_datetime($next_date, 'date-text')); ?>
+                                    <?php echo $this->wbbm_next_date_parts($next_date); ?>
                                 </a>
                             </li>
 
@@ -316,6 +316,29 @@ class NextDateClass extends CommonClass
         } else {
             $this->mage_next_date_suggestion(false, false, $target);
         }
+    }
+
+    /**
+     * The date rail shows a date on three lines -- weekday, day number, month --
+     * so the markup has to carry the parts instead of one formatted string.
+     * Returns escaped HTML; the full date stays available to screen readers.
+     */
+    public function wbbm_next_date_parts($date)
+    {
+        $timestamp = strtotime(sanitize_text_field($date));
+        if (!$timestamp) {
+            return '';
+        }
+
+        $is_today = wp_date('Y-m-d', $timestamp) === wp_date('Y-m-d');
+        $weekday = $is_today ? __('Today', 'bus-booking-manager') : wp_date('D', $timestamp);
+        // the year is only worth the space when the rail crosses into another one
+        $month = wp_date('Y', $timestamp) === wp_date('Y') ? wp_date('M', $timestamp) : wp_date('M Y', $timestamp);
+
+        return '<span class="wbbm-date-weekday">' . esc_html($weekday) . '</span>'
+            . '<span class="wbbm-date-day">' . esc_html(wp_date('j', $timestamp)) . '</span>'
+            . '<span class="wbbm-date-month">' . esc_html($month) . '</span>'
+            . '<span class="wbbm-sr-only">' . esc_html($this->wbbm_get_datetime($date, 'date-text')) . '</span>';
     }
 
     public function mage_bus_isset($parameter)

@@ -517,6 +517,17 @@
         });
     }
 
+    /*
+     * The same first-paint decoration the tab swap re-runs, exposed so any
+     * other script that injects panel markup -- the section swap in
+     * wbbm-settings-enhance.js -- can put tables back into hub dress rather
+     * than reimplementing it.
+     */
+    window.wbbmHubDecorate = function () {
+        init();
+        initFilters();
+    };
+
     function boot() {
         init();
         initFilters();

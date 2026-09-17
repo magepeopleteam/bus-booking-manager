@@ -1,0 +1,2410 @@
+/**
+ * Modern search form
+ * -----------------------------------------------------------------------------
+ * Restyles the boarding/dropping/date search form rendered by
+ * SearchClass::search_from_only(). Everything is scoped to .wbbm-modern-search
+ * so the rest of the plugin is untouched.
+ *
+ * Add .wbbm-stacked to the wrapper for the always-vertical variants
+ * (sidebar widget, small search box).
+ *
+ * Display font: falls back to the theme font. To use the designed pairing,
+ * load Bricolage Grotesque + Archivo from the theme and they are picked up
+ * automatically by the stacks below.
+ */
+
+:root,
+.wbbm-modern-search {
+    --wbbm-accent: #b30c3b;
+    --wbbm-accent-hover: #8e0930;
+    --wbbm-accent-tint: #fbeef2;
+    --wbbm-ink: #1a1417;
+    --wbbm-muted: #6b5f64;
+    --wbbm-soft: #8a7c81;
+    --wbbm-line: #e9e1e3;
+    --wbbm-line-strong: #d9cfd2;
+    --wbbm-ground: #fbf8f7;
+    --wbbm-surface: #ffffff;
+    --wbbm-radius-card: 22px;
+    --wbbm-radius-field: 15px;
+    --wbbm-display: "Bricolage Grotesque", "Archivo", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    --wbbm-shadow-card: 0 1px 2px rgba(26, 20, 23, 0.04), 0 18px 40px -26px rgba(26, 20, 23, 0.35);
+    --wbbm-shadow-pop: 0 24px 50px -20px rgba(26, 20, 23, 0.4);
+    --wbbm-field-h: 76px;
+}
+
+.wbbm-modern-search *,
+.wbbm-modern-search *::before,
+.wbbm-modern-search *::after {
+    box-sizing: border-box;
+}
+
+
+/* ---------------------------------------------------------------- shell */
+
+.wbbm-modern-search .wbbm-search-shell {
+    padding: 32px;
+    border-radius: 28px;
+}
+
+.wbbm-modern-search .wbbm-search-head {
+    margin: 0 0 18px 4px;
+}
+
+div.mage_container.wbbm-modern-search .wbbm-search-head h2,
+div.wbbm-modern-search .mage_search_box_small > h2,
+div.wbbm-modern-search .mage_sidebar_search_form > h2 {
+    margin: 0;
+    padding: 0;
+    font-family: var(--wbbm-display);
+    /* beats .mage_container h2 { font-size: 25px !important } in mage_css.css */
+    font-size: clamp(28px, 3vw, 40px) !important;
+    line-height: 1.04;
+    font-weight: 700 !important;
+    letter-spacing: -0.02em;
+    color: var(--wbbm-ink);
+}
+
+div.wbbm-modern-search.wbbm-stacked .wbbm-search-head h2,
+div.wbbm-modern-search .mage_search_box_small > h2,
+div.wbbm-modern-search .mage_sidebar_search_form > h2 {
+    font-size: 26px !important;
+    margin-bottom: 18px;
+}
+
+.wbbm-modern-search .search_form_horizontal,
+.wbbm-modern-search .mage_search_box_small,
+.wbbm-modern-search .mage_sidebar_search_form {
+    background: transparent !important;
+    border: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+}
+
+.wbbm-modern-search form.mage_form {
+    display: block;
+    margin: 0;
+}
+
+
+/* ------------------------------------------------------- trip type pill */
+
+.wbbm-modern-search .wbbm-trip-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 0 0 14px;
+    flex-wrap: wrap;
+}
+
+.wbbm-modern-search .mage_form_radio {
+    visibility: visible !important;
+    display: inline-flex !important;
+    flex-wrap: nowrap;
+    gap: 4px;
+    padding: 4px;
+    margin: 0;
+    background: #f1eaec;
+    border-radius: 999px;
+}
+
+.wbbm-modern-search .mage_form_radio label {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 9px 20px;
+    min-height: 40px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.2;
+    color: var(--wbbm-muted);
+    white-space: nowrap;
+    transition: background 0.18s ease, color 0.18s ease;
+}
+
+.wbbm-modern-search .mage_form_radio label input[type="radio"] {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: 0;
+    padding: 0;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.wbbm-modern-search .mage_form_radio label.is-active,
+.wbbm-modern-search .mage_form_radio label:has(input:checked) {
+    background: var(--wbbm-surface);
+    color: var(--wbbm-ink);
+    font-weight: 600;
+    box-shadow: 0 1px 3px rgba(26, 20, 23, 0.12);
+}
+
+.wbbm-modern-search .mage_form_radio label:has(input:focus-visible) {
+    outline: 2px solid var(--wbbm-accent);
+    outline-offset: 2px;
+}
+
+
+/* ------------------------------------------------------------ field bar */
+
+.wbbm-modern-search .wbbm-fields {
+    position: relative;
+    display: grid;
+    /* the date cells carry the site's date format, which can be as long as
+       "September 20, 2026" -- they get more room than the stop fields */
+    grid-template-columns:
+        minmax(0, 1fr) 0
+        minmax(0, 1fr)
+        minmax(0, 1.1fr)
+        minmax(0, 1.1fr)
+        172px;
+    align-items: stretch;
+    gap: 0;
+    padding: 8px;
+    background: var(--wbbm-surface);
+    border: 1px solid var(--wbbm-line);
+    border-radius: var(--wbbm-radius-card);
+    box-shadow: var(--wbbm-shadow-card);
+}
+
+.wbbm-modern-search .wbbm-fields > .mage_form_list {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 6px;
+    min-height: var(--wbbm-field-h);
+    margin: 0;
+    padding: 12px 20px;
+    border-radius: var(--wbbm-radius-field);
+    transition: background 0.18s ease;
+}
+
+.wbbm-modern-search .wbbm-fields > .mage_form_list:hover {
+    background: #fdfafb;
+}
+
+/* hairline dividers between cells */
+.wbbm-modern-search .wbbm-fields > .mage_form_list + .mage_form_list::before,
+.wbbm-modern-search .wbbm-fields > .wbbm-f-to::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 14px;
+    bottom: 14px;
+    width: 1px;
+    background: var(--wbbm-line);
+}
+
+/*
+ * The swap button is 44px centred on the zero-width track between these two,
+ * so it reaches a shade over 22px into each cell. 40px of padding measures
+ * out to exactly 20px of clear space between the button and the label/icon
+ * on either side.
+ *
+ * These need `.wbbm-fields >` to outweigh the cell's own `padding: 12px 20px`
+ * further up, which otherwise wins on specificity and drops the clearance.
+ */
+.wbbm-modern-search .wbbm-fields > .wbbm-f-from { grid-column: 1; padding-right: 40px; }
+.wbbm-modern-search .wbbm-swap { grid-column: 2; }
+.wbbm-modern-search .wbbm-fields > .wbbm-f-to { grid-column: 3; padding-left: 40px; }
+.wbbm-modern-search .wbbm-f-jdate { grid-column: 4; }
+.wbbm-modern-search .wbbm-f-rdate { grid-column: 5; }
+.wbbm-modern-search .mage_form_search { grid-column: 6; }
+
+/* one-way / single bus: the return cell is gone, so close the gap */
+.wbbm-modern-search .wbbm-no-return {
+    grid-template-columns:
+        minmax(0, 1.15fr) 0
+        minmax(0, 1.15fr)
+        minmax(0, 1.15fr)
+        172px;
+}
+
+.wbbm-modern-search .wbbm-no-return .mage_form_search { grid-column: 5; }
+
+
+/* micro label */
+
+.wbbm-modern-search .wbbm-fields > .mage_form_list > label {
+    display: flex !important;
+    align-items: center;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    width: auto;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    line-height: 1.2;
+    color: var(--wbbm-soft);
+}
+
+.wbbm-modern-search .wbbm-fields > .mage_form_list > label .fa {
+    display: none;
+}
+
+
+/* value row: icon + input */
+
+.wbbm-modern-search .route-input-wrap,
+.wbbm-modern-search .wbbm-date-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+}
+
+.wbbm-modern-search .wbbm-field-icon {
+    flex: 0 0 auto;
+    font-size: 15px;
+    line-height: 1;
+    color: var(--wbbm-accent);
+}
+
+.wbbm-modern-search .mage_input_select {
+    position: relative !important;
+    width: 100%;
+    min-width: 0;
+}
+
+/*
+ * Text inputs carry an intrinsic width from their size attribute, and a flex
+ * or grid item will not shrink past it while min-width is auto. Without this
+ * the two date cells stay 227px wide and push the card off a phone screen.
+ */
+.wbbm-modern-search .wbbm-fields > .mage_form_list,
+.wbbm-modern-search .route-input-wrap,
+.wbbm-modern-search .wbbm-date-wrap {
+    min-width: 0;
+}
+
+.wbbm-modern-search .route-input-wrap > .mage_form_control,
+.wbbm-modern-search .wbbm-date-wrap > .mage_form_control {
+    flex: 1 1 0;
+    min-width: 0;
+}
+
+.wbbm-modern-search form.mage_form .mage_form_control {
+    width: 100%;
+    height: auto !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    font-family: var(--wbbm-display);
+    font-size: 21px !important;
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+    color: var(--wbbm-ink);
+    text-overflow: ellipsis;
+}
+
+/* a written-out date needs a touch less size than a single-word stop name */
+.wbbm-modern-search .wbbm-f-jdate .mage_form_control,
+.wbbm-modern-search .wbbm-f-rdate .mage_form_control {
+    font-size: 18px !important;
+}
+
+.wbbm-modern-search form.mage_form .mage_form_control::placeholder {
+    color: #a99da2;
+    font-weight: 600;
+    opacity: 1;
+}
+
+.wbbm-modern-search form.mage_form .mage_form_control:focus {
+    outline: none;
+    border-radius: 0 !important;
+}
+
+/* focus ring lands on the whole cell, not the bare input */
+.wbbm-modern-search .wbbm-fields > .mage_form_list:focus-within {
+    background: var(--wbbm-accent-tint);
+}
+
+.wbbm-modern-search .wbbm-fields > .mage_form_list:focus-within > label {
+    color: var(--wbbm-accent);
+}
+
+.wbbm-modern-search .activeMageSelect:after {
+    display: none;
+}
+
+
+/* ----------------------------------------------------------- swap button */
+
+.wbbm-modern-search .wbbm-swap {
+    align-self: center;
+    justify-self: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 1px solid var(--wbbm-line);
+    border-radius: 999px;
+    background: var(--wbbm-surface);
+    color: var(--wbbm-ink);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+    box-shadow: 0 2px 6px rgba(26, 20, 23, 0.08);
+    transition: border-color 0.18s ease, transform 0.18s ease;
+}
+
+.wbbm-modern-search .wbbm-swap:hover {
+    border-color: var(--wbbm-line-strong);
+}
+
+.wbbm-modern-search .wbbm-swap:active {
+    transform: scale(0.94);
+}
+
+.wbbm-modern-search .wbbm-swap .fa {
+    font-size: 14px;
+    line-height: 1;
+}
+
+
+/* --------------------------------------------------------- search button */
+
+.wbbm-modern-search .mage_form_search {
+    display: flex;
+    align-items: stretch;
+    margin-left: 8px;
+}
+
+.wbbm-modern-search button.mage_button {
+    width: 100%;
+    min-width: 0;
+    height: auto !important;
+    min-height: 60px;
+    padding: 12px 20px !important;
+    gap: 10px;
+    border: 0;
+    border-radius: 16px !important;
+    background-color: var(--wbbm-accent);
+    color: #fff;
+    font-size: 17px !important;
+    font-weight: 600;
+    text-transform: none;
+    cursor: pointer;
+    transition: background-color 0.18s ease;
+}
+
+.wbbm-modern-search button.mage_button:hover,
+.wbbm-modern-search button.mage_button:focus {
+    background-color: var(--wbbm-accent-hover);
+    opacity: 1;
+}
+
+.wbbm-modern-search button.mage_button span {
+    padding: 0 !important;
+    font-size: 16px;
+}
+
+.wbbm-modern-search button.mage_button.cursor-disabled,
+.wbbm-modern-search button.mage_button[disabled] {
+    background-color: #e3d5da;
+    color: var(--wbbm-soft);
+    cursor: not-allowed;
+}
+
+
+/* ------------------------------------------------------- stop dropdowns */
+
+.wbbm-modern-search .mage_input_select_list,
+.wbbm-modern-search .mage_input_select_list_static {
+    left: 0;
+    right: auto;
+    top: calc(100% + 18px);
+    width: 308px;
+    max-width: min(308px, 84vw);
+    margin: 0;
+    padding: 8px;
+    border: 1px solid var(--wbbm-line);
+    border-radius: 18px;
+    box-shadow: var(--wbbm-shadow-pop);
+}
+
+.wbbm-modern-search .mage_input_select_list > ul,
+.wbbm-modern-search .mage_input_select_list_static > ul {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    gap: 2px;
+    margin: 0;
+    padding: 0;
+}
+
+.wbbm-modern-search .mage_input_select_list > ul > li,
+.wbbm-modern-search .mage_input_select_list_static > ul > li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-basis: auto;
+    width: 100%;
+    margin: 0;
+    padding: 11px 12px;
+    border: 0;
+    border-radius: 12px;
+    text-align: left;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--wbbm-ink);
+    transition: background 0.14s ease, color 0.14s ease;
+}
+
+.wbbm-modern-search .mage_input_select_list > ul > li:hover,
+.wbbm-modern-search .mage_input_select_list_static > ul > li:hover {
+    background: var(--wbbm-accent-tint);
+    color: var(--wbbm-accent);
+}
+
+.wbbm-modern-search .mage_input_select_list > ul > li span,
+.wbbm-modern-search .mage_input_select_list_static > ul > li span {
+    margin: 0;
+    font-size: 14px;
+    color: var(--wbbm-soft);
+}
+
+.wbbm-modern-search .mage_input_select_list > ul > li:hover span,
+.wbbm-modern-search .mage_input_select_list_static > ul > li:hover span {
+    color: var(--wbbm-accent);
+}
+
+/*
+ * The To label carries an empty <span id="wbtm_show_msg"> for the dropping
+ * point AJAX ("Loading.."). Empty it still counts as a flex item -- 5px of
+ * inherited padding plus the label's 6px gap -- which pushed the word "To"
+ * 11px right of its icon while every other cell lined up. Hidden while it
+ * has nothing to say; :empty stops matching the moment it does.
+ */
+.wbbm-modern-search #wbtm_show_msg:empty {
+    display: none !important;
+}
+
+.wbbm-modern-search #wbtm_show_msg {
+    position: static;
+    line-height: 1.2;
+    color: var(--wbbm-accent);
+    text-transform: none;
+    letter-spacing: 0;
+}
+
+
+/* ------------------------------------------- return leg disabled / hidden */
+
+.wbbm-modern-search .mage_return_date.mage_hidden {
+    display: none !important;
+}
+
+
+/* --------------------------------------------------------- medium widths */
+
+@media (max-width: 1160px) {
+    .wbbm-modern-search .wbbm-fields {
+        grid-template-columns: minmax(0, 1fr) 0 minmax(0, 1fr) minmax(0, 1fr);
+    }
+
+    .wbbm-modern-search .wbbm-f-from { grid-column: 1; grid-row: 1; }
+    .wbbm-modern-search .wbbm-swap { grid-column: 2; grid-row: 1; }
+    .wbbm-modern-search .wbbm-f-to { grid-column: 3 / span 2; grid-row: 1; }
+    .wbbm-modern-search .wbbm-f-jdate { grid-column: 1 / span 2; grid-row: 2; }
+    .wbbm-modern-search .wbbm-f-rdate { grid-column: 3; grid-row: 2; }
+    .wbbm-modern-search .mage_form_search { grid-column: 4; grid-row: 2; }
+
+    .wbbm-modern-search .wbbm-no-return {
+        grid-template-columns: minmax(0, 1fr) 0 minmax(0, 1fr) minmax(0, 1fr);
+    }
+
+    .wbbm-modern-search .wbbm-no-return .wbbm-f-jdate { grid-column: 1 / span 3; grid-row: 2; }
+    .wbbm-modern-search .wbbm-no-return .mage_form_search { grid-column: 4; grid-row: 2; }
+
+    .wbbm-modern-search .wbbm-fields > .mage_form_list::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 14px;
+        bottom: 14px;
+        width: 1px;
+        background: var(--wbbm-line);
+    }
+
+    .wbbm-modern-search .wbbm-f-from::before,
+    .wbbm-modern-search .wbbm-f-jdate::before {
+        display: none;
+    }
+
+    .wbbm-modern-search .wbbm-f-jdate::after {
+        content: "";
+        position: absolute;
+        left: 16px;
+        right: -8px;
+        top: 0;
+        height: 1px;
+        background: var(--wbbm-line);
+    }
+}
+
+
+/* --------------------------------------- stacked: sidebar + phone widths */
+
+.wbbm-modern-search.wbbm-stacked .wbbm-fields,
+.wbbm-modern-search .mage_search_box_small .wbbm-fields,
+.wbbm-modern-search .mage_sidebar_search_form .wbbm-fields {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+
+@media (max-width: 782px) {
+    .wbbm-modern-search .wbbm-fields {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+    }
+}
+
+.wbbm-modern-search.wbbm-stacked .wbbm-search-shell,
+.wbbm-modern-search .mage_search_box_small,
+.wbbm-modern-search .mage_sidebar_search_form {
+    padding: 0;
+}
+
+@media (max-width: 782px) {
+    .wbbm-modern-search .wbbm-search-shell {
+        padding: 20px;
+        border-radius: 22px;
+    }
+
+    .wbbm-modern-search .wbbm-search-head h2 {
+        font-size: 30px;
+    }
+}
+
+.wbbm-modern-search.wbbm-stacked .wbbm-f-from,
+.wbbm-modern-search .mage_search_box_small .wbbm-f-from,
+.wbbm-modern-search .mage_sidebar_search_form .wbbm-f-from,
+.wbbm-modern-search.wbbm-stacked .wbbm-f-to,
+.wbbm-modern-search .mage_search_box_small .wbbm-f-to,
+.wbbm-modern-search .mage_sidebar_search_form .wbbm-f-to,
+.wbbm-modern-search.wbbm-stacked .mage_form_search,
+.wbbm-modern-search .mage_search_box_small .mage_form_search,
+.wbbm-modern-search .mage_sidebar_search_form .mage_form_search {
+    grid-column: 1 / span 2 !important;
+}
+
+.wbbm-modern-search.wbbm-stacked .wbbm-f-from,
+.wbbm-modern-search .mage_search_box_small .wbbm-f-from,
+.wbbm-modern-search .mage_sidebar_search_form .wbbm-f-from { grid-row: 1 !important; padding-right: 66px !important; }
+
+.wbbm-modern-search.wbbm-stacked .wbbm-swap,
+.wbbm-modern-search .mage_search_box_small .wbbm-swap,
+.wbbm-modern-search .mage_sidebar_search_form .wbbm-swap {
+    grid-column: 1 / span 2 !important;
+    grid-row: 2 !important;
+    justify-self: end !important;
+    margin: -22px 12px -22px 0;
+}
+
+.wbbm-modern-search.wbbm-stacked .wbbm-f-to,
+.wbbm-modern-search .mage_search_box_small .wbbm-f-to,
+.wbbm-modern-search .mage_sidebar_search_form .wbbm-f-to { grid-row: 3 !important; padding-left: 20px !important; padding-right: 66px !important; }
+
+.wbbm-modern-search.wbbm-stacked .wbbm-f-jdate,
+.wbbm-modern-search .mage_search_box_small .wbbm-f-jdate,
+.wbbm-modern-search .mage_sidebar_search_form .wbbm-f-jdate { grid-column: 1 !important; grid-row: 4 !important; }
+
+.wbbm-modern-search.wbbm-stacked .wbbm-f-rdate,
+.wbbm-modern-search .mage_search_box_small .wbbm-f-rdate,
+.wbbm-modern-search .mage_sidebar_search_form .wbbm-f-rdate { grid-column: 2 !important; grid-row: 4 !important; }
+
+/* the two date cells share a row: bottom-align so the values line up even
+   when the longer label wraps to two lines */
+.wbbm-modern-search.wbbm-stacked .wbbm-f-jdate,
+.wbbm-modern-search.wbbm-stacked .wbbm-f-rdate,
+.wbbm-modern-search .mage_search_box_small .wbbm-f-jdate,
+.wbbm-modern-search .mage_search_box_small .wbbm-f-rdate,
+.wbbm-modern-search .mage_sidebar_search_form .wbbm-f-jdate,
+.wbbm-modern-search .mage_sidebar_search_form .wbbm-f-rdate {
+    justify-content: flex-end;
+}
+
+.wbbm-modern-search.wbbm-stacked .mage_form_search,
+.wbbm-modern-search .mage_search_box_small .mage_form_search,
+.wbbm-modern-search .mage_sidebar_search_form .mage_form_search { grid-row: 5 !important; margin: 8px 0 0 !important; }
+
+.wbbm-modern-search.wbbm-stacked .wbbm-no-return .wbbm-f-jdate,
+.wbbm-modern-search .mage_search_box_small .wbbm-no-return .wbbm-f-jdate,
+.wbbm-modern-search .mage_sidebar_search_form .wbbm-no-return .wbbm-f-jdate { grid-column: 1 / span 2 !important; }
+
+@media (max-width: 782px) {
+    .wbbm-modern-search .wbbm-f-from { grid-column: 1 / span 2 !important; grid-row: 1 !important; padding-right: 66px !important; }
+    .wbbm-modern-search .wbbm-swap { grid-column: 1 / span 2 !important; grid-row: 2 !important; justify-self: end !important; margin: -22px 12px -22px 0; }
+    .wbbm-modern-search .wbbm-f-to { grid-column: 1 / span 2 !important; grid-row: 3 !important; padding-left: 20px !important; padding-right: 66px !important; }
+    .wbbm-modern-search .wbbm-f-jdate { grid-column: 1 !important; grid-row: 4 !important; }
+    .wbbm-modern-search .wbbm-f-rdate { grid-column: 2 !important; grid-row: 4 !important; }
+    .wbbm-modern-search .wbbm-f-jdate,
+    .wbbm-modern-search .wbbm-f-rdate { justify-content: flex-end; }
+    .wbbm-modern-search .mage_form_search { grid-column: 1 / span 2 !important; grid-row: 5 !important; margin: 8px 0 0 !important; }
+    .wbbm-modern-search .wbbm-no-return .wbbm-f-jdate { grid-column: 1 / span 2 !important; }
+}
+
+/* stacked dividers run horizontally */
+.wbbm-modern-search.wbbm-stacked .wbbm-fields > .mage_form_list::before,
+.wbbm-modern-search .mage_search_box_small .wbbm-fields > .mage_form_list::before,
+.wbbm-modern-search .mage_sidebar_search_form .wbbm-fields > .mage_form_list::before {
+    left: 16px !important;
+    right: 16px !important;
+    top: 0 !important;
+    bottom: auto !important;
+    width: auto !important;
+    height: 1px;
+}
+
+.wbbm-modern-search.wbbm-stacked .wbbm-f-rdate::before,
+.wbbm-modern-search .mage_search_box_small .wbbm-f-rdate::before,
+.wbbm-modern-search .mage_sidebar_search_form .wbbm-f-rdate::before {
+    left: 0 !important;
+    right: auto !important;
+    top: 14px !important;
+    bottom: 14px !important;
+    width: 1px !important;
+    height: auto;
+}
+
+@media (max-width: 782px) {
+    .wbbm-modern-search .wbbm-fields > .mage_form_list::before,
+    .wbbm-modern-search .wbbm-fields > .mage_form_list::after {
+        left: 16px !important;
+        right: 16px !important;
+        top: 0 !important;
+        bottom: auto !important;
+        width: auto !important;
+        height: 1px;
+    }
+
+    .wbbm-modern-search .wbbm-f-rdate::before {
+        left: 0 !important;
+        right: auto !important;
+        top: 14px !important;
+        bottom: 14px !important;
+        width: 1px !important;
+        height: auto;
+    }
+
+    .wbbm-modern-search .wbbm-f-from::before,
+    .wbbm-modern-search .mage_form_search::before {
+        display: none;
+    }
+
+    .wbbm-modern-search form.mage_form .mage_form_control {
+        font-size: 19px !important;
+    }
+}
+
+.wbbm-modern-search .wbbm-f-from::before,
+.wbbm-modern-search .wbbm-swap::before,
+.wbbm-modern-search .mage_form_search::before {
+    display: none;
+}
+
+
+/* --------------------------------------------------- jQuery UI datepicker */
+
+.wbbm-datepicker-modern.ui-datepicker {
+    width: 320px;
+    padding: 14px;
+    border: 1px solid #e9e1e3;
+    border-radius: 18px;
+    background: #fff;
+    box-shadow: 0 24px 50px -20px rgba(26, 20, 23, 0.4);
+    font-family: inherit;
+    z-index: 10000 !important;
+}
+
+.wbbm-datepicker-modern .ui-datepicker-header {
+    padding: 0 0 12px;
+    border: 0;
+    background: transparent;
+    font-weight: 700;
+}
+
+.wbbm-datepicker-modern .ui-datepicker-title {
+    font-family: "Bricolage Grotesque", "Archivo", inherit;
+    font-size: 16px;
+    font-weight: 700;
+    color: #1a1417;
+    line-height: 30px;
+}
+
+.wbbm-datepicker-modern .ui-datepicker-prev,
+.wbbm-datepicker-modern .ui-datepicker-next {
+    top: 0;
+    width: 30px;
+    height: 30px;
+    border: 1px solid #e9e1e3 !important;
+    border-radius: 9px;
+    background: #fff !important;
+    cursor: pointer;
+}
+
+.wbbm-datepicker-modern .ui-datepicker-prev { left: 0; }
+.wbbm-datepicker-modern .ui-datepicker-next { right: 0; }
+
+.wbbm-datepicker-modern .ui-datepicker-prev-hover,
+.wbbm-datepicker-modern .ui-datepicker-next-hover {
+    top: 0;
+    border-color: #d9cfd2 !important;
+}
+
+.wbbm-datepicker-modern .ui-datepicker-prev span,
+.wbbm-datepicker-modern .ui-datepicker-next span {
+    margin: -8px 0 0 -8px;
+}
+
+.wbbm-datepicker-modern table {
+    margin: 0;
+    border-collapse: separate;
+    border-spacing: 2px;
+    font-size: 14px;
+}
+
+.wbbm-datepicker-modern th {
+    padding: 4px 0;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: #8a7c81;
+}
+
+.wbbm-datepicker-modern td {
+    padding: 0;
+    border: 0;
+}
+
+.wbbm-datepicker-modern td span,
+.wbbm-datepicker-modern td a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 38px;
+    padding: 0;
+    border: 0 !important;
+    border-radius: 10px;
+    background: transparent !important;
+    text-align: center;
+    font-weight: 500;
+    color: #1a1417 !important;
+}
+
+.wbbm-datepicker-modern td a:hover {
+    background: #fbeef2 !important;
+    color: #b30c3b !important;
+}
+
+.wbbm-datepicker-modern td.ui-datepicker-unselectable span {
+    color: #c9bec2 !important;
+}
+
+.wbbm-datepicker-modern td .ui-state-active,
+.wbbm-datepicker-modern td.ui-datepicker-current-day a {
+    background: #b30c3b !important;
+    color: #fff !important;
+    font-weight: 700;
+}
+
+.wbbm-datepicker-modern td.ui-datepicker-today a:not(.ui-state-active) {
+    box-shadow: inset 0 0 0 1px #e9e1e3;
+}
+
+
+/*
+ * The date cells sit side by side once the bar stacks, which is fine for a
+ * short format but truncates "September 18, 2026". Below 600px, and in the
+ * always-narrow sidebar, they each take a full row instead.
+ */
+@media (max-width: 600px) {
+    .wbbm-modern-search .wbbm-f-jdate { grid-column: 1 / span 2 !important; grid-row: 4 !important; }
+    .wbbm-modern-search .wbbm-f-rdate { grid-column: 1 / span 2 !important; grid-row: 5 !important; }
+    .wbbm-modern-search .mage_form_search { grid-row: 6 !important; }
+
+    .wbbm-modern-search .wbbm-f-rdate::before {
+        left: 16px !important;
+        right: 16px !important;
+        top: 0 !important;
+        bottom: auto !important;
+        width: auto !important;
+        height: 1px;
+    }
+}
+
+.wbbm-modern-search.wbbm-stacked .wbbm-f-jdate,
+.wbbm-modern-search .mage_search_box_small .wbbm-f-jdate,
+.wbbm-modern-search .mage_sidebar_search_form .wbbm-f-jdate {
+    grid-column: 1 / span 2 !important;
+    grid-row: 4 !important;
+}
+
+.wbbm-modern-search.wbbm-stacked .wbbm-f-rdate,
+.wbbm-modern-search .mage_search_box_small .wbbm-f-rdate,
+.wbbm-modern-search .mage_sidebar_search_form .wbbm-f-rdate {
+    grid-column: 1 / span 2 !important;
+    grid-row: 5 !important;
+}
+
+.wbbm-modern-search.wbbm-stacked .mage_form_search,
+.wbbm-modern-search .mage_search_box_small .mage_form_search,
+.wbbm-modern-search .mage_sidebar_search_form .mage_form_search {
+    grid-row: 6 !important;
+}
+
+.wbbm-modern-search.wbbm-stacked .wbbm-f-rdate::before,
+.wbbm-modern-search .mage_search_box_small .wbbm-f-rdate::before,
+.wbbm-modern-search .mage_sidebar_search_form .wbbm-f-rdate::before {
+    left: 16px !important;
+    right: 16px !important;
+    top: 0 !important;
+    bottom: auto !important;
+    width: auto !important;
+    height: 1px;
+}
+
+
+/* ------------------------------------------------------------ date rail */
+/*
+ * The nearby-departure strip under the results search form: small fixed
+ * width tiles, weekday over day over month. The row sizes to its contents
+ * rather than stretching the full width of the card above it.
+ *
+ * Restraint comes from the surface rather than the size -- the selected tile
+ * is white with a crimson hairline and crimson type, not a crimson block.
+ * A tinted selection would vanish here: the shell behind it is already a
+ * crimson tint, which is why white is doing the work.
+ *
+ * !important appears where wbbm-custom-style.css already used it
+ * (ul.mage_list_inline colours, div[class^='mage'] * line-height).
+ */
+
+.wbbm-daterail {
+    /* div[class*="mage_default"] in wbbm-custom-style.css paints a white
+       box around this; the tiles belong on the shell, not in a box */
+    margin: 14px 0 0 !important;
+    padding: 0 !important;
+    background-color: transparent !important;
+    border: 0 !important;
+}
+
+.wbbm-daterail .mage_next_date {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    justify-content: flex-start;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.wbbm-daterail .mage_next_date::-webkit-scrollbar {
+    display: none;
+}
+
+.wbbm-daterail .mage_next_date > li {
+    flex: 0 0 78px;
+    margin: 0 !important;
+    padding: 0;
+    background-color: rgba(255, 255, 255, 0.55) !important;
+    border: 0;
+    border-radius: 14px !important;
+    text-align: center;
+    scroll-snap-align: start;
+    transition: background-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.wbbm-daterail .mage_next_date > li:hover {
+    background-color: #ffffff !important;
+    box-shadow: 0 1px 3px rgba(26, 20, 23, 0.1);
+}
+
+.wbbm-daterail .mage_next_date > li > a {
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1px;
+    min-height: 60px;
+    padding: 9px 6px !important;
+    color: var(--wbbm-ink) !important;
+    font-size: 13px !important;
+    text-decoration: none;
+}
+
+.wbbm-daterail .wbbm-date-weekday {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    line-height: 1.2 !important;
+    color: var(--wbbm-soft);
+}
+
+.wbbm-daterail .wbbm-date-day {
+    font-family: var(--wbbm-display);
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.2 !important;
+    color: inherit;
+}
+
+.wbbm-daterail .wbbm-date-month {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    line-height: 1.2 !important;
+    color: var(--wbbm-soft);
+}
+
+.wbbm-daterail .mage_next_date > li.mage_active {
+    background-color: #ffffff !important;
+    box-shadow: inset 0 0 0 1.5px var(--wbbm-accent), 0 1px 3px rgba(26, 20, 23, 0.1);
+}
+
+.wbbm-daterail .mage_next_date > li.mage_active > a,
+.wbbm-daterail .mage_next_date > li.mage_active .wbbm-date-weekday,
+.wbbm-daterail .mage_next_date > li.mage_active .wbbm-date-month {
+    color: var(--wbbm-accent) !important;
+}
+
+/*
+ * The row is a horizontal scroller, and overflow-x:auto clips vertically too,
+ * so an outline drawn outside a tile loses its top and bottom edges and shows
+ * up as two bars down the sides. Mouse clicks get no ring at all; keyboard
+ * focus gets one drawn inside the tile, where nothing can clip it.
+ */
+.wbbm-daterail .mage_next_date > li > a:focus,
+.wbbm-daterail .mage_next_date > li:focus,
+.wbbm-daterail .mage_next_date > li > a:active {
+    outline: none !important;
+    box-shadow: none;
+}
+
+.wbbm-daterail .mage_next_date > li > a:focus-visible {
+    outline: 2px solid var(--wbbm-accent) !important;
+    outline-offset: -3px;
+    border-radius: 14px;
+}
+
+.wbbm-sr-only {
+    position: absolute !important;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+@media (max-width: 782px) {
+    .wbbm-daterail .mage_next_date > li {
+        flex: 0 0 72px;
+    }
+
+    .wbbm-daterail .wbbm-date-day {
+        font-size: 17px;
+    }
+}
+
+
+/* ========================================================== results list */
+/*
+ * Route summary, column strip, result cards and the expanded booking panel,
+ * on the same surface / hairline / accent as the search card.
+ *
+ * !important is used where the plugin sets the value inline from Style
+ * Settings (route title colour, results header colour, row background) or
+ * where mage_css.css / wbbm-custom-style.css already used it.
+ *
+ * NOTE: never add overflow or transform to .mage_search_list -- the offline
+ * booking modal is position:fixed inside it, and either property would make
+ * the card its containing block and trap the modal (see mage_css.css:370).
+ */
+
+
+/* ------------------------------------------------------ route summary */
+
+.mage_route_title {
+    padding: 16px 22px !important;
+    margin: 0 0 16px !important;
+    background-color: var(--wbbm-surface) !important;
+    border: 1px solid var(--wbbm-line);
+    border-radius: 18px !important;
+    box-shadow: 0 1px 2px rgba(26, 20, 23, 0.04) !important;
+}
+
+div.mage_route_title div,
+div.mage_route_title p {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 8px;
+    text-align: left !important;
+    font-family: var(--wbbm-display);
+    font-size: 19px !important;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.3 !important;
+    color: var(--wbbm-ink) !important;
+}
+
+div.mage_route_title strong {
+    font-family: Archivo, inherit;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--wbbm-soft) !important;
+    align-self: center;
+}
+
+.mage_route_title .fas,
+.mage_route_title .fa {
+    margin: 0 !important;
+    font-size: 15px;
+    opacity: 1 !important;
+    color: var(--wbbm-accent);
+    align-self: center;
+}
+
+/* the literal pipe becomes a real divider */
+.mage_route_title .wbbm-route-sep {
+    width: 1px;
+    height: 20px;
+    margin: 0 6px;
+    overflow: hidden;
+    text-indent: -999px;
+    background: var(--wbbm-line);
+    align-self: center;
+}
+
+
+/* --------------------------------------------------------- result card */
+
+.mage-search-res-wrapper .mage_search_list,
+.mage-search-res-wrapper .mage_search_list.theme_minimal {
+    padding: 0;
+    margin: 0 0 12px !important;
+    background-color: var(--wbbm-surface) !important;
+    border: 1px solid var(--wbbm-line) !important;
+    border-radius: 18px !important;
+    box-shadow: 0 1px 2px rgba(26, 20, 23, 0.04) !important;
+    transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.mage-search-res-wrapper .mage_search_list.theme_minimal:hover {
+    border-color: var(--wbbm-line-strong) !important;
+    box-shadow: 0 16px 34px -22px rgba(26, 20, 23, 0.45) !important;
+}
+
+.mage-search-res-wrapper .mage-search-brief-row {
+    padding: 18px 22px !important;
+    gap: 12px;
+}
+
+.mage-search-brief-row .mage-search-res-header--img img {
+    display: block;
+    width: 100%;
+    height: 66px;
+    object-fit: cover;
+    border-radius: 12px;
+}
+
+
+/* bus identity */
+
+.mage-search-brief-row .bus-title {
+    font-family: var(--wbbm-display);
+    font-size: 17px !important;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.25 !important;
+    color: var(--wbbm-ink);
+}
+
+.mage-search-brief-row .bus-title:hover {
+    color: var(--wbbm-accent);
+}
+
+.mage-search-brief-row .mage-bus-title > span {
+    display: block;
+    margin-top: 2px;
+    font-size: 11px !important;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--wbbm-soft);
+}
+
+.mage-search-brief-row .wbbm-feature-icon {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 9px 0 0 !important;
+}
+
+.mage-search-brief-row .wbbm-feature-icon .customCheckbox {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    /* the chip is a <span> too, so wbbm-custom-style.css's
+       ".wbbm-feature-icon span { padding-top: 15px; padding-right: 10px }"
+       lands on it as well as on the icon inside -- without zeroing it here
+       the glyph sits below centre and the circle grows to 41px */
+    box-sizing: border-box;
+    padding: 0 !important;
+    width: 26px;
+    height: 26px;
+    border-radius: 999px;
+    background: #f7f1f3;
+    color: var(--wbbm-muted);
+    font-size: 12px;
+    line-height: 1 !important;
+    text-align: center;
+}
+
+/* wbbm-custom-style.css puts padding-top:15px on these, which pushes the
+   glyph out of the chip */
+.mage-search-brief-row .wbbm-feature-icon .customCheckbox span {
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 1 !important;
+}
+
+/* the title tooltip was a 300px block overlapping the row; make it a pill */
+.mage-search-brief-row .wbbm-feature-icon span[title]:hover::after {
+    top: auto;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    width: auto;
+    padding: 6px 10px;
+    border-radius: 9px;
+    background: var(--wbbm-ink);
+    color: #fff;
+    font-size: 12px !important;
+    font-weight: 600;
+    line-height: 1.2 !important;
+    white-space: nowrap;
+    z-index: 5;
+}
+
+.mage-search-brief-row .mage-bus-stopage {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin: 0 0 4px !important;
+    font-size: 13px !important;
+    line-height: 1.45 !important;
+    color: var(--wbbm-muted);
+}
+
+.mage-search-brief-row .mage-bus-stopage .dashicons-location {
+    font-size: 15px;
+    width: 15px;
+    height: 15px;
+    color: var(--wbbm-accent);
+}
+
+.mage-search-brief-row .mage-bus-stopage + .mage-bus-stopage .dashicons-location {
+    color: var(--wbbm-soft);
+}
+
+
+/* fare + actions */
+
+.mage-search-brief-row .mage-search-res-header--right > div {
+    font-size: 13px !important;
+    color: var(--wbbm-muted) !important;
+}
+
+.mage-search-brief-row .mage-search-fare-value {
+    font-size: 12px !important;
+    color: var(--wbbm-soft) !important;
+}
+
+.mage-search-brief-row .mage-search-fare-value .woocommerce-Price-amount {
+    display: block;
+    font-family: var(--wbbm-display);
+    font-size: 19px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.2 !important;
+    color: var(--wbbm-accent);
+}
+
+.mage-search-brief-row .mage-bus-detail-action {
+    width: 100%;
+    padding: 12px 18px !important;
+    background: var(--wbbm-surface) !important;
+    color: var(--wbbm-ink) !important;
+    border: 1px solid var(--wbbm-line-strong) !important;
+    border-radius: 999px !important;
+    font-size: 14px !important;
+    font-weight: 600;
+    text-transform: none;
+    box-shadow: none !important;
+    transition: background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+}
+
+.mage-search-brief-row .mage-bus-detail-action:hover {
+    background: var(--wbbm-accent-tint) !important;
+    border-color: var(--wbbm-accent) !important;
+    color: var(--wbbm-accent) !important;
+    box-shadow: none !important;
+    transform: none;
+}
+
+
+/* ------------------------------------------------ expanded booking panel */
+
+.mage-search-res-wrapper .mage-bus-booking-wrapper {
+    padding: 16px !important;
+    background: var(--wbbm-ground);
+    border-top: 1px solid var(--wbbm-line);
+    border-radius: 0 0 17px 17px;
+}
+
+.mage-search-res-wrapper .mage-bus-booking-wrapper .mage_bus_info,
+.mage-search-res-wrapper .mage-bus-booking-wrapper .mage_price_info {
+    padding: 22px !important;
+    background: var(--wbbm-surface) !important;
+    border: 1px solid var(--wbbm-line);
+    border-radius: 16px;
+}
+
+.mage-search-res-wrapper .mage_bus_info h3 {
+    margin: 0 0 12px;
+    font-family: var(--wbbm-display);
+    font-size: 20px !important;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+}
+
+.mage-search-res-wrapper .mage_bus_info h3 a {
+    color: var(--wbbm-ink) !important;
+}
+
+.mage-search-res-wrapper .mage-bus-booking-wrapper .mage_bus_info p {
+    margin: 0 0 6px !important;
+    font-size: 14px !important;
+    line-height: 1.55 !important;
+    color: var(--wbbm-ink);
+}
+
+.mage-search-res-wrapper .mage-bus-booking-wrapper .mage_bus_info p strong {
+    min-width: 116px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--wbbm-soft);
+}
+
+.mage-search-res-wrapper .mage_price_info h3 {
+    margin: 0 0 14px;
+    font-family: var(--wbbm-display);
+    font-size: 16px !important;
+}
+
+.mage-search-res-wrapper .mage_price_info h3 strong {
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--wbbm-ink);
+}
+
+
+/* quantity stepper */
+
+.mage-search-res-wrapper .mage_form_group {
+    max-width: 148px;
+    margin: 0;
+    background-color: var(--wbbm-surface) !important;
+    border: 1px solid var(--wbbm-line) !important;
+    border-radius: 999px !important;
+}
+
+.mage-search-res-wrapper div.mage_form_group .mage_form {
+    height: 42px;
+    border: 0 !important;
+    background: transparent !important;
+    font-family: var(--wbbm-display);
+    font-size: 17px !important;
+    font-weight: 700;
+    color: var(--wbbm-ink);
+}
+
+.mage-search-res-wrapper div.mage_form_group .mage_form:focus {
+    border: 0 !important;
+    outline: none;
+}
+
+.mage-search-res-wrapper .mage_form_group [class*="mage_qty"] {
+    width: 42px;
+    height: 42px;
+    border-radius: 999px;
+    color: var(--wbbm-ink) !important;
+    font-size: 12px !important;
+    transition: background-color 0.16s ease, color 0.16s ease;
+}
+
+.mage-search-res-wrapper .mage_form_group [class*="mage_qty"]:hover {
+    background: var(--wbbm-accent-tint);
+    color: var(--wbbm-accent) !important;
+}
+
+
+/* subtotal + book now */
+
+.mage-search-res-wrapper .mage_book_now_area {
+    align-items: center;
+    gap: 16px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--wbbm-line);
+}
+
+.mage-search-res-wrapper .mage_sub_total {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--wbbm-soft);
+}
+
+.mage-search-res-wrapper .mage_subtotal_figure {
+    font-family: var(--wbbm-display);
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.15 !important;
+    text-transform: none;
+    color: var(--wbbm-ink);
+}
+
+.mage-search-res-wrapper button.mage_button {
+    min-width: 0;
+    height: auto !important;
+    min-height: 52px;
+    padding: 12px 28px !important;
+    gap: 10px;
+    border: 0;
+    border-radius: 16px !important;
+    background-color: var(--wbbm-accent);
+    color: #fff;
+    font-size: 16px !important;
+    font-weight: 600;
+    text-transform: none;
+    transition: background-color 0.18s ease;
+}
+
+.mage-search-res-wrapper button.mage_button:hover,
+.mage-search-res-wrapper button.mage_button:focus {
+    background-color: var(--wbbm-accent-hover);
+    opacity: 1;
+}
+
+/* the modal's Cancel sits beside Confirm -- only one of them is the action */
+.mage-search-res-wrapper button.mage_offline_modal_cancel {
+    background-color: var(--wbbm-surface);
+    color: var(--wbbm-ink);
+    border: 1px solid var(--wbbm-line-strong);
+}
+
+.mage-search-res-wrapper button.mage_offline_modal_cancel:hover {
+    background-color: var(--wbbm-ground);
+    color: var(--wbbm-ink);
+}
+
+.mage-search-res-wrapper .mage-notification.mage-seat-available {
+    padding: 7px 14px;
+    border-radius: 999px;
+    background: var(--wbbm-accent-tint);
+    font-size: 12px !important;
+    font-weight: 600;
+    color: var(--wbbm-accent) !important;
+}
+
+.mage-search-res-wrapper--footer {
+    display: none;
+}
+
+
+@media (max-width: 782px) {
+    .mage_route_title {
+        padding: 14px 16px !important;
+    }
+
+    div.mage_route_title div,
+    div.mage_route_title p {
+        font-size: 17px !important;
+    }
+
+    .mage-search-res-wrapper .mage-search-brief-row {
+        padding: 16px !important;
+    }
+
+    .mage-search-brief-row .mage-search-res-header--img img {
+        height: 56px;
+    }
+}
+
+
+/* dashed rules inside the panel (mage_css.css:963) become hairlines */
+.mage-search-res-wrapper div.mage_bus_info p:not(div.mage_center_space p),
+.mage-search-res-wrapper div.mage_bus_info h3,
+.mage-search-res-wrapper .mage_price_info .mage_center_space,
+.mage-search-res-wrapper .mage_bus_info .mage_center_space {
+    border-bottom: 1px solid var(--wbbm-line);
+    padding-bottom: 12px;
+    margin-bottom: 12px;
+}
+
+.mage-search-res-wrapper div.mage_bus_info p:last-child,
+.mage-search-res-wrapper .mage_price_info .mage_center_space:last-child {
+    border-bottom: 0;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+/* the subtotal was a bordered box with a grey label chip (mage_css.css:1512) */
+.mage-search-res-wrapper .mage_search_list .mage_book_now_area .mage_sub_total {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    border: 0;
+    margin-bottom: 0;
+}
+
+.mage-search-res-wrapper .mage_search_list .mage_book_now_area .mage_sub_total div,
+.mage-search-res-wrapper .mage_search_list .mage_book_now_area .mage_sub_total div:nth-child(1) {
+    padding: 0;
+    background-color: transparent;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--wbbm-soft);
+}
+
+.mage-search-res-wrapper .mage_search_list .mage_book_now_area .mage_sub_total .mage_subtotal_figure {
+    margin-left: 0;
+    font-family: var(--wbbm-display);
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.15 !important;
+    color: var(--wbbm-ink);
+}
+
+.mage-search-res-wrapper .mage_sub_price,
+.mage-search-res-wrapper .mage_book_now {
+    padding: 0;
+}
+
+.mage-search-res-wrapper .mage_sub_price {
+    justify-content: flex-start;
+    margin-right: auto;
+}
+
+
+@media only screen and (max-width: 600px) {
+    /* stacked rows use a dashed divider (mage_css.css:1391) */
+    .mage-search-res-wrapper .mage-search-res-header--left div,
+    .mage-search-res-wrapper .mage-search-res-header--right div {
+        border-bottom: 1px solid var(--wbbm-line);
+    }
+
+    .mage-search-res-wrapper .mage-search-res-header--right div:last-child {
+        border-bottom: 0;
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+}
+
+
+/* ======================================================= booking drawer */
+/*
+ * The offline-payment confirmation panel, presented as a right-side drawer
+ * instead of a centred modal. Purely presentational: mage_style.js still
+ * opens it by putting .is-open on .mage_offline_modal, and the overlay
+ * click / Escape / close-button handlers all keep working untouched.
+ *
+ * transform is on the panel only. The panel is fixed-positioned inside
+ * .mage_search_list, which must not become its containing block
+ * (mage_css.css:370), and nothing inside the panel is position:fixed.
+ */
+
+.mage_offline_modal {
+    align-items: stretch !important;
+    justify-content: flex-end !important;
+    padding: 0 !important;
+    background: rgba(26, 20, 23, 0.45);
+}
+
+.mage_offline_modal_box {
+    display: flex;
+    flex-direction: column;
+    width: min(440px, 100%);
+    max-width: none;
+    height: 100%;
+    max-height: none;
+    overflow: hidden;
+    border-radius: 0;
+    background: var(--wbbm-surface);
+    box-shadow: -30px 0 70px -35px rgba(26, 20, 23, 0.65);
+    animation: wbbm-drawer-in 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+@keyframes wbbm-drawer-in {
+    from { transform: translateX(100%); }
+    to { transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .mage_offline_modal_box {
+        animation: none;
+    }
+}
+
+
+/* head / body / foot: only the body scrolls */
+
+.mage_offline_modal_head {
+    flex: 0 0 auto;
+    padding: 20px 24px !important;
+    border-bottom: 1px solid var(--wbbm-line);
+}
+
+.mage_offline_modal_head strong,
+.mage_offline_modal_title {
+    font-family: var(--wbbm-display);
+    font-size: 19px !important;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--wbbm-ink);
+}
+
+.mage_offline_modal_close {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border-radius: 999px;
+    color: var(--wbbm-muted);
+    font-size: 20px;
+    transition: background-color 0.16s ease, color 0.16s ease;
+}
+
+.mage_offline_modal_close:hover {
+    background: var(--wbbm-ground);
+    color: var(--wbbm-ink);
+}
+
+.mage_offline_modal_body {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    padding: 20px 24px !important;
+}
+
+.mage_offline_modal_foot {
+    flex: 0 0 auto;
+    gap: 10px;
+    padding: 16px 24px !important;
+    border-top: 1px solid var(--wbbm-line);
+    background: var(--wbbm-surface);
+}
+
+
+/* fare summary */
+
+.mage_offline_summary {
+    margin: 0 0 20px !important;
+    padding: 16px 18px !important;
+    background: var(--wbbm-ground);
+    border: 1px solid var(--wbbm-line);
+    border-radius: 16px;
+}
+
+.mage_offline_summary h4 {
+    margin: 0 0 10px !important;
+    font-size: 11px !important;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--wbbm-soft);
+}
+
+.mage_offline_summary_row {
+    padding: 5px 0;
+    font-size: 14px !important;
+    color: var(--wbbm-ink);
+}
+
+.mage_offline_summary_row > span:first-child {
+    color: var(--wbbm-muted);
+}
+
+.mage_offline_summary_subtotal,
+.mage_offline_summary_tax {
+    border-top: 1px solid var(--wbbm-line);
+    margin-top: 8px;
+    padding-top: 10px;
+}
+
+.mage_offline_summary_total {
+    border-top: 1px solid var(--wbbm-line-strong);
+    margin-top: 8px;
+    padding-top: 10px;
+    font-size: 15px !important;
+}
+
+.mage_offline_summary_total > span:first-child {
+    color: var(--wbbm-ink) !important;
+    font-weight: 700;
+}
+
+.mage_offline_summary_total_val {
+    font-family: var(--wbbm-display);
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--wbbm-accent);
+}
+
+
+/* contact fields */
+
+.mage_offline_contact_fields {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.mage_offline_input {
+    width: 100%;
+    height: 48px;
+    padding: 0 16px !important;
+    border: 1px solid var(--wbbm-line) !important;
+    border-radius: 14px !important;
+    background: var(--wbbm-surface);
+    font-size: 15px !important;
+    color: var(--wbbm-ink);
+    transition: border-color 0.16s ease, box-shadow 0.16s ease;
+}
+
+.mage_offline_input::placeholder {
+    color: #a99da2;
+}
+
+.mage_offline_input:focus {
+    outline: none;
+    border-color: var(--wbbm-accent) !important;
+    box-shadow: 0 0 0 3px rgba(179, 12, 59, 0.14);
+}
+
+.mage_offline_input.mage_error {
+    border-color: var(--wbbm-accent) !important;
+    background: #fef7f9;
+}
+
+
+/* payment method */
+
+.mage_offline_gateway_picker_heading {
+    margin: 22px 0 10px !important;
+    font-size: 11px !important;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--wbbm-soft);
+}
+
+.mage_offline_gateway_picker {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.mage_offline_gateway_card {
+    /* mage_css.css:650 stacks the icon over the label in a centred column --
+       in a 440px drawer they read better as full-width rows */
+    display: flex !important;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 12px;
+    margin: 0;
+    padding: 14px 40px 14px 16px;
+    border: 1px solid var(--wbbm-line);
+    border-radius: 14px;
+    cursor: pointer;
+    font-size: 15px !important;
+    font-weight: 500;
+    text-align: left;
+    color: var(--wbbm-ink);
+    background: var(--wbbm-surface);
+    transition: border-color 0.16s ease, background-color 0.16s ease;
+}
+
+.mage_offline_gateway_card:hover {
+    border-color: var(--wbbm-line-strong);
+    transform: none;
+}
+
+/* the picked-card badge is orange by default */
+.mage_offline_gateway_card.is-selected::after {
+    background: var(--wbbm-accent);
+    top: 50%;
+    right: 14px;
+    transform: translateY(-50%);
+    box-shadow: none;
+}
+
+.mage_offline_gateway_card input[type="radio"] {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.mage_offline_gateway_card [class*="fa-"] {
+    font-size: 17px;
+    color: var(--wbbm-soft);
+}
+
+.mage_offline_gateway_card.is-selected {
+    border-color: var(--wbbm-accent);
+    background: var(--wbbm-accent-tint);
+    color: var(--wbbm-accent);
+    font-weight: 600;
+    box-shadow: none;
+}
+
+.mage_offline_gateway_card.is-selected [class*="fa-"] {
+    color: var(--wbbm-accent);
+}
+
+.mage_stripe_card_box {
+    margin-top: 14px;
+    padding: 14px 16px;
+    border: 1px solid var(--wbbm-line);
+    border-radius: 14px;
+}
+
+.mage_stripe_card_label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--wbbm-soft);
+}
+
+.mage_offline_submit_error {
+    margin-top: 14px !important;
+    padding: 10px 14px !important;
+    background: #fef7f9;
+    border: 1px solid var(--wbbm-accent);
+    border-radius: 12px;
+    color: var(--wbbm-accent-hover);
+    font-size: 13px !important;
+}
+
+.mage_offline_result_heading {
+    margin: 0 0 12px !important;
+    font-family: var(--wbbm-display);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--wbbm-ink);
+}
+
+
+@media (max-width: 560px) {
+    .mage_offline_modal_box {
+        width: 100%;
+    }
+
+    .mage_offline_modal_head,
+    .mage_offline_modal_body,
+    .mage_offline_modal_foot {
+        padding-left: 18px !important;
+        padding-right: 18px !important;
+    }
+}
+
+
+/* ------------------------------------------- return-leg hand-off */
+/*
+ * On a return search the outbound card does not book straight away: it marks
+ * itself as held and moves the customer to the return list (the hook in
+ * js/wbbm-search-modern.js, called from mage_style.js's wbbmProceedToBook).
+ */
+
+.mage-search-res-wrapper .mage_search_list.wbbm-leg-chosen {
+    border-color: var(--wbbm-accent) !important;
+    box-shadow: inset 0 0 0 1px var(--wbbm-accent), 0 10px 26px -18px rgba(179, 12, 59, 0.5) !important;
+}
+
+.wbbm-leg-badge {
+    display: inline-flex;
+    align-items: center;
+    margin-left: 10px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: var(--wbbm-accent-tint);
+    color: var(--wbbm-accent);
+    font-size: 10px !important;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    line-height: 1.4 !important;
+    vertical-align: middle;
+}
+
+.wbbm-return-prompt {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 12px !important;
+    padding: 13px 18px !important;
+    background: var(--wbbm-accent-tint);
+    border: 1px solid var(--wbbm-accent);
+    border-radius: 14px;
+    font-size: 14px !important;
+    font-weight: 600;
+    line-height: 1.4 !important;
+    color: var(--wbbm-accent) !important;
+}
+
+
+/* ---------------------------------------------- selected-leg summaries */
+
+.wbbm-return-prompt {
+    display: block;
+    margin: 0 0 12px !important;
+    padding: 16px 18px !important;
+    background: var(--wbbm-accent-tint);
+    border: 1px solid var(--wbbm-accent);
+    border-radius: 16px;
+}
+
+.wbbm-return-prompt-title {
+    margin: 0 0 12px !important;
+    font-size: 14px !important;
+    font-weight: 600;
+    line-height: 1.4 !important;
+    color: var(--wbbm-accent) !important;
+}
+
+.wbbm-leg-card {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: 14px 16px;
+    background: var(--wbbm-surface);
+    border: 1px solid var(--wbbm-line);
+    border-radius: 14px;
+}
+
+.wbbm-leg-card-tag {
+    font-size: 10px !important;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    line-height: 1.4 !important;
+    color: var(--wbbm-soft);
+}
+
+.wbbm-leg-card-bus {
+    font-family: var(--wbbm-display);
+    font-size: 16px !important;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.3 !important;
+    color: var(--wbbm-ink);
+}
+
+.wbbm-leg-card-meta {
+    font-size: 13px !important;
+    line-height: 1.45 !important;
+    color: var(--wbbm-muted);
+}
+
+.wbbm-leg-card-lines {
+    margin: 8px 0 0 !important;
+    padding: 0 !important;
+    list-style: none;
+}
+
+.wbbm-leg-card-lines li {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 0 !important;
+    padding: 3px 0;
+    font-size: 13px !important;
+    line-height: 1.45 !important;
+    color: var(--wbbm-muted);
+}
+
+.wbbm-leg-card-total {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 8px;
+    padding-top: 9px;
+    border-top: 1px solid var(--wbbm-line);
+    font-size: 13px !important;
+    font-weight: 700;
+    line-height: 1.45 !important;
+    color: var(--wbbm-ink);
+}
+
+.wbbm-leg-card-note {
+    margin: 8px 0 0 !important;
+    font-size: 12px !important;
+    line-height: 1.45 !important;
+    color: var(--wbbm-soft) !important;
+}
+
+.wbbm-drawer-leg {
+    margin-bottom: 14px;
+}
+
+.wbbm-drawer-leg-tag {
+    margin: 4px 0 6px;
+    font-size: 10px !important;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    line-height: 1.4 !important;
+    color: var(--wbbm-soft);
+}
+
+/* summary rows replaced by a leg card (js/wbbm-search-modern.js) */
+.mage_offline_summary .wbbm-row-replaced {
+    display: none !important;
+}
+
+
+/* ================================================ WooCommerce booking drawer */
+/*
+ * Same drawer chrome as the offline one, in two stages: the trip summary, then
+ * WooCommerce's own checkout. The checkout is framed rather than reimplemented
+ * so billing, gateways and validation stay entirely WooCommerce's.
+ */
+
+.wbbm-wc-drawer .wbbm-wc-stage[hidden],
+.wbbm-wc-drawer .mage_offline_modal_foot[hidden] {
+    display: none !important;
+}
+
+.wbbm-wc-drawer .wbbm-wc-summary .wbbm-leg-card {
+    border: 0;
+    padding: 0;
+}
+
+.wbbm-wc-note {
+    margin: 14px 0 0 !important;
+    font-size: 12px !important;
+    line-height: 1.5 !important;
+    color: var(--wbbm-soft) !important;
+}
+
+/* the checkout stage gives the frame the whole drawer body */
+.wbbm-wc-drawer .mage_offline_modal_body:has(.wbbm-wc-stage-checkout:not([hidden])) {
+    padding: 0 !important;
+}
+
+.wbbm-wc-stage-checkout {
+    display: flex;
+    height: 100%;
+}
+
+.wbbm-wc-checkout-frame {
+    flex: 1 1 auto;
+    width: 100%;
+    min-height: 100%;
+    border: 0;
+    background: var(--wbbm-surface);
+}
+
+.wbbm-wc-confirm.is-busy {
+    opacity: 0.65;
+    cursor: progress;
+}
+
+
+/* ============================================ expanded booking panel, v2 */
+/*
+ * Two columns come from .mage_bus_details -- the wrapper cannot host the grid
+ * because a <form> sits between it and these two cards.
+ *
+ * Detail rows stay inline text ("Type: Non AC") rather than a label column:
+ * the colon is literal in the markup, so a fixed label column would leave it
+ * stranded at the head of every value.
+ */
+
+.mage-search-res-wrapper .mage-bus-booking-wrapper .mage_bus_details {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    gap: 16px;
+    align-items: start;
+    width: 100%;
+}
+
+.mage-search-res-wrapper .mage-bus-booking-wrapper .mage_bus_info,
+.mage-search-res-wrapper .mage-bus-booking-wrapper .mage_price_info {
+    width: auto;
+    margin: 0 !important;
+    flex-basis: auto;
+}
+
+
+/* ------------------------------------------------------------ trip detail */
+
+.mage-search-res-wrapper .mage_bus_info h3 {
+    margin: 0 !important;
+    padding: 0 0 14px !important;
+    border-bottom: 1px solid var(--wbbm-line);
+}
+
+.mage-search-res-wrapper .mage_bus_info h3 a {
+    text-decoration: none;
+}
+
+.mage-search-res-wrapper .mage-bus-booking-wrapper .mage_bus_info p {
+    margin: 0 !important;
+    padding: 11px 0 !important;
+    border-bottom: 1px solid var(--wbbm-line);
+    font-size: 14px !important;
+    line-height: 1.55 !important;
+    color: var(--wbbm-muted);
+}
+
+.mage-search-res-wrapper .mage-bus-booking-wrapper .mage_bus_info p:last-child {
+    padding-bottom: 0 !important;
+    border-bottom: 0;
+}
+
+.mage-search-res-wrapper .mage-bus-booking-wrapper .mage_bus_info p strong:first-child {
+    min-width: 0;
+    display: inline;
+    margin-right: 2px;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--wbbm-ink);
+}
+
+/* the bracketed departure / arrival time trailing a stop name */
+.mage-search-res-wrapper .mage-bus-booking-wrapper .mage_bus_info p strong + strong {
+    display: inline-block;
+    margin-left: 6px;
+    padding: 2px 9px;
+    border-radius: 999px;
+    background: var(--wbbm-ground);
+    border: 1px solid var(--wbbm-line);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--wbbm-muted);
+}
+
+.mage-search-res-wrapper .mage-bus-booking-wrapper .mage_bus_info p .woocommerce-Price-amount {
+    font-family: var(--wbbm-display);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--wbbm-accent);
+}
+
+
+/* -------------------------------------------------------------- fare side */
+
+.mage-search-res-wrapper .mage_price_info h3 {
+    margin: 0 !important;
+}
+
+.mage-search-res-wrapper .mage_price_info .mage_center_space {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.mage-search-res-wrapper .mage_price_info .mage_center_space p {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    margin: 0 !important;
+    font-size: 13px !important;
+    color: var(--wbbm-muted);
+}
+
+.mage-search-res-wrapper .mage_price_info .mage_center_space p strong {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--wbbm-soft);
+}
+
+.mage-search-res-wrapper .mage_price_info .mage_center_space p .woocommerce-Price-amount {
+    font-family: var(--wbbm-display);
+    font-size: 19px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--wbbm-accent);
+}
+
+.mage-search-res-wrapper .mage_price_info .mage_center_space small {
+    font-size: 12px;
+    color: var(--wbbm-soft);
+}
+
+
+/* the book-now block closes the fare column */
+
+.mage-search-res-wrapper .mage_price_info .mage_book_now_area {
+    display: flex !important;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    margin-top: 0;
+    padding-top: 5px;
+    border-top: 1px solid var(--wbbm-line);
+}
+
+.mage-search-res-wrapper .mage_price_info .mage_book_now_area .mage_thumb,
+.mage-search-res-wrapper .mage_price_info .mage_book_now_area .mage_flex_equal {
+    width: 100%;
+    margin: 0;
+}
+
+.mage-search-res-wrapper .mage_price_info .mage_book_now_area .mage_flex_equal {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.mage-search-res-wrapper .mage_price_info .mage_book_now {
+    padding: 0;
+}
+
+.mage-search-res-wrapper .mage_price_info .mage_book_now_area button.mage_button {
+    min-width: 150px;
+}
+
+
+@media (max-width: 900px) {
+    .mage-search-res-wrapper .mage-bus-booking-wrapper .mage_bus_details {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+/* the stepper states its own row layout rather than inheriting display:flex
+   from mage_css.css, so it cannot collapse into a column */
+.mage-search-res-wrapper .mage_form_group {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    overflow: hidden;
+}
+
+.mage-search-res-wrapper .mage_form_group [class*="mage_qty"] {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mage-search-res-wrapper div.mage_form_group .mage_form {
+    flex: 1 1 auto;
+    width: auto;
+    min-width: 0;
+    text-align: center;
+}
+
+
+/* ------------------------------------------------ row expand button, v2 */
+/*
+ * This is a disclosure, not a link: it opens the fare and seat panel below
+ * the row. The chevron says so, and rotates on .opened -- the class the
+ * existing toggle in mage_style.js already puts on the row -- so the control
+ * reads as open or closed without needing its label to change.
+ */
+
+.mage-search-brief-row .mage-bus-detail-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    min-height: 40px;
+    padding: 10px 16px !important;
+    background: var(--wbbm-surface) !important;
+    color: var(--wbbm-ink) !important;
+    border: 1px solid var(--wbbm-line-strong) !important;
+    border-radius: 999px !important;
+    font-size: 14px !important;
+    font-weight: 600;
+    line-height: 1.2 !important;
+}
+
+.mage-search-brief-row .mage-bus-detail-action::after {
+    content: "";
+    flex: 0 0 auto;
+    width: 6px;
+    height: 6px;
+    margin-top: -3px;
+    border-right: 1.7px solid currentColor;
+    border-bottom: 1.7px solid currentColor;
+    transform: rotate(45deg);
+    transition: transform 0.18s ease;
+}
+
+.mage-search-brief-row.opened .mage-bus-detail-action {
+    background: var(--wbbm-accent-tint) !important;
+    border-color: var(--wbbm-accent) !important;
+    color: var(--wbbm-accent) !important;
+}
+
+.mage-search-brief-row.opened .mage-bus-detail-action::after {
+    margin-top: 3px;
+    transform: rotate(-135deg);
+}
+
+.mage-search-brief-row .mage-bus-detail-action:focus-visible {
+    outline: 2px solid var(--wbbm-accent);
+    outline-offset: 2px;
+}
+
+/* the row's own call to action, so it carries the brand at rest -- outlined
+   rather than filled, since the filled crimson belongs to Book Now inside */
+.mage-search-brief-row .mage-bus-detail-action {
+    border-color: var(--wbbm-accent) !important;
+    color: var(--wbbm-accent) !important;
+    box-shadow: 0 1px 2px rgba(179, 12, 59, 0.08) !important;
+}
+
+.mage-search-brief-row .mage-bus-detail-action:hover {
+    background: var(--wbbm-accent-tint) !important;
+    border-color: var(--wbbm-accent) !important;
+    color: var(--wbbm-accent) !important;
+    box-shadow: 0 2px 8px rgba(179, 12, 59, 0.16) !important;
+}
+
+/* open stays distinguishable from the now-accented rest state */
+.mage-search-brief-row.opened .mage-bus-detail-action {
+    background: var(--wbbm-accent) !important;
+    border-color: var(--wbbm-accent) !important;
+    color: #ffffff !important;
+    box-shadow: none !important;
+}
+
+/* wbbm-custom-style.css puts flex-wrap:wrap on every .mage_button, so a longer
+   label such as "Search Buses" dropped onto a second line under the icon */
+.wbbm-modern-search button.mage_button {
+    flex-wrap: nowrap !important;
+    white-space: nowrap;
+}
+
+.wbbm-modern-search button.mage_button > span {
+    flex: 0 0 auto;
+}
+
+/*
+ * mage_css.css bottom-aligns .mage_form_search inside the horizontal form,
+ * which left the Search button sitting 17px below the fields' centre line.
+ * It fills its cell like every other field, so the two line up.
+ */
+.wbbm-modern-search .wbbm-fields > .mage_form_search {
+    /* the 35px top padding is what actually pushed the button down: centring
+       was happening inside a content box that started 35px below the cell */
+    padding: 0 !important;
+    align-items: center !important;
+    align-self: stretch;
+}
+
+/*
+ * Centred rather than stretched. height:100% cannot resolve here -- the cell
+ * is a stretched grid item with an auto specified height, so the percentage
+ * falls back to auto and the button stayed at its 60px min-height, pinned to
+ * the bottom. Centring puts its middle on the fields' centre line, which is
+ * what has to match.
+ */
+.wbbm-modern-search .wbbm-fields > .mage_form_search > button.mage_button {
+    align-self: center;
+}
+
+
+/* ====================================== plugin page title and container */
+/*
+ * On a page this plugin renders, the theme's own title was centred and used
+ * the theme's width, while the plugin content below it sat in .mage_container
+ * -- two different boxes stacked on each other. The title now shares the
+ * container's box and aligns left with it.
+ *
+ * Scoped to body.wbbm-page (added in inc/wbbm_enque.php) so no other page on
+ * the site is touched.
+ */
+
+body.wbbm-page .wp-block-post-title,
+body.wbbm-page .entry-title,
+body.wbbm-page .page-title,
+body.wbbm-page header.entry-header {
+    /* Same box as .mage_container, declaration for declaration: content-box
+       + width:100% + 15px padding means it overruns its parent by 30px and
+       margin:0 auto resolves that overflow on the right. Reproducing all of
+       it is what makes the two boxes line up on BOTH edges. */
+    box-sizing: content-box;
+    max-width: 1366px;
+    width: 100%;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    padding-left: 15px;
+    padding-right: 15px;
+    text-align: left;
+}
+
+/* a block theme constrains the title with its own layout rules, which would
+   otherwise re-centre it inside the wider box above */
+body.wbbm-page .wp-block-post-title.alignwide,
+body.wbbm-page .wp-block-post-title.alignfull {
+    max-width: 1366px;
+}

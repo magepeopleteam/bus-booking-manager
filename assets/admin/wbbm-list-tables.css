@@ -1,13 +1,26 @@
-:root {
-    --sh-primary: #f97316;
-    --sh-primary-hover: #ea580c;
-    --sh-primary-soft: #f5f3ff;
+/* ------------------------------------------------------------------
+   Every rule below is scoped to .wrap.wbbm-list-wrap on purpose.
+   The PRO plugin enqueues its admin_style.css across the whole admin,
+   and that file redefines 53 of the same generic names this one uses
+   (.btn, .form-control, .filter-group, .wbbm-list-* and even :root).
+   PRO loads after this plugin, so with equal specificity its rules won
+   and these screens rendered with PRO's layout -- filters stacked one
+   per row, inputs double-bordered. The extra .wrap raises every rule
+   here above PRO's single-class ones, including the !important ones.
+   Design tokens live on the wrapper rather than :root for the same
+   reason. Keep new rules scoped the same way.
+   ------------------------------------------------------------------ */
+
+.wrap.wbbm-list-wrap {
+    --sh-primary: #b30c3b;
+    --sh-primary-hover: #8e0930;
+    --sh-primary-soft: #fff1e6;
     --sh-secondary: #64748b;
     --sh-bg: #f8fafc;
     --sh-card-bg: #ffffff;
     --sh-header-bg: #fdfdff;
-    --sh-border: #e2e8f0;
-    --sh-text-main: #1e293b;
+    --sh-border: #e6e9ef;
+    --sh-text-main: #17203a;
     --sh-text-soft: #64748b;
     --sh-success-bg: #ecfdf5;
     --sh-success-text: #059669;
@@ -15,64 +28,83 @@
     --sh-draft-text: #475569;
     --sh-pending-bg: #fff7ed;
     --sh-pending-text: #d97706;
+    --sh-radius: 12px;
+    --sh-radius-sm: 8px;
+    --sh-shadow-card: 0 1px 2px rgba(15, 23, 42, .04), 0 8px 24px -12px rgba(15, 23, 42, .08);
 }
 
-.wbbm-list-wrap {
+.wrap.wbbm-list-wrap {
     margin: 20px 20px 0 0;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 }
 
-.wbbm-list-container {
+.wrap.wbbm-list-wrap .wbbm-list-container,
+.wrap.wbbm-list-wrap .wbbm-list-container-fullwidth {
     max-width: 100%;
     margin: 0 auto;
 }
 
-/* Header Section */
-.wbbm-list-header {
+/* ---------------------------------------------------------------- Header */
+.wrap.wbbm-list-wrap .wbbm-list-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
     background: var(--sh-header-bg);
-    padding: 16px 24px;
-    border-radius: 12px 12px 0 0;
+    padding: 20px 24px !important;
+    border-radius: var(--sh-radius);
     border: 1px solid var(--sh-border);
-    margin-bottom: 0;
+    margin-bottom: 16px;
+    box-shadow: var(--sh-shadow-card);
 }
 
-.header-left {
+.wrap.wbbm-list-wrap .header-left {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 14px;
 }
 
-.brand-logo {
-    width: 40px;
-    height: 40px;
-    background: var(--sh-primary);
-    border-radius: 10px;
+.wrap.wbbm-list-wrap .brand-logo {
+    width: 42px;
+    height: 42px;
+    flex: 0 0 auto;
+    background: linear-gradient(135deg, var(--sh-primary), #fb923c);
+    border-radius: 11px;
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
+    box-shadow: 0 6px 14px rgba(179, 12, 59, .28);
 }
 
-.brand-logo .dashicons {
-    font-size: 24px;
-    width: 24px;
-    height: 24px;
+.wrap.wbbm-list-wrap .brand-logo .dashicons {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
 }
 
-.header-title-area h2 {
-    margin: 0;
-    font-size: 24px;
-    font-weight: 600;
-    color: var(--sh-text-main);
-    display: flex;
-    align-items: center;
-    gap: 10px;
+.wrap.wbbm-list-wrap .header-title-area h2 {
+    margin: 0 !important;
+    font-size: 21px !important;
+    font-weight: 700 !important;
+    color: var(--sh-text-main) !important;
+    letter-spacing: -.01em;
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
 }
 
-.version-badge {
+.wrap.wbbm-list-wrap .header-title-area .list-count-badge {
+    background: var(--sh-primary-soft);
+    color: var(--sh-primary-hover);
+    font-size: 12px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 100px;
+}
+
+.wrap.wbbm-list-wrap .version-badge {
     background: var(--sh-primary-soft);
     color: var(--sh-primary);
     font-size: 12px;
@@ -81,301 +113,399 @@
     font-weight: 500;
 }
 
-.header-right {
+.wrap.wbbm-list-wrap .header-right {
     display: flex;
     gap: 12px;
 }
 
-/* Filters Card */
-.wbbm-list-filters-card {
-    background: #fff;
-    padding: 20px 24px;
-    border: 1px solid var(--sh-border);
-    border-top: none;
-    margin-bottom: 0;
+/* --------------------------------------------------------------- Filters */
+.wrap.wbbm-list-wrap .wbbm-list-filters-card {
+    padding: 4px 2px 18px !important;
+    margin-bottom: 12px;
 }
 
-.filters-row {
+.wrap.wbbm-list-wrap .filters-row {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
-    gap: 16px;
+    gap: 12px;
     flex-wrap: wrap;
 }
 
-.filter-left,
-.filter-right {
+.wrap.wbbm-list-wrap .filter-left,
+.wrap.wbbm-list-wrap .filter-right {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
+    flex-wrap: wrap;
 }
 
-.filter-left {
-    flex-grow: 1;
+.wrap.wbbm-list-wrap .filter-left {
+    flex: 1 1 auto;
 }
 
-.filter-group {
+/*
+ * Each filter is ONE bordered field, not two nested boxes: the border,
+ * background, padding and height all live on .filter-group, and the
+ * input/select inside it is stripped of its own border/background so
+ * it's flush with the group. Icon + control sit in the same flex row so
+ * vertical centering only has to be right once.
+ */
+.wrap.wbbm-list-wrap .filter-group {
     position: relative;
     display: flex;
+    /*
+     * flex-direction, width and flex-shrink are stated even though they are
+     * the initial values: PRO's global admin_style.css sets .filter-group to
+     * column / width:100% / flex-shrink:0, and scoping alone cannot beat a
+     * property this sheet never declares. Naming them here leaves nothing
+     * for that sheet to fill in, which is what keeps the filters on one row.
+     */
+    flex-direction: row;
+    width: auto;
+    flex-shrink: 1;
     align-items: center;
+    gap: 6px;
+    height: 40px;
+    padding: 5px 12px;
+    border: 1px solid var(--sh-border);
+    border-radius: 8px;
+    background: #fff;
+    transition: border-color .15s, box-shadow .15s;
 }
 
-.status-filter-group {
-    width: 200px;
+.wrap.wbbm-list-wrap .filter-group:hover {
+    border-color: #cbd5e1;
 }
 
-.filter-group.search-group {
-    flex-grow: 0;
-    width: 400px;
-    max-width: 100%;
+.wrap.wbbm-list-wrap .filter-group:focus-within {
+    border-color: var(--sh-primary);
+    box-shadow: 0 0 0 3px rgba(179, 12, 59, .12);
 }
 
-.filter-group.search-group .dashicons {
-    position: absolute;
-    left: 20px;
-    top: 57%;
-    transform: translateY(-50%);
+.wrap.wbbm-list-wrap .status-filter-group {
+    width: 180px;
+}
+
+.wrap.wbbm-list-wrap .filter-group.search-group {
+    flex: 1 1 240px;
+    max-width: 340px;
+}
+
+.wrap.wbbm-list-wrap .filter-group .dashicons {
+    flex: 0 0 auto;
     color: var(--sh-text-soft);
     pointer-events: none;
-    font-size: 20px;
-    width: 20px;
-    height: 20px;
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
     line-height: 1;
 }
 
-.filter-group.search-group input {
-    padding-left: 40px !important;
+.wrap.wbbm-list-wrap .filter-group.search-group input {
     width: 100%;
-    background: #f8fafc !important;
-    border-color: #e2e8f0 !important;
 }
 
-.filter-group.search-group input:focus {
-    background: #fff !important;
-    border-color: var(--sh-primary) !important;
+/*
+ * PRO's sheet takes this icon out of the flow -- position:absolute, left:20px,
+ * top:57% -- and pads the input by 40px to clear it. Here the icon is an
+ * ordinary flex sibling ahead of the input, so those offsets drop it straight
+ * on top of the placeholder. Put it back in the flow; the four extra classes
+ * out-specify PRO's .filter-group.search-group .dashicons.
+ */
+.wrap.wbbm-list-wrap .filter-group.search-group .dashicons {
+    position: static;
+    left: auto;
+    top: auto;
+    transform: none;
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    line-height: 1;
 }
 
-.form-control {
-    border: 1px solid var(--sh-border) !important;
-    border-radius: 8px !important;
-    padding: 8px 14px !important;
-    height: 42px !important;
-    font-size: 14px !important;
+.wrap.wbbm-list-wrap .form-control {
+    flex: 1;
+    min-width: 0;
+    border: none !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    height: 100% !important;
+    font-size: 13.5px !important;
     box-shadow: none !important;
     color: var(--sh-text-main) !important;
-    background-color: #fff !important;
-    transition: all 0.2s;
+    background-color: transparent !important;
     appearance: none;
     -webkit-appearance: none;
 }
 
-select.form-control {
-    padding-right: 36px !important;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E") !important;
-    background-repeat: no-repeat !important;
-    background-position: right 12px center !important;
-    background-size: 16px !important;
-    cursor: pointer;
-}
-
-.form-control:focus {
-    border-color: var(--sh-primary) !important;
+.wrap.wbbm-list-wrap .form-control:focus {
     outline: none !important;
 }
 
-.filter-actions {
+.wrap.wbbm-list-wrap select.form-control {
+    padding-right: 22px !important;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E") !important;
+    background-repeat: no-repeat !important;
+    background-position: right center !important;
+    background-size: 15px !important;
+    cursor: pointer;
+}
+
+.wrap.wbbm-list-wrap .filter-group.seat-date-group input {
+    min-width: 150px;
+}
+
+/* Counterpart to the note above: PRO sets .filter-group input/select to
+   width:100%, which stretches the date and category fields. */
+.wrap.wbbm-list-wrap .filter-group.seat-date-group,
+.wrap.wbbm-list-wrap .filter-group.status-filter-group {
+    flex: 0 0 auto;
+}
+
+.wrap.wbbm-list-wrap .filter-actions {
     display: flex;
     gap: 8px;
 }
 
-/* Buttons */
-.btn {
+/* ----------------------------------------------------------------- Buttons */
+.wrap.wbbm-list-wrap .btn {
+    /* PRO's sheet supplied border-box; without it the fixed height below
+       adds padding and borders on top and the buttons come out 58px. */
+    box-sizing: border-box;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: 7px;
     padding: 8px 16px;
-    border-radius: 8px;
-    font-weight: 500;
+    border-radius: var(--sh-radius-sm);
+    font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: transform .1s ease, box-shadow .15s ease, background-color .15s ease, border-color .15s ease;
     text-decoration: none;
     border: 1px solid transparent;
-    font-size: 14px;
+    font-size: 13.5px;
+    height: 40px;
+    line-height: 1;
 }
 
-.btn-primary {
-    background: var(--sh-primary);
-    color: white;
+.wrap.wbbm-list-wrap .btn .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
 }
 
-.btn-primary:hover {
-    background: var(--sh-primary-hover);
-    color: white;
+.wrap.wbbm-list-wrap .btn-primary {
+    background: linear-gradient(135deg, var(--sh-primary), #fb923c);
+    color: #fff;
+    box-shadow: 0 4px 10px rgba(179, 12, 59, .24);
 }
 
-.btn-outline {
+.wrap.wbbm-list-wrap .btn-primary:hover {
+    color: #fff;
+    box-shadow: 0 6px 14px rgba(179, 12, 59, .32);
+    transform: translateY(-1px);
+}
+
+.wrap.wbbm-list-wrap .btn-outline {
     background: #fff;
-    border: 1px solid var(--sh-border);
+    border: 1px solid #d7dce3;
+    color: var(--sh-text-main);
+    box-shadow: 0 1px 2px rgba(15, 23, 42, .04);
+}
+
+.wrap.wbbm-list-wrap .btn-outline:hover {
+    background: var(--sh-bg);
+    border-color: #94a3b8;
     color: var(--sh-text-main);
 }
 
-.btn-outline:hover {
-    background: #f8fafc;
-    border-color: #cbd5e1;
+.wrap.wbbm-list-wrap .btn-sm {
+    height: 40px;
+    padding: 8px 16px;
 }
 
-.btn-icon-outline {
+.wrap.wbbm-list-wrap .btn-icon-outline {
     width: 40px;
     height: 40px;
     padding: 0;
     background: #fff;
     border: 1px solid var(--sh-border);
-    border-radius: 8px;
+    border-radius: var(--sh-radius-sm);
     color: var(--sh-text-soft);
 }
 
-/* Table Section */
-.wbbm-list-table-card {
+/* ------------------------------------------------------------------ Table */
+.wrap.wbbm-list-wrap .wbbm-list-table-card {
     background: #fff;
     border: 1px solid var(--sh-border);
-    border-top: none;
-    border-radius: 0 0 12px 12px;
+    border-radius: var(--sh-radius);
+    box-shadow: var(--sh-shadow-card);
     overflow: hidden;
 }
 
-.wbbm-list-modern-table {
+.wrap.wbbm-list-wrap .wbbm-list-table-scroll {
+    overflow-x: auto;
+}
+
+.wrap.wbbm-list-wrap .wbbm-list-modern-table {
     width: 100%;
     border-collapse: collapse;
+    min-width: 920px;
 }
 
-.wbbm-list-modern-table th {
-    background: #fff;
-    padding: 16px 24px;
-    text-align: left;
-    font-weight: 600;
-    color: var(--sh-text-soft);
+.wrap.wbbm-list-wrap .wbbm-list-modern-table th {
+    background: var(--sh-bg) !important;
+    padding: 14px 20px !important;
+    text-align: left !important;
+    font-weight: 700 !important;
+    color: var(--sh-text-soft) !important;
+    border-bottom: 1px solid var(--sh-border) !important;
+    font-size: 11.5px !important;
+    text-transform: uppercase !important;
+    letter-spacing: .06em !important;
+    white-space: nowrap;
+}
+
+.wrap.wbbm-list-wrap .wbbm-list-modern-table tbody tr {
     border-bottom: 1px solid var(--sh-border);
-    font-size: 13px;
-    text-transform: uppercase;
-    letter-spacing: 0.025em;
+    transition: background-color .12s ease;
 }
 
-.wbbm-list-modern-table tr {
-    border-bottom: 1px solid var(--sh-border);
-}
-.wbbm-list-modern-table td {
-    padding: 20px 24px;
-    vertical-align: middle;
+.wrap.wbbm-list-wrap .wbbm-list-modern-table tbody tr:hover {
+    background: #fafbfc;
 }
 
-.wbbm-list-modern-table tr:last-child td {
+.wrap.wbbm-list-wrap .wbbm-list-modern-table td {
+    padding: 16px 20px !important;
+    vertical-align: middle !important;
+}
+
+.wrap.wbbm-list-wrap .wbbm-list-modern-table tr:last-child td {
     border-bottom: none;
 }
 
-.col-check {
+.wrap.wbbm-list-wrap .col-check {
     width: 40px;
 }
 
-.col-category {
+.wrap.wbbm-list-wrap .col-category {
     width: 150px;
 }
 
-.col-capacity {
-    width: 180px;
+.wrap.wbbm-list-wrap .col-capacity {
+    width: 110px;
 }
 
-.col-status {
-    width: 120px;
+.wrap.wbbm-list-wrap .col-status {
+    width: 110px;
 }
 
-.col-action {
-    width: 150px;
+.wrap.wbbm-list-wrap .col-action {
+    width: 100px;
 }
 
-/* List Info Cell */
-.wbbm-list-info-cell {
+/* ------------------------------------------------------------- Info cell */
+.wrap.wbbm-list-wrap .wbbm-list-info-cell {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 14px;
 }
 
-.wbbm-list-thumb {
-    width: 56px;
-    height: 56px;
-    border-radius: 8px;
+.wrap.wbbm-list-wrap .wbbm-list-thumb {
+    width: 52px;
+    height: 52px;
+    flex: 0 0 auto;
+    border-radius: var(--sh-radius-sm);
     overflow: hidden;
-    background: #f1f5f9;
+    background: var(--sh-bg);
     display: flex;
     align-items: center;
     justify-content: center;
+    border: 1px solid var(--sh-border);
 }
 
-.wbbm-list-thumb img {
+.wrap.wbbm-list-wrap .wbbm-list-thumb img {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
 
-.wbbm-list-thumb .dashicons {
-    font-size: 32px;
+.wrap.wbbm-list-wrap .wbbm-list-thumb .dashicons {
+    font-size: 26px;
     color: #cbd5e1;
 }
 
-.wbbm-list-title {
-    font-weight: 700;
-    font-size: 16px;
+.wrap.wbbm-list-wrap .wbbm-list-title {
+    font-weight: 600;
+    font-size: 14.5px;
     color: var(--sh-text-main);
-    margin-bottom: 4px;
+    margin-bottom: 3px;
+    line-height: 1.3;
 }
 
-.wbbm-list-title a {
+.wrap.wbbm-list-wrap .wbbm-list-title a {
     text-decoration: none;
     color: inherit;
-    transition: color 0.2s;
+    transition: color .15s;
 }
 
-.wbbm-list-title a:hover {
+.wrap.wbbm-list-wrap .wbbm-list-title a:hover {
     color: var(--sh-primary);
 }
 
-.wbbm-list-meta {
-    font-size: 13px;
-    color: var(--sh-text-main);
-    font-weight: 500;
-    margin-bottom: 2px;
+.wrap.wbbm-list-wrap .wbbm-list-meta {
+    font-size: 12px;
+    color: var(--sh-text-soft) !important;
+    font-weight: 500 !important;
 }
 
-.wbbm-list-sub-meta {
+.wrap.wbbm-list-wrap .wbbm-list-sub-meta {
     font-size: 12px;
     color: var(--sh-text-soft);
 }
 
-/* Capacity Info */
-.capacity-info .count {
-    display: block;
-    font-size: 14px;
+.wrap.wbbm-list-wrap .wbbm-list-category-name {
     font-weight: 500;
-    margin-bottom: 8px;
+    color: var(--sh-text-main);
+    margin-bottom: 2px;
+    font-size: 13.5px;
+}
+
+/* --------------------------------------------------------- Capacity cell */
+.wrap.wbbm-list-wrap .capacity-info .count {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13.5px;
+    font-weight: 600;
     color: var(--sh-text-main);
 }
 
-.progress-bar {
+.wrap.wbbm-list-wrap .capacity-info .count::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-radius: 999px;
+    background: var(--sh-border);
+}
+
+.wrap.wbbm-list-wrap .progress-bar {
     width: 100%;
     height: 6px;
-    background: #f1f5f9;
+    background: var(--sh-bg);
     border-radius: 100px;
     overflow: hidden;
 }
 
-.progress {
+.wrap.wbbm-list-wrap .progress {
     height: 100%;
     background: var(--sh-primary);
     border-radius: 100px;
 }
 
-/* Author Cell */
-.author-cell {
+/* ---------------------------------------------------------------- Author */
+.wrap.wbbm-list-wrap .author-cell {
     display: flex;
     align-items: center;
     gap: 12px;
@@ -383,310 +513,491 @@ select.form-control {
     font-weight: 500;
 }
 
-.author-cell .dashicons {
+.wrap.wbbm-list-wrap .author-cell .dashicons {
     font-size: 16px;
     width: 16px;
     height: 16px;
     color: var(--sh-text-soft);
 }
 
-/* Status Badges */
-.status-badge {
+/* --------------------------------------------------------- Status badges */
+.wrap.wbbm-list-wrap .status-badge {
     display: inline-flex;
-    padding: 6px 12px;
-    border-radius: 6px;
-    font-size: 13px;
-    font-weight: 600;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 11px 5px 8px;
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 700;
 }
 
-.status-publish {
+.wrap.wbbm-list-wrap .status-badge::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: currentColor;
+}
+
+.wrap.wbbm-list-wrap .status-publish {
     background: var(--sh-success-bg);
     color: var(--sh-success-text);
 }
 
-.status-draft {
+.wrap.wbbm-list-wrap .status-draft {
     background: var(--sh-draft-bg);
     color: var(--sh-draft-text);
 }
 
-.status-pending {
+.wrap.wbbm-list-wrap .status-pending,
+.wrap.wbbm-list-wrap .status-future {
     background: var(--sh-pending-bg);
     color: var(--sh-pending-text);
 }
 
-/* Action Buttons */
-.action-buttons {
-    display: flex;
-    gap: 8px;
+/* Offline booking payment-status pills (inc/BusOfflineBookingListPageClass.php) */
+.wrap.wbbm-list-wrap .status-confirmed {
+    background: var(--sh-success-bg);
+    color: var(--sh-success-text);
 }
 
-.action-btn {
-    width: 36px;
-    height: 36px;
+.wrap.wbbm-list-wrap .status-cancelled {
+    background: var(--sh-draft-bg);
+    color: var(--sh-draft-text);
+}
+
+/* ---------------------------------------------------------- Action cell */
+.wrap.wbbm-list-wrap .action-buttons {
+    display: flex;
+    gap: 6px;
+}
+
+.wrap.wbbm-list-wrap .action-btn {
+    width: 34px;
+    height: 34px;
     border: 1px solid var(--sh-border);
-    border-radius: 8px;
+    border-radius: var(--sh-radius-sm);
     display: flex;
     align-items: center;
     justify-content: center;
     color: var(--sh-text-soft);
     text-decoration: none;
-    transition: all 0.2s;
+    transition: all .15s;
 }
 
-.action-btn:hover {
-    background: #f8fafc;
+.wrap.wbbm-list-wrap .action-btn .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+}
+
+.wrap.wbbm-list-wrap .action-btn:hover {
+    background: var(--sh-primary-soft);
     border-color: var(--sh-primary);
-    color: var(--sh-primary);
+    color: var(--sh-primary-hover);
 }
 
-.action-btn.delete-btn:hover {
+.wrap.wbbm-list-wrap .action-btn.delete-btn:hover {
+    background: #fef2f2;
     border-color: #ef4444;
     color: #ef4444;
 }
 
-/* Pagination Area */
-.wbbm-list-pagination-area {
-    padding: 24px;
+/* -------------------------------------------------------------- Pagination */
+.wrap.wbbm-list-wrap .wbbm-list-pagination-area {
+    padding: 16px 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
     border-top: 1px solid var(--sh-border);
     background: #fff;
 }
 
-.pagination-info {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--sh-text-main);
+.wrap.wbbm-list-wrap .pagination-info {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--sh-text-soft);
 }
 
-.pagination-controls {
+.wrap.wbbm-list-wrap .pagination-controls {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
 }
 
-.page-link {
-    width: 36px;
-    height: 36px;
+.wrap.wbbm-list-wrap .page-link {
+    min-width: 34px;
+    height: 34px;
+    padding: 0 6px;
     display: flex;
     align-items: center;
     justify-content: center;
     border: 1px solid var(--sh-border);
-    border-radius: 8px;
+    border-radius: var(--sh-radius-sm);
     text-decoration: none;
     color: var(--sh-text-main);
     font-weight: 500;
-    font-size: 14px;
+    font-size: 13px;
+    transition: all .15s;
 }
 
-.page-link.active {
+.wrap.wbbm-list-wrap .page-link:hover {
+    border-color: var(--sh-primary);
+    color: var(--sh-primary-hover);
+}
+
+.wrap.wbbm-list-wrap .page-link.active {
     background: var(--sh-primary);
     color: white;
     border-color: var(--sh-primary);
 }
 
-.pager-sep {
+.wrap.wbbm-list-wrap .pager-sep {
     color: var(--sh-text-soft);
+    padding: 0 2px;
 }
 
-.per-page-selector select {
+.wrap.wbbm-list-wrap .per-page-selector select {
     margin-left: 12px;
 }
 
-/* Stops Display */
-.wbbm-list-stops-display {
-    max-width: 250px;
+/* ----------------------------------------------------------- Stops display */
+.wrap.wbbm-list-wrap .wbbm-list-stops-display {
+    max-width: 240px;
     font-size: 13px;
     line-height: 1.5;
 }
 
-.stops-visible {
+.wrap.wbbm-list-wrap .stops-visible {
     color: var(--sh-text-main);
 }
 
-.stops-toggle-btn {
-    background: #f1f5f9;
+.wrap.wbbm-list-wrap .stops-toggle-btn {
+    background: var(--sh-primary-soft);
     border: none;
-    border-radius: 4px;
-    color: var(--sh-primary);
+    border-radius: 100px;
+    color: var(--sh-primary-hover);
     cursor: pointer;
-    font-size: 14px;
-    font-weight: 800;
-    padding: 0 6px;
-    line-height: 1;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 1px 8px;
+    line-height: 1.6;
     margin-left: 4px;
-    transition: all 0.2s;
+    transition: all .15s;
 }
 
-/* Booking List Filters */
-.wbbm-list-booking-filters-grid {
+.wrap.wbbm-list-wrap .stops-toggle-btn:hover {
+    background: #ffe1c7;
+}
+
+.wrap.wbbm-list-wrap .stops-hidden-content {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: all .35s cubic-bezier(.4, 0, .2, 1);
+}
+
+.wrap.wbbm-list-wrap .stops-list-wrapper.expanded .stops-hidden-content {
+    max-height: 500px;
+    opacity: 1;
+    margin-top: 8px;
+}
+
+.wrap.wbbm-list-wrap .stops-list-wrapper.expanded .stops-visible {
+    display: none;
+}
+
+.wrap.wbbm-list-wrap .stops-full-list {
+    background: var(--sh-bg);
+    border: 1px solid var(--sh-border);
+    border-radius: var(--sh-radius-sm);
+    padding: 10px 12px;
+    color: var(--sh-text-main);
+    font-weight: 500;
+}
+
+.wrap.wbbm-list-wrap .stops-collapse-btn {
+    background: transparent;
+    border: none;
+    color: var(--sh-primary-hover);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 6px;
+    padding: 0;
+    text-decoration: underline;
+}
+
+.wrap.wbbm-list-wrap .stops-collapse-btn:hover {
+    color: var(--sh-primary);
+}
+
+/* ------------------------------------------------------------ Empty state */
+.wrap.wbbm-list-wrap .wbbm-list-empty-state {
+    text-align: center;
+    padding: 64px 24px !important;
+}
+
+.wrap.wbbm-list-wrap .wbbm-list-empty-state .empty-icon {
+    width: 56px;
+    height: 56px;
+    margin: 0 auto 16px;
+    border-radius: 14px;
+    background: var(--sh-primary-soft);
+    color: var(--sh-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.wrap.wbbm-list-wrap .wbbm-list-empty-state .empty-icon .dashicons {
+    font-size: 26px;
+    width: 26px;
+    height: 26px;
+}
+
+.wrap.wbbm-list-wrap .wbbm-list-empty-state h3 {
+    margin: 0 0 6px;
+    font-size: 16px;
+    color: var(--sh-text-main);
+}
+
+.wrap.wbbm-list-wrap .wbbm-list-empty-state p {
+    margin: 0 0 18px;
+    color: var(--sh-text-soft);
+    font-size: 13.5px;
+}
+
+/* --------------------------------------------------- Remaining seats cell */
+.wrap.wbbm-list-wrap .wbbm-list-modern-table .col-remaining {
+    white-space: nowrap;
+}
+
+.wrap.wbbm-list-wrap .remaining-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    line-height: 1.3;
+    min-width: 92px;
+}
+
+.wrap.wbbm-list-wrap .remaining-info .count {
+    color: var(--sh-text-main);
+    font-size: 14.5px;
+    font-weight: 700;
+}
+
+.wrap.wbbm-list-wrap .remaining-info .sub {
+    color: var(--sh-text-soft);
+    font-size: 11px;
+}
+
+.wrap.wbbm-list-wrap .remaining-info .mini-bar {
+    width: 100%;
+    height: 4px;
+    border-radius: 100px;
+    background: var(--sh-bg);
+    overflow: hidden;
+}
+
+.wrap.wbbm-list-wrap .remaining-info .mini-bar span {
+    display: block;
+    height: 100%;
+    border-radius: 100px;
+    background: #10b981;
+}
+
+/* Tone tracks how full the vehicle is on the selected date. */
+.wrap.wbbm-list-wrap .remaining-info.is-ok .count { color: #047857; }
+.wrap.wbbm-list-wrap .remaining-info.is-ok .mini-bar span { background: #10b981; }
+
+.wrap.wbbm-list-wrap .remaining-info.is-low .count { color: #b45309; }
+.wrap.wbbm-list-wrap .remaining-info.is-low .mini-bar span { background: #f59e0b; }
+
+.wrap.wbbm-list-wrap .remaining-info.is-full .count { color: #dc2626; }
+.wrap.wbbm-list-wrap .remaining-info.is-full .mini-bar span { background: #ef4444; }
+
+.wrap.wbbm-list-wrap .wbbm-list-modern-table .col-remaining-date {
+    display: block;
+    margin-top: 2px;
+    color: #94a3b8;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0;
+    text-transform: none;
+}
+
+/* -------------------------------------------------- Booking list filters */
+.wrap.wbbm-list-wrap .wbbm-list-booking-filters-grid {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 12px;
     align-items: end;
 }
 
-.wbbm-list-booking-filters-grid .filter-group {
+.wrap.wbbm-list-wrap .wbbm-list-booking-filters-grid .filter-group {
     min-width: 0;
 }
 
-.wbbm-list-booking-filters-grid .form-control {
+.wrap.wbbm-list-wrap .wbbm-list-booking-filters-grid .form-control {
     width: 100%;
 }
 
-.wbbm-list-booking-filters-grid .booking-route-search {
+.wrap.wbbm-list-wrap .wbbm-list-booking-filters-grid .booking-route-search {
     width: 100%;
 }
 
-.wbbm-list-booking-filters-grid .booking-route-search .dashicons {
+.wrap.wbbm-list-wrap .wbbm-list-booking-filters-grid .booking-route-search .dashicons {
     left: 12px;
     top: 50%;
 }
 
-.wbbm-list-booking-filters-grid .booking-route-search input {
+.wrap.wbbm-list-wrap .wbbm-list-booking-filters-grid .booking-route-search input {
     padding-left: 36px !important;
 }
 
-.wbbm-list-booking-filter-actions {
+.wrap.wbbm-list-wrap .wbbm-list-booking-filter-actions {
     margin-top: 12px;
     display: flex;
     align-items: center;
     gap: 12px;
 }
 
-/* Booking List Table Widths */
-.wbbm-list-modern-table .col-id {
-    width: 100px;
-}
-
-.wbbm-list-modern-table .col-bus {
-    width: 200px;
-}
-
-.wbbm-list-modern-table .col-customer {
-    width: 220px;
-}
-
-.wbbm-list-modern-table .col-journey {
-    width: 180px;
-}
-
-.wbbm-list-modern-table .col-route {
-    width: 220px;
-}
-
-.wbbm-list-modern-table .col-passengers {
-    width: 140px;
-}
-
-.wbbm-list-modern-table .col-action {
-    width: 100px;
-}
+.wrap.wbbm-list-wrap .wbbm-list-modern-table .col-id { width: 100px; }
+.wrap.wbbm-list-wrap .wbbm-list-modern-table .col-bus { width: 200px; }
+.wrap.wbbm-list-wrap .wbbm-list-modern-table .col-customer { width: 220px; }
+.wrap.wbbm-list-wrap .wbbm-list-modern-table .col-journey { width: 180px; }
+.wrap.wbbm-list-wrap .wbbm-list-modern-table .col-route { width: 220px; }
+.wrap.wbbm-list-wrap .wbbm-list-modern-table .col-passengers { width: 140px; }
 
 @media (max-width: 1024px) {
-    .wbbm-list-booking-filters-grid {
+    .wrap.wbbm-list-wrap .wbbm-list-booking-filters-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
 
+@media (max-width: 782px) {
+    .wrap.wbbm-list-wrap .wbbm-list-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .wrap.wbbm-list-wrap .header-right {
+        width: 100%;
+    }
+
+    .wrap.wbbm-list-wrap .header-right .btn {
+        width: 100%;
+    }
+
+    .wrap.wbbm-list-wrap .status-filter-group,
+.wrap.wbbm-list-wrap .filter-group.search-group {
+        width: 100%;
+        max-width: none;
+        flex: 1 1 100%;
+    }
+}
+
 @media (max-width: 640px) {
-    .wbbm-list-booking-filters-grid {
+    .wrap.wbbm-list-wrap .wbbm-list-booking-filters-grid {
         grid-template-columns: 1fr;
     }
 }
 
-.stops-toggle-btn:hover {
-    background: var(--sh-primary-soft);
+
+/* ----------------------------------------------------- mark as paid */
+/*
+ * The one row action on the offline bookings table. It confirms a payment,
+ * so it carries the same success colour as the paid badge it produces --
+ * outlined at rest so a long list of pending rows stays calm, filled on
+ * hover once you are actually on the row you mean.
+ */
+
+.wrap.wbbm-list-wrap .wbbm-mark-paid {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px 6px 11px;
+    border: 1px solid var(--sh-success-text);
+    border-radius: 100px;
+    background: var(--sh-success-bg);
+    color: var(--sh-success-text);
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.4;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background-color 0.16s ease, color 0.16s ease, box-shadow 0.16s ease;
 }
 
-.stops-hidden-content {
-    max-height: 0;
-    overflow: hidden;
-    opacity: 0;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+.wrap.wbbm-list-wrap .wbbm-mark-paid .dashicons {
+    width: 15px;
+    height: 15px;
+    font-size: 15px;
+    line-height: 1;
 }
 
-.stops-list-wrapper.expanded .stops-hidden-content {
-    max-height: 500px;
-    opacity: 1;
-    margin-top: 10px;
+.wrap.wbbm-list-wrap .wbbm-mark-paid:hover,
+.wrap.wbbm-list-wrap .wbbm-mark-paid:focus {
+    background: var(--sh-success-text);
+    border-color: var(--sh-success-text);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(5, 150, 105, 0.28);
 }
 
-.stops-list-wrapper.expanded .stops-visible {
-    display: none;
+.wrap.wbbm-list-wrap .wbbm-mark-paid:focus-visible {
+    outline: 2px solid var(--sh-success-text);
+    outline-offset: 2px;
 }
 
-.stops-full-list {
-    background: #f8fafc;
+.wrap.wbbm-list-wrap .wbbm-mark-paid:active {
+    transform: translateY(1px);
+}
+
+
+/* ------------------------------------------------- how a booking was paid */
+/*
+ * The list covers every bus booking now, whichever flow took the money, so
+ * each row says which. Quieter than the status badge beside it: the status is
+ * what you act on, the method is context.
+ */
+
+.wrap.wbbm-list-wrap .wbbm-method-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 11px;
     border: 1px solid var(--sh-border);
-    border-radius: 8px;
-    padding: 12px;
-    color: var(--sh-text-main);
-    font-weight: 500;
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
-}
-
-.stops-collapse-btn {
-    background: transparent;
-    border: none;
-    color: var(--sh-primary);
+    border-radius: 100px;
+    background: #fff;
     font-size: 12px;
     font-weight: 600;
-    cursor: pointer;
-    margin-top: 8px;
-    padding: 0;
-    text-decoration: underline;
-}
-
-.stops-collapse-btn:hover {
-    color: #6d28d9;
-}
-
-.no-results {
-    text-align: center;
-    padding: 60px !important;
     color: var(--sh-text-soft);
-    font-style: italic;
-}
-/* ------------------------------------------------- remaining seats column */
-.wbbm-list-modern-table .col-remaining {
     white-space: nowrap;
 }
 
-.remaining-info {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    line-height: 1.3;
+.wrap.wbbm-list-wrap .wbbm-method-badge.wbbm-pay-wc {
+    border-color: #c7d7f0;
+    background: #f2f7ff;
+    color: #2b5f9e;
 }
 
-.remaining-info .count {
-    color: #172033;
-    font-size: 15px;
-    font-weight: 700;
-}
-
-.remaining-info .sub {
-    color: #64748b;
-    font-size: 11px;
-}
-
-/* Tone tracks how full the vehicle is on the selected date. */
-.remaining-info.is-ok .count   { color: #047857; }
-.remaining-info.is-low .count  { color: #b45309; }
-.remaining-info.is-full .count { color: #dc2626; }
-
-.filters-row .seat-date-group input[type="date"] {
-    min-width: 160px;
-}
-
-.wbbm-list-modern-table .col-remaining-date {
-    display: block;
-    margin-top: 2px;
-    color: #94a3b8;
-    font-size: 10px;
+.wrap.wbbm-list-wrap .wbbm-view-order {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 14px;
+    border: 1px solid var(--sh-border);
+    border-radius: 100px;
+    background: #fff;
+    font-size: 12px;
     font-weight: 600;
-    letter-spacing: 0;
-    text-transform: none;
+    color: var(--sh-text-main);
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.wrap.wbbm-list-wrap .wbbm-view-order:hover {
+    border-color: var(--sh-text-soft);
+    color: var(--sh-text-main);
 }

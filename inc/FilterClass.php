@@ -50,7 +50,7 @@ class FilterClass extends CommonClass
         $mage_ok = $nonce_mage && wp_verify_nonce($nonce_mage, 'mage_book_now_area');
 
         if (! $custom_ok && ! $mage_ok) {
-            wc_add_notice(__('Security check failed. Please try again.', 'bus-booking-manager'), 'error');
+            if (function_exists('wc_add_notice')) { wc_add_notice(__('Security check failed. Please try again.', 'bus-booking-manager'), 'error'); }
             return $cart_item_data;
         }
         // Normalize POST inputs and sanitize
@@ -532,11 +532,11 @@ class FilterClass extends CommonClass
                                                     : __('Adult', 'bus-booking-manager')
                                             );
 
-                                            echo ' (' . wp_kses_post(wc_price($total_adult_fare)) . ' × ' . esc_html($total_adult) . ') = ';
+                                            echo ' (' . wp_kses_post(wbbm_price_html($total_adult_fare)) . ' × ' . esc_html($total_adult) . ') = ';
                                         ?>
                                     </strong>
                                     <?php echo wp_kses_post(
-                                        wc_price($total_adult * $total_adult_fare)
+                                        wbbm_price_html($total_adult * $total_adult_fare)
                                     ); ?>
                                 </li>
                             <?php } ?>
@@ -556,10 +556,10 @@ class FilterClass extends CommonClass
                                                     : __('Child', 'bus-booking-manager')
                                             );
 
-                                            echo ' (' . wp_kses_post(wc_price($total_child_fare)) . ' × ' . esc_html($total_child) . ') = ';
+                                            echo ' (' . wp_kses_post(wbbm_price_html($total_child_fare)) . ' × ' . esc_html($total_child) . ') = ';
                                         ?>
                                     </strong>
-                                    <?php echo wp_kses_post(wc_price($total_child * $total_child_fare)); ?>
+                                    <?php echo wp_kses_post(wbbm_price_html($total_child * $total_child_fare)); ?>
                                 </li>
                             <?php } ?>
 
@@ -578,10 +578,10 @@ class FilterClass extends CommonClass
                                                     : __('Infant', 'bus-booking-manager')
                                             );
 
-                                            echo ' (' . wp_kses_post(wc_price($total_infant_fare)) . ' × ' . esc_html($total_infant) . ') = ';
+                                            echo ' (' . wp_kses_post(wbbm_price_html($total_infant_fare)) . ' × ' . esc_html($total_infant) . ') = ';
                                         ?>
                                     </strong>
-                                    <?php echo wp_kses_post(wc_price($total_infant * $total_infant_fare)); ?>
+                                    <?php echo wp_kses_post(wbbm_price_html($total_infant * $total_infant_fare)); ?>
                                 </li>
                             <?php } ?>
 
@@ -620,11 +620,11 @@ class FilterClass extends CommonClass
                                                 ?>
                                                 <li>
                                                     <strong><?php echo esc_html($es_name); ?>:</strong>
-                                                    (<?php echo wp_kses_post(wc_price($es_price_val)); ?> ×
+                                                    (<?php echo wp_kses_post(wbbm_price_html($es_price_val)); ?> ×
                                                     <?php echo esc_html($es_input_qty); ?>)
                                                     =
                                                     <?php
-                                                    echo wp_kses_post(wc_price($es_price_val * $es_input_qty));
+                                                    echo wp_kses_post(wbbm_price_html($es_price_val * $es_input_qty));
                                                     ?>
                                                 </li>
 
@@ -661,7 +661,7 @@ class FilterClass extends CommonClass
                                                     );
                                                 ?>
                                             </strong>
-                                            <?php echo wp_kses_post(wc_price($total_adult_fare)); ?>
+                                            <?php echo wp_kses_post(wbbm_price_html($total_adult_fare)); ?>
                                         </li>
                                     <?php endif; ?>
 
@@ -681,7 +681,7 @@ class FilterClass extends CommonClass
                                                     );
                                                 ?>
                                             </strong>
-                                            <?php echo wp_kses_post(wc_price($total_child_fare)); ?>
+                                            <?php echo wp_kses_post(wbbm_price_html($total_child_fare)); ?>
                                         </li>
                                     <?php endif; ?>
 
@@ -701,7 +701,7 @@ class FilterClass extends CommonClass
                                                     );
                                                 ?>
                                             </strong>
-                                            <?php echo wp_kses_post(wc_price($total_infant_fare)); ?>
+                                            <?php echo wp_kses_post(wbbm_price_html($total_infant_fare)); ?>
                                         </li>
                                     <?php endif; ?>
 
@@ -723,11 +723,11 @@ class FilterClass extends CommonClass
 
                                                     // Fare calculation output
                                                     echo ' ('
-                                                        . wp_kses_post(wc_price($total_entire_fare))
+                                                        . wp_kses_post(wbbm_price_html($total_entire_fare))
                                                         . ' × '
                                                         . esc_html($total_entire)
                                                         . ') = '
-                                                        . wp_kses_post(wc_price($total_entire_fare * $total_entire));
+                                                        . wp_kses_post(wbbm_price_html($total_entire_fare * $total_entire));
                                                 ?>
                                             </strong>
                                         </li>
@@ -772,11 +772,11 @@ class FilterClass extends CommonClass
                                             </strong>
                                             <?php
                                                 echo ' ('
-                                                    . wp_kses_post(wc_price($extra_per_bag_price))
+                                                    . wp_kses_post(wbbm_price_html($extra_per_bag_price))
                                                     . ' × '
                                                     . esc_html(absint($_passenger['extra_bag_quantity']))
                                                     . ') = '
-                                                    . wp_kses_post(wc_price((int) $_passenger['wbtm_extra_bag_price'] * (int) $_passenger['extra_bag_quantity']));
+                                                    . wp_kses_post(wbbm_price_html((int) $_passenger['wbtm_extra_bag_price'] * (int) $_passenger['extra_bag_quantity']));
                                             ?>
                                         </li>
                                     <?php endif; ?>
@@ -976,11 +976,11 @@ class FilterClass extends CommonClass
                                                     <li>
                                                         <strong><?php echo esc_html($es_name); ?>: </strong>
                                                         (
-                                                            <?php echo wp_kses_post(wc_price($es_price_val)); ?> 
+                                                            <?php echo wp_kses_post(wbbm_price_html($es_price_val)); ?> 
                                                             x 
                                                             <?php echo esc_html($es_input_qty); ?>
                                                         ) = 
-                                                        <?php echo wp_kses_post(wc_price($es_price_val * $es_input_qty)); ?>
+                                                        <?php echo wp_kses_post(wbbm_price_html($es_price_val * $es_input_qty)); ?>
                                                     </li>
                                                     <?php
                                                 endif;

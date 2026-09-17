@@ -25,7 +25,7 @@ class SearchClass extends CommonClass
 
             // Verify the nonce
             if (! $nonce || ! wp_verify_nonce($nonce, 'bus_search_nonce_action')) {
-                wc_add_notice(__('Security check failed. Please try again. 111', 'bus-booking-manager'), 'error');
+                if (function_exists('wc_add_notice')) { wc_add_notice(__('Security check failed. Please try again. 111', 'bus-booking-manager'), 'error'); }
                 return false;
             }
 
@@ -48,7 +48,6 @@ class SearchClass extends CommonClass
         $cpt_label = wbbm_get_option('wbbm_cpt_label', 'wbbm_general_setting_sec', 'Bus');
         $route_title_bg_color = wbbm_get_option('wbbm_search_route_title_b_color', 'wbbm_style_setting_sec');
         $route_title_color = wbbm_get_option('wbbm_search_route_title_color', 'wbbm_style_setting_sec') ?: '#fff';
-        $search_list_header_b_color = wbbm_get_option('wbbm_search_list_header_b_color', 'wbbm_style_setting_sec');
         $general_setting = get_option('wbbm_general_setting_sec') ? maybe_unserialize(get_option('wbbm_general_setting_sec')) : array();
 
         // Ensure options are set correctly
@@ -88,7 +87,7 @@ class SearchClass extends CommonClass
                 <?php echo esc_html(mage_get_isset('bus_start_route')); ?>
             <i class="fas fa-long-arrow-alt-right"></i>
                 <?php echo esc_html(mage_get_isset('bus_end_route')); ?>
-            <strong><?php echo ' | ';
+            <span class="wbbm-route-sep"> | </span><strong><?php
             echo esc_html(wbbm_get_option('wbbm_date_text', 'wbbm_label_setting_sec', __('Date', 'bus-booking-manager')));
             echo ':'; ?></strong>
                 <?php echo esc_html(mage_wp_date(mage_get_isset('j_date'))); ?>
@@ -96,27 +95,6 @@ class SearchClass extends CommonClass
     </div>
     <div class="mage-search-res-wrapper">
             <?php do_action('wbbm_woocommerce_before_single_product'); ?>
-            <?php if ($mage_bus_search_theme == 'minimal') { ?>
-            <div class="mage-search-res-header" style="background-color: <?php echo esc_attr($search_list_header_b_color ?: '#EA2330'); ?>;">
-                <div class="mage-search-res-header--img">
-                    <span><?php echo esc_html(wbbm_get_option('wbbm_bus_image_text', 'wbbm_label_setting_sec', __('Bus Image', 'bus-booking-manager'))); ?></span>
-                </div>
-                <div class="mage-search-res-header--left">
-                    <span><?php echo esc_html(wbbm_get_option('wbbm_bus_name_text', 'wbbm_label_setting_sec', __('Bus Name', 'bus-booking-manager'))); ?></span>
-                    <span><?php echo esc_html(wbbm_get_option('wbbm_schedule_text', 'wbbm_label_setting_sec', __('Schedule', 'bus-booking-manager'))); ?></span>
-                </div>
-                <div class="mage-search-res-header--right">
-                    <?php if ((isset($general_setting['wbbm_type_column_switch']) && $general_setting['wbbm_type_column_switch'] == 'on') || !isset($general_setting['wbbm_type_column_switch'])) { ?>
-                        <span><?php echo esc_html(wbbm_get_option('wbbm_type_text', 'wbbm_label_setting_sec', __('Type', 'bus-booking-manager'))); ?></span>
-                    <?php } ?>
-                    <span><?php echo esc_html(wbbm_get_option('wbbm_fare_text', 'wbbm_label_setting_sec', __('Fare', 'bus-booking-manager'))); ?></span>
-                    <?php if ((isset($general_setting['wbbm_seat_column_switch']) && $general_setting['wbbm_seat_column_switch'] == 'on') || !isset($general_setting['wbbm_seat_column_switch'])) { ?>
-                        <span><?php echo esc_html(wbbm_get_option('wbbm_seats_available_text', 'wbbm_label_setting_sec', __('Seat Available', 'bus-booking-manager'))); ?></span>
-                    <?php } ?>
-                    <span><?php echo esc_html(wbbm_get_option('wbbm_view_text', 'wbbm_label_setting_sec', __('View', 'bus-booking-manager'))); ?></span>
-                </div>
-            </div>
-            <?php } ?>
             <?php $this->mage_search_bus_list(false); ?>
     </div>
         <?php if (isset($_GET['r_date']) && $_GET['r_date'] !== '' && $_GET['r_date'] !== 'yy-mm-dd') {
@@ -125,7 +103,7 @@ class SearchClass extends CommonClass
 
         // Verify the nonce
             if (! $nonce || ! wp_verify_nonce($nonce, 'bus_search_nonce_action')) {
-                wc_add_notice(__('Security check failed. Please try again. 222', 'bus-booking-manager'), 'error');
+                if (function_exists('wc_add_notice')) { wc_add_notice(__('Security check failed. Please try again. 222', 'bus-booking-manager'), 'error'); }
                 return false;
             }
             ?>
@@ -134,41 +112,20 @@ class SearchClass extends CommonClass
                 <strong><?php echo esc_html(wbbm_get_option('wbbm_route_text', 'wbbm_label_setting_sec', __('Route', 'bus-booking-manager')));
                 echo ':'; ?></strong>
                 <?php echo esc_html(mage_get_isset('bus_end_route')); ?>
-                <span class="fa fa-long-arrow-right"></span>
+                <i class="fas fa-long-arrow-alt-right"></i>
                 <?php echo esc_html(mage_get_isset('bus_start_route')); ?>
-                <strong><?php echo ' | ';
+                <span class="wbbm-route-sep"> | </span><strong><?php
                 echo esc_html(wbbm_get_option('wbbm_date_text', 'wbbm_label_setting_sec', __('Date', 'bus-booking-manager')));
                 echo ':'; ?></strong>
                 <?php echo esc_html(mage_wp_date(mage_get_isset('r_date'))); ?>
             </div>
         </div>
         <div class="mage-search-res-wrapper">
-            <?php if ($mage_bus_search_theme == 'minimal') { ?>
-                <div class="mage-search-res-header">
-                    <div class="mage-search-res-header--img">
-                        <span><?php echo esc_html(wbbm_get_option('wbbm_bus_image_text', 'wbbm_label_setting_sec', __('Bus Image', 'bus-booking-manager'))); ?></span>
-                    </div>
-                    <div class="mage-search-res-header--left">
-                        <span><?php echo esc_html(wbbm_get_option('wbbm_bus_name_text', 'wbbm_label_setting_sec', esc_html(__('Bus Name', 'bus-booking-manager')))); ?></span>
-                        <span><?php echo esc_html(wbbm_get_option('wbbm_schedule_text', 'wbbm_label_setting_sec', esc_html(__('Schedule', 'bus-booking-manager')))); ?></span>
-                    </div>
-                    <div class="mage-search-res-header--right">
-                        <?php if (isset($general_setting['wbbm_type_column_switch']) && $general_setting['wbbm_type_column_switch'] == 'on') { ?>
-                            <span><?php echo esc_html(wbbm_get_option('wbbm_type_text', 'wbbm_label_setting_sec', esc_html(__('Type', 'bus-booking-manager')))); ?></span>
-                        <?php } ?>
-                        <span><?php echo esc_html(wbbm_get_option('wbbm_fare_text', 'wbbm_label_setting_sec', __('Fare', 'bus-booking-manager'))); ?></span>
-                        <?php if (isset($general_setting['wbbm_seat_column_switch']) && $general_setting['wbbm_seat_column_switch'] == 'on') { ?>
-                            <span><?php echo esc_html(wbbm_get_option('wbbm_seats_available_text', 'wbbm_label_setting_sec', __('Seat Available', 'bus-booking-manager'))); ?></span>
-                        <?php } ?>
-                        <span><?php echo esc_html(wbbm_get_option('wbbm_view_text', 'wbbm_label_setting_sec', __('View', 'bus-booking-manager'))); ?></span>
-                    </div>
-                </div>
-            <?php } ?>
             <?php $this->mage_search_bus_list(true); ?>
         </div>
         <div class="mage_mini_cart mage_hidden">
             <p><?php echo esc_html(wbbm_get_option('wbbm_total_text', 'wbbm_label_setting_sec', __('Total', 'bus-booking-manager'))); ?></p>
-            <p class="mage_total"><strong><span><?php echo wp_kses_post(wc_price(0)); ?></span></strong></p>
+            <p class="mage_total"><strong><span><?php echo wp_kses_post(wbbm_price_html(0)); ?></span></strong></p>
         </div>
         <?php }
         do_action('wbbm_prevent_form_resubmission');
@@ -181,7 +138,7 @@ class SearchClass extends CommonClass
 
         // Verify the nonce
         if (! $nonce || ! wp_verify_nonce($nonce, 'bus_search_nonce_action')) {
-            wc_add_notice(__('Security check failed. Please try again. 333', 'bus-booking-manager'), 'error');
+            if (function_exists('wc_add_notice')) { wc_add_notice(__('Security check failed. Please try again. 333', 'bus-booking-manager'), 'error'); }
             return false;
         }
         do_action('wbbm_woocommerce_before_single_product');
@@ -251,7 +208,7 @@ class SearchClass extends CommonClass
 
         // Verify the nonce
         if (! $nonce || ! wp_verify_nonce($nonce, 'bus_search_nonce_action')) {
-            wc_add_notice(__('Security check failed. Please try again. 44', 'bus-booking-manager'), 'error');
+            if (function_exists('wc_add_notice')) { wc_add_notice(__('Security check failed. Please try again. 44', 'bus-booking-manager'), 'error'); }
             return false;
         }
 
@@ -372,9 +329,9 @@ class SearchClass extends CommonClass
                                 <span><?php echo esc_html($type_name); ?></span>
                             </div>
                             <?php } ?>
-                        <div>
+                        <div class="mage-search-fare-value">
                             <strong class="mage-sm-show"><?php echo esc_html(wbbm_get_option('wbbm_fare_text', 'wbbm_label_setting_sec', __('Fare', 'bus-booking-manager'))); ?></strong>
-                            <?php echo wp_kses_post(wc_price($seat_price_adult)); ?> / <?php echo esc_html(wbbm_get_option('wbbm_seat_text', 'wbbm_label_setting_sec', __('Seat', 'bus-booking-manager'))); ?>
+                            <?php echo wp_kses_post(wbbm_price_html($seat_price_adult)); ?> / <?php echo esc_html(wbbm_get_option('wbbm_seat_text', 'wbbm_label_setting_sec', __('Seat', 'bus-booking-manager'))); ?>
                         </div>
                             <?php if (isset($general_setting['wbbm_seat_column_switch']) && $general_setting['wbbm_seat_column_switch'] == 'on') { ?>
                                 <?php if ($seat_available && $seat_available == 'on') : ?>
@@ -393,7 +350,7 @@ class SearchClass extends CommonClass
                                 <?php endif; ?>
                             <?php } ?>
                         <div>
-                            <button class="mage-bus-detail-action"><?php echo esc_html(wbbm_get_option('wbbm_view_text', 'wbbm_label_setting_sec', __('View', 'bus-booking-manager'))); ?></button>
+                            <button class="mage-bus-detail-action"><?php echo esc_html(wbbm_get_option('wbbm_view_text', 'wbbm_label_setting_sec', __('Select seats', 'bus-booking-manager'))); ?></button>
                         </div>
                     </div>
                 </div>
@@ -403,12 +360,6 @@ class SearchClass extends CommonClass
                             <div class="mage_flex_equal mage_bus_details">
                                 <div class="mage_bus_info">
                                     <h3><a href="<?php echo esc_url(get_the_permalink($id)); ?>"><?php echo esc_html(get_the_title()); ?></a></h3>
-                                        <?php if ($type_name) : ?>
-                                        <p>
-                                            <strong><?php echo esc_html(wbbm_get_option('wbbm_type_text', 'wbbm_label_setting_sec', __('Type', 'bus-booking-manager'))); ?></strong>:
-                                            <?php echo esc_html($type_name); ?>
-                                        </p>
-                                        <?php endif; ?>
                                     <p>
                                         <strong><?php echo esc_html(wbbm_get_option('wbbm_boarding_points_text', 'wbbm_label_setting_sec', __('Boarding', 'bus-booking-manager'))); ?></strong>:
                                         <?php echo esc_html($boarding); ?>
@@ -439,10 +390,6 @@ class SearchClass extends CommonClass
                                         <strong><?php echo esc_html(wbbm_get_option('wbbm_starting_text', 'wbbm_label_setting_sec', __('Start Time', 'bus-booking-manager'))); ?></strong>:
                                         <?php echo esc_html(wbbm_get_datetime($boarding_time, 'time')); ?>
                                     </p>
-                                    <p>
-                                        <strong><?php echo esc_html(wbbm_get_option('wbbm_fare_text', 'wbbm_label_setting_sec', __('Fare', 'bus-booking-manager'))); ?></strong>:
-                                        <?php echo wp_kses_post(wc_price($seat_price_adult)) . ' / ' . esc_html(wbbm_get_option('wbbm_seat_text', 'wbbm_label_setting_sec', __('Seat', 'bus-booking-manager'))); ?>
-                                    </p>
                                         <?php if ($in_cart) { ?>
                                         <p class="already_cart"><?php echo esc_html(wbbm_get_option('wbbm_item_in_cart_text', 'wbbm_label_setting_sec', __('Item has been added to cart', 'bus-booking-manager'))); ?></p>
                                         <?php } ?>
@@ -455,7 +402,7 @@ class SearchClass extends CommonClass
                                         <div>
                                             <p>
                                                 <strong><?php echo esc_html(wbbm_get_option('wbbm_adult_text', 'wbbm_label_setting_sec', __('Adult :', 'bus-booking-manager'))); ?></strong>
-                                                <?php echo wp_kses_post(wc_price($seat_price_adult)); ?>/
+                                                <?php echo wp_kses_post(wbbm_price_html($seat_price_adult)); ?>/
                                                 <small><?php echo esc_html(wbbm_get_option('wbbm_ticket_text', 'wbbm_label_setting_sec', __('Ticket', 'bus-booking-manager'))); ?></small>
                                             </p>
                                         </div>
@@ -468,7 +415,7 @@ class SearchClass extends CommonClass
                                         <div class="mage_center_space">
                                             <p>
                                                 <strong><?php echo esc_html(wbbm_get_option('wbbm_child_text', 'wbbm_label_setting_sec', __('Child :', 'bus-booking-manager'))); ?></strong>
-                                                    <?php echo wp_kses_post(wc_price($seat_price_child)); ?>/
+                                                    <?php echo wp_kses_post(wbbm_price_html($seat_price_child)); ?>/
                                                 <small><?php echo esc_html(wbbm_get_option('wbbm_ticket_text', 'wbbm_label_setting_sec', __('Ticket', 'bus-booking-manager'))); ?></small>
                                             </p>
                                                 <?php mage_qty_box($seat_price_child, 'child_quantity', false); ?>
@@ -479,7 +426,7 @@ class SearchClass extends CommonClass
                                         <div class="mage_center_space">
                                             <p>
                                                 <strong><?php echo esc_html(wbbm_get_option('wbbm_infant_text', 'wbbm_label_setting_sec', __('Infant :', 'bus-booking-manager'))); ?></strong>
-                                                <?php echo wp_kses_post(wc_price($seat_price_infant)); ?>/
+                                                <?php echo wp_kses_post(wbbm_price_html($seat_price_infant)); ?>/
                                                 <small><?php echo esc_html(wbbm_get_option('wbbm_ticket_text', 'wbbm_label_setting_sec', __('Ticket', 'bus-booking-manager'))); ?></small>
                                             </p>
                                             <?php mage_qty_box($seat_price_infant, 'infant_quantity', false); ?>
@@ -490,7 +437,7 @@ class SearchClass extends CommonClass
                                         <div class="mage_center_space">
                                             <p>
                                                 <strong><?php echo esc_html(wbbm_get_option('wbbm_entire_bus_text', 'wbbm_label_setting_sec')) ? esc_html(wbbm_get_option('wbbm_entire_bus_text', 'wbbm_label_setting_sec')) : esc_html__('Entire Bus', 'bus-booking-manager') . ':'; ?></strong>
-                                                <?php echo wp_kses_post(wc_price($seat_price_entire)); ?>
+                                                <?php echo wp_kses_post(wbbm_price_html($seat_price_entire)); ?>
                                             </p>
                                             <?php echo wp_kses_post(wbbm_entire_switch($seat_price_entire, 'entire_quantity', false)); ?>
                                         </div>
@@ -556,12 +503,6 @@ class SearchClass extends CommonClass
                         <div class="mage_flex_equal mage_bus_details">
                             <div class="mage_bus_info">
                                 <h3><a href="<?php echo esc_url(get_the_permalink($id)); ?>"><?php echo esc_html(get_the_title()); ?></a></h3>
-                                <?php if ($type_name) : ?>
-                                    <p>
-                                        <strong><?php echo esc_html(wbbm_get_option('wbbm_type_text', 'wbbm_label_setting_sec', __('Type :', 'bus-booking-manager'))); ?></strong>
-                                        <?php echo esc_html($type_name); ?>
-                                    </p>
-                                <?php endif; ?>
                                 <p>
                                     <strong><?php echo esc_html(wbbm_get_option('wbbm_boarding_points_text', 'wbbm_label_setting_sec', __('Boarding :', 'bus-booking-manager'))); ?></strong>
                                     <?php echo esc_html($boarding); ?>
@@ -594,7 +535,7 @@ class SearchClass extends CommonClass
                                         <p>
                                             <strong><?php echo esc_html(wbbm_get_option('wbbm_adult_text', 'wbbm_label_setting_sec', __('Adult', 'bus-booking-manager')));
                                             echo ':'; ?></strong>
-                                            <?php echo wp_kses_post(wc_price($seat_price_adult)); ?>/
+                                            <?php echo wp_kses_post(wbbm_price_html($seat_price_adult)); ?>/
                                             <small><?php echo esc_html(wbbm_get_option('wbbm_ticket_text', 'wbbm_label_setting_sec', __('Ticket', 'bus-booking-manager'))); ?></small>
                                         </p>
                                     </div>
@@ -607,7 +548,7 @@ class SearchClass extends CommonClass
                                         <p>
                                             <strong><?php echo esc_html(wbbm_get_option('wbbm_child_text', 'wbbm_label_setting_sec', __('Child', 'bus-booking-manager')));
                                             echo ':'; ?></strong>
-                                            <?php echo wp_kses_post(wc_price($seat_price_child)); ?>/
+                                            <?php echo wp_kses_post(wbbm_price_html($seat_price_child)); ?>/
                                             <small><?php echo esc_html(wbbm_get_option('wbbm_ticket_text', 'wbbm_label_setting_sec', __('Ticket', 'bus-booking-manager'))); ?></small>
                                         </p>
                                         <?php mage_qty_box($seat_price_child, 'child_quantity', false); ?>
@@ -619,7 +560,7 @@ class SearchClass extends CommonClass
                                         <p>
                                             <strong><?php echo esc_html(wbbm_get_option('wbbm_infant_text', 'wbbm_label_setting_sec', __('Infant', 'bus-booking-manager')));
                                             echo ':'; ?></strong>
-                                            <?php echo wp_kses_post(wc_price($seat_price_infant)); ?>/
+                                            <?php echo wp_kses_post(wbbm_price_html($seat_price_infant)); ?>/
                                             <small><?php echo esc_html(wbbm_get_option('wbbm_ticket_text', 'wbbm_label_setting_sec', __('Ticket', 'bus-booking-manager'))); ?></small>
                                         </p>
                                         <?php mage_qty_box($seat_price_infant, 'infant_quantity', false); ?>
@@ -630,7 +571,7 @@ class SearchClass extends CommonClass
                                     <div class="mage_center_space">
                                         <p>
                                             <strong><?php echo esc_html(wbbm_get_option('wbbm_entire_bus_text', 'wbbm_label_setting_sec')) ? esc_html(wbbm_get_option('wbbm_entire_bus_text', 'wbbm_label_setting_sec')) : esc_html__('Entire Bus', 'bus-booking-manager') . ':'; ?></strong>
-                                            <?php echo wp_kses_post(wc_price($seat_price_entire)); ?>
+                                            <?php echo wp_kses_post(wbbm_price_html($seat_price_entire)); ?>
                                         </p>
                                         <?php echo wp_kses_post(wbbm_entire_switch($seat_price_entire, 'entire_quantity', false)); ?>
                                     </div>
@@ -693,7 +634,7 @@ class SearchClass extends CommonClass
     function mage_search_form_vertical($target = '')
     {
         ?>
-    <div class="mage_container">
+    <div class="mage_container wbbm-modern-search wbbm-stacked">
         <div class="mage_search_box_small">
             <h2>
                 <?php
@@ -718,12 +659,16 @@ class SearchClass extends CommonClass
         // Get and escape the buy ticket text option
         $wbbm_buy_ticket_text = esc_html(wbbm_get_option('wbbm_buy_ticket_text', 'wbbm_label_setting_sec', __('Buy Ticket', 'bus-booking-manager')));
         ?>
-    <div class="mage_container">
-        <div class="search_form_horizontal" style="background-color: <?php echo esc_attr($search_form_b_color ? $search_form_b_color : '#b30c3b12'); ?>;">
+    <div class="mage_container wbbm-modern-search">
+        <div class="wbbm-search-shell" style="background-color: <?php echo esc_attr($search_form_b_color ? $search_form_b_color : '#b30c3b12'); ?>;">
             <?php if ($wbbm_buy_ticket_text) { ?>
-                <h2><?php echo esc_html($wbbm_buy_ticket_text); ?></h2>
+                <div class="wbbm-search-head">
+                    <h2><?php echo esc_html($wbbm_buy_ticket_text); ?></h2>
+                </div>
             <?php } ?>
-            <?php $this->search_from_only($single_bus, sanitize_text_field($target)); ?>
+            <div class="search_form_horizontal">
+                <?php $this->search_from_only($single_bus, sanitize_text_field($target)); ?>
+            </div>
         </div>
     </div>
         <?php
@@ -738,7 +683,7 @@ class SearchClass extends CommonClass
 
             // Verify the nonce
             if (! $nonce || ! wp_verify_nonce($nonce, 'bus_search_nonce_action')) {
-                wc_add_notice(__('Security check failed. Please try again.', 'bus-booking-manager'), 'error');
+                if (function_exists('wc_add_notice')) { wc_add_notice(__('Security check failed. Please try again.', 'bus-booking-manager'), 'error'); }
                 return false;
             }
             // Sanitize input from the query parameters
@@ -748,7 +693,7 @@ class SearchClass extends CommonClass
             ?>
         <div class="mage_container">
             <div class="mage_row">
-                <div class="mage_search_box_sidebar">
+                <div class="mage_search_box_sidebar wbbm-modern-search wbbm-stacked">
                     <div class="mage_sidebar_search_form">
                         <h2><?php echo esc_html(wbbm_get_option('wbbm_buy_ticket_text', 'wbbm_label_setting_sec', __('BUY TICKET', 'bus-booking-manager'))); ?></h2>
                         <?php do_action('mage_search_from_only', false, sanitize_text_field($target)); ?>
@@ -765,6 +710,41 @@ class SearchClass extends CommonClass
         }
     }
 
+    /**
+     * The date fields show the site's own date format (Settings > General)
+     * while the form still submits Y-m-d, so nothing downstream has to parse
+     * an ambiguous string such as 03/04/2026. The visible input carries no
+     * name; the hidden one beside it is what travels with the request.
+     *
+     * Anchored at midday and formatted as GMT so the rendered day can never
+     * slip either side of midnight through a timezone offset.
+     *
+     * Also used for the placeholders, which show today and tomorrow rather
+     * than an abstract pattern, so the expected shape is shown by example.
+     */
+    function wbbm_display_date($raw)
+    {
+        $timestamp = $raw ? strtotime(sanitize_text_field($raw) . ' 12:00:00') : false;
+
+        return $timestamp ? date_i18n(get_option('date_format'), $timestamp, true) : '';
+    }
+
+    function wbbm_iso_date($raw)
+    {
+        $timestamp = $raw ? strtotime(sanitize_text_field($raw) . ' 12:00:00') : false;
+
+        return $timestamp ? gmdate('Y-m-d', $timestamp) : '';
+    }
+
+    /**
+     * Field labels are shown above the value as a micro caps label, where a
+     * trailing colon reads as a typo. The option text itself is untouched.
+     */
+    function wbbm_field_label($text)
+    {
+        return rtrim(trim((string) $text), ': ');
+    }
+
     function search_from_only($single_bus, $target)
     {
         $search_form_dropdown_b_color = wbbm_get_option('wbbm_search_form_dropdown_b_color', 'wbbm_style_setting_sec');
@@ -775,14 +755,31 @@ class SearchClass extends CommonClass
     <form action="<?php echo esc_url($single_bus ? '' : get_site_url() . '/' . sanitize_title($target) . '/'); ?>" method="get" class="mage_form">
         <?php do_action('wbbm_active_date', $single_bus, get_the_ID());
         wp_nonce_field('bus_search_nonce_action', 'bus_search_nonce');
+        $return = $single_bus ? false : (mage_get_isset('bus-r') != 'oneway');
         ?>
-        <div class="mage_form_list">
+        <?php if (!$single_bus) { ?>
+        <div class="wbbm-trip-row">
+            <div class="mage_form_radio">
+                <label for="return" class="<?php echo esc_attr($return ? 'is-active' : ''); ?>">
+                    <input type="radio" name="bus-r" value='return' id="return" <?php echo esc_attr($return ? 'checked' : ''); ?>/>
+                    <?php echo esc_html(wbbm_get_option('wbbm_return_text', 'wbbm_label_setting_sec', __('Return', 'bus-booking-manager'))); ?>
+                </label>
+                <label for="one_way" class="<?php echo esc_attr($return ? '' : 'is-active'); ?>">
+                    <input type="radio" name="bus-r" value='oneway' id="one_way" <?php echo esc_attr($return ? '' : 'checked'); ?> />
+                    <?php echo esc_html(wbbm_get_option('wbbm_one_way_text', 'wbbm_label_setting_sec', __('One Way', 'bus-booking-manager'))); ?>
+                </label>
+            </div>
+        </div>
+        <?php } ?>
+        <div class="wbbm-fields<?php echo esc_attr($return ? '' : ' wbbm-no-return'); ?>">
+        <div class="mage_form_list wbbm-f-from">
             <label for="bus_start_route">
                 <span class="fa fa-map-marker"></span>
-                <?php echo esc_html(wbbm_get_option('wbbm_from_text', 'wbbm_label_setting_sec', __('From :', 'bus-booking-manager'))); ?>
+                <?php echo esc_html($this->wbbm_field_label(wbbm_get_option('wbbm_from_text', 'wbbm_label_setting_sec', __('From :', 'bus-booking-manager')))); ?>
             </label>
             <div class="mage_input_select mage_bus_boarding_point">
                 <div class="route-input-wrap">
+                    <span class="fa fa-dot-circle wbbm-field-icon" aria-hidden="true"></span>
                     <input id="bus_start_route" type="text" class="mage_form_control" name="bus_start_route" value="<?php echo esc_attr(mage_get_isset('bus_start_route')); ?>" placeholder="<?php esc_html_e('Please Select', 'bus-booking-manager'); ?>" autocomplete="off" required/>
                 </div>
                 <?php
@@ -812,19 +809,24 @@ class SearchClass extends CommonClass
                 ?>
             </div>
         </div>
-        <div class="mage_form_list">
+        <button type="button" class="wbbm-swap" aria-label="<?php esc_attr_e('Swap boarding and dropping point', 'bus-booking-manager'); ?>">
+            <span class="fa fa-exchange-alt" aria-hidden="true"></span>
+        </button>
+        <div class="mage_form_list wbbm-f-to">
             <label for="bus_end_route">
                 <span class="fa fa-map-marker"></span>
                 <span id="wbtm_show_msg"></span>
-                <?php echo esc_html(wbbm_get_option('wbbm_to_text', 'wbbm_label_setting_sec', __('To :', 'bus-booking-manager'))); ?>
+                <?php echo esc_html($this->wbbm_field_label(wbbm_get_option('wbbm_to_text', 'wbbm_label_setting_sec', __('To :', 'bus-booking-manager')))); ?>
             </label>
             <div class="mage_input_select mage_bus_dropping_point">
                 <div class="route-input-wrap">
+                    <span class="fa fa-map-marker wbbm-field-icon" aria-hidden="true"></span>
                     <input id="bus_end_route" type="text" class="mage_form_control" name="bus_end_route" value="<?php echo esc_attr(mage_get_isset('bus_end_route')); ?>" placeholder="<?php esc_html_e('Please Select', 'bus-booking-manager'); ?>" autocomplete="off" required/>
                 </div>
                 <?php
                 if ($single_bus) {
                     $end_stops = get_post_meta(get_the_ID(), 'wbbm_bus_prices', true);
+                    $end_stops = is_array($end_stops) ? $end_stops : array();
                     $end_stops = array_values(array_reduce($end_stops, function ($r, $a) {
                         if (!isset($r[$a['wbbm_bus_dp_price_stop']])) {
                             $r[$a['wbbm_bus_dp_price_stop']] = $a;
@@ -842,44 +844,36 @@ class SearchClass extends CommonClass
                 ?>
             </div>
         </div>
-        <div class="mage_form_list">
+        <div class="mage_form_list wbbm-f-jdate">
             <label for="j_date">
                 <span class="fa fa-calendar"></span>
-                <?php echo esc_html(wbbm_get_option('wbbm_date_of_journey_text', 'wbbm_label_setting_sec', __('Date of Journey :', 'bus-booking-manager'))); ?>
+                <?php echo esc_html($this->wbbm_field_label(wbbm_get_option('wbbm_date_of_journey_text', 'wbbm_label_setting_sec', __('Date of Journey :', 'bus-booking-manager')))); ?>
             </label>
-            <input type="text" class="mage_form_control" id="j_date" readonly name="j_date" value="<?php echo esc_attr(mage_get_isset('j_date')); ?>" placeholder="<?php echo esc_html(wbbm_convert_datepicker_dateformat()); ?>" autocomplete="off" required>
+            <div class="wbbm-date-wrap">
+                <span class="fa fa-calendar wbbm-field-icon" aria-hidden="true"></span>
+                <input type="text" class="mage_form_control" id="j_date" readonly value="<?php echo esc_attr($this->wbbm_display_date(mage_get_isset('j_date'))); ?>" placeholder="<?php echo esc_attr($this->wbbm_display_date(current_time('Y-m-d'))); ?>" autocomplete="off" required>
+                <input type="hidden" name="j_date" id="j_date_iso" value="<?php echo esc_attr($this->wbbm_iso_date(mage_get_isset('j_date'))); ?>">
+            </div>
         </div>
-            <?php if (!$single_bus) {
-                $return = (mage_get_isset('bus-r') == 'oneway') ? false : true; ?>
-            <div class="mage_form_list mage_return_date <?php echo esc_attr($return ? '' : 'mage_hidden'); ?>">
+            <?php if (!$single_bus) { ?>
+            <div class="mage_form_list mage_return_date wbbm-f-rdate <?php echo esc_attr($return ? '' : 'mage_hidden'); ?>">
                 <label for="r_date">
                     <span class="fa fa-calendar"></span>
-                    <?php echo esc_html(wbbm_get_option('wbbm_return_date_text', 'wbbm_label_setting_sec', __('Return Date (Optional):', 'bus-booking-manager'))); ?>
+                    <?php echo esc_html($this->wbbm_field_label(wbbm_get_option('wbbm_return_date_text', 'wbbm_label_setting_sec', __('Return Date (Optional):', 'bus-booking-manager')))); ?>
                 </label>
-                <input type="text" class="mage_form_control" id="r_date" readonly name="r_date" value="<?php echo esc_attr(mage_get_isset('r_date')); ?>" autocomplete="off" placeholder="<?php echo esc_html(wbbm_convert_datepicker_dateformat()); ?>">
+                <div class="wbbm-date-wrap">
+                    <span class="fa fa-calendar wbbm-field-icon" aria-hidden="true"></span>
+                    <input type="text" class="mage_form_control" id="r_date" readonly value="<?php echo esc_attr($this->wbbm_display_date(mage_get_isset('r_date'))); ?>" autocomplete="off" placeholder="<?php echo esc_attr($this->wbbm_display_date(gmdate('Y-m-d', strtotime(current_time('Y-m-d') . ' +1 day')))); ?>">
+                    <input type="hidden" name="r_date" id="r_date_iso" value="<?php echo esc_attr($this->wbbm_iso_date(mage_get_isset('r_date'))); ?>">
+                </div>
             </div>
             <?php } ?>
-        <div class="mage_form_list">
-            <div class="mage_form_radio">
-                    <?php if (!$single_bus) { ?>
-                    <label for="one_way">
-                        <input type="radio" name="bus-r" value='oneway' id="one_way" <?php echo esc_attr($return ? '' : 'checked'); ?> />
-                        <?php echo esc_html(wbbm_get_option('wbbm_one_way_text', 'wbbm_label_setting_sec', __('One Way', 'bus-booking-manager'))); ?>
-                    </label>
-                    <label for="return">
-                        <input type="radio" name="bus-r" value='return' id="return" <?php echo esc_attr($return ? 'checked' : '');?>/>
-                        <?php echo esc_html(wbbm_get_option('wbbm_return_text', 'wbbm_label_setting_sec', __('Return', 'bus-booking-manager'))); ?>
-                    </label>
-                    <?php } else {
-                        echo '<label>&nbsp;</label>';
-                    } ?>
-            </div>
-            <div class="mage_form_search">
-                <button type="submit" class="mage_button">
-                    <span class="fa fa-search"></span>
-                    <?php echo esc_html(wbbm_get_option('wbbm_search_buses_text', 'wbbm_label_setting_sec', __('Search', 'bus-booking-manager'))); ?>
-                </button>
-            </div>
+        <div class="mage_form_search">
+            <button type="submit" class="mage_button">
+                <span class="fa fa-search"></span>
+                <?php echo esc_html(wbbm_get_option('wbbm_search_buses_text', 'wbbm_label_setting_sec', __('Search', 'bus-booking-manager'))); ?>
+            </button>
+        </div>
         </div>
     </form>
         <?php

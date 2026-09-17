@@ -368,10 +368,10 @@ if (!class_exists('MAGE_WBBM_Setting_Controls')) :
             ),
              array(
                 'name' => 'wbbm_view_text',
-                'label' => esc_html__('View', 'bus-booking-manager'),
-                'desc' => esc_html__('Enter the translated text of: <strong>View</strong>.', 'bus-booking-manager'),
+                'label' => esc_html__('Select seats', 'bus-booking-manager'),
+                'desc' => esc_html__('Enter the translated text of: <strong>Select seats</strong> — the button that opens the fare and seat panel on a search result.', 'bus-booking-manager'),
                 'type' => 'text',
-                'default' => 'View'
+                'default' => 'Select seats'
             ),
             array(
                 'name' => 'wbbm_view_seats_text',
@@ -890,11 +890,8 @@ if (!class_exists('MAGE_WBBM_Setting_Controls')) :
         function plugin_page()
         {
             settings_errors();
-            echo '<div class="wbbm_settings_panel_header">';
-            echo esc_html(wbbm_get_plugin_data('Name'));
-            echo '<small>' . esc_html(wbbm_get_plugin_data('Version')) . '</small>';
-
-            echo '</div>';
+            // The hub header already names the screen; the plugin name and
+            // version banner that used to sit here only repeated it.
             echo '<div class="wbbm_settings_panel">';
             $this->settings_api->show_navigation();
             $this->settings_api->show_forms();
