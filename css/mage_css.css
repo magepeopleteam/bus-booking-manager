@@ -221,17 +221,37 @@ ul.mage_route_list {
     font-weight: 700 !important;
 }
 
+/* Colors here stay whatever the admin configured (Style Settings --
+   background-color/color come through as an inline style on the element
+   itself, see SearchClass::mage_search_list()) -- this modernizes the
+   shape/spacing/type around that color instead of replacing it. */
 .mage_route_title {
+    /* Default fallback only -- an admin-configured Style Settings color
+       comes through as a valid inline background-color and wins over
+       this. Needed because the text color below is unconditionally
+       forced to white (also inline, mirroring the PHP default) whenever
+       no custom color is set -- without a background here too, that
+       white text would sit on nothing and disappear. */
     background-color: #0a4b78;
-    padding: 10px;
-    margin: 0 0 15px 0;
+    padding: 14px 20px;
+    margin: 0 0 18px 0;
+    border-radius: 10px;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, .12);
 }
 
 div.mage_route_title p,
 div.mage_route_title div {
     text-align: center;
-    font-size: 22px !important;
+    font-size: 16px !important;
+    font-weight: 600;
+    letter-spacing: .01em;
     color: #fff;
+}
+
+.mage_route_title .fas,
+.mage_route_title .fa {
+    margin: 0 6px;
+    opacity: .85;
 }
 
 
@@ -348,10 +368,26 @@ ul.mage_route_list li:first-child {
 }
 
 .mage_search_list.theme_minimal {
+    /* No overflow:hidden and no transform here (even hover-only) on
+       purpose -- the offline booking modal (position:fixed) is nested
+       inside this element's own markup (mage_book_now_area(), several
+       levels down), and either property turns this element into the
+       modal's containing block instead of the viewport, trapping/clipping
+       a "fixed" modal inside this card rather than covering the page. */
     padding: 0;
-    border: 1px solid #d3d3d3;
-    margin: 0;
-    background: #b30c3b12;
+    border: 1px solid #eceef1;
+    border-radius: 10px;
+    margin: 0 0 12px 0;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, .06);
+    transition: box-shadow .15s ease;
+}
+
+.mage_search_list.theme_minimal:hover {
+    box-shadow: 0 8px 20px rgba(15, 23, 42, .1);
+}
+
+.mage_search_list.theme_minimal:last-child {
+    margin-bottom: 0;
 }
 
 .mage_search_list button.mage_button {
@@ -1046,18 +1082,20 @@ div.mage_bus_info h3,
 }
 
 .mage-search-res-wrapper .mage-search-res-header {
-    padding: 5px 15px;
-    background: #EA2330;
-    border-radius: 0px;
-    font-size: 18px;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-size: 12.5px;
+    margin: 0 0 10px 0;
 }
 
 .mage-search-res-wrapper .mage-search-brief-row {
-    padding: 5px 15px 5px;
+    padding: 16px 20px;
 }
 
 .mage-search-res-wrapper .mage-search-res-header span {
     font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
     color: #fff9f9;
 }
 
@@ -1092,37 +1130,58 @@ div.mage_bus_info h3,
 .mage-search-brief-row .mage-search-res-header--right {
     flex-basis: 45%;
     justify-content: space-between;
+    align-items: center;
     display: flex;
+}
+
+.mage-search-brief-row .mage-search-res-header--right > div {
+    font-size: 13.5px;
+    color: #374151;
+    text-align: center;
+}
+
+/* Fare is the one value on this row that deserves to stand out --
+   everything else here is just informational text. */
+.mage-search-brief-row .mage-search-fare-value {
+    font-weight: 700;
+    color: #111827;
+    font-size: 14.5px;
 }
 input#r_date,
 input#j_date{width: auto;}
 .mage-search-brief-row .mage-bus-detail-action {
     background: #22D02D;
     color: #fff;
-    padding: 10px 15px;
-    border-radius: 5px;
+    padding: 11px 15px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 13px;
     border: none;
     cursor: pointer;
     text-transform: capitalize;
     width: 100%;
-    transition: 0.5s;
+    box-shadow: 0 3px 8px rgba(34, 208, 45, .3);
+    transition: background-color .15s ease, box-shadow .15s ease, transform .15s ease;
 }
 
 .mage-search-brief-row .mage-bus-detail-action:hover {
     background: #0FA218;
-    transition: 0.5s;
+    box-shadow: 0 5px 12px rgba(15, 162, 24, .38);
+    transform: translateY(-1px);
 }
 
 .mage-search-brief-row .bus-title {
-    line-height: 1.2em;
+    line-height: 1.3em;
     display: block;
-    color: inherit;
+    color: #111827;
     text-decoration: none;
-    font-weight: bold;
+    font-weight: 700;
+    font-size: 15px;
 }
 
 .mage-search-brief-row .mage-bus-stopage {
-    line-height: 1.4em;
+    line-height: 1.6em;
+    color: #4b5563;
 }
 
 .mage-search-brief-row .mage-bus-stopage i {
@@ -1491,6 +1550,7 @@ select.mage_pickpoint option:not([disabled]) {
 .mage-search-brief-row .mage-search-res-header--img img {
     width: 100px;
     height: auto;
+    border-radius: 8px;
 }
 
 .search_form_horizontal div.mage_form_radio {

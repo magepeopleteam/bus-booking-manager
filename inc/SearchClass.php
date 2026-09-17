@@ -372,7 +372,7 @@ class SearchClass extends CommonClass
                                 <span><?php echo esc_html($type_name); ?></span>
                             </div>
                             <?php } ?>
-                        <div>
+                        <div class="mage-search-fare-value">
                             <strong class="mage-sm-show"><?php echo esc_html(wbbm_get_option('wbbm_fare_text', 'wbbm_label_setting_sec', __('Fare', 'bus-booking-manager'))); ?></strong>
                             <?php echo wp_kses_post(wbbm_price_html($seat_price_adult)); ?> / <?php echo esc_html(wbbm_get_option('wbbm_seat_text', 'wbbm_label_setting_sec', __('Seat', 'bus-booking-manager'))); ?>
                         </div>
