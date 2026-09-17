@@ -153,6 +153,15 @@ if (true) {
     require_once(dirname(__FILE__) . "/inc/class-wbbm-admin-hub.php");
     require_once(dirname(__FILE__) . "/inc/class-wbbm-settings-hub.php");
 
+    // Bookings page. The Passenger List belongs to this plugin; the hub's
+    // other tabs come from PRO when it is active.
+    require_once(dirname(__FILE__) . "/inc/wbbm_booking_status.php");
+    require_once(dirname(__FILE__) . "/inc/wbbm_passenger_list.php");
+    if (!class_exists('AdminPassengerListClass')) {
+        require_once(dirname(__FILE__) . "/inc/AdminPassengerListClass.php");
+    }
+    require_once(dirname(__FILE__) . "/inc/class-wbbm-bookings-hub.php");
+
     // Language Load
     add_action('init', 'wbbm_language_load');
     function wbbm_language_load()
@@ -1872,22 +1881,60 @@ if (true) {
         }
         return $page;
     }
+    /**
+     * Translate a PHP date format into a jQuery UI datepicker one.
+     *
+     * Settings > General accepts any PHP format, so the whole alphabet has to
+     * be handled rather than a handful of known strings: anything outside the
+     * map is emitted as a literal (quoted when it is a letter, which the
+     * datepicker would otherwise read as a token). Tokens with no datepicker
+     * equivalent -- the ordinal suffix S, ISO week W, weekday numbers -- are
+     * dropped, because printing them raw would corrupt the parse.
+     */
+    function wbbm_php_to_jquery_dateformat($php_format)
+    {
+        $map = array(
+            'd' => 'dd', 'j' => 'd', 'D' => 'D', 'l' => 'DD',
+            'F' => 'MM', 'M' => 'M', 'm' => 'mm', 'n' => 'm',
+            'Y' => 'yy', 'y' => 'y', 'o' => 'yy', 'z' => 'o',
+            'N' => '', 'S' => '', 'w' => '', 'W' => '', 't' => '', 'L' => '',
+        );
+
+        // split per character, not per byte -- localised formats such as the
+        // Japanese default Yå¹´næjæ¥ are multibyte
+        $chars = preg_split('//u', (string) $php_format, -1, PREG_SPLIT_NO_EMPTY) ?: array();
+        $out = '';
+        $length = count($chars);
+
+        for ($i = 0; $i < $length; $i++) {
+            $char = $chars[$i];
+
+            if ($char === '\\') {
+                $i++;
+                if ($i < $length) {
+                    $out .= "'" . str_replace("'", "''", $chars[$i]) . "'";
+                }
+                continue;
+            }
+
+            if (array_key_exists($char, $map)) {
+                $out .= $map[$char];
+            } elseif ($char === "'") {
+                $out .= "''";
+            } elseif (preg_match('/^[A-Za-z]$/', $char)) {
+                // a token the datepicker does not know -- keep it as text
+                $out .= "'" . $char . "'";
+            } else {
+                $out .= $char;
+            }
+        }
+
+        return $out !== '' ? $out : 'yy-mm-dd';
+    }
+
     function wbbm_convert_datepicker_dateformat()
     {
-        $date_format = get_option('date_format');
-        // return $date_format;
-        // $php_d     = array('F', 'j', 'Y', 'm','d','D','M','y');
-        // $js_d   = array('d', 'M', 'yy','mm','dd','tt','mm','yy');
-        $dformat = str_replace('d', 'dd', $date_format);
-        $dformat = str_replace('m', 'mm', $dformat);
-        $dformat = str_replace('Y', 'yy', $dformat);
-        if ($date_format == 'Y-m-d' || $date_format == 'm/d/Y' || $date_format == 'd/m/Y' || $date_format == 'Y/d/m' || $date_format == 'Y-d-m') {
-            return str_replace('/', '-', $dformat);
-        } elseif ($date_format == 'Y.m.d' || $date_format == 'm.d.Y' || $date_format == 'd.m.Y' || $date_format == 'Y.d.m' || $date_format == 'Y.d.m') {
-            return str_replace('.', '-', $dformat);
-        } else {
-            return 'yy-mm-dd';
-        }
+        return wbbm_php_to_jquery_dateformat(get_option('date_format'));
     }
     function wbbm_convert_date_to_php($date, $to = 'Y-m-d')
     {

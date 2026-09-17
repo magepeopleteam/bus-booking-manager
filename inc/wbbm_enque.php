@@ -154,6 +154,25 @@ function wbbm_bus_enqueue_scripts()
     $mpstyles_ver = file_exists($plugin_root . '/css/mpstyles.css') ? filemtime($plugin_root . '/css/mpstyles.css') : null;
     wp_enqueue_style('wbbm-mp-styles', plugin_dir_url(__DIR__) . 'css/mpstyles.css', array(), $mpstyles_ver);
 
+    // Modern search form skin -- loaded last so it wins over mage_css.css.
+    $search_modern_css_ver = file_exists($plugin_root . '/css/wbbm-search-modern.css') ? filemtime($plugin_root . '/css/wbbm-search-modern.css') : null;
+    $search_modern_js_ver = file_exists($plugin_root . '/js/wbbm-search-modern.js') ? filemtime($plugin_root . '/js/wbbm-search-modern.js') : null;
+    wp_enqueue_style('wbbm-search-modern', plugin_dir_url(__DIR__) . 'css/wbbm-search-modern.css', array('mage_css', 'wbbm-mp-styles'), $search_modern_css_ver);
+    wp_enqueue_script('wbbm-search-modern', plugin_dir_url(__DIR__) . 'js/wbbm-search-modern.js', array('jquery', 'mage_style'), $search_modern_js_ver, true);
+    wp_localize_script('wbbm-search-modern', 'WbbmSearchModern', array(
+        'returnPrompt'     => __('Outbound trip selected. Now choose your return bus.', 'bus-booking-manager'),
+        'chosenLabel'      => __('Selected', 'bus-booking-manager'),
+        'outboundLabel'    => __('Outbound', 'bus-booking-manager'),
+        'returnLabel'      => __('Return', 'bus-booking-manager'),
+        'subtotalLabel'    => __('Subtotal', 'bus-booking-manager'),
+        'totalLabel'       => __('Total', 'bus-booking-manager'),
+        'returnTotalLabel' => __('Return total', 'bus-booking-manager'),
+        'notBookedNote'    => __('Booked separately — this drawer confirms the return leg only.', 'bus-booking-manager'),
+        'yourTripLabel'    => __('Your trip', 'bus-booking-manager'),
+        'cartFailed'       => __('Could not add this to the cart. Please try again.', 'bus-booking-manager'),
+        'noProduct'        => __('This bus is not connected to WooCommerce yet. Open it in the admin and save it once.', 'bus-booking-manager'),
+    ));
+
     wp_localize_script('mage_style', 'WbbmAjax', [
         'ajax_url' => admin_url('admin-ajax.php'),
         'nonce'    => wp_create_nonce('wbbm_ajax_nonce'),
@@ -208,4 +227,162 @@ const wbbm_num_of_decimal = "<?php echo esc_attr(get_option('woocommerce_price_n
         }
     </script>
     <?php
+}
+
+/**
+ * Checkout inside the booking drawer.
+ *
+ * The drawer frames the real WooCommerce checkout so billing, gateways and
+ * validation stay WooCommerce's. Only the surrounding theme chrome is taken
+ * away: inside a 440px drawer the site header, footer and admin bar are noise,
+ * and the header's nav would let someone browse away mid-payment.
+ *
+ * Covers block themes (header/footer render as template parts) and classic
+ * ones (#masthead / .site-header and friends). Nothing is removed from the
+ * page itself, so the checkout keeps working if a theme names things
+ * differently -- worst case the chrome stays visible.
+ */
+function wbbm_is_embedded_checkout()
+{
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- presentation only.
+    if (empty($_GET['wbbm_embed']) || !function_exists('is_checkout')) {
+        return false;
+    }
+
+    // is_checkout() already covers the order-received page, but list it so the
+    // intent is explicit: the confirmation lands inside the drawer too.
+    return is_checkout() || (function_exists('is_order_received_page') && is_order_received_page());
+}
+
+/**
+ * Keep the drawer flag across the checkout -> order received redirect.
+ *
+ * WooCommerce builds that URL itself, so without this the query arg is lost
+ * and the confirmation renders with the site header and footer back.
+ */
+add_filter('woocommerce_get_checkout_order_received_url', 'wbbm_keep_embed_on_order_received', 10, 1);
+function wbbm_keep_embed_on_order_received($url)
+{
+    return wbbm_request_is_from_drawer() ? add_query_arg('wbbm_embed', '1', $url) : $url;
+}
+
+/**
+ * Is this request coming from the drawer's framed checkout?
+ *
+ * The query arg alone is not enough: WooCommerce places the order over AJAX
+ * at /?wc-ajax=checkout, a URL that carries none of the page's own args, so
+ * the redirect it builds would drop the flag and the confirmation would come
+ * back with the site header and footer. The referer is that framed page, so
+ * it is what identifies the request.
+ *
+ * Deliberately not a session flag: that would outlive the booking and strip
+ * the chrome from an ordinary checkout visit later in the same session.
+ */
+function wbbm_request_is_from_drawer()
+{
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- presentation only.
+    if (!empty($_GET['wbbm_embed']) || !empty($_POST['wbbm_embed'])) {
+        return true;
+    }
+
+    $referer = wp_get_referer();
+    if (!$referer) {
+        return false;
+    }
+
+    $query = wp_parse_url($referer, PHP_URL_QUERY);
+    if (!$query) {
+        return false;
+    }
+
+    parse_str($query, $args);
+
+    return !empty($args['wbbm_embed']);
+}
+
+add_filter('show_admin_bar', function ($show) {
+    return wbbm_is_embedded_checkout() ? false : $show;
+}, 99);
+
+add_action('wp_head', 'wbbm_embedded_checkout_chrome', 99);
+function wbbm_embedded_checkout_chrome()
+{
+    if (!wbbm_is_embedded_checkout()) {
+        return;
+    }
+    ?>
+    <style id="wbbm-embedded-checkout">
+        header.wp-block-template-part,
+        footer.wp-block-template-part,
+        .wp-site-blocks > header,
+        .wp-site-blocks > footer,
+        #masthead,
+        #colophon,
+        .site-header,
+        .site-footer,
+        .wp-block-post-title,
+        .woocommerce-breadcrumb,
+        #wpadminbar {
+            display: none !important;
+        }
+
+        html {
+            margin-top: 0 !important;
+        }
+
+        body {
+            padding: 0 !important;
+            background: #fff;
+        }
+
+        .wp-site-blocks,
+        .entry-content,
+        .woocommerce {
+            margin-top: 0 !important;
+            padding-top: 0 !important;
+        }
+
+        /* the drawer is narrow, so the checkout runs as one column */
+        .woocommerce-checkout .col2-set .col-1,
+        .woocommerce-checkout .col2-set .col-2 {
+            float: none;
+            width: 100%;
+        }
+    </style>
+    <?php
+}
+
+/**
+ * Mark pages this plugin renders.
+ *
+ * Adds body.wbbm-page wherever the plugin owns the content: any of its
+ * shortcodes, a single bus, or its own taxonomy archives. The stylesheet then
+ * lines the theme's page title up with .mage_container instead of letting the
+ * two use different widths and alignments.
+ */
+add_filter('body_class', 'wbbm_mark_plugin_pages');
+function wbbm_mark_plugin_pages($classes)
+{
+    if (is_admin()) {
+        return $classes;
+    }
+
+    if (is_singular('wbbm_bus') || is_tax('wbbm_bus_category') || is_tax('wbbm_bus_organizer')) {
+        $classes[] = 'wbbm-page';
+        return $classes;
+    }
+
+    if (is_singular()) {
+        $post = get_post();
+        $shortcodes = array('bus-search-form', 'bus-search', 'bus-list', 'destination');
+
+        foreach ($shortcodes as $tag) {
+            if ($post && has_shortcode((string) $post->post_content, $tag)) {
+                $classes[] = 'wbbm-page';
+                break;
+            }
+        }
+    }
+
+    return $classes;
 }

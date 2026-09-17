@@ -329,21 +329,55 @@ if ( ! class_exists( 'MP_Global_Function' ) ) {
          * product, so existing WooCommerce-mode buses don't silently
          * revert to Offline the moment this code ships.
          */
+        /**
+         * Normalise a booking-flow value to its canonical name.
+         *
+         * The custom flow is called 'custom'; 'offline' is the name it shipped
+         * under and is still what sites have stored, so it keeps resolving to
+         * the same thing. Applies to the bus-level flow and the global setting
+         * ONLY -- on a booking post the same meta key holds the gateway
+         * (offline/stripe/paypal), which this must never be used on.
+         *
+         * @return string 'custom', 'woocommerce', or '' when unrecognised.
+         */
+        public static function wbbm_flow_name( $value ): string {
+            $value = sanitize_key( (string) $value );
+
+            if ( 'woocommerce' === $value ) {
+                return 'woocommerce';
+            }
+
+            if ( 'custom' === $value || 'offline' === $value ) {
+                return 'custom';
+            }
+
+            return '';
+        }
+
         public static function wbbm_bus_wants_wc( $post_id ): bool {
             if ( ! self::wbbm_use_wc() ) {
                 return false;
             }
 
-            // phpcs:ignore WordPress.Security.NonceVerification.Missing -- read-only inference, the caller's own save handler verifies the nonce.
-            if ( isset( $_POST['wbbm_payment_method'] ) ) {
-                return 'woocommerce' === sanitize_key( wp_unslash( $_POST['wbbm_payment_method'] ) );
+            /*
+             * The booking flow is a site-wide choice, made once in
+             * Settings > Payments. It used to be stored per bus as well, which
+             * meant a site could be set to WooCommerce while individual buses
+             * quietly stayed on the custom drawer. Per-bus values are no
+             * longer read or written; $post_id is kept so the many callers do
+             * not have to change, and so a bus can be given its own flow again
+             * later without another signature change.
+             */
+            $settings = get_option( 'wbbm_payment_settings' );
+            if ( is_array( $settings ) && ! empty( $settings['default_payment_method'] ) ) {
+                $flow = self::wbbm_flow_name( $settings['default_payment_method'] );
+                if ( '' !== $flow ) {
+                    return 'woocommerce' === $flow;
+                }
             }
 
-            $stored = get_post_meta( $post_id, '_wbbm_payment_method', true );
-            if ( 'offline' === $stored || 'woocommerce' === $stored ) {
-                return 'woocommerce' === $stored;
-            }
-
+            // Nothing chosen yet: a bus that already has a linked WooCommerce
+            // product was plainly set up for it before this setting existed.
             return (bool) get_post_meta( $post_id, 'link_wc_product', true );
         }
 

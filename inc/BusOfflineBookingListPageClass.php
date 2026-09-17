@@ -5,7 +5,8 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Offline Bookings admin list page.
+ * Booking list admin page. Lists bookings taken through the custom payment
+ * flow -- WooCommerce orders live in WooCommerce > Orders.
  *
  * No admin page anywhere in this plugin lists individual bookings at all
  * today -- WooCommerce's own Orders screen is the only booking-visibility
@@ -42,8 +43,8 @@ class BusOfflineBookingListPageClass
     {
         add_submenu_page(
             'edit.php?post_type=wbbm_bus',
-            __('Offline Bookings', 'bus-booking-manager'),
-            __('Offline Bookings', 'bus-booking-manager'),
+            __('Booking list', 'bus-booking-manager'),
+            __('Booking list', 'bus-booking-manager'),
             'manage_options',
             self::PAGE_SLUG,
             array($this, 'render_page')
@@ -103,9 +104,13 @@ class BusOfflineBookingListPageClass
     }
 
     /**
-     * One offline wbbm_booking post per seat, all sharing one _wbbm_order_id
-     * -- fetch them all and group by that id so a multi-seat booking shows
-     * as a single row.
+     * One wbbm_booking post per seat, all sharing one _wbbm_order_id -- fetch
+     * them and group by that id so a multi-seat booking shows as one row.
+     *
+     * Every flow writes these posts, so no gateway filter: a WooCommerce
+     * booking is the same shape with _wbbm_payment_method = 'woocommerce'.
+     * The post type is the scope -- these are bus bookings, so unrelated
+     * WooCommerce orders never appear here.
      */
     private function get_grouped_bookings()
     {
@@ -116,10 +121,6 @@ class BusOfflineBookingListPageClass
             'orderby'        => 'date',
             'order'          => 'DESC',
             'no_found_rows'  => true,
-            // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
-            'meta_query'     => array(
-                array('key' => '_wbbm_payment_method', 'value' => 'offline', 'compare' => '='),
-            ),
         ));
 
         $groups = array();
@@ -142,6 +143,7 @@ class BusOfflineBookingListPageClass
                     'total_price'    => (float) get_post_meta($post->ID, '_wbbm_total_price', true),
                     'tax_amount'     => (float) get_post_meta($post->ID, '_wbbm_tax_amount', true),
                     'payment_status' => get_post_meta($post->ID, '_wbbm_payment_status', true) ?: 'pending',
+                    'payment_method' => get_post_meta($post->ID, '_wbbm_payment_method', true) ?: 'offline',
                     'booking_date'   => get_post_meta($post->ID, '_wbbm_booking_date', true),
                 );
             }
@@ -150,6 +152,21 @@ class BusOfflineBookingListPageClass
         }
 
         return array_values($groups);
+    }
+
+    /** How a booking was paid, for the Payment column. */
+    private function payment_method_metadata($method)
+    {
+        $map = array(
+            'woocommerce' => array('label' => __('WooCommerce', 'bus-booking-manager'), 'class' => 'wbbm-pay-wc'),
+            'offline'     => array('label' => __('Pay Offline', 'bus-booking-manager'), 'class' => 'wbbm-pay-offline'),
+            'stripe'      => array('label' => __('Card (Stripe)', 'bus-booking-manager'), 'class' => 'wbbm-pay-card'),
+            'paypal'      => array('label' => __('PayPal', 'bus-booking-manager'), 'class' => 'wbbm-pay-card'),
+        );
+
+        return isset($map[$method])
+            ? $map[$method]
+            : array('label' => ucfirst($method), 'class' => 'wbbm-pay-offline');
     }
 
     private function payment_status_metadata($status)
@@ -181,7 +198,7 @@ class BusOfflineBookingListPageClass
                         </div>
                         <div class="header-title-area">
                             <h2>
-                                <?php esc_html_e('Offline Bookings', 'bus-booking-manager'); ?>
+                                <?php esc_html_e('Booking list', 'bus-booking-manager'); ?>
                                 <span class="list-count-badge"><?php echo esc_html(number_format_i18n($total)); ?></span>
                             </h2>
                         </div>
@@ -199,6 +216,7 @@ class BusOfflineBookingListPageClass
                                     <th><?php esc_html_e('Journey Date', 'bus-booking-manager'); ?></th>
                                     <th><?php esc_html_e('Seats', 'bus-booking-manager'); ?></th>
                                     <th><?php esc_html_e('Total (Tax)', 'bus-booking-manager'); ?></th>
+                                    <th><?php esc_html_e('Paid via', 'bus-booking-manager'); ?></th>
                                     <th><?php esc_html_e('Payment', 'bus-booking-manager'); ?></th>
                                     <th><?php esc_html_e('Action', 'bus-booking-manager'); ?></th>
                                 </tr>
@@ -223,6 +241,7 @@ class BusOfflineBookingListPageClass
                                             'mark-paid-order_' . $group['order_id']
                                         );
                                         ?>
+                                        <?php $method_meta = $this->payment_method_metadata($group['payment_method']); ?>
                                         <tr>
                                             <td><?php echo esc_html($bus_title ?: __('(deleted bus)', 'bus-booking-manager')); ?></td>
                                             <td>
@@ -238,10 +257,25 @@ class BusOfflineBookingListPageClass
                                                     <br><span class="description">(<?php esc_html_e('tax', 'bus-booking-manager'); ?> <?php echo esc_html(number_format_i18n($group['tax_amount'], 2)); ?>)</span>
                                                 <?php endif; ?>
                                             </td>
+                                            <td><span class="wbbm-method-badge <?php echo esc_attr($method_meta['class']); ?>"><?php echo esc_html($method_meta['label']); ?></span></td>
                                             <td><span class="status-badge <?php echo esc_attr($status_meta['class']); ?>"><?php echo esc_html($status_meta['label']); ?></span></td>
                                             <td>
-                                                <?php if ('pending' === $group['payment_status']) : ?>
-                                                    <a href="<?php echo esc_url($mark_paid_url); ?>" class="button button-small"><?php esc_html_e('Mark as Paid', 'bus-booking-manager'); ?></a>
+                                                <?php
+                                                /*
+                                                 * Only an offline booking is settled by hand. A card or
+                                                 * WooCommerce booking is marked paid by its gateway, and
+                                                 * handle_mark_paid() refuses those anyway -- so no button.
+                                                 */
+                                                ?>
+                                                <?php if ('pending' === $group['payment_status'] && 'offline' === $group['payment_method']) : ?>
+                                                    <a href="<?php echo esc_url($mark_paid_url); ?>" class="wbbm-mark-paid">
+                                                        <span class="dashicons dashicons-yes-alt" aria-hidden="true"></span>
+                                                        <?php esc_html_e('Mark as Paid', 'bus-booking-manager'); ?>
+                                                    </a>
+                                                <?php elseif ('woocommerce' === $group['payment_method'] && function_exists('wc_get_order') && wc_get_order($group['order_id'])) : ?>
+                                                    <a href="<?php echo esc_url(get_edit_post_link($group['order_id'])); ?>" class="wbbm-view-order">
+                                                        <?php esc_html_e('View order', 'bus-booking-manager'); ?>
+                                                    </a>
                                                 <?php endif; ?>
                                             </td>
                                         </tr>

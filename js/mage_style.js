@@ -157,10 +157,33 @@
      */
     function wbbmProceedToBook($bookNowBtn) {
         var $searchList = $bookNowBtn.parents('.mage_search_list');
+
+        /*
+         * Return trips hand off here: on an outbound card the customer is
+         * moved to the return list to pick that leg instead of booking this
+         * one straight away. The hook lives in js/wbbm-search-modern.js and
+         * returns true only when it took over, so one-way searches and the
+         * return list itself fall through to the normal path below.
+         */
+        if (typeof window.wbbmAdvanceToReturnLeg === 'function' && window.wbbmAdvanceToReturnLeg($searchList)) {
+            return;
+        }
+
         var $offlineBtn = $searchList.find('button.wbbm-offline-book-btn');
 
         if ($offlineBtn.length) {
             wbbmOpenOfflineModal($searchList);
+            return;
+        }
+
+        /*
+         * WooCommerce buses open the same drawer and add to the cart from
+         * there, so the customer sees what they are buying before the
+         * checkout loads. The hook lives in js/wbbm-search-modern.js and
+         * returns true only when it took over; without it, or without a
+         * drawer on this bus, the original submit still runs.
+         */
+        if (typeof window.wbbmOpenWcDrawer === 'function' && window.wbbmOpenWcDrawer($searchList)) {
             return;
         }
 

@@ -11,8 +11,8 @@
  */
 
 .wbbm-hub {
-    --wbbm-accent: #f97316;
-    --wbbm-accent-dark: #ea580c;
+    --wbbm-accent: #b30c3b;
+    --wbbm-accent-dark: #8e0930;
     --wbbm-ink: #172033;
     --wbbm-muted: #64748b;
     --wbbm-line: #e2e8f0;
@@ -59,7 +59,7 @@
     color: #fff;
     background: var(--wbbm-accent);
     border-radius: 12px;
-    box-shadow: 0 8px 18px rgba(249, 115, 22, .22);
+    box-shadow: 0 8px 18px rgba(179, 12, 59, .22);
 }
 
 .wbbm-hub-mark .dashicons {
@@ -143,20 +143,11 @@
 .wbbm-hub-tabs a:focus-visible,
 .wbbm-hub-button:focus-visible,
 .wbbm-hub-panel :focus-visible {
-    outline: 3px solid rgba(249, 115, 22, .28);
+    outline: 3px solid rgba(179, 12, 59, .28);
     outline-offset: 2px;
 }
 
 /* --------------------------------------------------------------- subtitle */
-.wbbm-hub-subtitle {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 14px 24px 0;
-    color: var(--wbbm-muted);
-    font-size: 13px;
-}
-
 /* ---------------------------------------------------------------- notices */
 .wbbm-hub-notice {
     display: flex;
@@ -439,7 +430,7 @@
 .wbbm-hub-panel textarea:focus {
     background: #fff;
     border-color: var(--wbbm-accent);
-    box-shadow: 0 0 0 2px rgba(249, 115, 22, .12);
+    box-shadow: 0 0 0 2px rgba(179, 12, 59, .12);
     outline: none;
 }
 
@@ -594,35 +585,13 @@
    Legacy settings panel: adopt the hub palette instead of its own pink.
    Scoped to .wbbm-hub-panel, so the standalone page keeps its old look.
    ========================================================================= */
-.wbbm-hub-panel .wbbm_settings_panel_header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 14px 18px;
-    color: #fff;
-    background: var(--wbbm-accent);
-    border-radius: 12px 12px 0 0;
-    font-size: 15px;
-    font-weight: 700;
-}
-
-.wbbm-hub-panel .wbbm_settings_panel_header small {
-    padding: 3px 9px;
-    color: #fff;
-    background: rgba(255, 255, 255, .22);
-    border-radius: 999px;
-    font-size: 11px;
-    font-weight: 700;
-}
-
 .wbbm-hub-panel .wbbm_settings_panel {
     display: flex;
     overflow: hidden;
     max-width: 100%;
     background: #fff;
-    border: 1px solid var(--wbbm-line);
-    border-top: 0;
-    border-radius: 0 0 12px 12px;
+    border: 0;
+    border-radius: 6px;
 }
 
 /* Section navigation down the left. */
@@ -750,8 +719,8 @@
    rather than the two drifting apart.
    ------------------------------------------------------------------------- */
 .wbbm-hub {
-    --wbbm-accent: var(--color_theme, #f97316);
-    --wbbm-accent-dark: var(--color_theme_cc, #ea580c);
+    --wbbm-accent: var(--color_theme, #b30c3b);
+    --wbbm-accent-dark: var(--color_theme_cc, #8e0930);
 }
 
 /* Beat `.wbbm_settings_panel p.submit input` on specificity. */
@@ -1147,7 +1116,7 @@
 .wbbm-hub-search input[type="search"]:focus {
     background: #fff;
     border-color: var(--wbbm-accent);
-    box-shadow: 0 0 0 2px rgba(249, 115, 22, .12);
+    box-shadow: 0 0 0 2px rgba(179, 12, 59, .12);
     outline: none;
 }
 
@@ -1374,8 +1343,8 @@
    success/warning/danger STATUS colours stay meaningful.
    ========================================================================= */
 body.wbbm-admin {
-    --wbbm-accent: var(--color_theme, #f97316);
-    --wbbm-accent-dark: var(--color_theme_cc, #ea580c);
+    --wbbm-accent: var(--color_theme, #b30c3b);
+    --wbbm-accent-dark: var(--color_theme_cc, #8e0930);
     --wbbm-ink: #172033;
     --wbbm-muted: #64748b;
     --wbbm-line: #e2e8f0;
@@ -1453,11 +1422,6 @@ body.wbbm-admin .wbbm-table-top .left .item span {
 body.wbbm-admin .wbbm_page_filter_inner {
     background: #fff;
     border-color: var(--wbbm-line);
-}
-
-/* --- settings panel header ties to the brand --------------------------- */
-body.wbbm-admin .wbbm_settings_panel_header {
-    background: var(--wbbm-accent);
 }
 
 /* --- status pills keep their meaning ----------------------------------- */
@@ -1546,11 +1510,6 @@ body.wbbm-admin #ttbm_add_meta_box .mpStyle [data-tabs-target]:hover {
    height. The panel owns the spacing; the first block inside it never adds
    its own.
    ========================================================================= */
-.wbbm-hub-subtitle {
-    margin: 0;
-    padding: 14px 24px 0;
-}
-
 .wbbm-hub-panel {
     padding-top: 16px;
 }
@@ -1764,4 +1723,932 @@ body.wbbm-admin #ttbm_add_meta_box .mpStyle [data-tabs-target]:hover {
     min-width: 190px;
     min-height: 44px;
     padding: 10px 26px;
+}
+
+
+/* ===================================================== settings field rows */
+/*
+ * A settings form-table's <th> is the field LABEL, not a column heading, but
+ * it was picking up the data-table treatment above (12px uppercase muted on a
+ * tinted fill) -- so every option read as a caption and the description was
+ * crammed in beside it. Data tables (.widefat, .wp-list-table) keep that
+ * treatment; only the settings form is re-laid out here.
+ */
+
+.wbbm-hub-panel .wbbm_settings_panel table.form-table.wbbm-hub-table th {
+    width: 340px;
+    padding: 18px 20px;
+    background: #fff;
+    color: var(--wbbm-ink);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0;
+    text-transform: none;
+    vertical-align: top;
+}
+
+.wbbm-hub-panel .wbbm_settings_panel table.form-table.wbbm-hub-table td {
+    padding: 18px 20px;
+    vertical-align: top;
+}
+
+/* the description is a sibling of the label text inside the same cell */
+.wbbm-hub-panel .wbbm_settings_panel table.form-table.wbbm-hub-table th .description {
+    display: block;
+    max-width: 300px;
+    margin-top: 5px;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--wbbm-muted);
+}
+
+.wbbm-hub-panel .wbbm_settings_panel table.form-table.wbbm-hub-table tbody tr:hover td,
+.wbbm-hub-panel .wbbm_settings_panel table.form-table.wbbm-hub-table tbody tr:hover th {
+    background: var(--wbbm-soft);
+}
+
+.wbbm-hub-panel .wbbm_settings_panel table.form-table.wbbm-hub-table th code {
+    padding: 1px 5px;
+    border-radius: 3px;
+    background: var(--wbbm-soft);
+    font-size: 11px;
+}
+
+
+/* --------------------------------------------------------- sticky save bar */
+/*
+ * Translations is 86 fields long, so the only Save button used to sit a very
+ * long scroll away from whatever you just edited.
+ */
+
+.wbbm-hub-panel .wbbm_settings_panel p.submit {
+    position: sticky;
+    bottom: 0;
+    z-index: 5;
+    margin: 16px 0 0;
+    padding: 12px 20px;
+    background: #fff;
+    border: 1px solid var(--wbbm-line);
+    border-radius: 12px;
+    box-shadow: 0 -2px 14px rgba(23, 32, 51, 0.07);
+}
+
+
+/* ------------------------------------------------------------- on/off switch */
+/*
+ * Built by assets/admin/wbbm-settings-enhance.js from the two-option On/Off
+ * <select> it replaces. The select stays in the form as the value that
+ * submits, so nothing server-side changes.
+ */
+
+.wbbm-switch-field {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+}
+
+.wbbm-switch {
+    position: relative;
+    flex: 0 0 auto;
+    width: 42px;
+    height: 24px;
+    padding: 0;
+    border: none;
+    border-radius: 999px;
+    background: #cbd5e1;
+    cursor: pointer;
+    transition: background 0.16s ease;
+}
+
+.wbbm-switch[aria-checked="true"] {
+    background: var(--wbbm-accent);
+}
+
+.wbbm-switch::after {
+    content: "";
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 18px;
+    height: 18px;
+    border-radius: 999px;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(23, 32, 51, 0.25);
+    transition: left 0.16s ease;
+}
+
+.wbbm-switch[aria-checked="true"]::after {
+    left: 21px;
+}
+
+.wbbm-switch:focus-visible {
+    outline: 2px solid var(--wbbm-accent);
+    outline-offset: 3px;
+}
+
+.wbbm-switch-state {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--wbbm-muted);
+}
+
+.wbbm-switch[aria-checked="true"] + .wbbm-switch-state {
+    color: var(--wbbm-ink);
+}
+
+.wbbm-switch-field select {
+    display: none;
+}
+
+
+/* ------------------------------------------------------- long-section search */
+
+.wbbm-section-filter {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 0 0 14px;
+    padding: 12px 16px;
+    background: #fff;
+    border: 1px solid var(--wbbm-line);
+    border-radius: 12px;
+}
+
+.wbbm-section-filter label {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--wbbm-muted);
+}
+
+.wbbm-section-filter input[type="search"] {
+    flex: 1 1 260px;
+    max-width: 420px;
+    min-width: 0;
+    height: 38px;
+    padding: 0 12px;
+    border: 1px solid var(--wbbm-line);
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.wbbm-section-filter input[type="search"]:focus {
+    border-color: var(--wbbm-accent);
+    box-shadow: 0 0 0 3px rgba(179, 12, 59, 0.16);
+    outline: none;
+}
+
+.wbbm-section-filter-count {
+    margin-left: auto;
+    font-size: 13px;
+    color: var(--wbbm-muted);
+}
+
+.wbbm-section-empty {
+    padding: 36px 20px;
+    background: #fff;
+    border: 1px solid var(--wbbm-line);
+    border-radius: 12px;
+    text-align: center;
+    font-size: 14px;
+    color: var(--wbbm-muted);
+}
+
+
+/* ============================================================ field cards */
+/*
+ * Built by assets/admin/wbbm-settings-enhance.js, which redistributes a
+ * section's flat form-table into titled cards. A section with no map in that
+ * file keeps its single table and is unaffected.
+ */
+
+.wbbm-fieldset-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.wbbm-fieldset {
+    background: #fff;
+    border: 1px solid var(--wbbm-line);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.wbbm-fieldset-head {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    width: 100%;
+    margin: 0;
+    padding: 15px 20px;
+    background: #fff;
+    border: 0;
+    border-bottom: 1px solid var(--wbbm-line);
+    text-align: left;
+}
+
+button.wbbm-fieldset-head {
+    cursor: pointer;
+}
+
+button.wbbm-fieldset-head::before {
+    content: "";
+    flex: 0 0 auto;
+    width: 7px;
+    height: 7px;
+    margin-right: 2px;
+    border-right: 1.6px solid var(--wbbm-muted);
+    border-bottom: 1.6px solid var(--wbbm-muted);
+    transform: rotate(-45deg);
+    transition: transform 0.16s ease;
+}
+
+button.wbbm-fieldset-head[aria-expanded="true"]::before {
+    transform: rotate(45deg);
+}
+
+button.wbbm-fieldset-head:hover {
+    background: var(--wbbm-soft);
+}
+
+.wbbm-fieldset-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--wbbm-ink);
+}
+
+.wbbm-fieldset-desc {
+    font-size: 12.5px;
+    color: var(--wbbm-muted);
+}
+
+.wbbm-fieldset-count {
+    margin-left: auto;
+    padding: 2px 9px;
+    border-radius: 999px;
+    background: var(--wbbm-soft);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--wbbm-muted);
+}
+
+.wbbm-fieldset .wbbm-hub-table {
+    border: 0;
+    border-radius: 0;
+}
+
+.wbbm-fieldset-body[hidden] {
+    display: none;
+}
+
+
+/* --------------------------------------------------------- checkbox pills */
+
+.wbbm-pill-set {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.wbbm-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border: 1px solid var(--wbbm-line);
+    border-radius: 999px;
+    background: #fff;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--wbbm-ink);
+}
+
+.wbbm-pill input[type="checkbox"] {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: 0;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.wbbm-pill-box {
+    position: relative;
+    flex: 0 0 auto;
+    width: 15px;
+    height: 15px;
+    border: 1.5px solid #94a3b8;
+    border-radius: 4px;
+    background: #fff;
+}
+
+.wbbm-pill.is-on {
+    border-color: var(--wbbm-accent);
+    background: rgba(179, 12, 59, 0.06);
+    color: var(--wbbm-accent);
+    font-weight: 600;
+}
+
+.wbbm-pill.is-on .wbbm-pill-box {
+    border-color: var(--wbbm-accent);
+    background: var(--wbbm-accent);
+}
+
+.wbbm-pill.is-on .wbbm-pill-box::after {
+    content: "";
+    position: absolute;
+    top: 1px;
+    left: 4px;
+    width: 4px;
+    height: 8px;
+    border-right: 2px solid #fff;
+    border-bottom: 2px solid #fff;
+    transform: rotate(45deg);
+}
+
+.wbbm-pill:focus-within {
+    outline: 2px solid var(--wbbm-accent);
+    outline-offset: 2px;
+}
+
+
+/* ------------------------------------------------- changed-string marker */
+
+.wbbm-filter-toggle {
+    padding: 7px 14px;
+    border: 1px solid var(--wbbm-line);
+    border-radius: 999px;
+    background: #fff;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--wbbm-muted);
+}
+
+.wbbm-filter-toggle[aria-checked="true"] {
+    border-color: var(--wbbm-accent);
+    background: rgba(179, 12, 59, 0.06);
+    color: var(--wbbm-accent);
+    font-weight: 600;
+}
+
+tr.wbbm-row-changed td input[type="text"] {
+    border-color: var(--wbbm-warn);
+    background: #fffbeb;
+}
+
+tr.wbbm-row-changed th::after {
+    content: "";
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    margin-left: 7px;
+    border-radius: 999px;
+    background: var(--wbbm-warn);
+    vertical-align: middle;
+}
+
+
+/* ------------------------------------------------------- save bar state */
+
+.wbbm-hub-panel .wbbm_settings_panel p.submit {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.wbbm-save-state {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin-right: auto;
+    font-size: 13px;
+    color: var(--wbbm-muted);
+}
+
+.wbbm-save-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 999px;
+    background: var(--wbbm-ok);
+}
+
+p.submit.is-dirty .wbbm-save-dot {
+    background: var(--wbbm-warn);
+}
+
+p.submit.is-dirty .wbbm-save-state {
+    color: var(--wbbm-ink);
+    font-weight: 500;
+}
+
+.wbbm-hub-panel .wbbm_settings_panel p.submit .wbbm-discard {
+    border-radius: 8px;
+}
+
+
+/* ================================================= settings chrome, part 2 */
+/*
+ * Brings the Settings hub in line with the approved design: quiet plugin
+ * strip, segmented area tabs, a section rail that reads as a list rather than
+ * a solid block, and rows on plain white.
+ */
+
+
+/* area tabs as a segmented control */
+.wbbm-hub .wbbm-hub-tabs {
+    display: inline-flex;
+    gap: 4px;
+    padding: 4px;
+    background: #e9ecf1;
+    border: 0;
+    border-radius: 10px;
+}
+
+.wbbm-hub .wbbm-hub-tabs a {
+    padding: 9px 16px;
+    border: 0;
+    border-radius: 7px;
+    background: transparent;
+    color: var(--wbbm-muted);
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.wbbm-hub .wbbm-hub-tabs a:hover {
+    background: rgba(255, 255, 255, 0.55);
+    color: var(--wbbm-ink);
+}
+
+.wbbm-hub .wbbm-hub-tabs a[aria-current="page"] {
+    background: #fff;
+    color: var(--wbbm-ink);
+    font-weight: 600;
+    box-shadow: 0 1px 2px rgba(23, 32, 51, 0.16);
+}
+
+.wbbm-hub .wbbm-hub-tabs a[aria-current="page"]::after {
+    display: none;
+}
+
+
+/* section rail: a list, not a filled block */
+.wbbm-hub-panel .wbbm_settings_panel .nav-tab-wrapper {
+    flex: 0 0 248px;
+    padding: 8px;
+    background: #fff;
+    border-right: 1px solid var(--wbbm-line);
+}
+
+.wbbm-hub-panel .wbbm_settings_panel .nav-tab-wrapper::before {
+    content: "Sections";
+    padding: 8px 12px 6px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--wbbm-muted);
+}
+
+.wbbm-hub-panel .wbbm_settings_panel .nav-tab {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--wbbm-ink);
+    font-size: 13px;
+    font-weight: 400;
+}
+
+.wbbm-hub-panel .wbbm_settings_panel .nav-tab::before {
+    content: "";
+    flex: 0 0 auto;
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: #cbd5e1;
+}
+
+.wbbm-hub-panel .wbbm_settings_panel .nav-tab:hover {
+    background: var(--wbbm-soft);
+    color: var(--wbbm-ink);
+}
+
+.wbbm-hub-panel .wbbm_settings_panel .nav-tab-active,
+.wbbm-hub-panel .wbbm_settings_panel .nav-tab-active:hover {
+    background: rgba(179, 12, 59, 0.07);
+    color: var(--wbbm-accent);
+    font-weight: 600;
+    box-shadow: none;
+}
+
+.wbbm-hub-panel .wbbm_settings_panel .nav-tab-active::before {
+    background: var(--wbbm-accent);
+}
+
+/* row count, filled in by wbbm-settings-enhance.js */
+.wbbm-hub-panel .wbbm_settings_panel .nav-tab .wbbm-tab-count {
+    margin-left: auto;
+    font-size: 11px;
+    font-weight: 600;
+    color: #94a3b8;
+}
+
+.wbbm-hub-panel .wbbm_settings_panel .nav-tab-active .wbbm-tab-count {
+    color: var(--wbbm-accent);
+}
+
+
+/* rows sit on plain white; the card header carries the section name, so the
+   framework's repeated <h2> inside the panel is redundant */
+.wbbm-hub-panel .wbbm_settings_panel .group > form > h2 {
+    display: none;
+}
+
+.wbbm-hub-panel .wbbm_settings_panel table.form-table.wbbm-hub-table,
+.wbbm-hub-panel .wbbm_settings_panel table.form-table.wbbm-hub-table tbody tr,
+.wbbm-hub-panel .wbbm_settings_panel table.form-table.wbbm-hub-table tbody tr td,
+.wbbm-hub-panel .wbbm_settings_panel table.form-table.wbbm-hub-table tbody tr th {
+    background: #fff;
+}
+
+.wbbm-hub-panel .wbbm_settings_panel table.form-table.wbbm-hub-table tbody tr:hover td,
+.wbbm-hub-panel .wbbm_settings_panel table.form-table.wbbm-hub-table tbody tr:hover th {
+    background: #fcfdfe;
+}
+
+.wbbm-hub-panel .wbbm_settings_panel .group {
+    padding: 22px;
+}
+
+
+/* --------------------------------------------------- chrome, specificity */
+/*
+ * Beats the fixed tab height set further up the file.
+ */
+
+.wbbm-hub .wbbm-hub-tabs a,
+body.wbbm-admin .wbbm-hub .wbbm-hub-tabs a {
+    min-height: 0;
+    height: 36px;
+}
+
+.wbbm-hub-panel .wbbm_settings_panel .nav-tab,
+body.wbbm-admin .wbbm-hub-panel .wbbm_settings_panel .nav-tab {
+    text-decoration: none;
+    box-shadow: none;
+}
+
+.wbbm-hub-panel .wbbm_settings_panel .nav-tab:focus,
+.wbbm-hub-panel .wbbm_settings_panel .nav-tab:hover {
+    text-decoration: none;
+}
+
+
+/* ================================================== spacing parity block */
+/*
+ * Exact values from the approved artboard. Everything above sets the look;
+ * this sets the measurements, so any drift shows up as a diff against one
+ * block rather than being scattered.
+ *
+ *   rail        252px   gap to content 20px   inner padding 8px
+ *   rail item   10px 12px, radius 5, 10px gap, 6px dot
+ *   card        1px #dcdcde, radius 6, 16px between cards
+ *   card head   18px 22px, hairline #f0f0f1
+ *   field row   label column 340px, 24px gutter, 18px 22px, hairline #f0f0f1
+ *   control     34px tall, 10px inset, radius 4
+ *   save bar    14px 22px, radius 6
+ */
+
+.wbbm-hub-panel .wbbm_settings_panel .nav-tab-wrapper {
+    /* a flex item's min-width:auto lets it grow past its basis, which is why
+       the rail measured wider than the 252px it was given */
+    box-sizing: border-box;
+    flex: 0 0 252px;
+    width: 252px;
+    min-width: 252px;
+    max-width: 252px;
+    gap: 2px;
+    padding: 8px;
+    /* the shorthand also clears the border-right divider set further up, so
+       the rail gets one outline rather than a doubled edge */
+    border: 1px solid #ddd;
+    border-radius: 10px;
+}
+
+.wbbm-hub-panel .wbbm_settings_panel .nav-tab-wrapper::before {
+    padding: 8px 12px 6px;
+}
+
+.wbbm-hub-panel .wbbm_settings_panel .nav-tab {
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 5px;
+}
+
+.wbbm-hub-panel .wbbm_settings_panel .group {
+    padding: 20px;
+}
+
+.wbbm-fieldset-stack {
+    gap: 16px;
+}
+
+.wbbm-fieldset,
+.wbbm-hub-panel .wbbm_settings_panel p.submit,
+.wbbm-section-filter,
+.wbbm-section-empty {
+    border-color: #dcdcde;
+    border-radius: 6px;
+}
+
+.wbbm-fieldset-head {
+    gap: 10px;
+    padding: 18px 22px;
+    border-bottom-color: #f0f0f1;
+}
+
+.wbbm-fieldset-title {
+    font-size: 15px;
+}
+
+.wbbm-fieldset-desc {
+    font-size: 13px;
+}
+
+/* label column 340px with a 24px gutter: 12px of padding from each side */
+.wbbm-hub-panel .wbbm_settings_panel table.form-table.wbbm-hub-table th {
+    box-sizing: border-box;
+    width: 340px;
+    padding: 18px 12px 18px 22px;
+}
+
+.wbbm-hub-panel .wbbm_settings_panel table.form-table.wbbm-hub-table td {
+    padding: 18px 22px 18px 12px;
+}
+
+.wbbm-hub-panel .wbbm_settings_panel table.form-table.wbbm-hub-table th .description {
+    max-width: 306px;
+    margin-top: 4px;
+    font-size: 12px;
+}
+
+.wbbm-hub-panel .wbbm_settings_panel table.form-table.wbbm-hub-table tbody tr td,
+.wbbm-hub-panel .wbbm_settings_panel table.form-table.wbbm-hub-table tbody tr th {
+    border-bottom: 1px solid #f0f0f1;
+}
+
+.wbbm-hub-panel .wbbm_settings_panel table.form-table.wbbm-hub-table tbody tr:last-child td,
+.wbbm-hub-panel .wbbm_settings_panel table.form-table.wbbm-hub-table tbody tr:last-child th {
+    border-bottom: 0;
+}
+
+/* controls */
+.wbbm-hub-panel .wbbm_settings_panel table.form-table.wbbm-hub-table input[type="text"],
+.wbbm-hub-panel .wbbm_settings_panel table.form-table.wbbm-hub-table input[type="number"],
+.wbbm-hub-panel .wbbm_settings_panel table.form-table.wbbm-hub-table input[type="email"],
+.wbbm-hub-panel .wbbm_settings_panel table.form-table.wbbm-hub-table input[type="url"],
+.wbbm-hub-panel .wbbm_settings_panel table.form-table.wbbm-hub-table select {
+    box-sizing: border-box;
+    min-height: 34px;
+    height: 34px;
+    padding: 0 10px;
+    border: 1px solid #8c8f94;
+    border-radius: 4px;
+    font-size: 14px;
+    line-height: 32px;
+    color: #1d2327;
+}
+
+.wbbm-hub-panel .wbbm_settings_panel table.form-table.wbbm-hub-table select {
+    padding-right: 26px;
+}
+
+.wbbm-hub-panel .wbbm_settings_panel table.form-table.wbbm-hub-table input[type="text"]:focus,
+.wbbm-hub-panel .wbbm_settings_panel table.form-table.wbbm-hub-table select:focus {
+    border-color: var(--wbbm-accent);
+    box-shadow: 0 0 0 3px rgba(179, 12, 59, 0.14);
+    outline: none;
+}
+
+/* pills and switches to artboard measurements */
+.wbbm-pill {
+    gap: 8px;
+    padding: 8px 14px;
+}
+
+.wbbm-pill-box {
+    width: 15px;
+    height: 15px;
+    border-radius: 4px;
+}
+
+.wbbm-switch-field {
+    gap: 11px;
+}
+
+/* save bar */
+.wbbm-hub-panel .wbbm_settings_panel p.submit {
+    gap: 10px;
+    margin: 16px 0 0;
+    padding: 14px 22px;
+    box-shadow: 0 -2px 10px rgba(29, 35, 39, 0.05);
+}
+
+.wbbm-hub-panel .wbbm_settings_panel p.submit input,
+.wbbm-hub-panel p.submit input.button-primary {
+    padding: 9px 22px;
+    border-radius: 4px;
+    font-size: 13px;
+}
+
+.wbbm-hub-panel .wbbm_settings_panel p.submit .wbbm-discard {
+    padding: 9px 16px;
+    border-radius: 4px;
+    font-size: 13px;
+}
+
+/* filter bar */
+.wbbm-section-filter {
+    gap: 12px;
+    margin-bottom: 16px;
+    padding: 12px 16px;
+}
+
+.wbbm-section-filter input[type="search"] {
+    height: 38px;
+    padding: 0 12px;
+    border-radius: 6px;
+    border-color: #dcdcde;
+}
+
+/* section being fetched by wbbm-settings-enhance.js */
+.wbbm-hub-panel.wbbm-section-loading .wbbm_settings_panel {
+    opacity: 0.55;
+    pointer-events: none;
+    transition: opacity 0.12s ease;
+}
+
+/* the postbox is only a wrapper here; wp-admin's own padding on it doubles up
+   with .metabox-holder's and the section card's */
+.wbbm_settings_panel .metabox-holder .postbox {
+    padding: 0;
+}
+
+
+/* ------------------------------------------- rail / content top alignment */
+/*
+ * The rail sat flush against the panel while .metabox-holder carried its own
+ * 18px of padding, so the first card always started lower than "SECTIONS".
+ * The inset and the gutter now live on the panel, which is the one box both
+ * children share, so their top edges line up by construction.
+ */
+
+.wbbm-hub-panel .wbbm_settings_panel {
+    gap: 20px;
+    padding: 20px;
+    overflow: visible;
+}
+
+.wbbm-hub-panel .wbbm_settings_panel .metabox-holder {
+    padding: 0;
+}
+
+.wbbm-hub-panel .wbbm_settings_panel .group {
+    padding: 0;
+}
+
+/*
+ * class-mage-settings.php prints "#wpbody-content .metabox-holder{padding-top:5px}"
+ * inline. That is ID strength, so it beat the class-based reset above and left
+ * the first card 5px below the rail. Matched here rather than edited there,
+ * since that block is shared with the standalone settings page.
+ */
+#wpbody-content .wbbm-hub-panel .wbbm_settings_panel .metabox-holder {
+    padding: 0;
+}
+
+/*
+ * The save bar used to sit in a div with an inline padding-left:10px, which
+ * pushed it 10px right of the cards above it and only on one side. The wrapper
+ * is a plain hook now so the bar lines up with the section cards.
+ */
+.wbbm-hub-panel .wbbm_settings_panel .wbbm-submit-wrap {
+    padding: 0;
+}
+
+
+/* ============================================================== area tabs */
+/*
+ * Same language as the section rail below it: a white bordered track, a
+ * tinted pill for the current tab, icons carrying the colour. Go PRO is the
+ * one promotional item, so it gets a gold mark rather than a louder fill.
+ */
+
+.wbbm-hub .wbbm-hub-tabs {
+    display: inline-flex;
+    gap: 4px;
+    padding: 5px;
+    margin: 0 0 4px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    overflow: visible;
+}
+
+.wbbm-hub .wbbm-hub-tabs a,
+body.wbbm-admin .wbbm-hub .wbbm-hub-tabs a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 38px;
+    min-height: 0;
+    padding: 0 16px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--wbbm-muted);
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background-color 0.16s ease, color 0.16s ease;
+}
+
+.wbbm-hub .wbbm-hub-tabs a .dashicons {
+    width: 16px;
+    height: 16px;
+    font-size: 16px;
+    line-height: 1;
+    color: #a7aaad;
+    transition: color 0.16s ease;
+}
+
+.wbbm-hub .wbbm-hub-tabs a:hover,
+body.wbbm-admin .wbbm-hub .wbbm-hub-tabs a:hover {
+    background: var(--wbbm-soft);
+    color: var(--wbbm-ink);
+    box-shadow: none;
+}
+
+.wbbm-hub .wbbm-hub-tabs a:hover .dashicons {
+    color: var(--wbbm-muted);
+}
+
+.wbbm-hub .wbbm-hub-tabs a[aria-current="page"],
+body.wbbm-admin .wbbm-hub .wbbm-hub-tabs a[aria-current="page"] {
+    background: rgba(179, 12, 59, 0.07);
+    color: var(--wbbm-accent);
+    font-weight: 600;
+    box-shadow: none;
+}
+
+.wbbm-hub .wbbm-hub-tabs a[aria-current="page"] .dashicons {
+    color: var(--wbbm-accent);
+}
+
+.wbbm-hub .wbbm-hub-tabs a[aria-current="page"]::after {
+    display: none;
+}
+
+/* the upsell reads as an aside, not a competing section */
+.wbbm-hub .wbbm-hub-tabs a[data-wbbm-tab="go-pro"] .dashicons {
+    color: #dba617;
+}
+
+.wbbm-hub .wbbm-hub-tabs a[data-wbbm-tab="go-pro"]:hover,
+body.wbbm-admin .wbbm-hub .wbbm-hub-tabs a[data-wbbm-tab="go-pro"]:hover {
+    background: #fdf8e7;
+    color: #8a6616;
+}
+
+.wbbm-hub .wbbm-hub-tabs a:focus-visible {
+    outline: 2px solid var(--wbbm-accent);
+    outline-offset: 2px;
+}
+
+
+/* ------------------------------------------------ shared left edge */
+/*
+ * The mark, the area tabs and the section rail all start on the header's
+ * 24px inset. Previously each had its own: the mark at 25 (header padding),
+ * the tab track at 1 (flush), the rail at 45 (panel padding plus its own).
+ *
+ * The horizontal inset belongs to .wbbm-hub-panel, which already has 24px,
+ * so the settings panel keeps only its top gap -- that is what holds the
+ * rail and the first card on one top edge.
+ */
+
+.wbbm-hub .wbbm-hub-tabs {
+    margin-left: 24px;
+}
+
+.wbbm-hub-panel .wbbm_settings_panel {
+    padding: 20px 0 0;
 }

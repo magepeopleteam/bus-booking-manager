@@ -113,16 +113,17 @@ final class WBBM_Settings_Hub extends WBBM_Admin_Hub
             wp_send_json_error(array('message' => __('Insufficient permissions.', 'bus-booking-manager')));
         }
 
-        $mode = isset($_POST['mode']) ? sanitize_key(wp_unslash($_POST['mode'])) : 'offline';
-        if (!in_array($mode, array('offline', 'woocommerce'), true)) {
-            $mode = 'offline';
+        $mode = isset($_POST['mode']) ? sanitize_key(wp_unslash($_POST['mode'])) : 'custom';
+        $mode = class_exists('MP_Global_Function') ? MP_Global_Function::wbbm_flow_name($mode) : $mode;
+        if ('custom' !== $mode && 'woocommerce' !== $mode) {
+            $mode = 'custom';
         }
 
         $wc_ready = class_exists('MP_Global_Function') && MP_Global_Function::wbbm_use_wc();
         if ('woocommerce' === $mode && !$wc_ready) {
             // Can't select a flow that isn't actually available -- same
             // rule the per-bus save handler enforces.
-            $mode = 'offline';
+            $mode = 'custom';
         }
 
         $settings = get_option('wbbm_payment_settings');
@@ -341,7 +342,10 @@ final class WBBM_Settings_Hub extends WBBM_Admin_Hub
      */
     private function mode_has_gateway($mode)
     {
-        if ('offline' === $mode) {
+        // takes a flow, so normalise the legacy name before comparing
+        $mode = class_exists('MP_Global_Function') ? (MP_Global_Function::wbbm_flow_name($mode) ?: $mode) : $mode;
+
+        if ('custom' === $mode) {
             // True "is any gateway actually ready" check -- deliberately
             // stricter than the frontend picker's own gate
             // (wbbm_get_active_custom_gateways(), enabled-only by design so
@@ -388,17 +392,13 @@ final class WBBM_Settings_Hub extends WBBM_Admin_Hub
             ),
         );
 
-        // Quick Setup only exists once WooCommerce is present.
-        if (class_exists('WBTM_Quick_Setup') && WBTM_Quick_Setup::instance()) {
-            $tabs['quick-setup'] = array(
-                'label'       => __('Quick Setup', 'bus-booking-manager'),
-                'description' => __('Guided first-run setup for pages, currency and a sample service.', 'bus-booking-manager'),
-                'icon'        => 'dashicons-controls-play',
-                'capability'  => 'manage_options',
-                'callback'    => array($this, 'render_quick_setup'),
-                'legacy'      => array('wbbm_init_quick_setup', 'wbtm_quick_setup'),
-            );
-        }
+        /*
+         * Quick Setup is deliberately not a tab. Because the hub removes the
+         * standalone submenu for any slug a tab claims via 'legacy', dropping
+         * it from here also hands 'wbbm_init_quick_setup' back to
+         * WBTM_Quick_Setup, so the guided setup stays reachable from its own
+         * Bus menu item rather than disappearing.
+         */
 
         if (!is_plugin_active('bus-booking-manager-pro/wbtm-pro.php')) {
             $tabs['go-pro'] = array(
@@ -459,7 +459,9 @@ final class WBBM_Settings_Hub extends WBBM_Admin_Hub
     {
         $settings = get_option('wbbm_payment_settings');
         $settings = is_array($settings) ? $settings : array();
-        $default_method = isset($settings['default_payment_method']) && 'woocommerce' === $settings['default_payment_method'] ? 'woocommerce' : 'offline';
+        $default_method = class_exists('MP_Global_Function')
+            ? (MP_Global_Function::wbbm_flow_name(isset($settings['default_payment_method']) ? $settings['default_payment_method'] : '') ?: 'custom')
+            : 'custom';
 
         $wc_ready = class_exists('MP_Global_Function') && MP_Global_Function::wbbm_use_wc();
         $has_gateway = $this->mode_has_gateway($default_method);
@@ -477,9 +479,9 @@ final class WBBM_Settings_Hub extends WBBM_Admin_Hub
         <p class="description"><?php esc_html_e('Used for every new bus you create -- each bus can still be switched individually from its own edit screen.', 'bus-booking-manager'); ?></p>
 
         <div class="wbbm-bm-cards" id="wbbm-pay-mode-cards">
-            <label class="wbbm-bm-card <?php echo 'offline' === $default_method ? 'is-selected' : ''; ?>" data-mode="offline">
-                <input type="radio" name="wbbm_default_payment_method_display" value="offline" <?php checked($default_method, 'offline'); ?>>
-                <?php if ('offline' === $default_method) : ?><span class="wbbm-bm-card-active"><?php esc_html_e('ACTIVE', 'bus-booking-manager'); ?></span><?php endif; ?>
+            <label class="wbbm-bm-card <?php echo 'custom' === $default_method ? 'is-selected' : ''; ?>" data-mode="custom">
+                <input type="radio" name="wbbm_default_payment_method_display" value="custom" <?php checked($default_method, 'custom'); ?>>
+                <?php if ('custom' === $default_method) : ?><span class="wbbm-bm-card-active"><?php esc_html_e('ACTIVE', 'bus-booking-manager'); ?></span><?php endif; ?>
                 <span class="wbbm-bm-card-icon"><span class="dashicons dashicons-money-alt"></span></span>
                 <strong><?php esc_html_e('Custom Payment Method', 'bus-booking-manager'); ?></strong>
                 <small><?php esc_html_e('Offline, Stripe and/or PayPal -- no WooCommerce needed', 'bus-booking-manager'); ?></small>
@@ -565,8 +567,14 @@ final class WBBM_Settings_Hub extends WBBM_Admin_Hub
             var warningText = document.getElementById('wbbm-pay-warning-text');
             var configuringLabel = document.getElementById('wbbm-pay-configuring-label');
             var configuringIcon = document.querySelector('#wbbm-pay-configuring .dashicons');
+            /*
+             * Keyed by the canonical flow name. 'offline' is aliased below so
+             * a stale value coming back from the server still finds its copy
+             * -- without a match the card silently fails to update after a
+             * save that actually succeeded.
+             */
             var copy = {
-                offline: {
+                custom: {
                     label: <?php echo wp_json_encode(__('Custom Payment Method', 'bus-booking-manager')); ?>,
                     icon: 'dashicons-money-alt',
                     warn: <?php echo wp_json_encode(__('Custom Payment Method is selected but no gateway (Offline/Stripe/PayPal) is enabled and configured yet -- set one up below so customers can pay.', 'bus-booking-manager')); ?>
@@ -577,6 +585,7 @@ final class WBBM_Settings_Hub extends WBBM_Admin_Hub
                     warn: <?php echo wp_json_encode(__("WooCommerce mode is selected, but no WooCommerce payment gateway is enabled yet. Customers won't be able to complete a booking until you enable one below.", 'bus-booking-manager')); ?>
                 }
             };
+            copy.offline = copy.custom;
 
             if (cardsWrap) {
                 cardsWrap.querySelectorAll('.wbbm-bm-card').forEach(function (card) {
@@ -754,12 +763,6 @@ final class WBBM_Settings_Hub extends WBBM_Admin_Hub
                 <span class="dashicons dashicons-arrow-up-alt2"></span>
             </div>
             <div class="wbbm-gw-accordion-body" id="wbbm-gw-accordion-body">
-                <p>
-                    <a href="<?php echo esc_url(admin_url('admin.php?page=wc-settings&tab=checkout')); ?>" target="_blank" rel="noopener noreferrer" class="btn btn-outline">
-                        <?php esc_html_e('Open in WooCommerce', 'bus-booking-manager'); ?> <span class="dashicons dashicons-external"></span>
-                    </a>
-                </p>
-
                 <?php if (empty($gateways)) : ?>
                     <p class="wbbm-payment-modal-empty"><?php esc_html_e('WooCommerce has no payment gateways registered yet.', 'bus-booking-manager'); ?></p>
                 <?php endif; ?>
@@ -1018,7 +1021,7 @@ final class WBBM_Settings_Hub extends WBBM_Admin_Hub
                         <span class="wbbm-gw-status <?php echo esc_attr($wbbm_offline_pill_class); ?>"><?php echo esc_html($wbbm_offline_pill_text); ?></span>
                         <button type="button" class="btn btn-outline wbbm-cgw-configure" data-gateway="offline"><?php esc_html_e('Configure', 'bus-booking-manager'); ?></button>
                     </div>
-                    <p class="wbbm-gw-desc"><?php esc_html_e('Manual payment -- bank transfer, cash, pay on boarding. No online charge; you confirm payment yourself in the Offline Bookings list.', 'bus-booking-manager'); ?></p>
+                    <p class="wbbm-gw-desc"><?php esc_html_e('Manual payment -- bank transfer, cash, pay on boarding. No online charge; you confirm payment yourself in the Booking list.', 'bus-booking-manager'); ?></p>
                 </div>
 
                 <div class="wbbm-gw-row">

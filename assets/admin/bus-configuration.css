@@ -1,6 +1,6 @@
 :root {
-    --wbbm-config-accent: #f97316;
-    --wbbm-config-accent-dark: #ea580c;
+    --wbbm-config-accent: #b30c3b;
+    --wbbm-config-accent-dark: #8e0930;
     --wbbm-config-ink: #172033;
     --wbbm-config-muted: #64748b;
     --wbbm-config-line: #e2e8f0;
@@ -13,13 +13,13 @@ body.wbbm-config-modal-open { overflow: hidden; }
 .wbbm-config-shell { overflow: hidden; background: #fff; border: 1px solid var(--wbbm-config-line); border-radius: 14px; box-shadow: 0 10px 30px rgba(15, 23, 42, .04); }
 .wbbm-config-header { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 20px 24px; background: linear-gradient(135deg, #fff 0%, #fffaf6 100%); }
 .wbbm-config-heading { display: flex; align-items: center; gap: 15px; min-width: 0; }
-.wbbm-config-mark { display: grid; flex: 0 0 44px; width: 44px; height: 44px; place-items: center; color: #fff; background: var(--wbbm-config-accent); border-radius: 12px; box-shadow: 0 8px 18px rgba(249, 115, 22, .22); }
+.wbbm-config-mark { display: grid; flex: 0 0 44px; width: 44px; height: 44px; place-items: center; color: #fff; background: var(--wbbm-config-accent); border-radius: 12px; box-shadow: 0 8px 18px rgba(179, 12, 59, .22); }
 .wbbm-config-mark .dashicons { width: 24px; height: 24px; font-size: 24px; }
 .wbbm-config-heading h1 { margin: 0; color: var(--wbbm-config-ink); font-size: 24px; font-weight: 700; line-height: 1.2; }
 .wbbm-config-heading p { margin: 4px 0 0; color: var(--wbbm-config-muted); font-size: 13px; }
 .wbbm-config-button { display: inline-flex; box-sizing: border-box; align-items: center; justify-content: center; min-height: 40px; padding: 9px 15px; gap: 7px; color: var(--wbbm-config-ink); background: #fff; border: 1px solid var(--wbbm-config-line); border-radius: 8px; font-size: 14px; font-weight: 600; line-height: 20px; text-decoration: none; cursor: pointer; transition: border-color .18s, background .18s, color .18s, transform .18s; }
 .wbbm-config-button:hover, .wbbm-config-button:focus { color: var(--wbbm-config-accent-dark); border-color: var(--wbbm-config-accent); outline: none; }
-.wbbm-config-button:focus-visible, .wbbm-config-icon-button:focus-visible, .wbbm-config-tabs a:focus-visible, .wbbm-config-modal-close:focus-visible { outline: 3px solid rgba(249, 115, 22, .28); outline-offset: 2px; }
+.wbbm-config-button:focus-visible, .wbbm-config-icon-button:focus-visible, .wbbm-config-tabs a:focus-visible, .wbbm-config-modal-close:focus-visible { outline: 3px solid rgba(179, 12, 59, .28); outline-offset: 2px; }
 .wbbm-config-button.wbbm-config-primary { color: #fff; background: var(--wbbm-config-accent); border-color: var(--wbbm-config-accent); }
 .wbbm-config-button.wbbm-config-primary:hover, .wbbm-config-button.wbbm-config-primary:focus { color: #fff; background: var(--wbbm-config-accent-dark); border-color: var(--wbbm-config-accent-dark); transform: translateY(-1px); }
 .wbbm-config-button .dashicons { width: 18px; height: 18px; font-size: 18px; }
@@ -36,7 +36,7 @@ body.wbbm-config-modal-open { overflow: hidden; }
 .wbbm-config-toolbar form { position: relative; display: flex; align-items: center; max-width: 650px; gap: 10px; }
 .wbbm-config-toolbar form > .dashicons { position: absolute; left: 14px; z-index: 1; color: var(--wbbm-config-muted); pointer-events: none; }
 .wbbm-config-toolbar input[type="search"] { box-sizing: border-box; width: 390px; max-width: 100%; min-height: 42px; margin: 0; padding: 8px 14px 8px 42px; color: var(--wbbm-config-ink); background: var(--wbbm-config-soft); border: 1px solid var(--wbbm-config-line); border-radius: 8px; box-shadow: none; }
-.wbbm-config-toolbar input[type="search"]:focus { background: #fff; border-color: var(--wbbm-config-accent); box-shadow: 0 0 0 2px rgba(249, 115, 22, .12); outline: none; }
+.wbbm-config-toolbar input[type="search"]:focus { background: #fff; border-color: var(--wbbm-config-accent); box-shadow: 0 0 0 2px rgba(179, 12, 59, .12); outline: none; }
 
 .wbbm-config-table-card { overflow: hidden; border-top: 1px solid var(--wbbm-config-line); }
 .wbbm-config-table { width: 100%; border: 0; border-collapse: collapse; table-layout: auto; }
@@ -84,7 +84,7 @@ body.wbbm-config-modal-open { overflow: hidden; }
 .wbbm-config-fields label { display: block; margin: 0 0 7px; color: var(--wbbm-config-ink); font-weight: 650; }
 .wbbm-config-fields input[type="text"], .wbbm-config-fields textarea, .wbbm-config-fields select { box-sizing: border-box; width: 100%; max-width: none; min-height: 42px; margin: 0 0 19px; padding: 9px 12px; color: var(--wbbm-config-ink); background: #fff; border: 1px solid #cbd5e1; border-radius: 8px; box-shadow: none; }
 .wbbm-config-fields textarea { min-height: 110px; resize: vertical; }
-.wbbm-config-fields input:focus, .wbbm-config-fields textarea:focus, .wbbm-config-fields select:focus { border-color: var(--wbbm-config-accent); box-shadow: 0 0 0 3px rgba(249, 115, 22, .12); outline: none; }
+.wbbm-config-fields input:focus, .wbbm-config-fields textarea:focus, .wbbm-config-fields select:focus { border-color: var(--wbbm-config-accent); box-shadow: 0 0 0 3px rgba(179, 12, 59, .12); outline: none; }
 .wbbm-config-fields [aria-invalid="true"] { border-color: var(--wbbm-config-danger); }
 .wbbm-config-error { margin: 20px 22px 0; padding: 12px 14px; color: #991b1b; background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; }
 .wbbm-config-error ul { margin: 6px 0 0 18px; list-style: disc; }

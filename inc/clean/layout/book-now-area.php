@@ -62,10 +62,61 @@ function mage_book_now_area($available_seat = null)
                         <?php
                         // Nonce field for mage_book_now_area action — used for server-side verification
                         wp_nonce_field('mage_book_now_area', 'mage_book_now_area_nonce');
+
+                        $wbbm_wc_product_id = sanitize_text_field(get_post_meta(get_the_ID(), 'link_wc_product', true));
+                        $wbbm_checkout_url = function_exists('wc_get_checkout_url') ? wc_get_checkout_url() : '';
+                        // rendered without the theme's header and footer -- see
+                        // wbbm_embedded_checkout_chrome() in inc/wbbm_enque.php
+                        $wbbm_checkout_url = $wbbm_checkout_url ? add_query_arg('wbbm_embed', '1', $wbbm_checkout_url) : '';
                         ?>
 
-                        <button type="submit" class="mage_hidden single_add_to_cart_button" name="add-to-cart" value="<?php echo esc_attr(sanitize_text_field(get_post_meta(get_the_ID(), 'link_wc_product', true))); ?>">
+                        <button type="submit" class="mage_hidden single_add_to_cart_button" name="add-to-cart" value="<?php echo esc_attr($wbbm_wc_product_id); ?>">
                         </button>
+
+                        <?php
+                        /*
+                         * WooCommerce buses get the same drawer as offline ones, minus
+                         * the payment-method step: WooCommerce collects the method, the
+                         * billing details and the payment itself at its own checkout,
+                         * which loads into the second stage below once the seats are in
+                         * the cart. Reuses the .mage_offline_modal classes so the drawer
+                         * chrome is the one already styled.
+                         */
+                        ?>
+                        <div class="mage_offline_modal wbbm-wc-drawer"
+                             data-wbbm-checkout-url="<?php echo esc_url($wbbm_checkout_url); ?>"
+                             data-wbbm-product-id="<?php echo esc_attr($wbbm_wc_product_id); ?>">
+                            <div class="mage_offline_modal_box">
+                                <div class="mage_offline_modal_head">
+                                    <strong class="mage_offline_modal_title"><?php echo esc_html(get_the_title()); ?></strong>
+                                    <button type="button" class="mage_offline_modal_close" aria-label="<?php esc_attr_e('Close', 'bus-booking-manager'); ?>">&times;</button>
+                                </div>
+
+                                <div class="mage_offline_modal_body">
+                                    <div class="wbbm-wc-stage wbbm-wc-stage-review">
+                                        <div class="mage_offline_summary">
+                                            <h4><?php esc_html_e('Booking Summary', 'bus-booking-manager'); ?></h4>
+                                            <div class="wbbm-wc-summary"></div>
+                                        </div>
+                                        <p class="wbbm-wc-note"><?php esc_html_e('Payment details are taken at the next step.', 'bus-booking-manager'); ?></p>
+                                        <p class="mage_offline_submit_error" style="display:none;"></p>
+                                    </div>
+
+                                    <div class="wbbm-wc-stage wbbm-wc-stage-checkout" hidden>
+                                        <iframe class="wbbm-wc-checkout-frame" title="<?php esc_attr_e('Checkout', 'bus-booking-manager'); ?>" src="about:blank"></iframe>
+                                    </div>
+                                </div>
+
+                                <div class="mage_offline_modal_foot wbbm-wc-foot-review">
+                                    <button type="button" class="mage_button mage_offline_modal_cancel"><?php esc_html_e('Cancel', 'bus-booking-manager'); ?></button>
+                                    <button type="button" class="mage_button wbbm-wc-confirm"><?php esc_html_e('Confirm Booking', 'bus-booking-manager'); ?></button>
+                                </div>
+
+                                <div class="mage_offline_modal_foot wbbm-wc-foot-checkout" hidden>
+                                    <button type="button" class="mage_button mage_offline_modal_cancel"><?php esc_html_e('Back to results', 'bus-booking-manager'); ?></button>
+                                </div>
+                            </div>
+                        </div>
                     <?php else : ?>
                         <?php
                         $wbbm_pay_settings = get_option('wbbm_payment_settings');

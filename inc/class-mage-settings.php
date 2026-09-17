@@ -151,7 +151,25 @@ if (!class_exists('MAGE_Setting_API')) :
                         'sanitize_callback' => isset($option['sanitize_callback']) ? $option['sanitize_callback'] : '',
                         'placeholder' => isset($option['placeholder']) ? $option['placeholder'] : '',
                     );
-                    $label .= sprintf('<span class="description"> %s</span>', $desc);
+                    /*
+                     * The option definitions wrap emphasis in <strong>, but they
+                     * run through esc_html__() so the tags arrived here as
+                     * entities and printed literally in the label. Decode them
+                     * and allow only inline formatting back through.
+                     */
+                    $desc_html = wp_kses(
+                        html_entity_decode((string) $desc, ENT_QUOTES, 'UTF-8'),
+                        array(
+                            'strong' => array(),
+                            'b'      => array(),
+                            'em'     => array(),
+                            'i'      => array(),
+                            'br'     => array(),
+                            'code'   => array(),
+                            'a'      => array('href' => array(), 'target' => array(), 'rel' => array()),
+                        )
+                    );
+                    $label .= sprintf('<span class="description"> %s</span>', $desc_html);
                     add_settings_field($section . '[' . $option['name'] . ']', $label, array($this, 'callback_' . $type), $section, $section, $args);
                 }
             }
@@ -771,14 +789,71 @@ if (!class_exists('MAGE_Setting_API')) :
          *
          * Shows all the settings section labels as tab
          */
+        /**
+         * The section being viewed.
+         *
+         * Only ids that are actually registered are honoured, so the value is
+         * safe to use without a nonce: it selects which of our own sections to
+         * render and nothing else. Falls back to the first section.
+         */
+        function current_section()
+        {
+            $ids = wp_list_pluck($this->settings_sections, 'id');
+
+            if (empty($ids)) {
+                return '';
+            }
+
+            // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- screen selection only.
+            $requested = isset($_GET['section']) ? sanitize_key(wp_unslash($_GET['section'])) : '';
+
+            return in_array($requested, $ids, true) ? $requested : reset($ids);
+        }
+
+        /** The settings screen URL for one section. */
+        function section_url($section_id)
+        {
+            // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- screen selection only.
+            $get = wp_unslash($_GET);
+            $args = array();
+
+            foreach (array('post_type', 'page', 'tab') as $key) {
+                if (!empty($get[$key])) {
+                    $args[$key] = sanitize_key($get[$key]);
+                }
+            }
+
+            $args['section'] = $section_id;
+            $file = empty($args['post_type']) ? 'admin.php' : 'edit.php';
+
+            return add_query_arg($args, admin_url($file));
+        }
+
+        /**
+         * Show navigations as tab
+         *
+         * Each section is its own request, so these are real links rather than
+         * fragments toggling hidden markup. Only the section being viewed is
+         * rendered by show_forms(), which keeps 86 translation fields out of
+         * the page when you are looking at anything else.
+         */
         function show_navigation()
         {
+            $current = $this->current_section();
 
             echo '<h2 class="nav-tab-wrapper">';
             foreach ($this->settings_sections as $tab) {
+                $count = isset($this->settings_fields[$tab['id']])
+                    ? count($this->settings_fields[$tab['id']])
+                    : 0;
+
                 printf(
-                    '<a href="#%1$s" class="nav-tab" id="%1$s-tab">%2$s</a>',
+                    '<a href="%1$s" class="nav-tab%2$s" id="%3$s-tab" data-section="%3$s" data-count="%4$s"%5$s>%6$s</a>',
+                    esc_url($this->section_url($tab['id'])),
+                    $tab['id'] === $current ? ' nav-tab-active' : '',
                     esc_attr($tab['id']),
+                    esc_attr($count),
+                    $tab['id'] === $current ? ' aria-current="page"' : '',
                     esc_html($tab['title'])
                 );
             }
@@ -796,7 +871,14 @@ if (!class_exists('MAGE_Setting_API')) :
             ?>
             <div class="metabox-holder">
                 <div class="postbox">
-                    <?php foreach ($this->settings_sections as $form) { ?>
+                    <?php
+                    $current_section = $this->current_section();
+                    foreach ($this->settings_sections as $form) {
+                        // one section per request
+                        if ($form['id'] !== $current_section) {
+                            continue;
+                        }
+                        ?>
                         <div id="<?php echo esc_attr($form['id']); ?>" class="group">
                             <form method="post" action="options.php">
 
@@ -805,7 +887,7 @@ if (!class_exists('MAGE_Setting_API')) :
                                 <?php do_settings_sections(esc_attr($form['id'])); ?>
                                 <?php do_action('wbbm_form_bottom_' . esc_attr($form['id']), $form); ?>
 
-                                <div style="padding-left: 10px">
+                                <div class="wbbm-submit-wrap">
                                     <?php submit_button(); ?>
                                 </div>
                             </form>
@@ -830,17 +912,12 @@ if (!class_exists('MAGE_Setting_API')) :
                 jQuery(document).ready(function($) {
                     //Initiate Color Picker
                     $('.wp-color-picker-field').wpColorPicker();
-                    // Switches option sections
-                    $('.group').hide();
-                    var activetab = '';
-                    if (typeof(localStorage) != 'undefined') {
-                        activetab = localStorage.getItem("activetab");
-                    }
-                    if (activetab != '' && $(activetab).length) {
-                        $(activetab).fadeIn();
-                    } else {
-                        $('.group:first').fadeIn();
-                    }
+                    /*
+                     * Sections are separate requests now, so the one section
+                     * present is simply shown. No hiding, no localStorage
+                     * memory of a tab that may not be on this page.
+                     */
+                    $('.group').show();
                     $('.group .collapsed').each(function() {
                         $(this).find('input:checked').parent().parent().parent().nextAll().each(
                             function() {
@@ -852,22 +929,7 @@ if (!class_exists('MAGE_Setting_API')) :
                             });
                     });
 
-                    if (activetab != '' && $(activetab + '-tab').length) {
-                        $(activetab + '-tab').addClass('nav-tab-active');
-                    } else {
-                        $('.nav-tab-wrapper a:first').addClass('nav-tab-active');
-                    }
-                    $('.nav-tab-wrapper a').click(function(evt) {
-                        $('.nav-tab-wrapper a').removeClass('nav-tab-active');
-                        $(this).addClass('nav-tab-active').blur();
-                        var clicked_group = $(this).attr('href');
-                        if (typeof(localStorage) != 'undefined') {
-                            localStorage.setItem("activetab", $(this).attr('href'));
-                        }
-                        $('.group').hide();
-                        $(clicked_group).fadeIn();
-                        evt.preventDefault();
-                    });
+                    // the active tab is marked server-side; the links navigate
                 });
             </script>
 

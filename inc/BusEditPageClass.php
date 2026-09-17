@@ -318,14 +318,13 @@ class BusEditPageClass
                 update_post_meta($post_id, 'wbbm_seat_available', 'off');
             }
 
-            // Payment Method: never persist "woocommerce" unless WooCommerce
-            // is actually active -- the UI already warns about this, this
-            // is the server-side enforcement of the same rule.
-            $payment_method = isset($_POST['wbbm_payment_method']) ? sanitize_key(wp_unslash($_POST['wbbm_payment_method'])) : 'offline';
-            if ($payment_method !== 'woocommerce' || !class_exists('MP_Global_Function') || !MP_Global_Function::wbbm_use_wc()) {
-                $payment_method = 'offline';
-            }
-            update_post_meta($post_id, '_wbbm_payment_method', $payment_method);
+            /*
+             * Payment flow is a site-wide setting now (Settings > Payments),
+             * so saving a bus no longer writes one. Leaving this in would have
+             * stamped every bus with a flow on every save, which is exactly
+             * how buses ended up pinned to the custom drawer while the site
+             * was set to WooCommerce.
+             */
 
             // Save Route & Price (Step 2)
             if (isset($_POST['wbtm_route_place'])) {
@@ -1003,7 +1002,13 @@ class BusEditPageClass
                 </div>
             </div>
 
-            <?php $this->render_payment_modal($post_id); ?>
+            <?php
+            /*
+             * The payment-method modal is not rendered any more: it edited a
+             * per-bus flow that is now a single site-wide setting. Its script
+             * already bails on a missing modal, so nothing else has to change.
+             */
+            ?>
             </form>
         </div>
         </div>
@@ -1290,8 +1295,7 @@ class BusEditPageClass
      */
     private function payment_needs_attention($post_id)
     {
-        $payment_method = $post_id ? get_post_meta($post_id, '_wbbm_payment_method', true) : '';
-        $payment_method = $payment_method === 'woocommerce' ? 'woocommerce' : 'offline';
+        $payment_method = self::site_payment_flow();
         $wc_ready = class_exists('MP_Global_Function') && MP_Global_Function::wbbm_use_wc();
 
         return 'woocommerce' === $payment_method && !$wc_ready;
@@ -1312,10 +1316,22 @@ class BusEditPageClass
      * render_payment_modal() updates every matching element via
      * querySelectorAll() instead.
      */
+    /** The site-wide booking flow, from Settings > Payments. */
+    private static function site_payment_flow()
+    {
+        $settings = get_option('wbbm_payment_settings');
+        $stored = is_array($settings) && isset($settings['default_payment_method'])
+            ? $settings['default_payment_method']
+            : '';
+
+        return class_exists('MP_Global_Function')
+            ? (MP_Global_Function::wbbm_flow_name($stored) ?: 'custom')
+            : 'custom';
+    }
+
     private function render_payment_method_card($post_id)
     {
-        $payment_method = $post_id ? get_post_meta($post_id, '_wbbm_payment_method', true) : '';
-        $payment_method = $payment_method === 'woocommerce' ? 'woocommerce' : 'offline';
+        $payment_method = self::site_payment_flow();
         $is_wc = 'woocommerce' === $payment_method;
         ?>
         <div class="bus-card wbbm-payment-card">
@@ -1331,9 +1347,13 @@ class BusEditPageClass
                 </span>
             </div>
 
-            <button type="button" class="btn btn-outline wbbm-payment-configure-btn" data-wbbm-payment-modal-open>
-                <span class="dashicons dashicons-admin-generic"></span> <?php _e('Configure', 'bus-booking-manager'); ?>
-            </button>
+            <p class="description wbbm-payment-summary-scope">
+                <?php esc_html_e('This applies to every bus. Change it in Settings > Payments.', 'bus-booking-manager'); ?>
+            </p>
+
+            <a class="btn btn-outline wbbm-payment-configure-btn" href="<?php echo esc_url(admin_url('edit.php?post_type=wbbm_bus&page=wbbm-settings&section=wbbm_payment_setting_sec')); ?>">
+                <span class="dashicons dashicons-admin-generic"></span> <?php _e('Open payment settings', 'bus-booking-manager'); ?>
+            </a>
         </div>
         <?php
     }
@@ -1375,8 +1395,7 @@ class BusEditPageClass
      */
     private function render_payment_modal($post_id)
     {
-        $payment_method = $post_id ? get_post_meta($post_id, '_wbbm_payment_method', true) : '';
-        $payment_method = $payment_method === 'woocommerce' ? 'woocommerce' : 'offline';
+        $payment_method = self::site_payment_flow();
         $wc_ready = class_exists('MP_Global_Function') && MP_Global_Function::wbbm_use_wc();
         ?>
         <div class="wbbm-payment-modal" id="wbbm-payment-modal" style="display:none;">
@@ -1389,8 +1408,8 @@ class BusEditPageClass
                     <p class="description"><?php esc_html_e('How customers pay when they book this bus.', 'bus-booking-manager'); ?></p>
 
                     <div class="wbbm-bm-cards">
-                        <label class="wbbm-bm-card <?php echo 'offline' === $payment_method ? 'is-selected' : ''; ?>">
-                            <input type="radio" name="wbbm_payment_method" value="offline" <?php checked($payment_method, 'offline'); ?>>
+                        <label class="wbbm-bm-card <?php echo 'custom' === $payment_method ? 'is-selected' : ''; ?>">
+                            <input type="radio" name="wbbm_payment_method" value="custom" <?php checked($payment_method, 'custom'); ?>>
                             <span class="wbbm-bm-card-icon"><span class="dashicons dashicons-money-alt"></span></span>
                             <strong><?php esc_html_e('Custom Payment Method', 'bus-booking-manager'); ?></strong>
                             <small><?php esc_html_e('Offline, Stripe and/or PayPal -- no WooCommerce needed', 'bus-booking-manager'); ?></small>
@@ -1427,7 +1446,7 @@ class BusEditPageClass
                      * shown only while its card is the selected one.
                      */ ?>
                     <?php if (class_exists('WBBM_Settings_Hub')) : ?>
-                        <div data-mode-section="offline" <?php echo 'offline' === $payment_method ? '' : 'style="display:none"'; ?>>
+                        <div data-mode-section="custom" <?php echo 'custom' === $payment_method ? '' : 'style="display:none"'; ?>>
                             <?php WBBM_Settings_Hub::render_offline_payment_section(); ?>
                         </div>
                         <div data-mode-section="woocommerce" <?php echo 'woocommerce' === $payment_method ? '' : 'style="display:none"'; ?>>
@@ -1467,7 +1486,7 @@ class BusEditPageClass
                 }
                 function syncFromSelection() {
                     var checked = modal.querySelector('input[name="wbbm_payment_method"]:checked');
-                    var mode = checked ? checked.value : 'offline';
+                    var mode = checked ? checked.value : 'custom';
 
                     modal.querySelectorAll('.wbbm-bm-card').forEach(function (card) {
                         var input = card.querySelector('input[name="wbbm_payment_method"]');
