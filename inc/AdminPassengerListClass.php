@@ -284,7 +284,25 @@ class AdminPassengerListClass
         $booking_ids = get_posts($query_args);
         $booking_ids = $this->filter_booking_ids_by_object_post_type($booking_ids, 'wbbm_bus');
         $total_count = count($booking_ids);
-        $passger_query = $this->get_passenger_posts_by_ids(array_slice($booking_ids, $offset, $limit));
+
+        /*
+         * Paged by whole orders, not by a flat slice of seat rows: a booking
+         * split across a page boundary shows some of its seats on one page
+         * and the rest on the next, with nothing to say they belong together.
+         */
+        $page_groups = $this->paginate_booking_groups($booking_ids, $limit);
+        $total_pages = max(1, count($page_groups));
+        $current_page = min($current_page, $total_pages);
+        $page_ids = isset($page_groups[$current_page - 1]) ? $page_groups[$current_page - 1] : array();
+
+        // How many seat rows the earlier pages used, for the "Showing x - y"
+        // line -- pages hold roughly rather than exactly $limit rows now.
+        $offset = 0;
+        for ($wbbm_page = 0; $wbbm_page < $current_page - 1; $wbbm_page++) {
+            $offset += count($page_groups[$wbbm_page]);
+        }
+
+        $passger_query = $this->get_passenger_posts_by_ids($page_ids);
 
         // Show Removed List
         if (isset($_GET['req_type']) && ($_GET['req_type'] === 'removed_list')) {
@@ -298,7 +316,19 @@ class AdminPassengerListClass
             $booking_ids = get_posts($query_args);
             $booking_ids = $this->filter_booking_ids_by_object_post_type($booking_ids, 'wbbm_bus');
             $total_count = count($booking_ids);
-            $passger_query = $this->get_passenger_posts_by_ids(array_slice($booking_ids, $offset, $limit));
+
+            // Same whole-order paging as the main list above.
+            $page_groups = $this->paginate_booking_groups($booking_ids, $limit);
+            $total_pages = max(1, count($page_groups));
+            $current_page = min($current_page, $total_pages);
+            $page_ids = isset($page_groups[$current_page - 1]) ? $page_groups[$current_page - 1] : array();
+
+            $offset = 0;
+            for ($wbbm_page = 0; $wbbm_page < $current_page - 1; $wbbm_page++) {
+                $offset += count($page_groups[$wbbm_page]);
+            }
+
+            $passger_query = $this->get_passenger_posts_by_ids($page_ids);
             $class_name = 'removed-list';
         }
 
@@ -343,6 +373,16 @@ class AdminPassengerListClass
                 'per_adult_price',
                 'per_child_price',
                 'per_infant_price',
+                // per_entire_price was missing, so an entire-bus booking looked
+                // up a price that was never loaded and always showed 0.00. The
+                // total_* counts back the ticket-type fallback in
+                // resolve_ticket_type().
+                'per_entire_price',
+                'payment_method',
+                'total_adult',
+                'total_child',
+                'total_infant',
+                'total_entire',
                 'bus_start',
                 'booking_date',
                 'journey_date',
@@ -669,12 +709,38 @@ class AdminPassengerListClass
                         $i = 0;
                         $t = 0;
                         $sl = $offset + 1;
-                        $passenger_index = 0;
-                        $prev_order_id = '';
+
+                        /*
+                         * Where every seat sits in its order, worked out in one
+                         * pass over the page. This replaced a running comparison
+                         * against the previous row, which only held while the
+                         * seats of an order stayed adjacent -- any filter that
+                         * dropped one from the middle silently mis-numbered the
+                         * rest and mis-indexed their extra-info blocks.
+                         */
+                        $group_map = $this->build_group_map($page_ids);
+
+                        // Which groups have already shown their order block. The
+                        // billing filters below can drop a seat, so the first row
+                        // of an order is not necessarily the first one DISPLAYED
+                        // -- without this, filtering out seat 1 would leave the
+                        // rest of the order with no order number on any row.
+                        $group_lead_shown = array();
+
                         foreach ($passger_query as $_passger) {
 
                             $order_id = $_passger->order_id;
-                            $passenger_index = ($prev_order_id == $order_id ? ++$passenger_index : 0); // if a order has multiple seats
+                            $group = isset($group_map[$_passger->ID])
+                                ? $group_map[$_passger->ID]
+                                : array('index' => 0, 'size' => 1, 'band' => -1);
+
+                            // Position within the real order, so "Seat 2 of 3"
+                            // stays true even when seat 1 is filtered out.
+                            $passenger_index = $group['index']; // if a order has multiple seats
+
+                            $group_key = (string) $order_id;
+                            $group['is_lead'] = empty($group_lead_shown[$group_key]);
+                            $group_lead_shown[$group_key] = true;
 
                             $custom_field = unserialize(get_post_meta($bus_id, 'wbbm_attendee_reg_form', true));
 
@@ -718,11 +784,9 @@ class AdminPassengerListClass
                                 $_passger->flight_arrial_no = get_post_meta($_passger->ID, '_wbbm_flight_arrial_no', true);
                                 $_passger->flight_departure_no = get_post_meta($_passger->ID, '_wbbm_flight_departure_no', true);
 
-                                $this->passenger_list($_passger, $class_name, $sl, $default_billing_fields, $wc_custom_checkout_fields, $bus_id, $mage_meta, $t, $passenger_index);
+                                $this->passenger_list($_passger, $class_name, $sl, $default_billing_fields, $wc_custom_checkout_fields, $bus_id, $mage_meta, $t, $passenger_index, $group);
                                 $sl++;
                             }
-
-                            $prev_order_id = $order_id; // store current order id for next iteration
                         }
                         ?>
                     </tbody>
@@ -733,14 +797,16 @@ class AdminPassengerListClass
                     <div class="pagination-info">
                         <?php
                         $total = $total_count;
-                        $pages = ceil($total / $limit);
-                        printf(__('Showing %d - %d of %d items', 'bus-booking-manager'), max(1, $offset + 1), min($offset + $limit, $total), $total);
+                        // Pages come from the whole-order packing, so they are
+                        // not simply $total / $limit any more.
+                        $pages = $total_pages;
+                        printf(__('Showing %d - %d of %d items', 'bus-booking-manager'), max(1, $offset + 1), min($offset + count($page_ids), $total), $total);
                         ?>
                     </div>
                     <div class="pagination-controls">
                         <?php
                         // Using the existing wbbm_pagination function but wrapped in our container
-                        echo ($total > $limit) ? wbbm_pagination($current_page, $pages) : '';
+                        echo ($pages > 1) ? wbbm_pagination($current_page, $pages) : '';
                         ?>
                     </div>
                 </div>
@@ -993,10 +1059,79 @@ class AdminPassengerListClass
     <?php
     }
 
-    function passenger_list($_passger, $class_name, $sl, $default_billing_fields, $wc_custom_checkout_fields, $bus_id, $mage_meta, $t, $passenger_index)
+    /**
+     * Which of the four ticket types a booking post is.
+     *
+     * _wbbm_user_type is not always one of them. Custom Payment Method
+     * bookings recorded before the fix in wbbm_record_pending_booking()
+     * stamped the payment method ('offline') here instead of the passenger
+     * type, and the WooCommerce path stores 'Adult'/'Entire' capitalised.
+     *
+     * When the stored value is not a ticket type, fall back to whichever type
+     * the booking actually has seats for: the per-type counts and prices all
+     * sit on the same post, so the right figure is recoverable and existing
+     * bookings display correctly without their stored data being rewritten.
+     */
+    private function resolve_ticket_type($_passger)
+    {
+        $types = array('adult', 'child', 'infant', 'entire');
+        $stored = strtolower(trim((string) $_passger->user_type));
+
+        if (in_array($stored, $types, true)) {
+            return $stored;
+        }
+
+        foreach ($types as $type) {
+            $count_key = 'total_' . $type;
+            if (!empty($_passger->$count_key)) {
+                return $type;
+            }
+        }
+
+        return 'adult';
+    }
+
+    function passenger_list($_passger, $class_name, $sl, $default_billing_fields, $wc_custom_checkout_fields, $bus_id, $mage_meta, $t, $passenger_index, $group = null)
     {
         $user_id = $_passger->user_id;
-        $per_price_key = 'per_' . strtolower($_passger->user_type) . '_price';
+
+        /*
+         * Seats sharing an order id are one booking by one customer. The row
+         * carries that: connected rows share a tinted band and an accent bar,
+         * only the first shows the order block, and each says which seat of
+         * the order it is. $group comes from build_group_map().
+         */
+        $group = is_array($group) ? $group : array('index' => 0, 'size' => 1, 'band' => -1);
+        $is_grouped = $group['size'] > 1;
+        // First row of this order actually shown, which is not always its first
+        // seat -- a filter may have removed that one.
+        $is_group_lead = $is_grouped && !empty($group['is_lead']);
+
+        $row_classes = array_filter(array(
+            $class_name,
+            $is_grouped ? 'wbbm-order-group' : '',
+            $is_grouped ? ('wbbm-order-band-' . (int) $group['band']) : '',
+            $is_group_lead ? 'is-group-first' : '',
+            ($is_grouped && $group['index'] === $group['size'] - 1) ? 'is-group-last' : '',
+        ));
+
+        /*
+         * Custom Payment bookings use a negative, timestamp-derived stand-in
+         * for an order id -- there is no post behind it, so the usual
+         * edit-order link goes nowhere and the raw value reads as "#-1789...".
+         * Show it the way the customer's confirmation does, and point it at
+         * this list filtered to that order instead.
+         */
+        $wbbm_order_id = $_passger->order_id;
+        $wbbm_is_wc_order = ((int) $wbbm_order_id > 0);
+        $wbbm_order_label = $wbbm_is_wc_order ? $wbbm_order_id : absint(abs((int) $wbbm_order_id));
+        $wbbm_order_filter_url = add_query_arg(
+            array('post_type' => 'wbbm_bus', 'page' => 'passenger_list', 'order_id' => $wbbm_order_id),
+            admin_url('edit.php')
+        );
+        $wbbm_order_link = $wbbm_is_wc_order ? get_edit_post_link($wbbm_order_id) : $wbbm_order_filter_url;
+        $ticket_type   = $this->resolve_ticket_type($_passger);
+        $per_price_key = 'per_' . $ticket_type . '_price';
         $per_price     = isset($_passger->$per_price_key) ? $_passger->$per_price_key : 0;
         $pin          = $_passger->order_id . "-" . $_passger->booking_id . "-" . $_passger->user_id . "-" . $_passger->bus_id;
 
@@ -1012,12 +1147,48 @@ class AdminPassengerListClass
             $status_class = 'status-pending';
         }
     ?>
-        <tr class="<?php echo $class_name; ?>">
+        <tr class="<?php echo esc_attr(implode(' ', $row_classes)); ?>" data-wbbm-order="<?php echo esc_attr($wbbm_order_id); ?>">
             <td class="col-id">
-                <div class="wbbm-list-title"><span style="color:var(--sh-primary);">#<?php echo $_passger->booking_id; ?></span></div>
-                <div class="wbbm-list-meta">
-                    <a href="<?php echo get_edit_post_link($_passger->order_id); ?>" style="color:var(--sh-text-soft);">Ord #<?php echo $_passger->order_id; ?></a>
+                <div class="wbbm-list-title">
+                    <?php if ($is_grouped && !$is_group_lead) : ?>
+                        <span class="wbbm-order-continues" aria-hidden="true">&#8627;</span>
+                    <?php endif; ?>
+                    <span style="color:var(--sh-primary);">#<?php echo $_passger->booking_id; ?></span>
                 </div>
+                <div class="wbbm-list-meta">
+                    <?php if (!$is_grouped || $is_group_lead) : ?>
+                        <a href="<?php echo esc_url($wbbm_order_link); ?>" style="color:var(--sh-text-soft);">Ord #<?php echo esc_html($wbbm_order_label); ?></a>
+                    <?php else : ?>
+                        <?php /* The order number is on the group's first row; repeating it
+                                 on every seat is what made the connection hard to see. */ ?>
+                        <span class="wbbm-order-same"><?php esc_html_e('same order', 'bus-booking-manager'); ?></span>
+                    <?php endif; ?>
+                </div>
+                <?php if ($is_grouped) : ?>
+                    <div class="wbbm-list-sub-meta">
+                        <span class="wbbm-order-seat-chip">
+                            <?php
+                            printf(
+                                /* translators: 1: this seat's position in the order, 2: how many seats the order has */
+                                esc_html__('Seat %1$d of %2$d', 'bus-booking-manager'),
+                                (int) $group['index'] + 1,
+                                (int) $group['size']
+                            );
+                            ?>
+                        </span>
+                        <?php if ($is_group_lead) : ?>
+                            <a class="wbbm-order-view-all" href="<?php echo esc_url($wbbm_order_filter_url); ?>">
+                                <?php
+                                printf(
+                                    /* translators: %d: how many seats the order has */
+                                    esc_html__('View all %d', 'bus-booking-manager'),
+                                    (int) $group['size']
+                                );
+                                ?>
+                            </a>
+                        <?php endif; ?>
+                    </div>
+                <?php endif; ?>
                 <div class="wbbm-list-sub-meta" style="font-size:11px;"><?php echo wbbm_get_datetime($_passger->booking_date, 'date-text'); ?></div>
             </td>
 
@@ -1046,18 +1217,41 @@ class AdminPassengerListClass
             </td>
 
             <td class="col-route">
-                <div style="display: flex; flex-direction: column; gap: 4px;">
-                    <div style="font-size: 13px;">
-                        <span style="color: #64748b; font-weight: bold; font-size: 16px; line-height: 1; vertical-align: middle;">○</span>
-                        <span style="font-weight: 600; color: var(--sh-text-main);"><?php echo $_passger->boarding_point; ?></span>
-                        <?php if (!empty($_passger->pickpoint)) : ?>
-                            <br><span style="padding-left: 14px; font-size: 12px; color: var(--sh-text-soft);">↳ <?php echo $_passger->pickpoint; ?></span>
-                        <?php endif; ?>
+                <?php
+                /*
+                 * 'n_a' is the sentinel for "this bus has no pick-up points",
+                 * not a place -- wbbm_extra_price.php and FilterClass.php both
+                 * drop it, and printing it here is what put a literal "n_a"
+                 * under the boarding point.
+                 */
+                $wbbm_pickpoint = trim((string) $_passger->pickpoint);
+                $wbbm_has_pickpoint = ('' !== $wbbm_pickpoint) && ('n_a' !== strtolower($wbbm_pickpoint));
+                ?>
+                <?php /* A rail joins the two markers, so the column reads as one
+                         journey from a boarding point to a dropping point rather
+                         than as two unrelated place names. The markers are
+                         decorative; the From/To wording carries the meaning for
+                         anyone not seeing them. */ ?>
+                <div class="wbbm-route-timeline">
+                    <div class="wbbm-route-stop is-from">
+                        <span class="wbbm-route-marker" aria-hidden="true"></span>
+                        <span class="wbbm-route-body">
+                            <span class="screen-reader-text"><?php esc_html_e('From', 'bus-booking-manager'); ?></span>
+                            <span class="wbbm-route-point"><?php echo esc_html($_passger->boarding_point); ?></span>
+                            <?php if ($wbbm_has_pickpoint) : ?>
+                                <span class="wbbm-route-pickup">
+                                    <span class="screen-reader-text"><?php esc_html_e('Pick-up point:', 'bus-booking-manager'); ?></span>
+                                    <?php echo esc_html($wbbm_pickpoint); ?>
+                                </span>
+                            <?php endif; ?>
+                        </span>
                     </div>
-                    <div style="padding-left: 4px; border-left: 1px dashed #cbd5e1; margin-left: 3px; height: 12px;"></div>
-                    <div style="font-size: 13px;">
-                        <span style="color: var(--sh-primary); font-weight: bold; font-size: 16px; line-height: 1; vertical-align: middle;">●</span>
-                        <span style="font-weight: 600; color: var(--sh-text-main);"><?php echo $_passger->droping_point; ?></span>
+                    <div class="wbbm-route-stop is-to">
+                        <span class="wbbm-route-marker" aria-hidden="true"></span>
+                        <span class="wbbm-route-body">
+                            <span class="screen-reader-text"><?php esc_html_e('To', 'bus-booking-manager'); ?></span>
+                            <span class="wbbm-route-point"><?php echo esc_html($_passger->droping_point); ?></span>
+                        </span>
                     </div>
                 </div>
             </td>
@@ -1066,11 +1260,14 @@ class AdminPassengerListClass
                 <div class="capacity-info">
                     <span class="count" style="margin-bottom: 4px; font-size: 13px; color: var(--sh-text-soft);">
                         <?php
-                        if ($_passger->user_type == 'child') {
+                        // Same resolved type the price above uses -- read straight
+                        // off user_type this would label a historical 'offline'
+                        // row "Adult" while pricing it as whatever it really is.
+                        if ($ticket_type === 'child') {
                             echo wbbm_get_option('wbbm_child_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_child_text', 'wbbm_label_setting_sec') : __('Child', 'bus-booking-manager');
-                        } elseif ($_passger->user_type == 'infant') {
+                        } elseif ($ticket_type === 'infant') {
                             echo wbbm_get_option('wbbm_infant_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_infant_text', 'wbbm_label_setting_sec') : __('Infant', 'bus-booking-manager');
-                        } elseif ($_passger->user_type == 'entire') {
+                        } elseif ($ticket_type === 'entire') {
                             echo wbbm_get_option('wbbm_entire_bus_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_entire_bus_text', 'wbbm_label_setting_sec') : __('Entire Bus', 'bus-booking-manager');
                         } else {
                             echo wbbm_get_option('wbbm_adult_text', 'wbbm_label_setting_sec') ? wbbm_get_option('wbbm_adult_text', 'wbbm_label_setting_sec') : __('Adult', 'bus-booking-manager');
@@ -1143,8 +1340,22 @@ class AdminPassengerListClass
             <?php endif; ?>
 
             <td class="col-status">
-                <span class="status-badge <?php echo $status_class; ?>"><?php echo $status_label; ?></span>
-                <div class="wbbm-list-sub-meta" style="font-size: 11px; margin-top: 4px;"><?php echo wbbm_checkin_status_name($_passger->ticket_status); ?></div>
+                <?php
+                /*
+                 * How it was paid, above the ticket status. The two answer
+                 * different questions -- "did this booking go through" versus
+                 * "which flow took the money" -- and only the method tells you
+                 * whether a pending booking is waiting on a person or on a
+                 * gateway. Same badge the Bookings list uses, from the shared
+                 * helper in inc/wbbm_booking_status.php.
+                 */
+                $wbbm_method = wbbm_payment_method_meta($_passger->payment_method);
+                ?>
+                <div class="wbbm-status-stack">
+                    <span class="wbbm-method-badge <?php echo esc_attr($wbbm_method['class']); ?>"><?php echo esc_html($wbbm_method['label']); ?></span>
+                    <span class="status-badge <?php echo $status_class; ?>"><?php echo $status_label; ?></span>
+                    <span class="wbbm-list-sub-meta wbbm-checkin-line"><?php echo wbbm_checkin_status_name($_passger->ticket_status); ?></span>
+                </div>
             </td>
 
             <td class="col-action" style="text-align: right;">
@@ -1188,6 +1399,132 @@ class AdminPassengerListClass
         }
 
         return $filtered_ids;
+    }
+
+    /* ------------------------------------------------------------------
+     * Orders as groups.
+     *
+     * The list is one row per seat, and seats that share a _wbbm_order_id
+     * came from one order by one customer -- since return trips can be
+     * booked together, possibly across two buses. These helpers work that
+     * grouping out once, up front, so the table can mark the connection
+     * instead of leaving the reader to spot repeated order numbers.
+     * ---------------------------------------------------------------- */
+
+    /**
+     * Booking ids bucketed by order, preserving the order the ids arrived
+     * in. One query for every id rather than a get_post_meta() per row.
+     *
+     * A booking with no order id becomes its own group: it is connected to
+     * nothing, and bucketing every such row under one empty key would show
+     * unrelated bookings as a single order.
+     *
+     * @return array<int, int[]> Groups, in display order.
+     */
+    private function group_booking_ids_by_order($booking_ids)
+    {
+        if (empty($booking_ids)) {
+            return array();
+        }
+
+        global $wpdb;
+
+        $booking_ids = array_map('absint', $booking_ids);
+        $placeholders = implode(',', array_fill(0, count($booking_ids), '%d'));
+        $rows = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT post_id, meta_value FROM {$wpdb->postmeta}
+                 WHERE meta_key = '_wbbm_order_id' AND post_id IN ($placeholders)",
+                $booking_ids
+            )
+        );
+
+        $order_of = array();
+        foreach ($rows as $row) {
+            $order_of[(int) $row->post_id] = (string) $row->meta_value;
+        }
+
+        $groups = array();
+        foreach ($booking_ids as $id) {
+            $order_id = isset($order_of[$id]) ? $order_of[$id] : '';
+            $key = ('' !== $order_id) ? 'ord:' . $order_id : 'post:' . $id;
+
+            if (!isset($groups[$key])) {
+                $groups[$key] = array();
+            }
+            $groups[$key][] = $id;
+        }
+
+        return array_values($groups);
+    }
+
+    /**
+     * Packs booking ids into pages without ever splitting an order across a
+     * page boundary -- the seats of one booking are only recognisable as
+     * connected while they are on the same page.
+     *
+     * Pages therefore hold roughly, not exactly, $limit rows. An order with
+     * more seats than the limit still gets a page of its own rather than
+     * being split, since splitting is the thing being avoided.
+     *
+     * @return array<int, int[]> One entry per page.
+     */
+    private function paginate_booking_groups($booking_ids, $limit)
+    {
+        $pages = array();
+        $current = array();
+
+        foreach ($this->group_booking_ids_by_order($booking_ids) as $group) {
+            if ($current && (count($current) + count($group)) > $limit) {
+                $pages[] = $current;
+                $current = array();
+            }
+            $current = array_merge($current, $group);
+        }
+
+        if ($current) {
+            $pages[] = $current;
+        }
+
+        return $pages;
+    }
+
+    /**
+     * Per-row group facts for one page: where each seat sits in its order,
+     * how big that order is, and an alternating band index so two orders
+     * that happen to sit next to each other stay visually distinct.
+     *
+     * Keyed by booking id, so a row can be placed without relying on the
+     * row before it -- the old approach compared each row to the previous
+     * one only, which quietly mis-numbered seats as soon as a filter
+     * removed one from the middle of an order.
+     *
+     * @return array<int, array{index: int, size: int, band: int, order_id: string}>
+     */
+    private function build_group_map($page_ids)
+    {
+        $map = array();
+        $band = 0;
+
+        foreach ($this->group_booking_ids_by_order($page_ids) as $group) {
+            $size = count($group);
+
+            foreach ($group as $position => $id) {
+                $map[$id] = array(
+                    'index' => $position,
+                    'size'  => $size,
+                    'band'  => ($size > 1) ? ($band % 2) : -1,
+                );
+            }
+
+            // Only a real multi-seat order takes a band, so two single-seat
+            // bookings in a row never look like an alternating pair.
+            if ($size > 1) {
+                $band++;
+            }
+        }
+
+        return $map;
     }
 
     private function get_passenger_posts_by_ids($booking_ids)

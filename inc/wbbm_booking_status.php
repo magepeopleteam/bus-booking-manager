@@ -49,3 +49,41 @@ if (!function_exists('wbbm_checkin_status_name')) {
         }
     }
 }
+
+/**
+ * How a booking was paid, as a label and a badge class.
+ *
+ * Both Bookings screens show this now -- the Bookings list in its own Payment
+ * column, the Passenger List above the ticket status -- so the mapping lives
+ * here rather than being copied into each. Guarded like its neighbours above:
+ * PRO may declare the same helper and either plugin may load first.
+ *
+ * @param string $method A _wbbm_payment_method value.
+ * @return array{label: string, class: string}
+ */
+if (!function_exists('wbbm_payment_method_meta')) {
+    function wbbm_payment_method_meta($method)
+    {
+        $method = strtolower(trim((string) $method));
+
+        $map = array(
+            'woocommerce' => array('label' => __('WooCommerce', 'bus-booking-manager'), 'class' => 'wbbm-pay-wc'),
+            'offline'     => array('label' => __('Pay Offline', 'bus-booking-manager'), 'class' => 'wbbm-pay-offline'),
+            'stripe'      => array('label' => __('Card (Stripe)', 'bus-booking-manager'), 'class' => 'wbbm-pay-card'),
+            'paypal'      => array('label' => __('PayPal', 'bus-booking-manager'), 'class' => 'wbbm-pay-card'),
+        );
+
+        if (isset($map[$method])) {
+            return $map[$method];
+        }
+
+        // Bookings written before the payment method was recorded have no
+        // value at all. They predate the Custom Payment Method gateways, so
+        // WooCommerce is what they were -- but say so as a guess, not a fact.
+        if ('' === $method) {
+            return array('label' => __('WooCommerce', 'bus-booking-manager'), 'class' => 'wbbm-pay-wc');
+        }
+
+        return array('label' => ucfirst($method), 'class' => 'wbbm-pay-offline');
+    }
+}

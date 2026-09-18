@@ -189,6 +189,10 @@
     /* ---- reading a leg's selection off its card ---- */
 
     var outboundSelection = null;
+    // The outbound card itself, not just what was read off it. WooCommerce
+    // mode adds each leg to the cart by posting that leg's own <form>, so the
+    // element has to be reachable when the RETURN leg is confirmed.
+    var outboundCard = null;
 
     function fieldVal($searchList, name) {
         var $el = $searchList.find('[name="' + name + '"]').first();
@@ -245,9 +249,87 @@
             date: fieldVal($searchList, 'journey_date'),
             time: fieldVal($searchList, 'user_start_time'),
             tickets: tickets,
-            subtotal: legSubtotal($searchList)
+            subtotal: legSubtotal($searchList),
+            // Each bus carries its own offline tax rate, so the drawer cannot
+            // apply the return leg's rate to both legs when it adds them up.
+            taxRate: parseFloat($searchList.find('.mage_offline_tax_rate').val()) || 0,
+            // What it takes to actually BOOK this leg, as opposed to describe
+            // it. Held on the outbound card so the return leg's Confirm can
+            // post both legs in one request -- without this the outbound was
+            // only ever drawn on screen, never submitted, and the customer
+            // ended up with a one-way booking.
+            payload: legPayload($searchList)
         };
     }
+
+    /**
+     * The per-leg half of the offline booking POST. Deliberately mirrors the
+     * per-leg field names in mage_style.js's postData, because the server
+     * hands each leg straight to the same single-leg validator that has
+     * always run (wbbm_validate_offline_booking_request()).
+     */
+    function legPayload($searchList) {
+        return {
+            bus_id: fieldVal($searchList, 'bus_id'),
+            journey_date: fieldVal($searchList, 'journey_date'),
+            start_stops: fieldVal($searchList, 'start_stops'),
+            end_stops: fieldVal($searchList, 'end_stops'),
+            user_start_time: fieldVal($searchList, 'user_start_time'),
+            bus_start_time: fieldVal($searchList, 'bus_start_time'),
+            mage_pickpoint: $searchList.find('select[name="mage_pickpoint"]').val() || '',
+            adult_quantity: $searchList.find('[name="adult_quantity"]').val() || 0,
+            child_quantity: $searchList.find('[name="child_quantity"]').val() || 0,
+            infant_quantity: $searchList.find('[name="infant_quantity"]').val() || 0,
+            entire_quantity: $searchList.find('[name="entire_quantity"]').is(':checked') ? 1 : 0
+        };
+    }
+
+    /**
+     * The held outbound leg, for mage_style.js's Confirm handler. Returns null
+     * on a one-way search, or when the card being confirmed IS the outbound --
+     * in both cases there is only one leg and it posts on its own.
+     */
+    window.wbbmHeldOutboundLeg = function ($searchList) {
+        var $return = returnWrapper();
+
+        if (!outboundSelection || !$return || !$searchList || !$searchList.length) {
+            return null;
+        }
+
+        if (!$.contains($return[0], $searchList[0])) {
+            return null;
+        }
+
+        return outboundSelection.payload;
+    };
+
+    /**
+     * The held outbound card, for the WooCommerce drawer's Confirm. Returns
+     * null on a one-way search, or when the card being confirmed IS the
+     * outbound -- in both cases there is only one leg to add.
+     */
+    window.wbbmHeldOutboundCard = function ($searchList) {
+        var $return = returnWrapper();
+
+        if (!outboundCard || !$return || !$searchList || !$searchList.length) {
+            return null;
+        }
+
+        if (!$.contains($return[0], $searchList[0])) {
+            return null;
+        }
+
+        return outboundCard;
+    };
+
+    /** Forgets the held leg once its booking is recorded, so a second search starts clean. */
+    window.wbbmClearHeldOutboundLeg = function () {
+        outboundSelection = null;
+        outboundCard = null;
+        $('.mage_search_list').removeClass('wbbm-leg-chosen');
+        $('.wbbm-leg-badge').remove();
+        $('.wbbm-return-prompt').remove();
+    };
 
     /** A compact card describing one leg, used in the prompt and the drawer. */
     function legCard(selection, tag) {
@@ -342,6 +424,7 @@
         }
 
         outboundSelection = readSelection($searchList);
+        outboundCard = $searchList;
 
         markOutboundChosen($searchList);
         showReturnPrompt($return);
@@ -363,8 +446,16 @@
      * the total would misstate what the customer is about to pay.
      */
     function showBothLegsInDrawer($searchList) {
-        var $modal = $searchList.find('.mage_offline_modal');
-        if (!$modal.hasClass('is-open')) {
+        /*
+         * The Custom Payment modal only. The WooCommerce drawer carries the
+         * .mage_offline_modal class too (it reuses that modal's chrome -- see
+         * inc/clean/layout/book-now-area.php), so an unfiltered lookup matched
+         * it as well and inserted a second Outbound card after its <h4>, on top
+         * of the pair wbbmOpenWcDrawer() had already rendered into
+         * .wbbm-wc-summary. That is what showed the outbound leg twice.
+         */
+        var $modal = $searchList.find('.mage_offline_modal').not('.wbbm-wc-drawer');
+        if (!$modal.length || !$modal.hasClass('is-open')) {
             return;
         }
 
@@ -389,7 +480,7 @@
 
         var $outbound = $('<div class="wbbm-drawer-leg"></div>')
             .append(legCard(outboundSelection, strings().outboundLabel || 'Outbound'))
-            .append($('<p class="wbbm-leg-card-note"></p>').text(strings().notBookedNote || ''));
+            .append($('<p class="wbbm-leg-card-note"></p>').text(strings().bothLegsNote || ''));
 
         $summary.find('h4').after($outbound);
 
@@ -406,7 +497,45 @@
         );
         $summary.find(plainRows).addClass('wbbm-row-replaced');
 
-        $totalLabel.text(strings().returnTotalLabel || 'Return total');
+        /*
+         * Both legs are booked and charged together now, so the drawer has to
+         * show what the customer will actually owe. mage_style.js filled these
+         * figures in for the return leg alone a moment ago (wbbmOpenOfflineModal
+         * runs first); the outbound's own subtotal and its own bus's tax rate
+         * are added on top.
+         *
+         * This is a preview -- wbbm_validate_booking_legs() recomputes every
+         * figure server-side and that is what is charged and recorded.
+         */
+        var outSubtotal = parseFloat(outboundSelection.subtotal) || 0;
+        var outTax = outSubtotal * ((parseFloat(outboundSelection.taxRate) || 0) / 100);
+
+        addToAmountRow($summary.find('.mage_offline_summary_subtotal_val'), outSubtotal);
+        addToAmountRow($summary.find('.mage_offline_summary_tax_val'), outTax);
+        addToAmountRow($summary.find('.mage_offline_summary_total_val'), outSubtotal + outTax);
+
+        // The tax row hides itself when the return leg is untaxed, but the
+        // outbound leg may still be taxed -- show it if there is tax to show.
+        if (outTax > 0) {
+            $summary.find('.mage_offline_summary_tax').show();
+        }
+
+        $totalLabel.text(strings().returnTotalLabel || 'Trip total');
+    }
+
+    /**
+     * Adds an amount to a currency cell the drawer has already written, keeping
+     * the site's own currency formatting. The cell's own number is recovered by
+     * stripping everything that is not part of one -- reading it back beats
+     * re-deriving the return leg's figures here and risking the two disagreeing.
+     */
+    function addToAmountRow($cell, amount) {
+        if (!$cell.length || !amount) {
+            return;
+        }
+
+        var current = parseFloat(String($cell.text()).replace(/[^0-9.\-]/g, '')) || 0;
+        $cell.text(money(current + amount));
     }
 
     $(document).on('click', 'button.mage_book_now', function () {
@@ -443,10 +572,38 @@
             return false;
         }
 
-        var selection = readSelection($searchList);
-        $drawer.find('.wbbm-wc-summary').empty().append(
-            legCard(selection, strings().yourTripLabel || 'Your trip')
-        );
+        /*
+         * Both legs, when this is the return leg of a return trip -- the drawer
+         * has to show what is actually going into the cart, and Confirm now
+         * adds the held outbound as well as this one.
+         */
+        var $return = returnWrapper();
+        var isReturnLeg = $return && $.contains($return[0], $searchList[0]);
+        var $summary = $drawer.find('.wbbm-wc-summary').empty();
+        var thisLeg = readSelection($searchList);
+        var bothLegs = !!(outboundSelection && isReturnLeg);
+
+        $summary.toggleClass('is-multi-leg', bothLegs);
+
+        if (bothLegs) {
+            $summary
+                .append(legCard(outboundSelection, strings().outboundLabel || 'Outbound'))
+                .append(legCard(thisLeg, strings().returnLabel || 'Return'))
+                .append(
+                    // Both legs go into one cart and are paid for together, so
+                    // the drawer has to show the figure that will actually be
+                    // charged -- two subtotals and no total leaves the customer
+                    // adding them up. WooCommerce recalculates authoritatively
+                    // at checkout; this is the preview.
+                    $('<div class="wbbm-wc-trip-total"></div>')
+                        .append($('<span></span>').text(strings().returnTotalLabel || 'Trip total'))
+                        .append($('<span></span>').text(
+                            money((parseFloat(outboundSelection.subtotal) || 0) + (parseFloat(thisLeg.subtotal) || 0))
+                        ))
+                );
+        } else {
+            $summary.append(legCard(thisLeg, strings().yourTripLabel || 'Your trip'));
+        }
 
         $drawer.find('.mage_offline_submit_error').hide().empty();
         $drawer.find('.wbbm-wc-checkout-frame').attr('src', 'about:blank');
@@ -460,62 +617,121 @@
         var $button = $(this);
         var $drawer = $button.closest('.wbbm-wc-drawer');
         var $form = $drawer.closest('form');
+        var $searchList = $drawer.closest('.mage_search_list');
         var $error = $drawer.find('.mage_offline_submit_error').hide().empty();
 
         if (!$form.length) {
             return;
         }
 
-        /*
-         * WooCommerce mode needs the bus's hidden linked product. It is created
-         * when a bus is saved in WooCommerce mode, so a bus that predates the
-         * switch has none -- posting add-to-cart with an empty value adds
-         * nothing and lands the customer on an empty checkout. Say so instead.
-         */
-        if (!$drawer.attr('data-wbbm-product-id')) {
-            $error.text(strings().noProduct || 'This bus is not connected to WooCommerce yet. Open it in the admin and save it once.').show();
-            return;
-        }
-
         $button.prop('disabled', true).addClass('is-busy');
 
         /*
-         * The same POST the hidden submit would have made, minus the
-         * navigation: a submit button's name/value is not part of FormData, so
-         * add-to-cart is appended by hand. Everything else -- seats, stops,
-         * journey date, passenger rows -- rides along exactly as before.
+         * A return trip is two buses. The outbound leg was held back when the
+         * customer picked it (wbbmAdvanceToReturnLeg) and never added to the
+         * cart -- which is why only the return bus used to reach checkout.
+         *
+         * Each bus card carries its own <form> and its own linked product, so
+         * both legs are added by posting their own forms, outbound first.
          */
-        var data = new window.FormData($form[0]);
-        data.append('add-to-cart', $drawer.attr('data-wbbm-product-id') || '');
+        var $heldOutbound = (typeof window.wbbmHeldOutboundCard === 'function')
+            ? window.wbbmHeldOutboundCard($searchList)
+            : null;
 
-        window.fetch(window.location.href, {
-            method: 'POST',
-            body: data,
-            credentials: 'same-origin'
-        })
-            .then(function (response) {
-                if (!response.ok) {
-                    throw new Error('HTTP ' + response.status);
-                }
-                return response.text();
-            })
-            .then(function () {
+        var legs = [];
+
+        if ($heldOutbound && $heldOutbound.length) {
+            legs.push({
+                label: strings().outboundLabel || 'Outbound',
+                $form: $heldOutbound.find('form').first(),
+                productId: $heldOutbound.find('.wbbm-wc-drawer').attr('data-wbbm-product-id') || ''
+            });
+        }
+
+        legs.push({
+            label: strings().returnLabel || 'Return',
+            $form: $form,
+            productId: $drawer.attr('data-wbbm-product-id') || ''
+        });
+
+        function failWith(message) {
+            $error.text(message).show();
+            $button.prop('disabled', false).removeClass('is-busy');
+        }
+
+        var missing = legs.filter(function (leg) {
+            return !leg.productId || !leg.$form.length;
+        });
+
+        if (missing.length) {
+            // Checked before anything is added, so a return trip whose outbound
+            // bus has no linked product never half-fills the cart.
+            failWith(strings().noProduct || 'This bus is not connected to WooCommerce yet. Open it in the admin and save it once.');
+            return;
+        }
+
+        /*
+         * Strictly sequential. WooCommerce's cart lives in the session, and two
+         * add-to-cart posts in flight at once can each write back a cart that
+         * never saw the other -- silently dropping a leg, which is the very bug
+         * being fixed here.
+         */
+        function addLeg(index) {
+            if (index >= legs.length) {
                 var url = $drawer.attr('data-wbbm-checkout-url');
                 if (!url) {
-                    throw new Error('no checkout url');
+                    failWith(strings().cartFailed || 'Could not add this to the cart. Please try again.');
+                    return;
                 }
+
+                // Both legs are in the cart; forget the held one so re-opening
+                // the drawer cannot add the outbound a second time.
+                if (typeof window.wbbmClearHeldOutboundLeg === 'function') {
+                    window.wbbmClearHeldOutboundLeg();
+                }
+
                 $drawer.find('.wbbm-wc-checkout-frame').attr('src', url);
                 showStage($drawer, 'checkout');
-            })
-            .catch(function () {
-                $error
-                    .text(strings().cartFailed || 'Could not add this to the cart. Please try again.')
-                    .show();
-            })
-            .then(function () {
-                // fetch returns a native promise, which has no jQuery .always()
                 $button.prop('disabled', false).removeClass('is-busy');
-            });
+                return;
+            }
+
+            var leg = legs[index];
+
+            /*
+             * The same POST the hidden submit would have made, minus the
+             * navigation: a submit button's name/value is not part of FormData,
+             * so add-to-cart is appended by hand. Everything else -- seats,
+             * stops, journey date, passenger rows -- rides along exactly as
+             * before.
+             */
+            var data = new window.FormData(leg.$form[0]);
+            data.append('add-to-cart', leg.productId);
+
+            window.fetch(window.location.href, {
+                method: 'POST',
+                body: data,
+                credentials: 'same-origin'
+            })
+                .then(function (response) {
+                    if (!response.ok) {
+                        throw new Error('HTTP ' + response.status);
+                    }
+                    return response.text();
+                })
+                .then(function () {
+                    addLeg(index + 1);
+                })
+                .catch(function () {
+                    // Name the leg: on a two-bus booking "could not add this to
+                    // the cart" leaves the customer with no idea which failed,
+                    // or whether the other one made it.
+                    var message = strings().cartFailed || 'Could not add this to the cart. Please try again.';
+                    failWith(legs.length > 1 ? (leg.label + ': ' + message) : message);
+                });
+        }
+
+        addLeg(0);
     });
 
     $(function () {

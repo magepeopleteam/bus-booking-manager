@@ -109,51 +109,88 @@ $wbbm_off_date_status = false;
                 $wbbm_pay_settings = is_array($wbbm_pay_settings) ? $wbbm_pay_settings : array();
                 $wbbm_offline_instructions = !empty($wbbm_pay_settings['offline_instructions']) ? $wbbm_pay_settings['offline_instructions'] : '';
                 ?>
+                <?php
+                /*
+                 * A return trip is one booking on two buses, so this lists
+                 * every leg -- a PayPal customer lands back here after paying,
+                 * and showing only the first leg lost a bus they had paid for.
+                 * A one-way booking has no 'legs' key and the summary itself
+                 * stands in as the single leg, which is also what every
+                 * booking made before return trips could be booked together
+                 * looks like.
+                 */
+                $wbbm_legs = (is_array($wbbm_offline_summary) && !empty($wbbm_offline_summary['legs']))
+                    ? $wbbm_offline_summary['legs']
+                    : (is_array($wbbm_offline_summary) ? array($wbbm_offline_summary) : array());
+                $wbbm_multi_leg = count($wbbm_legs) > 1;
+                $wbbm_is_offline_pay = !isset($wbbm_offline_summary['gateway']) || 'offline' === $wbbm_offline_summary['gateway'];
+                ?>
                 <div class="mage_notice mage_notice-success wbbm-offline-booked-notice">
-                    <p><strong><?php esc_html_e('Booking received — we\'ll contact you to confirm payment.', 'bus-booking-manager'); ?></strong></p>
+                    <p><strong><?php
+                        // Stripe and PayPal have already taken the money by the
+                        // time the customer is redirected back here; only an
+                        // offline booking is still waiting on payment.
+                        if ($wbbm_is_offline_pay) {
+                            esc_html_e('Booking confirmed — we\'ll contact you to confirm payment.', 'bus-booking-manager');
+                        } else {
+                            esc_html_e('Payment confirmed — your booking is complete.', 'bus-booking-manager');
+                        }
+                    ?></strong></p>
                     <?php if (is_array($wbbm_offline_summary)) : ?>
                         <table class="wbbm-offline-booking-details">
                             <tr>
                                 <th><?php esc_html_e('Booking reference', 'bus-booking-manager'); ?></th>
                                 <td>#<?php echo esc_html($wbbm_offline_summary['reference']); ?></td>
                             </tr>
-                            <tr>
-                                <th><?php esc_html_e('Bus', 'bus-booking-manager'); ?></th>
-                                <td><?php echo esc_html($wbbm_offline_summary['bus_name']); ?></td>
-                            </tr>
-                            <tr>
-                                <th><?php esc_html_e('Route', 'bus-booking-manager'); ?></th>
-                                <td><?php echo esc_html($wbbm_offline_summary['start'] . ' → ' . $wbbm_offline_summary['end']); ?></td>
-                            </tr>
-                            <tr>
-                                <th><?php esc_html_e('Journey date', 'bus-booking-manager'); ?></th>
-                                <td><?php echo esc_html($wbbm_offline_summary['journey_date']); ?></td>
-                            </tr>
-                            <tr>
-                                <th><?php esc_html_e('Seats', 'bus-booking-manager'); ?></th>
-                                <td>
-                                    <?php
-                                    $wbbm_seat_bits = array();
-                                    if ($wbbm_offline_summary['entire']) {
-                                        $wbbm_seat_bits[] = __('Entire bus', 'bus-booking-manager');
-                                    } else {
-                                        if ($wbbm_offline_summary['adult']) {
-                                            /* translators: %d: number of adult seats */
-                                            $wbbm_seat_bits[] = sprintf(__('%d adult', 'bus-booking-manager'), $wbbm_offline_summary['adult']);
+                            <?php foreach ($wbbm_legs as $wbbm_leg_index => $wbbm_leg) : ?>
+                                <?php if ($wbbm_multi_leg) : ?>
+                                    <tr class="wbbm-offline-leg-heading">
+                                        <th colspan="2"><?php echo esc_html(0 === $wbbm_leg_index ? __('Outbound', 'bus-booking-manager') : __('Return', 'bus-booking-manager')); ?></th>
+                                    </tr>
+                                <?php endif; ?>
+                                <tr>
+                                    <th><?php esc_html_e('Bus', 'bus-booking-manager'); ?></th>
+                                    <td><?php echo esc_html($wbbm_leg['bus_name']); ?></td>
+                                </tr>
+                                <tr>
+                                    <th><?php esc_html_e('Route', 'bus-booking-manager'); ?></th>
+                                    <td><?php echo esc_html($wbbm_leg['start'] . ' → ' . $wbbm_leg['end']); ?></td>
+                                </tr>
+                                <tr>
+                                    <th><?php esc_html_e('Journey date', 'bus-booking-manager'); ?></th>
+                                    <td><?php echo esc_html($wbbm_leg['journey_date']); ?></td>
+                                </tr>
+                                <tr>
+                                    <th><?php esc_html_e('Seats', 'bus-booking-manager'); ?></th>
+                                    <td>
+                                        <?php
+                                        $wbbm_seat_bits = array();
+                                        if ($wbbm_leg['entire']) {
+                                            $wbbm_seat_bits[] = __('Entire bus', 'bus-booking-manager');
+                                        } else {
+                                            if ($wbbm_leg['adult']) {
+                                                /* translators: %d: number of adult seats */
+                                                $wbbm_seat_bits[] = sprintf(__('%d adult', 'bus-booking-manager'), $wbbm_leg['adult']);
+                                            }
+                                            if ($wbbm_leg['child']) {
+                                                /* translators: %d: number of child seats */
+                                                $wbbm_seat_bits[] = sprintf(__('%d child', 'bus-booking-manager'), $wbbm_leg['child']);
+                                            }
+                                            if ($wbbm_leg['infant']) {
+                                                /* translators: %d: number of infant seats */
+                                                $wbbm_seat_bits[] = sprintf(__('%d infant', 'bus-booking-manager'), $wbbm_leg['infant']);
+                                            }
                                         }
-                                        if ($wbbm_offline_summary['child']) {
-                                            /* translators: %d: number of child seats */
-                                            $wbbm_seat_bits[] = sprintf(__('%d child', 'bus-booking-manager'), $wbbm_offline_summary['child']);
-                                        }
-                                        if ($wbbm_offline_summary['infant']) {
-                                            /* translators: %d: number of infant seats */
-                                            $wbbm_seat_bits[] = sprintf(__('%d infant', 'bus-booking-manager'), $wbbm_offline_summary['infant']);
-                                        }
-                                    }
-                                    echo esc_html(implode(', ', $wbbm_seat_bits));
-                                    ?>
-                                </td>
-                            </tr>
+                                        echo esc_html(implode(', ', $wbbm_seat_bits));
+                                        ?>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                            <?php if ($wbbm_multi_leg) : ?>
+                                <tr class="wbbm-offline-leg-heading">
+                                    <th colspan="2"><?php esc_html_e('Payment', 'bus-booking-manager'); ?></th>
+                                </tr>
+                            <?php endif; ?>
                             <tr>
                                 <th><?php esc_html_e('Subtotal', 'bus-booking-manager'); ?></th>
                                 <td><?php echo wp_kses_post(wbbm_price_html($wbbm_offline_summary['subtotal'])); ?></td>
@@ -162,8 +199,14 @@ $wbbm_off_date_status = false;
                                 <tr>
                                     <th>
                                         <?php
-                                        /* translators: %s: tax rate percentage */
-                                        echo esc_html(sprintf(__('Tax (%s%%)', 'bus-booking-manager'), $wbbm_offline_summary['tax_rate']));
+                                        if ($wbbm_multi_leg) {
+                                            // Each bus has its own offline tax rate, so a single
+                                            // percentage in the label would misstate at least one leg.
+                                            esc_html_e('Tax', 'bus-booking-manager');
+                                        } else {
+                                            /* translators: %s: tax rate percentage */
+                                            echo esc_html(sprintf(__('Tax (%s%%)', 'bus-booking-manager'), $wbbm_offline_summary['tax_rate']));
+                                        }
                                         ?>
                                     </th>
                                     <td><?php echo wp_kses_post(wbbm_price_html($wbbm_offline_summary['tax_amount'])); ?></td>

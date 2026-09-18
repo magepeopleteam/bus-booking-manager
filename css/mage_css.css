@@ -1715,3 +1715,23 @@ select.mage_pickpoint option:not([disabled]) {
 div.mage_form_list_body .mage_group_input label input{margin:0 10px 0 0;}
 div.mage_form_list_body .mage_group_input label{width: auto;
 margin: 10px 10px 0 0;}
+
+/* Leg separator inside the confirmation's details table -- a return trip
+   lists both buses, and without a heading the two blocks of Bus/Route/Date
+   rows read as one contradictory list. */
+.wbbm-offline-leg-heading th {
+    padding-top: 14px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid #e5e7eb;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    line-height: 1.6;
+    color: #6b7280;
+    width: auto;
+}
+
+.wbbm-offline-booking-details tr:first-child.wbbm-offline-leg-heading th {
+    padding-top: 0;
+}

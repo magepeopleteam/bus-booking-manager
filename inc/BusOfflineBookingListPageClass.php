@@ -149,6 +149,7 @@ class BusOfflineBookingListPageClass
                     'order_id'       => $order_id,
                     'post'           => $post,
                     'seat_count'     => 0,
+                    'legs'           => array(),
                     'bus_id'         => (int) get_post_meta($post->ID, '_wbbm_bus_id', true),
                     'user_name'      => get_post_meta($post->ID, '_wbbm_user_name', true),
                     'user_phone'     => get_post_meta($post->ID, '_wbbm_user_phone', true),
@@ -161,27 +162,61 @@ class BusOfflineBookingListPageClass
                     'payment_method' => get_post_meta($post->ID, '_wbbm_payment_method', true) ?: 'offline',
                     'booking_date'   => get_post_meta($post->ID, '_wbbm_booking_date', true),
                 );
+
+                /*
+                 * A return trip is one booking on two buses, so the group's
+                 * money comes from the whole-booking meta rather than from
+                 * this one post -- _wbbm_total_price is only ever the LEG's
+                 * total, and on a two-leg booking it would understate the row
+                 * by exactly the other leg. Bookings written before return
+                 * trips could be booked together have no whole-booking meta
+                 * and correctly keep using their single leg's figures.
+                 */
+                $booking_total = get_post_meta($post->ID, '_wbbm_booking_total', true);
+                if ('' !== $booking_total) {
+                    $groups[$order_id]['total_price'] = (float) $booking_total;
+                    $groups[$order_id]['tax_amount'] = (float) get_post_meta($post->ID, '_wbbm_booking_tax', true);
+                }
             }
 
+            /*
+             * Bucket the group's posts by leg so the row can name every bus
+             * on the booking. Seats and legs are indistinguishable through
+             * _wbbm_order_id alone -- both are just more posts under one id.
+             */
+            $leg_index = (int) get_post_meta($post->ID, '_wbbm_leg_index', true);
+            if (!isset($groups[$order_id]['legs'][$leg_index])) {
+                $groups[$order_id]['legs'][$leg_index] = array(
+                    'bus_id'         => (int) get_post_meta($post->ID, '_wbbm_bus_id', true),
+                    'journey_date'   => get_post_meta($post->ID, '_wbbm_journey_date', true),
+                    'boarding_point' => get_post_meta($post->ID, '_wbbm_boarding_point', true),
+                    'droping_point'  => get_post_meta($post->ID, '_wbbm_droping_point', true),
+                    'seat_count'     => 0,
+                );
+            }
+
+            $groups[$order_id]['legs'][$leg_index]['seat_count']++;
             $groups[$order_id]['seat_count']++;
         }
+
+        foreach ($groups as &$group) {
+            ksort($group['legs']);
+            $group['legs'] = array_values($group['legs']);
+        }
+        unset($group);
 
         return array_values($groups);
     }
 
     /** How a booking was paid, for the Payment column. */
+    /**
+     * Delegates to the shared helper in inc/wbbm_booking_status.php -- the
+     * Passenger List shows the same badge, and one mapping keeps the two
+     * screens from drifting apart as gateways are added.
+     */
     private function payment_method_metadata($method)
     {
-        $map = array(
-            'woocommerce' => array('label' => __('WooCommerce', 'bus-booking-manager'), 'class' => 'wbbm-pay-wc'),
-            'offline'     => array('label' => __('Pay Offline', 'bus-booking-manager'), 'class' => 'wbbm-pay-offline'),
-            'stripe'      => array('label' => __('Card (Stripe)', 'bus-booking-manager'), 'class' => 'wbbm-pay-card'),
-            'paypal'      => array('label' => __('PayPal', 'bus-booking-manager'), 'class' => 'wbbm-pay-card'),
-        );
-
-        return isset($map[$method])
-            ? $map[$method]
-            : array('label' => ucfirst($method), 'class' => 'wbbm-pay-offline');
+        return wbbm_payment_method_meta($method);
     }
 
     private function payment_status_metadata($status)
@@ -244,7 +279,6 @@ class BusOfflineBookingListPageClass
                                 <?php else : ?>
                                     <?php foreach ($groups as $group) : ?>
                                         <?php
-                                        $bus_title = $group['bus_id'] ? get_the_title($group['bus_id']) : '';
                                         $status_meta = $this->payment_status_metadata($group['payment_status']);
                                         $mark_paid_url = wp_nonce_url(
                                             add_query_arg(array(
@@ -257,14 +291,48 @@ class BusOfflineBookingListPageClass
                                         );
                                         ?>
                                         <?php $method_meta = $this->payment_method_metadata($group['payment_method']); ?>
+                                        <?php
+                                        /*
+                                         * A return trip is two legs under one booking, so the Bus,
+                                         * Route and Date columns list every leg rather than only the
+                                         * first -- showing just one of the two buses is what made a
+                                         * return booking look like it had lost a bus.
+                                         */
+                                        $legs = !empty($group['legs']) ? $group['legs'] : array(array(
+                                            'bus_id'         => $group['bus_id'],
+                                            'journey_date'   => $group['journey_date'],
+                                            'boarding_point' => $group['boarding_point'],
+                                            'droping_point'  => $group['droping_point'],
+                                            'seat_count'     => $group['seat_count'],
+                                        ));
+                                        $multi_leg = count($legs) > 1;
+                                        ?>
                                         <tr>
-                                            <td><?php echo esc_html($bus_title ?: __('(deleted bus)', 'bus-booking-manager')); ?></td>
+                                            <td>
+                                                <?php foreach ($legs as $i => $leg) : ?>
+                                                    <?php $leg_title = $leg['bus_id'] ? get_the_title($leg['bus_id']) : ''; ?>
+                                                    <div class="wbbm-leg-line">
+                                                        <?php if ($multi_leg) : ?>
+                                                            <span class="wbbm-leg-tag"><?php echo esc_html(0 === $i ? __('Outbound', 'bus-booking-manager') : __('Return', 'bus-booking-manager')); ?></span>
+                                                        <?php endif; ?>
+                                                        <?php echo esc_html($leg_title ?: __('(deleted bus)', 'bus-booking-manager')); ?>
+                                                    </div>
+                                                <?php endforeach; ?>
+                                            </td>
                                             <td>
                                                 <strong><?php echo esc_html($group['user_name']); ?></strong><br>
                                                 <span class="description"><?php echo esc_html($group['user_phone']); ?></span>
                                             </td>
-                                            <td><?php echo esc_html($group['boarding_point'] . ' → ' . $group['droping_point']); ?></td>
-                                            <td><?php echo esc_html($group['journey_date']); ?></td>
+                                            <td>
+                                                <?php foreach ($legs as $leg) : ?>
+                                                    <div class="wbbm-leg-line"><?php echo esc_html($leg['boarding_point'] . ' → ' . $leg['droping_point']); ?></div>
+                                                <?php endforeach; ?>
+                                            </td>
+                                            <td>
+                                                <?php foreach ($legs as $leg) : ?>
+                                                    <div class="wbbm-leg-line"><?php echo esc_html($leg['journey_date']); ?></div>
+                                                <?php endforeach; ?>
+                                            </td>
                                             <td><?php echo esc_html($group['seat_count']); ?></td>
                                             <td>
                                                 <?php echo esc_html(number_format_i18n($group['total_price'], 2)); ?>

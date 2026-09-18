@@ -522,7 +522,16 @@ final class WBBM_Settings_Hub extends WBBM_Admin_Hub
             <?php self::render_wc_gateway_section(); ?>
         </div>
 
-        <div data-mode-section="offline" <?php echo 'offline' === $default_method ? '' : 'style="display:none"'; ?>>
+        <?php /*
+         * "custom", not "offline": MP_Global_Function::wbbm_flow_name()
+         * normalises both spellings to 'custom', and ajax_save_default_payment_mode()
+         * only ever returns 'custom' or 'woocommerce'. While this said
+         * "offline" the condition could never be true and the JS toggle at
+         * the foot of this file could never match it either, so the whole
+         * Custom Payment Methods panel -- the Offline/Stripe/PayPal
+         * enable switches included -- was unreachable on both paths.
+         */ ?>
+        <div data-mode-section="custom" <?php echo 'custom' === $default_method ? '' : 'style="display:none"'; ?>>
             <?php self::render_offline_payment_section(); ?>
         </div>
 
