@@ -1,0 +1,452 @@
+/**
+ * WooCommerce checkout and order confirmation, fitted to the booking drawer.
+ *
+ * Loaded only on a framed request (wbbm_embedded_checkout_styles() in
+ * inc/wbbm_enque.php adds body.wbbm-embedded-checkout), so an ordinary
+ * checkout visit is untouched. Every rule below is scoped to that class.
+ *
+ * The drawer is ~430px wide. WooCommerce's block checkout and Order
+ * Confirmation block are laid out for a full-width page, so this re-fits them
+ * rather than re-skinning them: one column, tighter rhythm, and the two
+ * information-dense areas -- the summary list and the line-item table --
+ * rebuilt as cards that read at this width.
+ *
+ * The palette deliberately matches the Custom Payment confirmation panel in
+ * css/wbbm-search-modern.css, so both booking flows end on the same visual
+ * note rather than looking like two different products.
+ */
+
+body.wbbm-embedded-checkout {
+    --wbbm-co-accent: #b30c3b;
+    --wbbm-co-accent-tint: #fbeef2;
+    --wbbm-co-ink: #1a1417;
+    --wbbm-co-muted: #6b5f64;
+    --wbbm-co-soft: #8a7c81;
+    --wbbm-co-line: #e9e1e3;
+    --wbbm-co-surface: #ffffff;
+    --wbbm-co-ground: #fbf8f7;
+    --wbbm-co-ok: #0f7a42;
+    --wbbm-co-ok-tint: #e7f7ee;
+    --wbbm-co-ok-line: #b7e3c8;
+
+    background: var(--wbbm-co-ground);
+    color: var(--wbbm-co-ink);
+}
+
+/* The frame supplies the page gutter; the theme's constrained layout would
+   otherwise add its own on top and leave very little room for content. */
+body.wbbm-embedded-checkout main.wp-block-group,
+body.wbbm-embedded-checkout .wp-block-group.has-global-padding {
+    padding-left: 16px;
+    padding-right: 16px;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+body.wbbm-embedded-checkout .alignwide,
+body.wbbm-embedded-checkout .alignfull {
+    max-width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+
+/* ---------------------------------------------------- order received: status */
+/*
+ * "Order received" plus a line of thanks. Rebuilt as a success panel with a
+ * drawn check, so the outcome is legible at a glance instead of reading as an
+ * ordinary page heading.
+ */
+
+body.wbbm-embedded-checkout .wc-block-order-confirmation-status {
+    position: relative;
+    margin: 16px 0 14px;
+    /* room for the check drawn above the heading */
+    padding: 84px 18px 20px;
+    border: 1px solid var(--wbbm-co-ok-line);
+    border-radius: 18px;
+    background:
+        radial-gradient(120% 90% at 50% 0%, #eafaf0 0%, rgba(234, 250, 240, 0) 70%),
+        var(--wbbm-co-surface);
+    text-align: center;
+    font-size: inherit !important;
+}
+
+/*
+ * The check is drawn in CSS because the markup belongs to WooCommerce's block
+ * and cannot have an <svg> added to it: ::before is the tinted disc, ::after
+ * two borders of a rotated box, which is the one reliable way to get a real
+ * tick out of a pseudo-element.
+ */
+body.wbbm-embedded-checkout .wc-block-order-confirmation-status::before {
+    content: "";
+    position: absolute;
+    top: 22px;
+    left: 50%;
+    width: 52px;
+    height: 52px;
+    margin-left: -26px;
+    border-radius: 50%;
+    background: var(--wbbm-co-ok-tint);
+    box-shadow: inset 0 0 0 2px var(--wbbm-co-ok-line);
+}
+
+body.wbbm-embedded-checkout .wc-block-order-confirmation-status::after {
+    content: "";
+    position: absolute;
+    top: 38px;
+    left: 50%;
+    width: 11px;
+    height: 19px;
+    margin-left: -6px;
+    border-right: 3px solid var(--wbbm-co-ok);
+    border-bottom: 3px solid var(--wbbm-co-ok);
+    transform: rotate(45deg);
+}
+
+body.wbbm-embedded-checkout .wc-block-order-confirmation-status h1 {
+    margin: 0 0 6px !important;
+    font-size: 22px !important;
+    font-weight: 700;
+    line-height: 1.25 !important;
+    letter-spacing: -0.01em;
+    color: var(--wbbm-co-ok);
+}
+
+body.wbbm-embedded-checkout .wc-block-order-confirmation-status p {
+    max-width: 32ch;
+    margin: 0 auto !important;
+    font-size: 14px !important;
+    line-height: 1.5 !important;
+    color: var(--wbbm-co-muted) !important;
+}
+
+
+/* --------------------------------------------------- order received: summary */
+/*
+ * Order #, Date, Total, Email, Payment. WooCommerce stacks these as bold
+ * label + value runs; at this width they read better as a card of aligned
+ * label/value rows.
+ */
+
+body.wbbm-embedded-checkout .wc-block-order-confirmation-summary {
+    margin: 0 0 14px;
+    padding: 4px 16px;
+    border: 1px solid var(--wbbm-co-line);
+    border-radius: 16px;
+    background: var(--wbbm-co-surface);
+}
+
+body.wbbm-embedded-checkout .wc-block-order-confirmation-summary-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+body.wbbm-embedded-checkout .wc-block-order-confirmation-summary-list-item {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 14px;
+    margin: 0;
+    padding: 11px 0;
+    border-bottom: 1px solid var(--wbbm-co-line);
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+body.wbbm-embedded-checkout .wc-block-order-confirmation-summary-list-item:last-child {
+    border-bottom: 0;
+}
+
+body.wbbm-embedded-checkout .wc-block-order-confirmation-summary-list-item__key {
+    flex: 0 0 auto;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--wbbm-co-soft);
+}
+
+body.wbbm-embedded-checkout .wc-block-order-confirmation-summary-list-item__value {
+    flex: 1 1 auto;
+    min-width: 0;
+    text-align: right;
+    font-weight: 600;
+    color: var(--wbbm-co-ink);
+    overflow-wrap: anywhere;
+}
+
+
+/* ------------------------------------------------ order received: line items */
+
+body.wbbm-embedded-checkout .wc-block-order-confirmation-totals-wrapper > h2,
+body.wbbm-embedded-checkout .wc-block-order-confirmation-address-wrapper > h2,
+body.wbbm-embedded-checkout .wc-block-order-confirmation-additional-information h2 {
+    margin: 0 0 8px !important;
+    font-size: 11px !important;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--wbbm-co-soft);
+}
+
+body.wbbm-embedded-checkout .wc-block-order-confirmation-totals {
+    margin: 0 0 14px;
+    padding: 0 16px;
+    border: 1px solid var(--wbbm-co-line);
+    border-radius: 16px;
+    background: var(--wbbm-co-surface);
+}
+
+body.wbbm-embedded-checkout .wc-block-order-confirmation-totals__table {
+    width: 100%;
+    margin: 0;
+    border: 0;
+    border-collapse: collapse;
+    table-layout: auto;
+}
+
+/* Product / Total: the column headings say nothing a customer needs at this
+   width, and cost a whole row of the drawer. */
+body.wbbm-embedded-checkout .wc-block-order-confirmation-totals__table thead {
+    display: none;
+}
+
+body.wbbm-embedded-checkout .wc-block-order-confirmation-totals__table td,
+body.wbbm-embedded-checkout .wc-block-order-confirmation-totals__table th {
+    padding: 14px 0;
+    border: 0;
+    border-bottom: 1px solid var(--wbbm-co-line);
+    vertical-align: top;
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+/* Each bus is one line item: name and quantity first, its own price aligned
+   right, the journey details underneath. */
+body.wbbm-embedded-checkout .wc-block-order-confirmation-totals__product {
+    width: auto;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--wbbm-co-ink);
+}
+
+body.wbbm-embedded-checkout .wc-block-order-confirmation-totals__total {
+    width: 1%;
+    padding-left: 12px !important;
+    text-align: right;
+    white-space: nowrap;
+    font-weight: 700;
+    color: var(--wbbm-co-ink);
+}
+
+body.wbbm-embedded-checkout .product-quantity {
+    font-weight: 600;
+    color: var(--wbbm-co-soft);
+}
+
+/* Boarding Point / Dropping Point / Journey Date / Journey Time. WooCommerce
+   renders these as a <ul> of <strong> label + <p> value, which stacks to eight
+   lines per bus; paired up they take four and stay scannable. */
+body.wbbm-embedded-checkout .wc-item-meta {
+    margin: 9px 0 0 !important;
+    padding: 0;
+    list-style: none;
+    font-weight: 400;
+}
+
+body.wbbm-embedded-checkout .wc-item-meta li {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 6px;
+    margin: 0 0 3px;
+    padding: 0;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+body.wbbm-embedded-checkout .wc-item-meta-label {
+    flex: 0 0 auto;
+    font-weight: 600;
+    color: var(--wbbm-co-soft);
+}
+
+body.wbbm-embedded-checkout .wc-item-meta li > p {
+    margin: 0 !important;
+    color: var(--wbbm-co-muted);
+}
+
+/* "Passenger info" carries a nested table with its own inline border. Quieted
+   into an inset strip so it reads as a detail of the line item, not a second
+   table competing with it. */
+body.wbbm-embedded-checkout .wc-item-meta li > table {
+    width: 100%;
+    margin: 4px 0 0;
+    border: 0;
+    border-collapse: collapse;
+    background: var(--wbbm-co-ground);
+    border-radius: 10px;
+}
+
+body.wbbm-embedded-checkout .wc-item-meta li > table td {
+    padding: 7px 10px !important;
+    border: 0 !important;
+    font-size: 12px;
+    color: var(--wbbm-co-muted);
+}
+
+/* Subtotal / Payment method / Total. */
+body.wbbm-embedded-checkout .wc-block-order-confirmation-totals__table tfoot th {
+    font-size: 12px;
+    font-weight: 600;
+    text-align: left;
+    color: var(--wbbm-co-soft);
+}
+
+body.wbbm-embedded-checkout .wc-block-order-confirmation-totals__table tfoot td {
+    text-align: right;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+body.wbbm-embedded-checkout .wc-block-order-confirmation-totals__table tfoot tr:last-child th,
+body.wbbm-embedded-checkout .wc-block-order-confirmation-totals__table tfoot tr:last-child td {
+    padding-top: 14px;
+    border-bottom: 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--wbbm-co-accent);
+}
+
+body.wbbm-embedded-checkout .woocommerce-Price-amount {
+    white-space: nowrap;
+}
+
+
+/* ------------------------------------------------- order received: addresses */
+
+body.wbbm-embedded-checkout .wc-block-order-confirmation-address-wrapper,
+body.wbbm-embedded-checkout .wc-block-order-confirmation-additional-information {
+    margin: 0 0 14px;
+}
+
+body.wbbm-embedded-checkout .wc-block-order-confirmation-billing-address,
+body.wbbm-embedded-checkout .wc-block-order-confirmation-shipping-address {
+    padding: 14px 16px;
+    border: 1px solid var(--wbbm-co-line);
+    border-radius: 16px;
+    background: var(--wbbm-co-surface);
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--wbbm-co-muted);
+}
+
+body.wbbm-embedded-checkout .wc-block-order-confirmation-downloads {
+    font-size: 13px;
+}
+
+
+/* ------------------------------------------------------------ block checkout */
+/*
+ * The checkout itself. Its two-column sidebar layout has nowhere to go at this
+ * width, so it runs as one column with the order summary above the form.
+ */
+
+body.wbbm-embedded-checkout .wc-block-checkout {
+    margin: 14px 0;
+}
+
+body.wbbm-embedded-checkout .wp-block-woocommerce-checkout-fields-block,
+body.wbbm-embedded-checkout .wp-block-woocommerce-checkout-totals-block {
+    width: 100%;
+    max-width: 100%;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body.wbbm-embedded-checkout .wc-block-components-sidebar-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+/* Summary first: at this width the customer should see what they are paying
+   for before the fields, not after scrolling past all of them. */
+body.wbbm-embedded-checkout .wc-block-components-sidebar {
+    order: -1;
+    width: 100%;
+    max-width: 100%;
+    padding: 0;
+}
+
+body.wbbm-embedded-checkout .wc-block-components-main {
+    width: 100%;
+    max-width: 100%;
+    padding: 0;
+    border: 0;
+}
+
+body.wbbm-embedded-checkout .wc-block-checkout__sidebar .wc-block-components-panel,
+body.wbbm-embedded-checkout .wc-block-components-order-summary {
+    border-radius: 16px;
+    background: var(--wbbm-co-surface);
+}
+
+body.wbbm-embedded-checkout .wc-block-checkout__form .wc-block-components-checkout-step {
+    padding: 16px;
+    margin: 0 0 10px;
+    border: 1px solid var(--wbbm-co-line);
+    border-radius: 16px;
+    background: var(--wbbm-co-surface);
+}
+
+body.wbbm-embedded-checkout .wc-block-components-checkout-step__heading {
+    margin: 0 0 4px;
+}
+
+body.wbbm-embedded-checkout .wc-block-components-checkout-step__title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--wbbm-co-ink);
+}
+
+body.wbbm-embedded-checkout .wc-block-components-text-input input,
+body.wbbm-embedded-checkout .wc-block-components-textarea,
+body.wbbm-embedded-checkout .wc-blocks-components-select__container {
+    box-sizing: border-box;
+    border-radius: 12px;
+}
+
+/* The place-order button is the one thing that must never be missed. */
+body.wbbm-embedded-checkout .wc-block-components-checkout-place-order-button {
+    width: 100%;
+    box-sizing: border-box;
+    border-radius: 999px;
+    background: var(--wbbm-co-accent);
+    font-size: 15px;
+    font-weight: 700;
+}
+
+body.wbbm-embedded-checkout .wc-block-components-checkout-place-order-button:hover:not(:disabled) {
+    background: #8e0930;
+}
+
+body.wbbm-embedded-checkout .wc-block-components-notice-banner {
+    border-radius: 12px;
+    font-size: 13px;
+}
+
+
+/* A drawer is a small viewport regardless of the device, so the narrow rules
+   the theme keeps behind a media query are wanted here unconditionally. */
+body.wbbm-embedded-checkout table,
+body.wbbm-embedded-checkout img {
+    max-width: 100%;
+}
