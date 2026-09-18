@@ -396,12 +396,26 @@
         invalid_request: 'Something went wrong -- please try again.'
     };
 
+    // Everything below goes into .html(), and the summary values come back
+    // from the server (bus name, stop names, the reference) -- run them
+    // through here so a stop called `<b>` renders as text instead of markup.
+    // Prices are deliberately NOT escaped: wbbm_woo_price_format() bakes in
+    // the WooCommerce currency symbol, which can legitimately be an HTML
+    // entity (`&pound;`), and escaping would print the entity source.
+    function wbbmEscHtml(value) {
+        return String(value === null || value === undefined ? '' : value)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
     function wbbmRenderOfflineResult($modal, summary) {
         var rows = [
-            ['Booking reference', '#' + summary.reference],
-            ['Bus', summary.bus_name],
-            ['Route', summary.start + ' → ' + summary.end],
-            ['Journey date', summary.journey_date]
+            ['Bus', wbbmEscHtml(summary.bus_name)],
+            ['Route', wbbmEscHtml(summary.start) + ' <span class="wbbm-offline-route-arrow" aria-hidden="true">→</span> ' + wbbmEscHtml(summary.end)],
+            ['Journey date', wbbmEscHtml(summary.journey_date)]
         ];
 
         var seatBits = [];
@@ -412,10 +426,10 @@
             if (summary.child) { seatBits.push(summary.child + ' child'); }
             if (summary.infant) { seatBits.push(summary.infant + ' infant'); }
         }
-        rows.push(['Seats', seatBits.join(', ')]);
+        rows.push(['Seats', wbbmEscHtml(seatBits.join(', '))]);
         rows.push(['Subtotal', wbbm_woo_price_format(summary.subtotal)]);
         if (parseFloat(summary.tax_amount) > 0) {
-            rows.push(['Tax (' + summary.tax_rate + '%)', wbbm_woo_price_format(summary.tax_amount)]);
+            rows.push(['Tax (' + wbbmEscHtml(summary.tax_rate) + '%)', wbbm_woo_price_format(summary.tax_amount)]);
         }
 
         // Offline is still "we'll follow up" (payment_status stays pending
@@ -423,10 +437,38 @@
         // already actually charged/captured by the time this renders, so
         // the wording should say so rather than implying anything is still
         // owed or pending.
-        var heading = ('offline' === summary.gateway || !summary.gateway)
-            ? '✓ Booking received — we\'ll contact you to confirm payment.'
-            : '✓ Payment confirmed — your booking is complete.';
-        var html = '<p class="mage_offline_result_heading">' + heading + '</p>' +
+        //
+        // Either way the *booking* itself is recorded, so the headline says
+        // so plainly and the pill underneath carries the honest payment
+        // state -- the customer should never have to read a paragraph to
+        // find out whether they got a seat.
+        var isOffline = ('offline' === summary.gateway || !summary.gateway);
+        var heading = isOffline ? 'Booking confirmed' : 'Payment confirmed';
+        var note = isOffline
+            ? 'Your seats are reserved. We\'ll contact you shortly to confirm payment.'
+            : 'Your booking is complete and your payment has gone through.';
+        var pillLabel = isOffline ? 'Payment pending' : 'Paid in full';
+        var pillState = isOffline ? 'is-pending' : 'is-paid';
+
+        // The check draws itself in (see .wbbm-offline-success-mark in
+        // css/wbbm-search-modern.css); the whole block is announced at once
+        // via role="status" so a screen reader hears the outcome too, not
+        // just the sighted celebration.
+        var html = '<div class="wbbm-offline-success" role="status">' +
+            '<span class="wbbm-offline-success-mark" aria-hidden="true">' +
+                '<svg viewBox="0 0 52 52" focusable="false">' +
+                    '<circle class="wbbm-offline-success-mark-ring" cx="26" cy="26" r="24"/>' +
+                    '<path class="wbbm-offline-success-mark-tick" d="M15 27.5 L22.5 35 L37.5 19"/>' +
+                '</svg>' +
+            '</span>' +
+            '<h3 class="mage_offline_result_heading">' + heading + '</h3>' +
+            '<p class="wbbm-offline-success-note">' + note + '</p>' +
+            '<span class="wbbm-offline-success-pill ' + pillState + '">' + pillLabel + '</span>' +
+            '<span class="wbbm-offline-success-ref">' +
+                '<small>Booking reference</small>' +
+                '<strong>#' + wbbmEscHtml(summary.reference) + '</strong>' +
+            '</span>' +
+        '</div>' +
             '<table class="wbbm-offline-booking-details">';
         rows.forEach(function (row) {
             html += '<tr><th>' + row[0] + '</th><td>' + row[1] + '</td></tr>';

@@ -1839,12 +1839,184 @@ div.mage_route_title strong {
     font-size: 13px !important;
 }
 
-.mage_offline_result_heading {
-    margin: 0 0 12px !important;
+/* ------------------------------------------------ booking-confirmed panel */
+/*
+ * Built by wbbmRenderOfflineResult() in js/mage_style.js. The success state is
+ * the one screen in the whole flow the customer actually wants to see, so it
+ * gets a centred hero -- drawn-in check, headline, payment-state pill and the
+ * booking reference -- above the plain details table.
+ */
+
+.wbbm-offline-success {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin: 0 0 20px;
+    padding: 26px 20px 22px;
+    border: 1px solid #b7e3c8;
+    border-radius: var(--wbbm-radius-card);
+    background:
+        radial-gradient(120% 90% at 50% 0%, #eafaf0 0%, rgba(234, 250, 240, 0) 70%),
+        var(--wbbm-surface);
+    box-shadow: 0 1px 2px rgba(16, 122, 66, 0.05), 0 18px 40px -30px rgba(16, 122, 66, 0.55);
+}
+
+.wbbm-offline-success-mark {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 62px;
+    height: 62px;
+    margin-bottom: 14px;
+    border-radius: 50%;
+    background: #e7f7ee;
+}
+
+.wbbm-offline-success-mark svg {
+    /* Smaller than the tinted disc it sits in, so the drawn ring reads as a
+       crisp mark on a soft halo rather than an outline of the disc itself. */
+    width: 44px;
+    height: 44px;
+    display: block;
+    overflow: visible;
+}
+
+.wbbm-offline-success-mark-ring {
+    fill: none;
+    stroke: #16a34a;
+    stroke-width: 2.5;
+    stroke-dasharray: 151;
+    stroke-dashoffset: 151;
+    transform-origin: 50% 50%;
+    transform: rotate(-90deg);
+    animation: wbbm-success-ring 0.55s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+}
+
+.wbbm-offline-success-mark-tick {
+    fill: none;
+    stroke: #16a34a;
+    stroke-width: 4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 44;
+    stroke-dashoffset: 44;
+    animation: wbbm-success-tick 0.35s cubic-bezier(0.65, 0, 0.35, 1) 0.4s forwards;
+}
+
+@keyframes wbbm-success-ring {
+    to { stroke-dashoffset: 0; }
+}
+
+@keyframes wbbm-success-tick {
+    to { stroke-dashoffset: 0; }
+}
+
+/* The panel must read as "confirmed" without any motion at all -- with
+   reduced motion the check is simply already drawn. */
+@media (prefers-reduced-motion: reduce) {
+    .wbbm-offline-success-mark-ring,
+    .wbbm-offline-success-mark-tick {
+        animation: none;
+        stroke-dashoffset: 0;
+    }
+}
+
+.wbbm-offline-success .mage_offline_result_heading {
+    margin: 0 0 6px !important;
     font-family: var(--wbbm-display);
-    font-size: 18px;
+    font-size: 22px !important;
     font-weight: 700;
+    line-height: 1.25 !important;
+    letter-spacing: -0.01em;
+    color: #0f7a42;
+}
+
+.wbbm-offline-success-note {
+    max-width: 34ch;
+    margin: 0 0 14px !important;
+    font-size: 14px !important;
+    line-height: 1.5 !important;
+    color: var(--wbbm-muted) !important;
+}
+
+.wbbm-offline-success-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 10px !important;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    line-height: 1.6 !important;
+}
+
+.wbbm-offline-success-pill::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+.wbbm-offline-success-pill.is-paid {
+    background: #e7f7ee;
+    color: #0f7a42;
+}
+
+.wbbm-offline-success-pill.is-pending {
+    background: #fff4e5;
+    color: #a35a07;
+}
+
+/* The one thing the customer may need to quote back to the operator, so it
+   gets pulled out of the table and given its own plate. */
+.wbbm-offline-success-ref {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    width: 100%;
+    margin-top: 16px;
+    padding: 10px 16px;
+    border: 1px dashed #b7e3c8;
+    border-radius: var(--wbbm-radius-field);
+    background: rgba(255, 255, 255, 0.7);
+    box-sizing: border-box;
+}
+
+.wbbm-offline-success-ref small {
+    font-size: 10px !important;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    line-height: 1.6 !important;
+    color: var(--wbbm-soft);
+}
+
+.wbbm-offline-success-ref strong {
+    font-family: var(--wbbm-display);
+    font-size: 19px !important;
+    font-weight: 700;
+    line-height: 1.3 !important;
     color: var(--wbbm-ink);
+}
+
+.mage_offline_modal_result .wbbm-offline-route-arrow {
+    color: var(--wbbm-soft);
+    padding: 0 2px;
+}
+
+@media (max-width: 560px) {
+    .wbbm-offline-success {
+        padding: 22px 16px 18px;
+    }
+
+    .wbbm-offline-success .mage_offline_result_heading {
+        font-size: 20px !important;
+    }
 }
 
 

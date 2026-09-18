@@ -1900,9 +1900,100 @@ label.switch input:checked+.slider:before {
     margin-top: 1px;
 }
 
-.wbbm-payment-configure-btn {
+/* "Open payment settings" action row.
+   Every property PRO's generic .btn / .btn-outline sets is declared here, and
+   the rules are scoped under .wbbm-payment-card so they out-specify PRO's
+   single-class ones -- PRO loads second and would otherwise win on a tie. */
+.wbbm-payment-card .wbbm-payment-configure-btn {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
     width: 100%;
+    height: auto;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 9px 11px;
+    border: 1px solid var(--bus-border);
+    border-radius: 10px;
+    background: #fff;
+    color: var(--bus-text);
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.35;
+    text-align: left;
+    text-decoration: none;
+    white-space: normal;
+    cursor: pointer;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, .05);
+    transition: border-color .15s ease, background-color .15s ease, color .15s ease, box-shadow .15s ease, transform .15s ease;
+}
+
+/* Echoes .wbbm-payment-summary-icon above it, one size down, so the card's
+   two rows read as the same component. */
+.wbbm-payment-card .wbbm-payment-configure-btn__icon {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
     justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: #fff1e6;
+    color: var(--bus-primary);
+    transition: background-color .15s ease, color .15s ease;
+}
+
+.wbbm-payment-card .wbbm-payment-configure-btn__icon .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    line-height: 1;
+}
+
+.wbbm-payment-card .wbbm-payment-configure-btn__label {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.wbbm-payment-card .wbbm-payment-configure-btn__arrow {
+    flex: 0 0 auto;
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+    line-height: 1;
+    color: var(--bus-text-light);
+    transition: transform .15s ease, color .15s ease;
+}
+
+.wbbm-payment-card .wbbm-payment-configure-btn:hover,
+.wbbm-payment-card .wbbm-payment-configure-btn:focus {
+    border-color: var(--bus-primary);
+    background: #fff8f4;
+    color: var(--bus-primary);
+    box-shadow: 0 4px 12px rgba(179, 12, 59, .13);
+    transform: translateY(-1px);
+}
+
+.wbbm-payment-card .wbbm-payment-configure-btn:hover .wbbm-payment-configure-btn__icon,
+.wbbm-payment-card .wbbm-payment-configure-btn:focus .wbbm-payment-configure-btn__icon {
+    background: var(--bus-primary);
+    color: #fff;
+}
+
+.wbbm-payment-card .wbbm-payment-configure-btn:hover .wbbm-payment-configure-btn__arrow,
+.wbbm-payment-card .wbbm-payment-configure-btn:focus .wbbm-payment-configure-btn__arrow {
+    color: var(--bus-primary);
+    transform: translateX(3px);
+}
+
+/* Keyboard users still get a ring -- the rule above replaces WP's default
+   a:focus box-shadow, so restore a visible focus indicator explicitly. */
+.wbbm-payment-card .wbbm-payment-configure-btn:focus-visible {
+    outline: 2px solid var(--bus-primary);
+    outline-offset: 2px;
 }
 
 /* ---- Popup modal ---- */
