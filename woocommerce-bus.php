@@ -977,31 +977,41 @@ if (true) {
     {
         ob_start();
         ?>
-        <div class="search-fields">
+        <?php /*
+         * wbbm-admin-search is the styling hook (assets/admin/wbbm-admin-shell.css).
+         * It has to be a class of its own: .fields-li and .search-fields are also
+         * used by the front-end search form with different markup, so styling
+         * those names directly would reach across to it.
+         *
+         * Each label's icon and caption are wrapped so the caption can sit above
+         * its control -- with the text as a bare node there is no element to
+         * style, and the icon ends up on a line of its own.
+         */ ?>
+        <div class="search-fields wbbm-admin-search">
             <?php wp_nonce_field('bus_search_nonce_action', 'bus_search_nonce', false); ?>
             <div class="fields-li">
                 <label>
-                    <i class="fa fa-map-marker" aria-hidden="true"></i> <?php esc_html_e('From', 'bus-booking-manager'); ?>
+                    <span class="wbbm-as-cap"><i class="fa fa-map-marker" aria-hidden="true"></i> <?php esc_html_e('From', 'bus-booking-manager'); ?></span>
                     <?php echo wbbm_get_bus_route_list( // phpcs:ignore WordPress.Security.EscapingOutput.OutputNotEscaped -- Helper returns escaped markup; wp_kses_post() would strip the select.
                         'bus_start_route', $start); ?></label>
             </div>
             <div class="fields-li">
                 <label>
-                    <i class="fa fa-map-marker" aria-hidden="true"></i> <?php esc_html_e('To:', 'bus-booking-manager'); ?>
+                    <span class="wbbm-as-cap"><i class="fa fa-map-marker" aria-hidden="true"></i> <?php esc_html_e('To', 'bus-booking-manager'); ?></span>
                     <?php echo wbbm_get_bus_route_list( // phpcs:ignore WordPress.Security.EscapingOutput.OutputNotEscaped -- Helper returns escaped markup; wp_kses_post() would strip the select.
                         'bus_end_route', $end); ?>
                 </label>
             </div>
             <div class="fields-li">
                 <label for='j_date'>
-                    <i class="fa fa-calendar" aria-hidden="true"></i> <?php esc_html_e('Date of Journey:', 'bus-booking-manager'); ?>
+                    <span class="wbbm-as-cap"><i class="fa fa-calendar" aria-hidden="true"></i> <?php esc_html_e('Date of Journey', 'bus-booking-manager'); ?></span>
                     <input type="text" id="j_date" name="j_date" value="<?php echo esc_attr($date); ?>">
 
                 </label>
             </div>
             <div class="fields-li return-date-sec">
                 <label for='r_date'>
-                    <i class="fa fa-calendar" aria-hidden="true"></i> <?php esc_html_e('Return Date:', 'bus-booking-manager'); ?>
+                    <span class="wbbm-as-cap"><i class="fa fa-calendar" aria-hidden="true"></i> <?php esc_html_e('Return Date', 'bus-booking-manager'); ?></span>
                     <input type="text" id="r_date" name="r_date" value="<?php echo esc_attr($r_date); ?>">
                 </label>
             </div>
@@ -1018,7 +1028,8 @@ if (true) {
                 $busr = 'oneway';
             }
             ?>
-            <div class="fields-li">
+            <div class="fields-li wbbm-as-actions">
+                <span class="wbbm-as-cap"><?php esc_html_e('Trip', 'bus-booking-manager'); ?></span>
                 <div class="search-radio-sec">
                     <label for="oneway"><input type="radio" <?php if ($busr == 'oneway') {
                                                                 echo 'checked';
@@ -1036,17 +1047,16 @@ if (true) {
         </div>
         <script>
             jQuery(function ($) {
+                // A class, not .show()/.hide(): those write an inline
+                // display:block, which overrides the field's own flex layout
+                // and collapses the caption onto the control.
                 var $return = $('.return-date-sec');
-                <?php if ('return' === $busr) { ?>
-                    $return.show();
-                <?php } else { ?>
-                    $return.hide();
-                <?php } ?>
+                $return.toggleClass('is-hidden', <?php echo ('return' === $busr) ? 'false' : 'true'; ?>);
                 $('#oneway').on('click', function () {
-                    $return.hide();
+                    $return.addClass('is-hidden');
                 });
                 $('#return_date').on('click', function () {
-                    $return.show();
+                    $return.removeClass('is-hidden');
                 });
             });
         </script>

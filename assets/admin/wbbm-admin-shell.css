@@ -2753,3 +2753,398 @@ body.wbbm-admin .wbbm-hub .wbbm-hub-tabs a[data-wbbm-tab="go-pro"]:hover {
     font-size: 8px;
     letter-spacing: .04em;
 }
+
+
+/* ------------------------------------------- Purchase Ticket search bar */
+/*
+ * The route search on the Purchase Ticket screen (wbbm_bus_search_fileds() in
+ * woocommerce-bus.php). It is a search bar, not a settings form: one row of
+ * fields, each a small caption over its control, ending in the action.
+ *
+ * Scoped on .wbbm-admin-search rather than .search-fields / .fields-li --
+ * the front-end search form uses those same names with different markup, and
+ * this stylesheet is admin-only, so both layers keep it off the front end.
+ *
+ * Properties PRO's admin_style.css sets on generic names (flex-direction,
+ * width, box-sizing) are declared explicitly: PRO loads second and wins ties.
+ */
+
+.wbbm-admin-search {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 14px;
+    box-sizing: border-box;
+    margin: 0 0 20px;
+    padding: 18px 20px;
+    border: 1px solid var(--wbbm-line);
+    border-radius: 14px;
+    /* Tinted, so the white fields read as raised out of the bar. A white bar
+       would need the field fill to carry the separation, and no tint light
+       enough to sit under white text gets near a usable contrast ratio -- the
+       border would be doing all the work on its own. */
+    background: #f1f5f9;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, .04);
+}
+
+.wbbm-admin-search .fields-li {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1 1 170px;
+    min-width: 150px;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    width: auto;
+}
+
+.wbbm-admin-search .fields-li.is-hidden {
+    display: none;
+}
+
+.wbbm-admin-search .fields-li label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    font-weight: 400;
+}
+
+.wbbm-admin-search .wbbm-as-cap {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    line-height: 1.6;
+    /* 11px bold is small text, so it needs 4.5:1 -- --wbbm-muted (#64748b)
+       lands at 4.34:1 on the tinted bar and just misses. */
+    color: #475569;
+    white-space: nowrap;
+}
+
+.wbbm-admin-search .wbbm-as-cap [class*="fa-"] {
+    font-size: 12px;
+    color: var(--wbbm-accent);
+}
+
+/*
+ * Fields sit on a white card, so they are filled and given a border with real
+ * contrast rather than a hairline: an unfilled field with a near-white border
+ * does not read as something you can type in. This also has to be at least as
+ * strong as wp-admin's own #8c8f94 select border, which these rules override.
+ *
+ * Both select2 skins are covered. PRO enqueues select2 v3.4.8 from a CDN
+ * (wbtm-pro.php) while the free plugin ships v4 -- their markup is completely
+ * different (v3: .select2-choice/.select2-chosen/.select2-arrow, v4:
+ * .select2-selection--single/__rendered/__arrow), so whichever initialises,
+ * the field still matches the ones beside it.
+ */
+.wbbm-admin-search select,
+.wbbm-admin-search input[type="text"],
+.wbbm-admin-search .select2-container .select2-selection--single,
+.wbbm-admin-search .select2-container .select2-choice {
+    box-sizing: border-box;
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: 40px;
+    min-height: 40px;
+    margin: 0;
+    padding: 0 12px;
+    /* A shade darker than wp-admin's own #8c8f94 field border, because this
+       boundary has to clear WCAG 1.4.11's 3:1 on BOTH sides -- against the
+       white fill inside (3.47:1) and against the tinted bar outside (3.17:1),
+       where #8c8f94 itself lands at 2.96:1 and just misses. The slate tones
+       that suit the rest of this palette are nowhere near: #cbd5e1 is 1.48:1
+       and #94a3b8 is 2.56:1, both leaving the field edge guesswork. */
+    border: 1px solid #868a90;
+    border-radius: 10px;
+    background-color: #fff;
+    background-image: none;
+    font-size: 13px;
+    /* Only the select2 skins and the text inputs take a line-height; a native
+       <select> must not (see the rule below). */
+    line-height: 38px;
+    color: var(--wbbm-ink);
+    text-decoration: none;
+    box-shadow: none;
+    transition: border-color .15s ease, background-color .15s ease, box-shadow .15s ease;
+}
+
+/*
+ * The native select loses its arrow with background-image:none above, so it is
+ * drawn back on -- without it the control looks like a read-only text field.
+ *
+ * line-height is reset because browsers centre a select's own text vertically
+ * inside a fixed-height control, and an explicit line-height overrides that and
+ * pushes it off-centre. The engines do not even disagree quietly: Firefox
+ * ignores line-height on a select altogether, so with one set, Firefox centres
+ * the text and Chrome does not.
+ */
+.wbbm-admin-search select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    line-height: normal;
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-right: 30px;
+    background-image:
+        linear-gradient(45deg, transparent 50%, var(--wbbm-muted) 50%),
+        linear-gradient(135deg, var(--wbbm-muted) 50%, transparent 50%);
+    /* `center` on the vertical axis rather than a hard-coded offset: the mark
+       then stays centred whatever the control's height, instead of being
+       correct only at 40px. */
+    background-position: calc(100% - 17px) center, calc(100% - 12px) center;
+    background-size: 5px 5px, 5px 5px;
+    background-repeat: no-repeat;
+}
+
+.wbbm-admin-search .select2-container {
+    width: 100% !important;
+}
+
+/* v4 */
+.wbbm-admin-search .select2-container .select2-selection--single .select2-selection__rendered {
+    padding: 0;
+    line-height: 38px;
+    color: var(--wbbm-ink);
+}
+
+.wbbm-admin-search .select2-container .select2-selection--single .select2-selection__arrow {
+    height: 38px;
+}
+
+/* v3 */
+.wbbm-admin-search .select2-container .select2-choice .select2-chosen {
+    margin: 0;
+    line-height: 38px;
+    color: var(--wbbm-ink);
+}
+
+.wbbm-admin-search .select2-container .select2-choice .select2-arrow {
+    border: 0;
+    background: none;
+    border-radius: 0;
+}
+
+.wbbm-admin-search select:hover,
+.wbbm-admin-search input[type="text"]:hover {
+    border-color: #94a3b8;
+}
+
+/* Focus fills white and lifts the border to the accent, so the active field is
+   unmistakable against the four resting ones. */
+.wbbm-admin-search select:focus,
+.wbbm-admin-search input[type="text"]:focus,
+.wbbm-admin-search .select2-container--focus .select2-selection--single,
+.wbbm-admin-search .select2-container-active .select2-choice {
+    border-color: var(--wbbm-accent);
+    background-color: #fff;
+    box-shadow: 0 0 0 3px rgba(179, 12, 59, .12);
+    outline: none;
+}
+
+/* Trip type and the submit sit together and do not stretch like the fields. */
+.wbbm-admin-search .wbbm-as-actions {
+    flex: 0 0 auto;
+    min-width: 0;
+}
+
+/* Segmented control rather than loose radios: two mutually exclusive choices
+   read faster as one switch than as two separate checkable rows. */
+.wbbm-admin-search .search-radio-sec {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    gap: 0;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 3px;
+    border: 1px solid #868a90;
+    border-radius: 10px;
+    /* Matches the fields beside it: white, on the tinted bar. */
+    background: #fff;
+}
+
+.wbbm-admin-search .search-radio-sec label {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 0 14px;
+    height: 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1;
+    white-space: nowrap;
+    color: var(--wbbm-muted);
+    transition: background-color .15s ease, color .15s ease, box-shadow .15s ease;
+}
+
+/*
+ * The segmented look needs :has() -- the radio is INSIDE its label, so no
+ * sibling selector can reach the label from the checked input.
+ *
+ * It is all gated on support because the two halves only work together:
+ * hiding the radio without :has() would leave the control with no visible
+ * checked state at all. Without support the radios simply stay visible inside
+ * the pill, which is plain but never ambiguous.
+ */
+@supports selector(:has(*)) {
+    .wbbm-admin-search .search-radio-sec input[type="radio"] {
+        position: absolute;
+        opacity: 0;
+        width: 1px;
+        height: 1px;
+        margin: 0;
+        pointer-events: none;
+    }
+
+    .wbbm-admin-search .search-radio-sec label:has(input:checked) {
+        background: var(--wbbm-accent);
+        color: #fff;
+        box-shadow: 0 1px 3px rgba(15, 23, 42, .12);
+    }
+
+    .wbbm-admin-search .search-radio-sec label:has(input:focus-visible) {
+        outline: 2px solid var(--wbbm-accent);
+        outline-offset: 1px;
+    }
+}
+
+/* Fallback state: the radio is visible, so it carries the answer itself. */
+.wbbm-admin-search .search-radio-sec input[type="radio"] {
+    margin: 0 6px 0 0;
+}
+
+.wbbm-admin-search .search-radio-sec input[type="radio"]:checked + * {
+    color: var(--wbbm-accent);
+}
+
+.wbbm-admin-search .wbbm-as-actions {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* The caption above Trip keeps the row's baseline, but the control sits beside
+   the button rather than under the caption. */
+.wbbm-admin-search .wbbm-as-actions > .wbbm-as-cap {
+    flex-basis: 100%;
+}
+
+.wbbm-admin-search button[type="submit"] {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-sizing: border-box;
+    width: auto;
+    height: 40px;
+    margin: 0;
+    padding: 0 22px;
+    border: 1px solid var(--wbbm-accent);
+    border-radius: 10px;
+    background: var(--wbbm-accent);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1;
+    white-space: nowrap;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(179, 12, 59, .22);
+    transition: background-color .15s ease, box-shadow .15s ease, transform .15s ease;
+}
+
+.wbbm-admin-search button[type="submit"]:hover {
+    background: var(--wbbm-accent-dark);
+    border-color: var(--wbbm-accent-dark);
+    box-shadow: 0 4px 12px rgba(179, 12, 59, .28);
+    transform: translateY(-1px);
+}
+
+.wbbm-admin-search button[type="submit"] [class*="fa-"] {
+    font-size: 13px;
+}
+
+/* Below this the row cannot hold four fields plus the action without each one
+   becoming too narrow to read its own value. */
+@media (max-width: 960px) {
+    .wbbm-admin-search .fields-li {
+        flex: 1 1 100%;
+    }
+
+    .wbbm-admin-search button[type="submit"] {
+        flex: 1 1 auto;
+    }
+}
+
+
+/*
+ * Reclaiming the two route selects from PRO.
+ *
+ * PRO's assets/css/admin_style.css targets these exact elements with
+ *
+ *     select.seat_type.select2:not(#wbbm-single-settings-meta select.seat_type.select2)
+ *
+ * which scores (1,4,2): :not() takes the specificity of its argument, and that
+ * argument contains an ID. Nothing written with classes can outrank it, so the
+ * properties it forces -- border:none, line-height:40px, width:200px -- were
+ * winning over every rule above, whatever they declared. That is why the two
+ * fields had no visible edge and sat off-centre while the date inputs beside
+ * them, which PRO does not target this way, looked correct.
+ *
+ * !important is the only lever left short of adding an id to the markup, and
+ * it is confined to the four properties PRO actually forces.
+ */
+.wbbm-admin-search select.seat_type {
+    /* PRO: border: none */
+    border: 1px solid #868a90 !important;
+    /* PRO: width: 200px -- breaks the flex sizing of the bar */
+    width: 100% !important;
+    /* PRO: line-height: 40px on a 38px content box, pushing the text down.
+       The browser centres a select's text on its own once nothing overrides
+       it, which is what `normal` restores. */
+    line-height: normal !important;
+    /* PRO: .fields-li label select { margin-top: 5px } -- (0,2,1), which also
+       outranks the rules above, and drops the field below its neighbours. */
+    margin-top: 0 !important;
+}
+
+.wbbm-admin-search select.seat_type:focus {
+    border-color: var(--wbbm-accent) !important;
+}
+
+/*
+ * PRO also forces `.fields-li label { display: block !important; width: 100%
+ * !important }`. An !important declaration beats any normal one regardless of
+ * specificity, so the label's column layout above was never applying either --
+ * the caption and control only *looked* stacked because both happen to be
+ * block-level, which left the flex `gap` doing nothing and the spacing coming
+ * from PRO's margin-top instead.
+ *
+ * This is the only !important PRO uses anywhere that can reach this form.
+ */
+.wbbm-admin-search .fields-li label {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    gap: 6px;
+    overflow: visible;
+}
