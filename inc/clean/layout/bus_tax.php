@@ -1,3 +1,8 @@
+<?php
+if (!defined('ABSPATH')) {
+    die;
+} // Cannot access pages directly.
+?>
 <div class="mp_tab_item" data-tab-item="#wbmm_bus_tax">
     <h3 class="wbbm_mp_tab_item_heading"><?php esc_html_e('Tax Settings', 'bus-booking-manager'); ?></h3>
     <p>

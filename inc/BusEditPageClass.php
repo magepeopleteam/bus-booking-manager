@@ -147,7 +147,11 @@ class BusEditPageClass
             $parent_slug,
             __('Add New', 'bus-booking-manager'),
             __('Add New', 'bus-booking-manager'),
-            'read',
+            // Registering this at 'read' put the page on a URL every logged-in
+            // user could reach. render_bus_edit_page() already turns them away
+            // with can_access_bus(), so nothing leaked, but the registration
+            // itself should not be broader than the page it opens.
+            $this->get_bus_page_capability(),
             'wbbm-bus-edit',
             array($this, 'render_bus_edit_page')
         );
