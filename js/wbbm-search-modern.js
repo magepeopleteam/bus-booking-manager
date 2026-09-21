@@ -53,36 +53,6 @@
     });
 
     /**
-     * Segmented trip type. :has() handles this on its own in current
-     * browsers; the class keeps older ones in step.
-     */
-    function syncTripType() {
-        $(SCOPE + ' .mage_form_radio label').each(function () {
-            $(this).toggleClass('is-active', $(this).find('input[type="radio"]').is(':checked'));
-        });
-
-        // The return cell is animated away rather than removed, so the grid
-        // is told to close the gap instead of leaving an empty column.
-        $(SCOPE + ' form.mage_form').each(function () {
-            var oneWay = $(this).find('input[name="bus-r"]:checked').val() === 'oneway';
-            $(this).find('.wbbm-fields').toggleClass('wbbm-no-return', oneWay);
-        });
-    }
-
-    $(document).on('change', SCOPE + ' input[name="bus-r"]', function () {
-        syncTripType();
-
-        // mage_style.js animates the return leg with slideUp/slideDown, which
-        // leaves display:block inline and flattens the cell's own layout.
-        var $leg = $('.mage_return_date');
-        setTimeout(function () {
-            if ($leg.is(':visible')) {
-                $leg.css('display', '');
-            }
-        }, 360);
-    });
-
-    /**
      * The date fields display the site's own date format while the form
      * submits Y-m-d, so every pick is mirrored into the hidden input beside
      * it. Doing it here rather than with the datepicker's altField keeps the
@@ -735,7 +705,6 @@
     });
 
     $(function () {
-        syncTripType();
         $(SCOPE + ' .mage_return_date').css('display', '');
         $('#j_date, #r_date').each(function () {
             syncIsoDate($(this));

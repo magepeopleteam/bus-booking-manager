@@ -656,16 +656,9 @@ class SearchClass extends CommonClass
         // Sanitize background color
         $search_form_b_color = sanitize_hex_color(wbbm_get_option('wbbm_search_form_b_color', 'wbbm_style_setting_sec'));
 
-        // Get and escape the buy ticket text option
-        $wbbm_buy_ticket_text = esc_html(wbbm_get_option('wbbm_buy_ticket_text', 'wbbm_label_setting_sec', __('Buy Ticket', 'bus-booking-manager')));
         ?>
     <div class="mage_container wbbm-modern-search">
         <div class="wbbm-search-shell" style="background-color: <?php echo esc_attr($search_form_b_color ? $search_form_b_color : '#b30c3b12'); ?>;">
-            <?php if ($wbbm_buy_ticket_text) { ?>
-                <div class="wbbm-search-head">
-                    <h2><?php echo esc_html($wbbm_buy_ticket_text); ?></h2>
-                </div>
-            <?php } ?>
             <div class="search_form_horizontal">
                 <?php $this->search_from_only($single_bus, sanitize_text_field($target)); ?>
             </div>
@@ -755,22 +748,14 @@ class SearchClass extends CommonClass
     <form action="<?php echo esc_url($single_bus ? '' : get_site_url() . '/' . sanitize_title($target) . '/'); ?>" method="get" class="mage_form">
         <?php do_action('wbbm_active_date', $single_bus, get_the_ID());
         wp_nonce_field('bus_search_nonce_action', 'bus_search_nonce');
-        $return = $single_bus ? false : (mage_get_isset('bus-r') != 'oneway');
+        /*
+         * The trip-type choice is gone from the form. It only ever governed
+         * whether the Return Date field was shown -- the results page decides
+         * on r_date alone, never on bus-r -- so the optional return date is
+         * simply always offered on the search form now.
+         */
+        $return = !$single_bus;
         ?>
-        <?php if (!$single_bus) { ?>
-        <div class="wbbm-trip-row">
-            <div class="mage_form_radio">
-                <label for="return" class="<?php echo esc_attr($return ? 'is-active' : ''); ?>">
-                    <input type="radio" name="bus-r" value='return' id="return" <?php echo esc_attr($return ? 'checked' : ''); ?>/>
-                    <?php echo esc_html(wbbm_get_option('wbbm_return_text', 'wbbm_label_setting_sec', __('Return', 'bus-booking-manager'))); ?>
-                </label>
-                <label for="one_way" class="<?php echo esc_attr($return ? '' : 'is-active'); ?>">
-                    <input type="radio" name="bus-r" value='oneway' id="one_way" <?php echo esc_attr($return ? '' : 'checked'); ?> />
-                    <?php echo esc_html(wbbm_get_option('wbbm_one_way_text', 'wbbm_label_setting_sec', __('One Way', 'bus-booking-manager'))); ?>
-                </label>
-            </div>
-        </div>
-        <?php } ?>
         <div class="wbbm-fields<?php echo esc_attr($return ? '' : ' wbbm-no-return'); ?>">
         <div class="mage_form_list wbbm-f-from">
             <label for="bus_start_route">
