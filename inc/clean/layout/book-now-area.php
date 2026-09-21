@@ -65,8 +65,9 @@ function mage_book_now_area($available_seat = null)
 
                         $wbbm_wc_product_id = sanitize_text_field(get_post_meta(get_the_ID(), 'link_wc_product', true));
                         $wbbm_checkout_url = function_exists('wc_get_checkout_url') ? wc_get_checkout_url() : '';
-                        // rendered without the theme's header and footer -- see
-                        // wbbm_embedded_checkout_chrome() in inc/wbbm_enque.php
+                        // rendered without the theme's header and footer: the flag
+                        // sends the request to the plugin's own canvas template --
+                        // see wbbm_embedded_checkout_template() in inc/wbbm_enque.php
                         $wbbm_checkout_url = $wbbm_checkout_url ? add_query_arg('wbbm_embed', '1', $wbbm_checkout_url) : '';
                         ?>
 
