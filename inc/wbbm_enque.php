@@ -166,8 +166,8 @@ function wbbm_bus_enqueue_scripts()
         'returnLabel'      => __('Return', 'bus-booking-manager'),
         'subtotalLabel'    => __('Subtotal', 'bus-booking-manager'),
         'totalLabel'       => __('Total', 'bus-booking-manager'),
-        'returnTotalLabel' => __('Return total', 'bus-booking-manager'),
-        'notBookedNote'    => __('Booked separately — this drawer confirms the return leg only.', 'bus-booking-manager'),
+        'returnTotalLabel' => __('Trip total', 'bus-booking-manager'),
+        'bothLegsNote'     => __('Both legs are booked together, under one reference.', 'bus-booking-manager'),
         'yourTripLabel'    => __('Your trip', 'bus-booking-manager'),
         'cartFailed'       => __('Could not add this to the cart. Please try again.', 'bus-booking-manager'),
         'noProduct'        => __('This bus is not connected to WooCommerce yet. Open it in the admin and save it once.', 'bus-booking-manager'),
@@ -303,6 +303,43 @@ function wbbm_request_is_from_drawer()
 add_filter('show_admin_bar', function ($show) {
     return wbbm_is_embedded_checkout() ? false : $show;
 }, 99);
+
+/**
+ * Scope hook for the drawer stylesheet.
+ *
+ * Everything in css/wbbm-embedded-checkout.css hangs off this class, so the
+ * restyling can never reach an ordinary checkout visit -- only the framed one.
+ */
+add_filter('body_class', 'wbbm_embedded_checkout_body_class');
+function wbbm_embedded_checkout_body_class($classes)
+{
+    if (wbbm_is_embedded_checkout()) {
+        $classes[] = 'wbbm-embedded-checkout';
+    }
+
+    return $classes;
+}
+
+/**
+ * The drawer's own checkout/confirmation styling.
+ *
+ * Loaded only inside the frame. WooCommerce's block checkout and Order
+ * Confirmation block are built for a full-width page; the drawer is about
+ * 430px wide, so the default layout needs re-fitting rather than re-skinning.
+ */
+add_action('wp_enqueue_scripts', 'wbbm_embedded_checkout_styles', 100);
+function wbbm_embedded_checkout_styles()
+{
+    if (!wbbm_is_embedded_checkout()) {
+        return;
+    }
+
+    $plugin_root = dirname(__DIR__);
+    $rel = 'css/wbbm-embedded-checkout.css';
+    $ver = file_exists($plugin_root . '/' . $rel) ? filemtime($plugin_root . '/' . $rel) : null;
+
+    wp_enqueue_style('wbbm-embedded-checkout', plugin_dir_url(__DIR__) . $rel, array(), $ver);
+}
 
 add_action('wp_head', 'wbbm_embedded_checkout_chrome', 99);
 function wbbm_embedded_checkout_chrome()

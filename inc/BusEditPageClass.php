@@ -1351,8 +1351,14 @@ class BusEditPageClass
                 <?php esc_html_e('This applies to every bus. Change it in Settings > Payments.', 'bus-booking-manager'); ?>
             </p>
 
-            <a class="btn btn-outline wbbm-payment-configure-btn" href="<?php echo esc_url(admin_url('edit.php?post_type=wbbm_bus&page=wbbm-settings&section=wbbm_payment_setting_sec')); ?>">
-                <span class="dashicons dashicons-admin-generic"></span> <?php _e('Open payment settings', 'bus-booking-manager'); ?>
+            <?php /* Styled entirely off .wbbm-payment-configure-btn -- deliberately not .btn/.btn-outline,
+                     which PRO's admin_style.css also defines and would win on a tie. */ ?>
+            <a class="wbbm-payment-configure-btn" href="<?php echo esc_url(admin_url('edit.php?post_type=wbbm_bus&page=wbbm-settings&section=wbbm_payment_setting_sec')); ?>">
+                <span class="wbbm-payment-configure-btn__icon" aria-hidden="true">
+                    <span class="dashicons dashicons-admin-generic"></span>
+                </span>
+                <span class="wbbm-payment-configure-btn__label"><?php esc_html_e('Open payment settings', 'bus-booking-manager'); ?></span>
+                <span class="dashicons dashicons-arrow-right-alt2 wbbm-payment-configure-btn__arrow" aria-hidden="true"></span>
             </a>
         </div>
         <?php

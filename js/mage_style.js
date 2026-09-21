@@ -396,26 +396,69 @@
         invalid_request: 'Something went wrong -- please try again.'
     };
 
-    function wbbmRenderOfflineResult($modal, summary) {
-        var rows = [
-            ['Booking reference', '#' + summary.reference],
-            ['Bus', summary.bus_name],
-            ['Route', summary.start + ' → ' + summary.end],
-            ['Journey date', summary.journey_date]
-        ];
+    // Everything below goes into .html(), and the summary values come back
+    // from the server (bus name, stop names, the reference) -- run them
+    // through here so a stop called `<b>` renders as text instead of markup.
+    // Prices are deliberately NOT escaped: wbbm_woo_price_format() bakes in
+    // the WooCommerce currency symbol, which can legitimately be an HTML
+    // entity (`&pound;`), and escaping would print the entity source.
+    function wbbmEscHtml(value) {
+        return String(value === null || value === undefined ? '' : value)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
 
+    /** The rows describing one leg: which bus, which route, which day, how many seats. */
+    function wbbmLegRows(leg) {
         var seatBits = [];
-        if (summary.entire) {
+        if (leg.entire) {
             seatBits.push('Entire bus');
         } else {
-            if (summary.adult) { seatBits.push(summary.adult + ' adult'); }
-            if (summary.child) { seatBits.push(summary.child + ' child'); }
-            if (summary.infant) { seatBits.push(summary.infant + ' infant'); }
+            if (leg.adult) { seatBits.push(leg.adult + ' adult'); }
+            if (leg.child) { seatBits.push(leg.child + ' child'); }
+            if (leg.infant) { seatBits.push(leg.infant + ' infant'); }
         }
-        rows.push(['Seats', seatBits.join(', ')]);
+
+        return [
+            ['Bus', wbbmEscHtml(leg.bus_name)],
+            ['Route', wbbmEscHtml(leg.start) + ' <span class="wbbm-offline-route-arrow" aria-hidden="true">→</span> ' + wbbmEscHtml(leg.end)],
+            ['Journey date', wbbmEscHtml(leg.journey_date)],
+            ['Seats', wbbmEscHtml(seatBits.join(', '))]
+        ];
+    }
+
+    function wbbmRenderOfflineResult($modal, summary) {
+        /*
+         * A return trip comes back as two legs under one reference. A one-way
+         * booking has no `legs` key at all (and an older booking replayed
+         * through the Stripe/PayPal return trip may not either), so the
+         * summary itself stands in as the single leg.
+         */
+        var legs = (summary.legs && summary.legs.length) ? summary.legs : [summary];
+        var multiLeg = legs.length > 1;
+
+        var rows = [];
+        legs.forEach(function (leg, index) {
+            if (multiLeg) {
+                rows.push(['__heading__', index === 0 ? 'Outbound' : 'Return']);
+            }
+            rows = rows.concat(wbbmLegRows(leg));
+        });
+
+        if (multiLeg) {
+            rows.push(['__heading__', 'Payment']);
+        }
         rows.push(['Subtotal', wbbm_woo_price_format(summary.subtotal)]);
         if (parseFloat(summary.tax_amount) > 0) {
-            rows.push(['Tax (' + summary.tax_rate + '%)', wbbm_woo_price_format(summary.tax_amount)]);
+            // No rate in the label on a return trip: each leg carries its own
+            // per-bus offline tax rate, so one percentage would be a lie.
+            rows.push([
+                multiLeg ? 'Tax' : ('Tax (' + wbbmEscHtml(summary.tax_rate) + '%)'),
+                wbbm_woo_price_format(summary.tax_amount)
+            ]);
         }
 
         // Offline is still "we'll follow up" (payment_status stays pending
@@ -423,12 +466,50 @@
         // already actually charged/captured by the time this renders, so
         // the wording should say so rather than implying anything is still
         // owed or pending.
-        var heading = ('offline' === summary.gateway || !summary.gateway)
-            ? '✓ Booking received — we\'ll contact you to confirm payment.'
-            : '✓ Payment confirmed — your booking is complete.';
-        var html = '<p class="mage_offline_result_heading">' + heading + '</p>' +
+        //
+        // Either way the *booking* itself is recorded, so the headline says
+        // so plainly and the pill underneath carries the honest payment
+        // state -- the customer should never have to read a paragraph to
+        // find out whether they got a seat.
+        var isOffline = ('offline' === summary.gateway || !summary.gateway);
+        var heading = isOffline ? 'Booking confirmed' : 'Payment confirmed';
+        var note = isOffline
+            ? 'Your seats are reserved. We\'ll contact you shortly to confirm payment.'
+            : 'Your booking is complete and your payment has gone through.';
+        var pillLabel = isOffline ? 'Payment pending' : 'Paid in full';
+        var pillState = isOffline ? 'is-pending' : 'is-paid';
+
+        if (multiLeg) {
+            note = isOffline
+                ? 'Both legs are reserved under one reference. We\'ll contact you shortly to confirm payment.'
+                : 'Both legs are booked under one reference and your payment has gone through.';
+        }
+
+        // The check draws itself in (see .wbbm-offline-success-mark in
+        // css/wbbm-search-modern.css); the whole block is announced at once
+        // via role="status" so a screen reader hears the outcome too, not
+        // just the sighted celebration.
+        var html = '<div class="wbbm-offline-success" role="status">' +
+            '<span class="wbbm-offline-success-mark" aria-hidden="true">' +
+                '<svg viewBox="0 0 52 52" focusable="false">' +
+                    '<circle class="wbbm-offline-success-mark-ring" cx="26" cy="26" r="24"/>' +
+                    '<path class="wbbm-offline-success-mark-tick" d="M15 27.5 L22.5 35 L37.5 19"/>' +
+                '</svg>' +
+            '</span>' +
+            '<h3 class="mage_offline_result_heading">' + heading + '</h3>' +
+            '<p class="wbbm-offline-success-note">' + note + '</p>' +
+            '<span class="wbbm-offline-success-pill ' + pillState + '">' + pillLabel + '</span>' +
+            '<span class="wbbm-offline-success-ref">' +
+                '<small>Booking reference</small>' +
+                '<strong>#' + wbbmEscHtml(summary.reference) + '</strong>' +
+            '</span>' +
+        '</div>' +
             '<table class="wbbm-offline-booking-details">';
         rows.forEach(function (row) {
+            if ('__heading__' === row[0]) {
+                html += '<tr class="wbbm-offline-leg-heading"><th colspan="2">' + row[1] + '</th></tr>';
+                return;
+            }
             html += '<tr><th>' + row[0] + '</th><td>' + row[1] + '</td></tr>';
         });
         html += '<tr class="wbbm-offline-booking-total"><th>Total</th><td>' + wbbm_woo_price_format(summary.total_price) + '</td></tr>' +
@@ -438,6 +519,12 @@
         $modal.find('.mage_offline_modal_form').hide();
         $modal.find('.mage_offline_modal_foot_form').hide();
         $modal.find('.mage_offline_modal_foot_result').show();
+
+        // The held outbound leg has been recorded now. Forgetting it stops a
+        // later booking from silently re-posting the leg it already sold.
+        if (typeof window.wbbmClearHeldOutboundLeg === 'function') {
+            window.wbbmClearHeldOutboundLeg();
+        }
     }
 
     $(document).on('click', '.mage_offline_confirm_btn', function () {
@@ -482,9 +569,24 @@
         $btn.prop('disabled', true).text(gateway === 'paypal' ? 'Redirecting…' : 'Processing…');
 
         function resetButton() { $btn.prop('disabled', false).text(originalText); }
-        function showError(code) {
+
+        /*
+         * On a return trip the server says WHICH leg failed. Naming it matters:
+         * "sold out" on a two-bus booking leaves the customer with no idea
+         * which leg to change. Nothing was recorded either way -- the legs are
+         * validated together and inserted all-or-nothing.
+         */
+        function showError(code, leg) {
             resetButton();
-            $errorMsg.text(wbbmOfflineErrorMessages[code] || 'Something went wrong -- please try again.').show();
+
+            var text = wbbmOfflineErrorMessages[code] || 'Something went wrong -- please try again.';
+
+            if (postData.legs && typeof leg === 'number') {
+                text = (0 === leg ? 'Outbound leg: ' : 'Return leg: ') + text
+                    + ' Nothing has been booked.';
+            }
+
+            $errorMsg.text(text).show();
         }
 
         // The same field set feeds all three gateways -- Offline validates
@@ -513,6 +615,37 @@
             wbbm_offline_email: $modal.find('[name="wbbm_offline_email"]').val()
         };
 
+        /*
+         * Return trips book both legs in one request. The outbound leg was
+         * held back when the customer picked it (wbbmAdvanceToReturnLeg in
+         * js/wbbm-search-modern.js); it goes first in `legs`, with the leg
+         * being confirmed here second, and the server records both under one
+         * order id or neither.
+         *
+         * The flat per-leg fields above stay on the request regardless: the
+         * server falls back to them when there is no `legs` key, which is
+         * what a one-way booking and the no-JS POST-back both send.
+         */
+        var heldOutbound = (typeof window.wbbmHeldOutboundLeg === 'function')
+            ? window.wbbmHeldOutboundLeg($searchList)
+            : null;
+
+        if (heldOutbound) {
+            postData.legs = [heldOutbound, {
+                bus_id: postData.bus_id,
+                journey_date: postData.journey_date,
+                start_stops: postData.start_stops,
+                end_stops: postData.end_stops,
+                user_start_time: postData.user_start_time,
+                bus_start_time: postData.bus_start_time,
+                mage_pickpoint: postData.mage_pickpoint,
+                adult_quantity: postData.adult_quantity,
+                child_quantity: postData.child_quantity,
+                infant_quantity: postData.infant_quantity,
+                entire_quantity: postData.entire_quantity
+            }];
+        }
+
         if ('stripe' === gateway) {
             postData.action = 'wbbm_create_stripe_payment_intent';
         } else if ('paypal' === gateway) {
@@ -526,7 +659,10 @@
             dataType: 'json'
         }).done(function (response) {
             if (!response || !response.success) {
-                showError(response && response.data && response.data.code);
+                showError(
+                    response && response.data && response.data.code,
+                    response && response.data ? response.data.leg : undefined
+                );
                 return;
             }
 

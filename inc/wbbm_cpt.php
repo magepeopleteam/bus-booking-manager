@@ -4,6 +4,62 @@ if (! defined('ABSPATH')) {
     die;
 } // Cannot access pages directly.
 
+/**
+ * Admin menu icon for the Bus Services post type.
+ *
+ * Dashicons has no bus glyph -- the bus in the plugin's own screens comes
+ * from Font Awesome, which the admin menu cannot use -- so the icon ships
+ * as an inline SVG. It is drawn in #a7aaad, WordPress's resting menu-icon
+ * grey, so it matches its neighbours even if the tinting rule below never
+ * applies.
+ *
+ * @return string A data URI WordPress renders as .wp-menu-image.svg.
+ */
+function wbbm_bus_menu_icon()
+{
+    return 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMCAyMCI+PHBhdGggZmlsbD0iI2E3YWFhZCIgZD0iTTUgMWgxMGEzIDMgMCAwIDEgMyAzdjguNWEyLjUgMi41IDAgMCAxLTEuNSAyLjI5VjE3YTEgMSAwIDAgMS0xIDFoLTFhMSAxIDAgMCAxLTEtMXYtMUg2LjV2MWExIDEgMCAwIDEtMSAxaC0xYTEgMSAwIDAgMS0xLTF2LTIuMjFBMi41IDIuNSAwIDAgMSAyIDEyLjVWNGEzIDMgMCAwIDEgMy0zWm0wIDJhMSAxIDAgMCAwLTEgMXYxaDEyVjRhMSAxIDAgMCAwLTEtMUg1Wk00IDd2M2g1LjI1VjdINFptNi43NSAwdjNIMTZWN2gtNS4yNVpNNS43NSAxMS41YTEuMjUgMS4yNSAwIDEgMCAwIDIuNSAxLjI1IDEuMjUgMCAwIDAgMC0yLjVabTguNSAwYTEuMjUgMS4yNSAwIDEgMCAwIDIuNSAxLjI1IDEuMjUgMCAwIDAgMC0yLjVaIi8+PC9zdmc+';
+}
+
+/*
+ * Make the SVG above follow the admin colour scheme.
+ *
+ * WordPress paints a data-URI menu icon as a plain background image and never
+ * recolours it, so on its own it would stay grey while every neighbouring
+ * dashicon turns white on hover and when the menu is open. Re-painting it as a
+ * mask lets it take the anchor's colour instead. The inline background-image
+ * has to be cleared with !important because WordPress sets it on the element.
+ * Browsers without mask support simply keep the grey bitmap, which is why the
+ * SVG is drawn in #a7aaad to begin with.
+ */
+add_action('admin_head', 'wbbm_bus_menu_icon_style');
+function wbbm_bus_menu_icon_style()
+{
+    /*
+     * The URI is printed raw on purpose. esc_url() drops it entirely --
+     * "data" is not in wp_allowed_protocols() -- which left mask:url("")
+     * and, with the background-image already cleared below, no icon at all.
+     * The value comes from wbbm_bus_menu_icon(), a fixed base64 string this
+     * file builds itself, so there is no untrusted input to escape here.
+     */
+    $icon = wbbm_bus_menu_icon();
+    if (0 !== strpos($icon, 'data:image/svg+xml;base64,')) {
+        return;
+    }
+    ?>
+    <style id="wbbm-bus-menu-icon">
+        @supports ((-webkit-mask-image: none) or (mask-image: none)) {
+            #adminmenu #menu-posts-wbbm_bus .wp-menu-image.svg {
+                background-image: none !important;
+                background-color: currentColor;
+                -webkit-mask: url("<?php echo $icon; ?>") no-repeat center / 20px auto;
+                mask: url("<?php echo $icon; ?>") no-repeat center / 20px auto;
+            }
+        }
+    </style>
+    <?php
+}
+
+
 // Create MKB CPT
 function wbbm_bus_cpt()
 {
@@ -38,7 +94,7 @@ function wbbm_bus_cpt()
     $args = array(
         'public'                => true,
         'labels'                => $labels,
-        'menu_icon'             => 'dashicons-tickets-alt',
+        'menu_icon'             => wbbm_bus_menu_icon(),
         'show_in_rest'          => $editor,
         'supports'              => array('title', 'editor', 'thumbnail'),
         'rewrite'               => array('slug' => $cpt_slug),

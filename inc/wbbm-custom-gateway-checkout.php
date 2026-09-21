@@ -211,6 +211,74 @@ function wbbm_paypal_request($method, $path, $args = array())
  * customer is redirected back from Stripe/PayPal.
  * -------------------------------------------------------------------- */
 
+/* ----------------------------------------------------------------------
+ * Currency amounts.
+ *
+ * The currency is a free-text three-letter code the admin types into
+ * Settings > Payments, so it is not safe to assume every currency has two
+ * decimal places. Both gateways used to multiply by 100 / format to 2dp
+ * unconditionally, which for a zero-decimal currency charges the customer
+ * one hundred times the booking total.
+ * -------------------------------------------------------------------- */
+
+/**
+ * Currencies Stripe expects in whole units rather than hundredths.
+ * https://docs.stripe.com/currencies#zero-decimal
+ */
+function wbbm_cgw_zero_decimal_currencies()
+{
+    return array(
+        'BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA',
+        'PYG', 'RWF', 'UGX', 'VND', 'VUV', 'XAF', 'XOF', 'XPF',
+    );
+}
+
+/**
+ * Currencies Stripe expects in thousandths, and whose amounts must end in
+ * a zero. https://docs.stripe.com/currencies#three-decimal
+ */
+function wbbm_cgw_three_decimal_currencies()
+{
+    return array('BHD', 'JOD', 'KWD', 'OMR', 'TND');
+}
+
+/**
+ * A booking total as the integer minor-unit amount Stripe charges.
+ *
+ * @param float  $amount   The total in major units (e.g. 12.50).
+ * @param string $currency Three-letter code.
+ * @return int
+ */
+function wbbm_cgw_stripe_amount($amount, $currency)
+{
+    $currency = strtoupper((string) $currency);
+    $amount = (float) $amount;
+
+    if (in_array($currency, wbbm_cgw_zero_decimal_currencies(), true)) {
+        return (int) round($amount);
+    }
+
+    if (in_array($currency, wbbm_cgw_three_decimal_currencies(), true)) {
+        // Stripe rejects a three-decimal amount whose last digit is not 0.
+        return ((int) round($amount * 1000 / 10)) * 10;
+    }
+
+    return (int) round($amount * 100);
+}
+
+/**
+ * A booking total as the decimal string PayPal expects. PayPal rejects any
+ * decimal places at all on these currencies (DECIMALS_NOT_SUPPORTED), so
+ * they are sent whole.
+ */
+function wbbm_cgw_paypal_amount($amount, $currency)
+{
+    $no_decimals = array('HUF', 'JPY', 'TWD');
+    $places = in_array(strtoupper((string) $currency), $no_decimals, true) ? 0 : 2;
+
+    return number_format((float) $amount, $places, '.', '');
+}
+
 function wbbm_cgw_find_booking_posts($reference, $gateway)
 {
     $order_id = -absint($reference);
@@ -227,36 +295,95 @@ function wbbm_cgw_find_booking_posts($reference, $gateway)
     ));
 }
 
+/** One leg's slice of the summary, read back off any one of its seat posts. */
+function wbbm_cgw_leg_summary_from_post($post_id, $gateway, $seat_count)
+{
+    $tax_amount = (float) get_post_meta($post_id, '_wbbm_tax_amount', true);
+    $total_price = (float) get_post_meta($post_id, '_wbbm_total_price', true);
+
+    return array(
+        'reference'    => absint(abs((int) get_post_meta($post_id, '_wbbm_order_id', true))),
+        'bus_name'     => get_the_title((int) get_post_meta($post_id, '_wbbm_bus_id', true)),
+        'start'        => get_post_meta($post_id, '_wbbm_boarding_point', true),
+        'end'          => get_post_meta($post_id, '_wbbm_droping_point', true),
+        'journey_date' => get_post_meta($post_id, '_wbbm_journey_date', true),
+        'adult'        => (int) get_post_meta($post_id, '_wbbm_total_adult', true),
+        'child'        => (int) get_post_meta($post_id, '_wbbm_total_child', true),
+        'infant'       => (int) get_post_meta($post_id, '_wbbm_total_infant', true),
+        'entire'       => (int) get_post_meta($post_id, '_wbbm_total_entire', true),
+        'seat_count'   => $seat_count,
+        'name'         => get_post_meta($post_id, '_wbbm_user_name', true),
+        'phone'        => get_post_meta($post_id, '_wbbm_user_phone', true),
+        'email'        => get_post_meta($post_id, '_wbbm_user_email', true),
+        'subtotal'     => round($total_price - $tax_amount, 2),
+        'tax_rate'     => (float) get_post_meta($post_id, '_wbbm_tax_rate', true),
+        'tax_amount'   => $tax_amount,
+        'total_price'  => $total_price,
+        'gateway'      => $gateway,
+    );
+}
+
+/**
+ * Rebuilds the summary wbbm_record_pending_booking_legs() produced, from
+ * post meta alone -- by the time Stripe/PayPal redirect the customer back,
+ * the request that created the booking is long gone.
+ *
+ * The posts under one order id can be several seats across several legs, so
+ * they are bucketed by _wbbm_leg_index first. Bookings written before legs
+ * existed have no such meta and fall into one bucket, which is exactly right
+ * for them.
+ */
 function wbbm_cgw_summary_from_posts($ids, $gateway)
 {
     if (empty($ids)) {
         return null;
     }
 
-    $first = $ids[0];
-    $tax_amount = (float) get_post_meta($first, '_wbbm_tax_amount', true);
-    $total_price = (float) get_post_meta($first, '_wbbm_total_price', true);
+    $buckets = array();
+    foreach ($ids as $post_id) {
+        $leg_index = (int) get_post_meta($post_id, '_wbbm_leg_index', true);
+        if (!isset($buckets[$leg_index])) {
+            $buckets[$leg_index] = array();
+        }
+        $buckets[$leg_index][] = $post_id;
+    }
+    ksort($buckets);
 
-    return array(
-        'reference'    => absint(abs((int) get_post_meta($first, '_wbbm_order_id', true))),
-        'bus_name'     => get_the_title((int) get_post_meta($first, '_wbbm_bus_id', true)),
-        'start'        => get_post_meta($first, '_wbbm_boarding_point', true),
-        'end'          => get_post_meta($first, '_wbbm_droping_point', true),
-        'journey_date' => get_post_meta($first, '_wbbm_journey_date', true),
-        'adult'        => (int) get_post_meta($first, '_wbbm_total_adult', true),
-        'child'        => (int) get_post_meta($first, '_wbbm_total_child', true),
-        'infant'       => (int) get_post_meta($first, '_wbbm_total_infant', true),
-        'entire'       => (int) get_post_meta($first, '_wbbm_total_entire', true),
-        'seat_count'   => (int) get_post_meta($first, '_wbbm_seat', true),
-        'name'         => get_post_meta($first, '_wbbm_user_name', true),
-        'phone'        => get_post_meta($first, '_wbbm_user_phone', true),
-        'email'        => get_post_meta($first, '_wbbm_user_email', true),
-        'subtotal'     => round($total_price - $tax_amount, 2),
-        'tax_rate'     => (float) get_post_meta($first, '_wbbm_tax_rate', true),
-        'tax_amount'   => $tax_amount,
-        'total_price'  => $total_price,
-        'gateway'      => $gateway,
-    );
+    $legs = array();
+    foreach ($buckets as $leg_posts) {
+        // Seat count is how many posts this leg has, except for an
+        // entire-bus booking -- that is deliberately a single post standing
+        // for the whole vehicle, so _wbbm_seat carries the real figure.
+        $entire = (int) get_post_meta($leg_posts[0], '_wbbm_total_entire', true);
+        $seat_count = $entire
+            ? (int) get_post_meta($leg_posts[0], '_wbbm_seat', true)
+            : count($leg_posts);
+
+        $legs[] = wbbm_cgw_leg_summary_from_post($leg_posts[0], $gateway, $seat_count);
+    }
+
+    $first_post = $buckets[array_key_first($buckets)][0];
+    $stored_total = get_post_meta($first_post, '_wbbm_booking_total', true);
+
+    // Pre-legs bookings have no whole-booking meta; their single leg's own
+    // figures are the whole booking, so fall back to summing the legs.
+    $totals = ('' !== $stored_total)
+        ? array(
+            'subtotal'    => (float) get_post_meta($first_post, '_wbbm_booking_subtotal', true),
+            'tax_amount'  => (float) get_post_meta($first_post, '_wbbm_booking_tax', true),
+            'total_price' => (float) $stored_total,
+        )
+        : array(
+            'subtotal'    => round(array_sum(wp_list_pluck($legs, 'subtotal')), 2),
+            'tax_amount'  => round(array_sum(wp_list_pluck($legs, 'tax_amount')), 2),
+            'total_price' => round(array_sum(wp_list_pluck($legs, 'total_price')), 2),
+        );
+
+    return array_merge($legs[0], $totals, array(
+        'legs'       => $legs,
+        'leg_count'  => count($legs),
+        'seat_count' => array_sum(wp_list_pluck($legs, 'seat_count')),
+    ));
 }
 
 function wbbm_cgw_confirm_posts($ids)
@@ -292,10 +419,15 @@ function wbbm_cgw_release_booking($ids)
 
 function wbbm_ajax_create_stripe_payment_intent()
 {
-    $validated = wbbm_validate_offline_booking_request($_POST); // phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce checked inside wbbm_validate_offline_booking_request()
+    // Legs, not a single bus: a return trip is one booking on two buses and
+    // Stripe must be charged the combined total, not just one leg's.
+    $validated = wbbm_validate_booking_legs($_POST); // phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce checked inside wbbm_validate_offline_booking_request()
 
     if (empty($validated['ok'])) {
-        wp_send_json_error(array('code' => isset($validated['error']) ? $validated['error'] : 'unknown'));
+        wp_send_json_error(array(
+            'code' => isset($validated['error']) ? $validated['error'] : 'unknown',
+            'leg'  => isset($validated['leg']) ? (int) $validated['leg'] : 0,
+        ));
     }
 
     $settings = wbbm_cgw_settings();
@@ -303,13 +435,13 @@ function wbbm_ajax_create_stripe_payment_intent()
         wp_send_json_error(array('code' => 'stripe_not_configured'));
     }
 
-    $recorded = wbbm_record_pending_booking($validated['data'], 'stripe', 'pending');
+    $recorded = wbbm_record_pending_booking_legs($validated['legs'], $validated['totals'], 'stripe', 'pending');
     if (empty($recorded['ok'])) {
         wp_send_json_error(array('code' => isset($recorded['error']) ? $recorded['error'] : 'insert_failed'));
     }
 
     $currency = strtolower(!empty($settings['currency_code']) ? $settings['currency_code'] : 'usd');
-    $amount_minor = (int) round($recorded['summary']['total_price'] * 100);
+    $amount_minor = wbbm_cgw_stripe_amount($recorded['summary']['total_price'], $currency);
 
     $intent = wbbm_stripe_request('POST', 'payment_intents', array(
         'amount'                => $amount_minor,
@@ -392,10 +524,15 @@ function wbbm_ajax_confirm_stripe_payment()
 
 function wbbm_ajax_create_paypal_order()
 {
-    $validated = wbbm_validate_offline_booking_request($_POST); // phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce checked inside wbbm_validate_offline_booking_request()
+    // See the Stripe handler above -- both legs of a return trip are one
+    // booking, and PayPal is handed the combined total.
+    $validated = wbbm_validate_booking_legs($_POST); // phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce checked inside wbbm_validate_offline_booking_request()
 
     if (empty($validated['ok'])) {
-        wp_send_json_error(array('code' => isset($validated['error']) ? $validated['error'] : 'unknown'));
+        wp_send_json_error(array(
+            'code' => isset($validated['error']) ? $validated['error'] : 'unknown',
+            'leg'  => isset($validated['leg']) ? (int) $validated['leg'] : 0,
+        ));
     }
 
     $settings = wbbm_cgw_settings();
@@ -403,12 +540,12 @@ function wbbm_ajax_create_paypal_order()
         wp_send_json_error(array('code' => 'paypal_not_configured'));
     }
 
-    $recorded = wbbm_record_pending_booking($validated['data'], 'paypal', 'pending');
+    $recorded = wbbm_record_pending_booking_legs($validated['legs'], $validated['totals'], 'paypal', 'pending');
     if (empty($recorded['ok'])) {
         wp_send_json_error(array('code' => isset($recorded['error']) ? $recorded['error'] : 'insert_failed'));
     }
 
-    $bus_url = get_permalink((int) $validated['data']['bus_id']);
+    $bus_url = get_permalink((int) $validated['legs'][0]['bus_id']);
     $reference = $recorded['summary']['reference'];
 
     // PayPal appends its own token/PayerID query args to whatever
@@ -419,7 +556,7 @@ function wbbm_ajax_create_paypal_order()
     $cancel_url = add_query_arg(array('wbbm_offline_error' => 'payment_cancelled'), $bus_url);
 
     $currency = !empty($settings['currency_code']) ? strtoupper($settings['currency_code']) : 'USD';
-    $amount = number_format((float) $recorded['summary']['total_price'], 2, '.', '');
+    $amount = wbbm_cgw_paypal_amount($recorded['summary']['total_price'], $currency);
 
     $order = wbbm_paypal_request('POST', 'v2/checkout/orders', array(
         'intent'              => 'CAPTURE',

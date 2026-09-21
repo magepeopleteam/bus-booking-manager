@@ -19,7 +19,7 @@ final class WBBM_Bookings_Hub extends WBBM_Admin_Hub
 
     public function title()
     {
-        return __('Bookings', 'bus-booking-manager');
+        return __('Booking list', 'bus-booking-manager');
     }
 
     protected function description()
@@ -63,6 +63,12 @@ final class WBBM_Bookings_Hub extends WBBM_Admin_Hub
                 'callback'    => array($purchase, 'wbbm_admin_purchase_ticket'),
                 'legacy'      => 'admin_purchase_ticket',
             );
+        } else {
+            $tabs['purchase'] = $this->locked_tab(
+                __('Purchase Ticket', 'bus-booking-manager'),
+                'dashicons-cart',
+                __('Search a route and book a seat on behalf of a customer.', 'bus-booking-manager')
+            );
         }
 
         if (function_exists('wbbm_gen_ticket')) {
@@ -74,9 +80,22 @@ final class WBBM_Bookings_Hub extends WBBM_Admin_Hub
                 'callback'    => 'wbbm_gen_ticket',
                 'legacy'      => 'create_ticket',
             );
+        } else {
+            $tabs['ticket'] = $this->locked_tab(
+                __('View Ticket', 'bus-booking-manager'),
+                'dashicons-media-default',
+                __('Look up and print an issued ticket.', 'bus-booking-manager')
+            );
         }
 
         $report = class_exists('WbbmReport') ? WbbmReport::instance() : null;
+        if (!$report) {
+            $tabs['reports'] = $this->locked_tab(
+                __('Reports', 'bus-booking-manager'),
+                'dashicons-chart-bar',
+                __('Sales, tickets and revenue across every bus booking.', 'bus-booking-manager')
+            );
+        }
         if ($report) {
             $tabs['reports'] = array(
                 'label'       => __('Reports', 'bus-booking-manager'),

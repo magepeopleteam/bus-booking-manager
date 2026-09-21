@@ -1218,3 +1218,165 @@ body.wbbm-export-open { overflow: hidden; }
         transform: translateY(0);
     }
 }
+
+
+/* ==================================================================
+   Passenger List filter panel
+   ------------------------------------------------------------------
+   Scoped to .mage-custom-filter-area-outer, the wrapper only this
+   screen renders, for two reasons: the Bus/Stop/Type list screens use
+   the same .filter-group name for a quite different control (one
+   bordered pill holding an icon and a borderless input), and
+   wbbm-list-tables.css styles it that way with !important. This panel
+   instead stacks a label above an ordinary field inside a grid, so it
+   needs to out-specify that sheet without disturbing it.
+   ================================================================== */
+
+.wrap.wbbm-list-wrap.mage-custom-filter-area-outer .wbbm-list-filters-card {
+    padding: 20px 22px 18px !important;
+    margin-bottom: 16px;
+    background: var(--sh-card-bg, #fff);
+    border: 1px solid var(--sh-border, #e6e9ef);
+    border-radius: 12px;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, .04);
+}
+
+/* Must stay stronger than the card rule above, which is later in the
+   cascade, or the Show/Hide Filters toggle cannot close the panel. */
+.wrap.wbbm-list-wrap.mage-custom-filter-area-outer .wbbm-list-filters-card.collapsed {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
+    border-width: 0 !important;
+}
+
+.wrap.wbbm-list-wrap.mage-custom-filter-area-outer .wbbm-list-filter-wrapper {
+    width: 100%;
+}
+
+/* ---- the field grid ---- */
+.wrap.wbbm-list-wrap.mage-custom-filter-area-outer .sh-filter-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px 20px;
+    align-items: end;
+    margin: 0;
+}
+
+.wrap.wbbm-list-wrap.mage-custom-filter-area-outer .sh-filter-grid .filter-group {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+    width: auto;
+    height: auto;
+    min-width: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+}
+
+.wrap.wbbm-list-wrap.mage-custom-filter-area-outer .sh-filter-grid .filter-group label {
+    margin: 0;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--sh-text-soft, #64748b);
+}
+
+.wrap.wbbm-list-wrap.mage-custom-filter-area-outer .sh-filter-grid .filter-group .form-control {
+    box-sizing: border-box !important;
+    display: block;
+    width: 100% !important;
+    min-width: 0;
+    height: 38px !important;
+    margin: 0 !important;
+    padding: 0 12px !important;
+    border: 1px solid var(--sh-border, #e6e9ef) !important;
+    border-radius: 8px !important;
+    background-color: #fff !important;
+    font-size: 13.5px !important;
+    line-height: normal !important;
+    color: var(--sh-text-main, #17203a) !important;
+    box-shadow: none !important;
+    transition: border-color .15s, box-shadow .15s;
+}
+
+.wrap.wbbm-list-wrap.mage-custom-filter-area-outer .sh-filter-grid .filter-group .form-control:focus {
+    border-color: var(--sh-primary, #b30c3b) !important;
+    box-shadow: 0 0 0 3px rgba(179, 12, 59, .12) !important;
+    outline: none !important;
+}
+
+/* the chevron the list sheet paints sits flush without room reserved */
+.wrap.wbbm-list-wrap.mage-custom-filter-area-outer .sh-filter-grid .filter-group select.form-control {
+    padding-right: 30px !important;
+    background-position: right 10px center !important;
+}
+
+/* ---- extra passenger filters ---- */
+.wrap.wbbm-list-wrap.mage-custom-filter-area-outer .extra-filters-wrapper {
+    margin-top: 18px;
+}
+
+.wrap.wbbm-list-wrap.mage-custom-filter-area-outer .extra-filters-toggle-wrap {
+    margin: 0;
+}
+
+.wrap.wbbm-list-wrap.mage-custom-filter-area-outer .extra-filters-grid {
+    margin-top: 14px !important;
+    padding: 18px !important;
+    border-top: 0;
+}
+
+/* ---- actions row ---- */
+.wrap.wbbm-list-wrap.mage-custom-filter-area-outer .sh-filter-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1px solid var(--sh-border, #e6e9ef);
+}
+
+.wrap.wbbm-list-wrap.mage-custom-filter-area-outer .sh-filter-left {
+    display: flex;
+    align-items: center;
+}
+
+/* the link carries its own 10px/16px padding for its hover pill, so pull
+   it back to the panel's left edge rather than letting it sit indented */
+.wrap.wbbm-list-wrap.mage-custom-filter-area-outer .sh-filter-left .removed-passengers-link {
+    margin-left: -16px;
+}
+
+.wrap.wbbm-list-wrap.mage-custom-filter-area-outer .sh-filter-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+@media screen and (max-width: 1200px) {
+    .wrap.wbbm-list-wrap.mage-custom-filter-area-outer .sh-filter-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media screen and (max-width: 782px) {
+    .wrap.wbbm-list-wrap.mage-custom-filter-area-outer .sh-filter-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .wrap.wbbm-list-wrap.mage-custom-filter-area-outer .sh-filter-actions {
+        align-items: stretch;
+    }
+
+    .wrap.wbbm-list-wrap.mage-custom-filter-area-outer .sh-filter-right {
+        justify-content: flex-end;
+    }
+}
+

@@ -977,31 +977,41 @@ if (true) {
     {
         ob_start();
         ?>
-        <div class="search-fields">
+        <?php /*
+         * wbbm-admin-search is the styling hook (assets/admin/wbbm-admin-shell.css).
+         * It has to be a class of its own: .fields-li and .search-fields are also
+         * used by the front-end search form with different markup, so styling
+         * those names directly would reach across to it.
+         *
+         * Each label's icon and caption are wrapped so the caption can sit above
+         * its control -- with the text as a bare node there is no element to
+         * style, and the icon ends up on a line of its own.
+         */ ?>
+        <div class="search-fields wbbm-admin-search">
             <?php wp_nonce_field('bus_search_nonce_action', 'bus_search_nonce', false); ?>
             <div class="fields-li">
                 <label>
-                    <i class="fa fa-map-marker" aria-hidden="true"></i> <?php esc_html_e('From', 'bus-booking-manager'); ?>
+                    <span class="wbbm-as-cap"><i class="fa fa-map-marker" aria-hidden="true"></i> <?php esc_html_e('From', 'bus-booking-manager'); ?></span>
                     <?php echo wbbm_get_bus_route_list( // phpcs:ignore WordPress.Security.EscapingOutput.OutputNotEscaped -- Helper returns escaped markup; wp_kses_post() would strip the select.
                         'bus_start_route', $start); ?></label>
             </div>
             <div class="fields-li">
                 <label>
-                    <i class="fa fa-map-marker" aria-hidden="true"></i> <?php esc_html_e('To:', 'bus-booking-manager'); ?>
+                    <span class="wbbm-as-cap"><i class="fa fa-map-marker" aria-hidden="true"></i> <?php esc_html_e('To', 'bus-booking-manager'); ?></span>
                     <?php echo wbbm_get_bus_route_list( // phpcs:ignore WordPress.Security.EscapingOutput.OutputNotEscaped -- Helper returns escaped markup; wp_kses_post() would strip the select.
                         'bus_end_route', $end); ?>
                 </label>
             </div>
             <div class="fields-li">
                 <label for='j_date'>
-                    <i class="fa fa-calendar" aria-hidden="true"></i> <?php esc_html_e('Date of Journey:', 'bus-booking-manager'); ?>
+                    <span class="wbbm-as-cap"><i class="fa fa-calendar" aria-hidden="true"></i> <?php esc_html_e('Date of Journey', 'bus-booking-manager'); ?></span>
                     <input type="text" id="j_date" name="j_date" value="<?php echo esc_attr($date); ?>">
 
                 </label>
             </div>
             <div class="fields-li return-date-sec">
                 <label for='r_date'>
-                    <i class="fa fa-calendar" aria-hidden="true"></i> <?php esc_html_e('Return Date:', 'bus-booking-manager'); ?>
+                    <span class="wbbm-as-cap"><i class="fa fa-calendar" aria-hidden="true"></i> <?php esc_html_e('Return Date', 'bus-booking-manager'); ?></span>
                     <input type="text" id="r_date" name="r_date" value="<?php echo esc_attr($r_date); ?>">
                 </label>
             </div>
@@ -1018,7 +1028,8 @@ if (true) {
                 $busr = 'oneway';
             }
             ?>
-            <div class="fields-li">
+            <div class="fields-li wbbm-as-actions">
+                <span class="wbbm-as-cap"><?php esc_html_e('Trip', 'bus-booking-manager'); ?></span>
                 <div class="search-radio-sec">
                     <label for="oneway"><input type="radio" <?php if ($busr == 'oneway') {
                                                                 echo 'checked';
@@ -1036,17 +1047,16 @@ if (true) {
         </div>
         <script>
             jQuery(function ($) {
+                // A class, not .show()/.hide(): those write an inline
+                // display:block, which overrides the field's own flex layout
+                // and collapses the caption onto the control.
                 var $return = $('.return-date-sec');
-                <?php if ('return' === $busr) { ?>
-                    $return.show();
-                <?php } else { ?>
-                    $return.hide();
-                <?php } ?>
+                $return.toggleClass('is-hidden', <?php echo ('return' === $busr) ? 'false' : 'true'; ?>);
                 $('#oneway').on('click', function () {
-                    $return.hide();
+                    $return.addClass('is-hidden');
                 });
                 $('#return_date').on('click', function () {
-                    $return.show();
+                    $return.removeClass('is-hidden');
                 });
             });
         </script>
@@ -1347,6 +1357,47 @@ if (true) {
         return $all_stops;
     }
     /**
+     * Fall back to the WooCommerce customer when no passenger details were collected.
+     *
+     * Per-passenger name/email/phone are only asked for when the coach has
+     * them ticked under Passenger Registration; with those off, the booking
+     * form never asks and _wbbm_passenger_info carries nothing but the
+     * passenger type. The buyer is still known to WooCommerce, so a booking
+     * ended up blank everywhere it is listed while the order beside it named
+     * the customer.
+     *
+     * Only applied to a booking that covers a single passenger. On a booking
+     * for several people the buyer is one of them at most, and stamping
+     * their name on all of them would assert something untrue.
+     *
+     * @param int $order_id   Order the booking belongs to.
+     * @param int $passengers How many people this booking covers.
+     * @return array{name: string, email: string, phone: string}
+     */
+    function wbbm_booking_customer_fallback($order_id, $passengers)
+    {
+        $empty = array('name' => '', 'email' => '', 'phone' => '');
+        if (1 !== (int) $passengers || !function_exists('wc_get_order')) {
+            return $empty;
+        }
+
+        $order = wc_get_order(absint($order_id));
+        if (!$order) {
+            return $empty;
+        }
+
+        $name = trim($order->get_billing_first_name() . ' ' . $order->get_billing_last_name());
+        if ('' === $name) {
+            $name = trim($order->get_shipping_first_name() . ' ' . $order->get_shipping_last_name());
+        }
+
+        return array(
+            'name'  => $name,
+            'email' => (string) $order->get_billing_email(),
+            'phone' => (string) $order->get_billing_phone(),
+        );
+    }
+    /**
      * $payment_method / $payment_status are new optional trailing params
      * (added for offline-payment support -- see inc/wbbm-offline-booking.php)
      * so the existing WooCommerce call site below (which never passes them)
@@ -1357,6 +1408,24 @@ if (true) {
     function wbbm_add_passenger($order_id, $bus_id, $user_id, $start, $next_stops, $end, $user_name, $user_email, $user_phone, $user_gender, $user_dob, $nationality, $flight_arrival_no, $flight_departure_no, $extra_bag_quantity, $user_address, $user_type, $b_time, $j_time, $adult, $adult_per_price, $child, $child_per_price, $infant, $infant_per_price, $entire, $entire_per_price, $total_price, $item_quantity, $j_date, $add_datetime, $pickpoint, $status, $payment_method = 'woocommerce', $payment_status = null)
     {
         $add_datetime = current_time("Y-m-d h:i:s");
+
+        /*
+         * Nothing was collected for this passenger: name the buyer rather
+         * than filing the booking under no one. Each field falls back on its
+         * own, so a coach that asks for a name but not a phone keeps the
+         * name it was given.
+         */
+        if ('' === trim((string) $user_name)) {
+            $fallback = wbbm_booking_customer_fallback($order_id, (int) $adult + (int) $child + (int) $infant + (int) $entire);
+            $user_name = $fallback['name'];
+            if ('' === trim((string) $user_email)) {
+                $user_email = $fallback['email'];
+            }
+            if ('' === trim((string) $user_phone)) {
+                $user_phone = $fallback['phone'];
+            }
+        }
+
         $post_title = 'Booking #' . $order_id . ' - ' . $user_name;
 
         if (null === $payment_status) {

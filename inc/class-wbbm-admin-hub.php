@@ -206,6 +206,49 @@ abstract class WBBM_Admin_Hub
     }
 
     /** Capability check for one tab. */
+    /**
+     * Panel shown when a section's add-on is not installed.
+     *
+     * Locked tabs are rendered in the nav but are not links, so this is only
+     * reached by a direct URL. It also gives tabs() a callable to validate,
+     * which is why locked entries can be registered at all.
+     *
+     * @param string $label Section name, for the message.
+     */
+    public function render_locked_notice($label = '')
+    {
+        $label = $label ? $label : __('This section', 'bus-booking-manager');
+        ?>
+        <div class="wbbm-hub-locked-panel">
+            <span class="dashicons dashicons-lock" aria-hidden="true"></span>
+            <h2><?php echo esc_html(sprintf(/* translators: %s: section name. */ __('%s is a PRO feature', 'bus-booking-manager'), $label)); ?></h2>
+            <p><?php esc_html_e('Activate the PRO version to use this section.', 'bus-booking-manager'); ?></p>
+        </div>
+        <?php
+    }
+
+    /**
+     * Build a locked tab definition for a section whose add-on is missing.
+     *
+     * @param string $label Section name.
+     * @param string $icon  Dashicon class.
+     * @param string $note  Short description for the tab.
+     * @return array
+     */
+    protected function locked_tab($label, $icon, $note = '')
+    {
+        return array(
+            'label'       => $label,
+            'description' => $note,
+            'icon'        => $icon,
+            'capability'  => 'manage_options',
+            'locked'      => true,
+            'callback'    => function () use ($label) {
+                $this->render_locked_notice($label);
+            },
+        );
+    }
+
     protected function can($tab)
     {
         $cap = isset($tab['capability']) ? $tab['capability'] : 'manage_options';
@@ -578,9 +621,17 @@ abstract class WBBM_Admin_Hub
                 <?php if (count($tabs) > 1) : ?>
                     <nav class="wbbm-hub-tabs" data-wbbm-tabs aria-label="<?php echo esc_attr(sprintf(/* translators: %s: hub title. */ __('%s sections', 'bus-booking-manager'), $this->title())); ?>">
                         <?php foreach ($tabs as $key => $item) : ?>
-                            <a href="<?php echo esc_url($this->page_url($key)); ?>" data-wbbm-tab="<?php echo esc_attr($key); ?>"<?php echo $key === $tab_key ? ' aria-current="page"' : ''; ?>>
-                                <span class="dashicons <?php echo esc_attr(isset($item['icon']) ? $item['icon'] : 'dashicons-marker'); ?>" aria-hidden="true"></span><?php echo esc_html($item['label']); ?>
-                            </a>
+                            <?php if (!empty($item['locked'])) : ?>
+                                <?php /* Rendered, but not a link: the section belongs to an add-on that is not active. */ ?>
+                                <span class="wbbm-hub-tab-locked" data-wbbm-tab="<?php echo esc_attr($key); ?>" aria-disabled="true" title="<?php esc_attr_e('Available in the PRO version', 'bus-booking-manager'); ?>">
+                                    <span class="dashicons <?php echo esc_attr(isset($item['icon']) ? $item['icon'] : 'dashicons-marker'); ?>" aria-hidden="true"></span><?php echo esc_html($item['label']); ?>
+                                    <em class="wbbm-pro-badge"><?php esc_html_e('PRO', 'bus-booking-manager'); ?></em>
+                                </span>
+                            <?php else : ?>
+                                <a href="<?php echo esc_url($this->page_url($key)); ?>" data-wbbm-tab="<?php echo esc_attr($key); ?>"<?php echo $key === $tab_key ? ' aria-current="page"' : ''; ?>>
+                                    <span class="dashicons <?php echo esc_attr(isset($item['icon']) ? $item['icon'] : 'dashicons-marker'); ?>" aria-hidden="true"></span><?php echo esc_html($item['label']); ?>
+                                </a>
+                            <?php endif; ?>
                         <?php endforeach; ?>
                     </nav>
                 <?php endif; ?>

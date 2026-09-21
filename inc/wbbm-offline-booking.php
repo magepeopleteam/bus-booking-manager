@@ -221,17 +221,44 @@ function wbbm_validate_offline_booking_request($post)
  * return trip confirms payment, while Offline still records straight to
  * 'pending' meaning "awaiting manual confirmation" (unchanged behaviour).
  *
+ * $order_id / $leg_index / $leg_count exist for the multi-leg path in
+ * wbbm_record_pending_booking_legs(): a return trip is ONE booking made of
+ * two legs, so both legs must land under the same order id rather than each
+ * minting its own. Left at their defaults this behaves exactly as it always
+ * did -- a fresh order id, a single leg numbered 0 of 1.
+ *
  * @return array{ok: bool, ids?: int[], summary?: array, error?: string}
  */
-function wbbm_record_pending_booking($data, $gateway = 'offline', $payment_status = 'pending')
+function wbbm_record_pending_booking($data, $gateway = 'offline', $payment_status = 'pending', $order_id = null, $leg_index = 0, $leg_count = 1)
 {
     // A negative, timestamp-derived placeholder keeps Custom Payment
     // Method bookings trivially distinguishable from real WooCommerce
     // order ids (always positive post ids) in anything that later reads
     // _wbbm_order_id.
-    $order_id = -time();
+    $order_id = (null === $order_id) ? -time() : (int) $order_id;
     $item_quantity = $data['item_quantity'];
     $inserted_ids = array();
+
+    /*
+     * Which ticket type each seat is. The loop below inserts one post per
+     * seat, filled adults first, then children, then infants -- the same
+     * per-passenger typing wbbm_add_passenger_to_db() does on the
+     * WooCommerce path (woocommerce-bus.php).
+     *
+     * This matters beyond labelling: the Passenger List prices a seat by
+     * looking up _wbbm_per_{type}_price from _wbbm_user_type. This used to
+     * pass the literal 'offline' here -- the payment method, which is the
+     * LAST argument, not this one -- so every Custom Payment Method seat
+     * looked for a "per_offline_price" that does not exist and was shown
+     * as 0.00 under a defaulted "Adult" label.
+     */
+    $seat_types = $data['entire']
+        ? array('entire')
+        : array_merge(
+            array_fill(0, (int) $data['adult'], 'adult'),
+            array_fill(0, (int) $data['child'], 'child'),
+            array_fill(0, (int) $data['infant'], 'infant')
+        );
 
     for ($i = 0; $i < $item_quantity; $i++) {
         $post_id = wbbm_add_passenger(
@@ -251,7 +278,7 @@ function wbbm_record_pending_booking($data, $gateway = 'offline', $payment_statu
             '',   // flight_departure_no
             0,    // extra_bag_quantity
             '',   // user_address
-            'offline',
+            isset($seat_types[$i]) ? $seat_types[$i] : 'adult',
             $data['bus_start_time'],
             $data['user_start_time'],
             $data['adult'],
@@ -276,6 +303,13 @@ function wbbm_record_pending_booking($data, $gateway = 'offline', $payment_statu
             $inserted_ids[] = $post_id;
             update_post_meta($post_id, '_wbbm_tax_amount', $data['tax_amount']);
             update_post_meta($post_id, '_wbbm_tax_rate', $data['tax_rate']);
+            // Which leg of the booking this seat belongs to. Anything reading
+            // these posts back -- the admin list's grouping, the Stripe/PayPal
+            // return-trip summary rebuild -- needs this to tell "two legs of
+            // one return trip" apart from "two seats on one bus", since both
+            // look identical through _wbbm_order_id alone.
+            update_post_meta($post_id, '_wbbm_leg_index', (int) $leg_index);
+            update_post_meta($post_id, '_wbbm_leg_count', (int) $leg_count);
             // wbbm_add_passenger() already stamps _wbbm_order_id and
             // _wbbm_payment_method ($gateway, passed above) -- this is an
             // explicit alias so a reader looking for "which gateway" finds
@@ -322,6 +356,233 @@ function wbbm_record_pending_booking($data, $gateway = 'offline', $payment_statu
     return array('ok' => true, 'ids' => $inserted_ids, 'summary' => $summary);
 }
 
+/* ----------------------------------------------------------------------
+ * Multi-leg bookings.
+ *
+ * A return trip is one booking made of two legs on two different buses.
+ * The single-leg functions above stay exactly as they were -- these wrap
+ * them, so a one-way booking still takes the identical code path and the
+ * per-leg validation and pricing rules can't drift between one leg and two.
+ * -------------------------------------------------------------------- */
+
+/** The fields that describe one leg; everything else on the request is shared. */
+function wbbm_booking_leg_fields()
+{
+    return array(
+        'bus_id',
+        'journey_date',
+        'start_stops',
+        'end_stops',
+        'user_start_time',
+        'bus_start_time',
+        'mage_pickpoint',
+        'adult_quantity',
+        'child_quantity',
+        'infant_quantity',
+        'entire_quantity',
+    );
+}
+
+/**
+ * Splits a request into one POST-shaped array per leg, each carrying the
+ * shared fields (nonce, contact details) so it can be handed straight to
+ * wbbm_validate_offline_booking_request() untouched.
+ *
+ * A request with no `legs` key is a single leg described by the flat POST --
+ * which is what the no-JS fallback still submits, and what every request
+ * looked like before return trips were bookable together.
+ *
+ * @return array<int, array> Never empty.
+ */
+function wbbm_extract_booking_legs($post)
+{
+    $leg_fields = wbbm_booking_leg_fields();
+    $shared = $post;
+    foreach ($leg_fields as $field) {
+        unset($shared[$field]);
+    }
+
+    if (empty($post['legs']) || !is_array($post['legs'])) {
+        return array($post);
+    }
+
+    /**
+     * The UI only ever posts an outbound and a return. The cap is here
+     * because `legs` arrives from the browser: without it a crafted request
+     * could ask the server to price and insert an unbounded number of legs
+     * in one go. Filterable so a future multi-city flow can raise it
+     * deliberately rather than by accident.
+     */
+    $max_legs = (int) apply_filters('wbbm_max_booking_legs', 2);
+
+    $legs = array();
+    foreach ($post['legs'] as $leg) {
+        if (!is_array($leg)) {
+            continue;
+        }
+
+        if (count($legs) >= $max_legs) {
+            break;
+        }
+
+        $normalized = $shared;
+        foreach ($leg_fields as $field) {
+            if (isset($leg[$field])) {
+                $normalized[$field] = $leg[$field];
+            }
+        }
+        $legs[] = $normalized;
+    }
+
+    return $legs ? $legs : array($post);
+}
+
+/**
+ * Validates every leg before anything is recorded -- all or nothing. If one
+ * leg is sold out the customer gets told which, and no half-booked return
+ * trip is left behind for the operator to unpick by hand.
+ *
+ * @return array{ok: bool, legs?: array[], totals?: array, error?: string, leg?: int}
+ */
+function wbbm_validate_booking_legs($post)
+{
+    $legs = array();
+    $claimed = array();
+    $subtotal = 0.0;
+    $tax_amount = 0.0;
+    $total_price = 0.0;
+
+    foreach (wbbm_extract_booking_legs($post) as $index => $leg_post) {
+        $validated = wbbm_validate_offline_booking_request($leg_post);
+
+        if (empty($validated['ok'])) {
+            return array(
+                'ok'    => false,
+                'error' => isset($validated['error']) ? $validated['error'] : 'invalid_request',
+                'leg'   => $index,
+            );
+        }
+
+        $data = $validated['data'];
+
+        /*
+         * Each leg's availability was checked against the database as it
+         * stands right now, which is correct for two legs on two buses but
+         * would happily sell the same seats twice if both legs are on the
+         * same bus on the same day. Nothing has been inserted yet, so the
+         * second check would still see the first leg's seats as free.
+         *
+         * Subtracting what earlier legs already claimed closes that. It is
+         * deliberately conservative: two legs on one bus and date are only
+         * genuinely in conflict when their segments overlap, and this
+         * refuses whenever the combined count exceeds the tighter of the
+         * two availabilities. Refusing a rare legitimate booking is the
+         * right side to err on against overselling a real seat.
+         */
+        $key = $data['bus_id'] . '|' . $data['journey_date'];
+        $requested = $data['entire']
+            ? (int) get_post_meta($data['bus_id'], 'wbbm_total_seat', true)
+            : ($data['adult'] + $data['child'] + $data['infant']);
+        $prior = isset($claimed[$key]) ? $claimed[$key] : 0;
+
+        if ($prior > 0) {
+            $available = function_exists('wbbm_intermidiate_available_seat')
+                ? wbbm_intermidiate_available_seat($data['start'], $data['end'], $data['journey_date'], $data['bus_id'])
+                : 0;
+
+            if (($requested + $prior) > $available) {
+                return array('ok' => false, 'error' => 'sold_out', 'leg' => $index);
+            }
+        }
+
+        $claimed[$key] = $prior + $requested;
+
+        $subtotal += (float) $data['subtotal'];
+        $tax_amount += (float) $data['tax_amount'];
+        $total_price += (float) $data['total_price'];
+
+        $legs[] = $data;
+    }
+
+    if (empty($legs)) {
+        return array('ok' => false, 'error' => 'invalid_request');
+    }
+
+    return array(
+        'ok'     => true,
+        'legs'   => $legs,
+        'totals' => array(
+            'subtotal'    => round($subtotal, 2),
+            'tax_amount'  => round($tax_amount, 2),
+            'total_price' => round($total_price, 2),
+        ),
+    );
+}
+
+/**
+ * Records every validated leg under one order id, so the confirmation and
+ * the admin Bookings list both see a single booking covering both buses.
+ *
+ * If any leg fails to insert, every leg already inserted is released again
+ * (wbbm_cgw_release_booking(), inc/wbbm-custom-gateway-checkout.php) rather
+ * than leaving a one-way booking the customer never asked for. Validation
+ * has already passed at this point, so this only fires on a genuine
+ * database failure -- but a half-written return trip is exactly the mess
+ * that is expensive to find later.
+ *
+ * @return array{ok: bool, ids?: int[], summary?: array, error?: string}
+ */
+function wbbm_record_pending_booking_legs($legs, $totals, $gateway = 'offline', $payment_status = 'pending')
+{
+    $order_id = -time();
+    $leg_count = count($legs);
+    $all_ids = array();
+    $leg_summaries = array();
+
+    foreach ($legs as $index => $data) {
+        $recorded = wbbm_record_pending_booking($data, $gateway, $payment_status, $order_id, $index, $leg_count);
+
+        if (empty($recorded['ok'])) {
+            if ($all_ids && function_exists('wbbm_cgw_release_booking')) {
+                wbbm_cgw_release_booking($all_ids);
+            }
+
+            return array('ok' => false, 'error' => isset($recorded['error']) ? $recorded['error'] : 'insert_failed');
+        }
+
+        $all_ids = array_merge($all_ids, $recorded['ids']);
+        $leg_summaries[] = $recorded['summary'];
+    }
+
+    // The whole-booking figures go on every post so anything reading one
+    // seat back knows what the customer actually owes, without having to
+    // re-query its siblings. _wbbm_total_price stays the LEG's total --
+    // unchanged meaning, so single-leg readers elsewhere keep working.
+    foreach ($all_ids as $post_id) {
+        update_post_meta($post_id, '_wbbm_booking_subtotal', $totals['subtotal']);
+        update_post_meta($post_id, '_wbbm_booking_tax', $totals['tax_amount']);
+        update_post_meta($post_id, '_wbbm_booking_total', $totals['total_price']);
+    }
+
+    $first = $leg_summaries[0];
+
+    // Leg 0 stays at the top level so every existing reader of this summary
+    // -- the Stripe/PayPal descriptions, the no-JS confirmation banner --
+    // keeps finding the fields it expects. The whole trip is in 'legs'.
+    $summary = array_merge($first, array(
+        'legs'        => $leg_summaries,
+        'leg_count'   => $leg_count,
+        'subtotal'    => $totals['subtotal'],
+        'tax_amount'  => $totals['tax_amount'],
+        'total_price' => $totals['total_price'],
+        'seat_count'  => array_sum(wp_list_pluck($leg_summaries, 'seat_count')),
+    ));
+
+    do_action('wbbm_offline_booking_legs_created', $all_ids, $summary);
+
+    return array('ok' => true, 'ids' => $all_ids, 'summary' => $summary);
+}
+
 /**
  * Thin wrapper kept for backward compatibility with this file's two
  * original callers (the AJAX handler and the no-JS fallback below) --
@@ -330,16 +591,20 @@ function wbbm_record_pending_booking($data, $gateway = 'offline', $payment_statu
  * which insert their own AJAX handlers in
  * inc/wbbm-custom-gateway-checkout.php around these same two functions.
  *
- * @return array{ok: bool, summary?: array, error?: string}
+ * @return array{ok: bool, summary?: array, error?: string, leg?: int}
  */
 function wbbm_process_offline_booking($post)
 {
-    $validated = wbbm_validate_offline_booking_request($post);
+    $validated = wbbm_validate_booking_legs($post);
     if (empty($validated['ok'])) {
-        return array('ok' => false, 'error' => $validated['error']);
+        return array(
+            'ok'    => false,
+            'error' => $validated['error'],
+            'leg'   => isset($validated['leg']) ? $validated['leg'] : 0,
+        );
     }
 
-    $recorded = wbbm_record_pending_booking($validated['data'], 'offline', 'pending');
+    $recorded = wbbm_record_pending_booking_legs($validated['legs'], $validated['totals'], 'offline', 'pending');
     if (empty($recorded['ok'])) {
         return array('ok' => false, 'error' => $recorded['error']);
     }
@@ -361,7 +626,13 @@ function wbbm_ajax_offline_book_now()
         wp_send_json_success($result['summary']);
     }
 
-    wp_send_json_error(array('code' => isset($result['error']) ? $result['error'] : 'unknown'));
+    // `leg` lets the modal say which leg of a return trip failed -- "the
+    // return leg is sold out" is actionable in a way that a bare
+    // "sold out" on a two-bus booking is not.
+    wp_send_json_error(array(
+        'code' => isset($result['error']) ? $result['error'] : 'unknown',
+        'leg'  => isset($result['leg']) ? (int) $result['leg'] : 0,
+    ));
 }
 
 /**
