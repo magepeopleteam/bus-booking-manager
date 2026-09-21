@@ -34,12 +34,16 @@ if (!defined('ABSPATH')) {
 // Kept so anything that legitimately injects here -- payment gateway
 // scripts, consent banners -- still runs inside the frame.
 wp_body_open();
-
-while (have_posts()) {
-    the_post();
-    the_content();
-}
-
+?>
+<div class="wbbm-embedded-page">
+    <?php
+    while (have_posts()) {
+        the_post();
+        the_content();
+    }
+    ?>
+</div>
+<?php
 wp_footer();
 ?>
 </body>

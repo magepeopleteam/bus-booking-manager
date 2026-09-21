@@ -5,7 +5,7 @@
  * inc/wbbm_enque.php adds body.wbbm-embedded-checkout), so an ordinary
  * checkout visit is untouched. Every rule below is scoped to that class.
  *
- * The drawer is ~430px wide. WooCommerce's block checkout and Order
+ * The drawer is ~560px wide. WooCommerce's block checkout and Order
  * Confirmation block are laid out for a full-width page, so this re-fits them
  * rather than re-skinning them: one column, tighter rhythm, and the two
  * information-dense areas -- the summary list and the line-item table --
@@ -449,4 +449,249 @@ body.wbbm-embedded-checkout .wc-block-components-notice-banner {
 body.wbbm-embedded-checkout table,
 body.wbbm-embedded-checkout img {
     max-width: 100%;
+}
+
+
+/* =========================================================================
+ * The canvas, and the classic order confirmation
+ *
+ * A framed request is rendered on the plugin's own canvas template, which
+ * deliberately has none of the theme's wrappers -- that is what keeps the
+ * site header and footer out of the drawer on every theme. It also means the
+ * theme is no longer supplying the page gutter or any of the layout the
+ * rules above borrowed from it, so the canvas supplies its own.
+ *
+ * On the canvas the confirmation comes from WooCommerce's classic template on
+ * every theme, rather than the Order Confirmation block that a block theme
+ * would otherwise render. That is worth having -- the drawer then looks the
+ * same everywhere -- but it means the block rules above never match, and the
+ * classic markup arrives with WooCommerce's own floats and bullets. Styled
+ * here to the same design, so both paths end on the same panel and cards.
+ * ========================================================================= */
+
+body.wbbm-embedded-checkout .wbbm-embedded-page {
+    padding: 16px;
+}
+
+/* WooCommerce's classic wrappers add nothing at this width. */
+body.wbbm-embedded-checkout .wbbm-embedded-page > .woocommerce,
+body.wbbm-embedded-checkout .woocommerce-order {
+    margin: 0;
+    padding: 0;
+}
+
+/* ------------------------------------------- classic: the success notice */
+/*
+ * Same success panel and drawn check as the block status above, so the
+ * outcome reads at a glance rather than as a stray line of body text.
+ */
+body.wbbm-embedded-checkout .woocommerce-thankyou-order-received {
+    position: relative;
+    margin: 0 0 14px !important;
+    padding: 84px 18px 20px !important;
+    border: 1px solid var(--wbbm-co-ok-line);
+    border-radius: 18px;
+    background:
+        radial-gradient(120% 90% at 50% 0%, #eafaf0 0%, rgba(234, 250, 240, 0) 70%),
+        var(--wbbm-co-surface);
+    text-align: center;
+    font-size: 16px !important;
+    font-weight: 700;
+    line-height: 1.35;
+    color: var(--wbbm-co-ok);
+}
+
+body.wbbm-embedded-checkout .woocommerce-thankyou-order-received::before {
+    content: "";
+    position: absolute;
+    top: 22px;
+    left: 50%;
+    width: 52px;
+    height: 52px;
+    margin-left: -26px;
+    border-radius: 50%;
+    background: var(--wbbm-co-ok-tint);
+    box-shadow: inset 0 0 0 2px var(--wbbm-co-ok-line);
+}
+
+/* Two borders of a rotated box: the one reliable way to draw a real tick in
+   a pseudo-element, the markup being WooCommerce's to own. */
+body.wbbm-embedded-checkout .woocommerce-thankyou-order-received::after {
+    content: "";
+    position: absolute;
+    top: 38px;
+    left: 50%;
+    width: 11px;
+    height: 19px;
+    margin-left: -6px;
+    border-right: 3px solid var(--wbbm-co-ok);
+    border-bottom: 3px solid var(--wbbm-co-ok);
+    transform: rotate(45deg);
+}
+
+/* ----------------------------------------------- classic: the overview list */
+/*
+ * Order number, date, total and payment method. WooCommerce floats these into
+ * columns with dividers between them, which at drawer width collapses into an
+ * unreadable run; they become aligned label/value rows instead.
+ */
+body.wbbm-embedded-checkout .woocommerce-order-overview {
+    margin: 0 0 14px !important;
+    padding: 4px 16px !important;
+    border: 1px solid var(--wbbm-co-line);
+    border-radius: 16px;
+    background: var(--wbbm-co-surface);
+    list-style: none !important;
+}
+
+body.wbbm-embedded-checkout .woocommerce-order-overview::before,
+body.wbbm-embedded-checkout .woocommerce-order-overview::after {
+    content: none !important;
+}
+
+body.wbbm-embedded-checkout .woocommerce-order-overview li {
+    display: flex !important;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 14px;
+    float: none !important;
+    width: auto !important;
+    margin: 0 !important;
+    padding: 12px 0 !important;
+    border: 0 !important;
+    border-bottom: 1px solid var(--wbbm-co-line) !important;
+    list-style: none !important;
+    /* WooCommerce sets the label in uppercase small text and the value large;
+       both are reset so the row reads as one line. */
+    font-size: 12px !important;
+    line-height: 1.4 !important;
+    text-transform: none !important;
+    color: var(--wbbm-co-muted);
+}
+
+body.wbbm-embedded-checkout .woocommerce-order-overview li:last-child {
+    border-bottom: 0 !important;
+}
+
+body.wbbm-embedded-checkout .woocommerce-order-overview li strong {
+    flex: 0 1 auto;
+    min-width: 0;
+    text-align: right;
+    overflow-wrap: anywhere;
+    font-size: 13px !important;
+    font-weight: 700;
+    line-height: 1.4 !important;
+    color: var(--wbbm-co-ink);
+}
+
+/* --------------------------------------------- classic: details and address */
+
+body.wbbm-embedded-checkout .woocommerce-order-details__title,
+body.wbbm-embedded-checkout .woocommerce-column__title,
+body.wbbm-embedded-checkout .woocommerce-customer-details h2 {
+    margin: 0 0 8px !important;
+    font-size: 11px !important;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--wbbm-co-soft);
+}
+
+body.wbbm-embedded-checkout .woocommerce-order-details,
+body.wbbm-embedded-checkout .woocommerce-customer-details {
+    margin: 0 0 14px !important;
+}
+
+body.wbbm-embedded-checkout .woocommerce-table--order-details {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border: 1px solid var(--wbbm-co-line);
+    border-radius: 16px;
+    border-collapse: collapse;
+    background: var(--wbbm-co-surface);
+    /* The border-radius only shows if the table itself clips its corners. */
+    overflow: hidden;
+}
+
+/* Product / Total says nothing a customer needs here and costs a row. */
+body.wbbm-embedded-checkout .woocommerce-table--order-details thead {
+    display: none;
+}
+
+body.wbbm-embedded-checkout .woocommerce-table--order-details th,
+body.wbbm-embedded-checkout .woocommerce-table--order-details td {
+    padding: 13px 16px !important;
+    border: 0 !important;
+    border-bottom: 1px solid var(--wbbm-co-line) !important;
+    vertical-align: top;
+    font-size: 13px;
+    line-height: 1.45;
+    text-align: left;
+    color: var(--wbbm-co-ink);
+}
+
+body.wbbm-embedded-checkout .woocommerce-table--order-details tfoot th {
+    font-weight: 600;
+    color: var(--wbbm-co-muted);
+}
+
+body.wbbm-embedded-checkout .woocommerce-table--order-details td.product-total,
+body.wbbm-embedded-checkout .woocommerce-table--order-details tfoot td {
+    width: 1%;
+    text-align: right;
+    white-space: nowrap;
+    font-weight: 700;
+}
+
+body.wbbm-embedded-checkout .woocommerce-table--order-details tbody td.product-name {
+    font-weight: 700;
+    font-size: 14px;
+}
+
+/* The quantity WooCommerce appends to the product name. */
+body.wbbm-embedded-checkout .woocommerce-table--order-details .product-quantity {
+    font-weight: 600;
+    color: var(--wbbm-co-muted);
+}
+
+/* The last row closes the card, so it drops its rule. Which row that is
+   varies -- payment method, shipping and tax all come and go with the order --
+   so nothing here leans on the position meaning anything in particular. Not
+   accenting a row by position is deliberate: WooCommerce gives these rows no
+   class, and "the total is the last one" is false as soon as an order has a
+   payment method after it. */
+body.wbbm-embedded-checkout .woocommerce-table--order-details tfoot tr:last-child th,
+body.wbbm-embedded-checkout .woocommerce-table--order-details tfoot tr:last-child td {
+    border-bottom: 0 !important;
+    padding-bottom: 16px !important;
+}
+
+body.wbbm-embedded-checkout .woocommerce-customer-details address {
+    margin: 0;
+    padding: 14px 16px;
+    border: 1px solid var(--wbbm-co-line);
+    border-radius: 16px;
+    background: var(--wbbm-co-surface);
+    font-style: normal;
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--wbbm-co-ink);
+}
+
+body.wbbm-embedded-checkout .woocommerce-customer-details .woocommerce-customer-details--phone,
+body.wbbm-embedded-checkout .woocommerce-customer-details .woocommerce-customer-details--email {
+    margin: 6px 0 0;
+    color: var(--wbbm-co-muted);
+}
+
+/* Two address columns do not fit side by side; they stack. */
+body.wbbm-embedded-checkout .woocommerce-columns--addresses {
+    display: block;
+}
+
+body.wbbm-embedded-checkout .woocommerce-columns--addresses .woocommerce-column {
+    width: auto;
+    float: none;
+    margin: 0 0 14px;
 }

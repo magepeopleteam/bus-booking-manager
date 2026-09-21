@@ -993,9 +993,15 @@ class FilterClass extends CommonClass
                         </ul>
                         <?php
                     }
+                // Only when this buffer was actually started. ob_start() above runs
+                // only for a wbbm_bus cart item; closing the buffer outside this
+                // branch closed whatever buffer happened to be open instead --
+                // the page's own -- so any cart holding an ordinary product lost
+                // its doctype, <head> and <body> into this value and the checkout
+                // rendered as unstyled markup with the page source shown as text.
+                $item_data[] = array( 'key' => '', 'value' => ob_get_clean() );
             }
         }
-        $item_data[] = array( 'key' => '', 'value' => ob_get_clean() );
         return $item_data;
     }
 }

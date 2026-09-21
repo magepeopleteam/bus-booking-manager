@@ -1572,7 +1572,7 @@ div.mage_route_title strong {
 .mage_offline_modal_box {
     display: flex;
     flex-direction: column;
-    width: min(440px, 100%);
+    width: min(560px, 100%);
     max-width: none;
     height: 100%;
     max-height: none;
@@ -1754,7 +1754,7 @@ div.mage_route_title strong {
 
 .mage_offline_gateway_card {
     /* mage_css.css:650 stacks the icon over the label in a centred column --
-       in a 440px drawer they read better as full-width rows */
+       in a narrow drawer they read better as full-width rows */
     display: flex !important;
     flex-direction: row;
     align-items: center;
