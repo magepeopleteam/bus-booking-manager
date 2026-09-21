@@ -653,6 +653,37 @@ class SearchClass extends CommonClass
 
     function mage_search_form_horizontal($single_bus, $target = '')
     {
+        /**
+         * Let a theme render the route search form itself.
+         *
+         * Returning a non-empty string replaces this form completely --
+         * including the three wrappers below, which is the point. A theme
+         * that only swapped the <form> out of the finished markup would be
+         * left inside .wbbm-modern-search, .wbbm-search-shell and
+         * .search_form_horizontal, which carry their own background, border
+         * and padding, so its form would sit in a box the theme never asked
+         * for and does not control.
+         *
+         * $single_bus is passed so a theme can decline the single-bus form,
+         * whose stop lists are scoped to one bus rather than the whole
+         * catalogue, and let this render it as normal.
+         *
+         * The filtered value is echoed as-is: whatever supplies it owns its
+         * escaping, the same contract as any HTML-returning WordPress filter.
+         *
+         * @since 5.0.3
+         *
+         * @param string $html       Empty to render the built-in form.
+         * @param bool   $single_bus Whether this is a single bus's own form.
+         * @param string $target     Slug of the page the form searches on.
+         */
+        $custom_form = apply_filters('wbbm_search_form_horizontal_html', '', $single_bus, sanitize_text_field($target));
+
+        if (is_string($custom_form) && $custom_form !== '') {
+            echo $custom_form; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- the filter that supplied this owns its escaping.
+            return;
+        }
+
         // Sanitize background color
         $search_form_b_color = sanitize_hex_color(wbbm_get_option('wbbm_search_form_b_color', 'wbbm_style_setting_sec'));
 

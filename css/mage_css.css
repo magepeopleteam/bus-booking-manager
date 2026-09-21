@@ -2,7 +2,11 @@
     max-width: 1366px !important;
     width: 100% !important;
     margin: 0 auto !important;
-    padding: 15px;
+    /* No horizontal padding: the container is always rendered inside a
+       theme's own content area, which already supplies the side gutter, so
+       15px on the sides only inset the plugin's content further than
+       everything around it. */
+    padding: 15px 0;
     font-size: 16px !important;
 }
 

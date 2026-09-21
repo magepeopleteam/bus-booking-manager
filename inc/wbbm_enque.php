@@ -341,6 +341,43 @@ function wbbm_embedded_checkout_styles()
     wp_enqueue_style('wbbm-embedded-checkout', plugin_dir_url(__DIR__) . $rel, array(), $ver);
 }
 
+/**
+ * Render the framed request on the plugin's own bare canvas.
+ *
+ * The theme's header.php and footer.php are never reached, so the drawer
+ * gets the checkout and the confirmation without any site chrome -- whatever
+ * that theme happens to call it. Hiding chrome with CSS cannot do this: the
+ * selector list can only name markup it was written against, so every theme
+ * with its own naming kept its header and footer inside the frame.
+ *
+ * Scoped by wbbm_is_embedded_checkout(), which needs both the wbbm_embed flag
+ * and is_checkout(), so this can never reach an ordinary page.
+ */
+add_filter('template_include', 'wbbm_embedded_checkout_template', 99);
+function wbbm_embedded_checkout_template($template)
+{
+    if (!wbbm_is_embedded_checkout()) {
+        return $template;
+    }
+
+    /**
+     * Filters whether the drawer renders on the bare canvas.
+     *
+     * A theme that wants to supply its own stripped-down framed template can
+     * return false here and keep its own, and the stylesheet below still
+     * applies.
+     *
+     * @param bool   $use_canvas Whether to use the plugin's canvas template.
+     * @param string $template   The template the theme resolved.
+     */
+    if (!apply_filters('wbbm_embedded_checkout_use_canvas', true, $template)) {
+        return $template;
+    }
+
+    $canvas = dirname(__DIR__) . '/templates/embedded-checkout.php';
+
+    return file_exists($canvas) ? $canvas : $template;
+}
 add_action('wp_head', 'wbbm_embedded_checkout_chrome', 99);
 function wbbm_embedded_checkout_chrome()
 {
@@ -349,12 +386,26 @@ function wbbm_embedded_checkout_chrome()
     }
     ?>
     <style id="wbbm-embedded-checkout">
+        /* The canvas template means the theme's chrome is normally never
+           rendered at all. This stays as a second line of defence, for chrome
+           injected through wp_body_open or wp_footer rather than header.php,
+           and for a theme that opts out of the canvas. Matching on a substring
+           rather than an exact class is deliberate: themes almost always
+           prefix these names with their own slug, so an exact list misses
+           them all. */
+        body.wbbm-embedded-checkout > header,
+        body.wbbm-embedded-checkout > footer,
+        body.wbbm-embedded-checkout > nav,
         header.wp-block-template-part,
         footer.wp-block-template-part,
         .wp-site-blocks > header,
         .wp-site-blocks > footer,
-        #masthead,
-        #colophon,
+        [class*="site-header"],
+        [class*="site-footer"],
+        [class*="mobile-tab"],
+        [class*="mobile-nav"],
+        [id*="masthead"],
+        [id*="colophon"],
         .site-header,
         .site-footer,
         .wp-block-post-title,
