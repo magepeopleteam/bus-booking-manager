@@ -39,14 +39,25 @@ if (!function_exists('wbbm_ticket_status_name')) {
 }
 
 if (!function_exists('wbbm_checkin_status_name')) {
+    /**
+     * Boarding check-in state of a booking, as a badge.
+     *
+     * PRO writes _wbbm_ticket_status = 2 when a ticket is scanned at the
+     * door. A booking that has never been scanned has no meta at all, and
+     * under PHP 8 an empty string no longer compares equal to 0 -- which
+     * used to leave this returning nothing and the column simply blank.
+     * Anything that is not an explicit 2 is "not checked in yet".
+     *
+     * @param mixed $id A _wbbm_ticket_status value.
+     * @return string
+     */
     function wbbm_checkin_status_name($id)
     {
-        if ($id == 0) {
-            return "<span class='wbtm-ticket-hold'>No</span>";
+        if (2 == $id) {
+            return "<span class='wbtm-ticket-confirm'>" . esc_html__('Yes', 'bus-booking-manager') . "</span>";
         }
-        if ($id == 2) {
-            return "<span class='wbtm-ticket-confirm'>Yes</span>";
-        }
+
+        return "<span class='wbtm-ticket-hold'>" . esc_html__('No', 'bus-booking-manager') . "</span>";
     }
 }
 

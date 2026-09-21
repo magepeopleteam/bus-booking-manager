@@ -1209,6 +1209,27 @@
 .wbbm-validator-result.is-warn .wbbm-validator-result-badge { background: var(--wbbm-warn); }
 .wbbm-validator-result.is-bad .wbbm-validator-result-badge { background: var(--wbbm-danger); }
 
+/*
+ * "Checked in 12 May 2026 08:14 by Rahim" on a repeat scan. The result and
+ * preview boxes are flex rows, so the note claims a full row of its own
+ * rather than squeezing in beside the badge. display/width/box-sizing are
+ * declared outright because PRO's admin stylesheet loads after this one.
+ */
+.wbbm-validator-result-note {
+    display: block;
+    flex: 0 0 100%;
+    width: 100%;
+    box-sizing: border-box;
+    margin: 0;
+    color: var(--wbbm-ink, #172033);
+    font-size: 12.5px;
+    font-weight: 600;
+}
+
+.wbbm-validator-result-note[hidden] {
+    display: none;
+}
+
 .wbbm-validator-result-meta,
 .wbbm-validator-preview-meta {
     display: flex;
