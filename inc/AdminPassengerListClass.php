@@ -1091,6 +1091,70 @@ class AdminPassengerListClass
         return 'adult';
     }
 
+    /**
+     * Who bought this booking, for the Customer column.
+     *
+     * WC_Customer only knows registered accounts, so a guest checkout -- which
+     * is most of them -- produced an empty object and the column printed three
+     * blank lines even though the order beside it named the buyer. The order's
+     * billing details are what was actually typed at checkout, so they come
+     * first. A Custom Payment booking carries a negative stand-in order id
+     * with no Woo order behind it, and falls back to what the booking itself
+     * stored.
+     *
+     * Orders are cached per request because the list groups several bookings
+     * under one order and would otherwise load it once per row.
+     *
+     * @param object $_passger Booking row.
+     * @return array{name: string, email: string, phone: string}
+     */
+    private function customer_details($_passger)
+    {
+        static $orders = array();
+
+        $order_id = (int) $_passger->order_id;
+        if ($order_id > 0 && function_exists('wc_get_order')) {
+            if (!array_key_exists($order_id, $orders)) {
+                $orders[$order_id] = wc_get_order($order_id);
+            }
+            $order = $orders[$order_id];
+            if ($order) {
+                $name = trim($order->get_billing_first_name() . ' ' . $order->get_billing_last_name());
+                $email = (string) $order->get_billing_email();
+                if ('' !== $name || '' !== $email) {
+                    return array(
+                        'name'  => $name,
+                        'email' => $email,
+                        'phone' => (string) $order->get_billing_phone(),
+                    );
+                }
+            }
+        }
+
+        if ((int) $_passger->user_id > 0 && class_exists('WC_Customer')) {
+            try {
+                $customer = new WC_Customer((int) $_passger->user_id);
+                $name = trim($customer->get_billing_first_name() . ' ' . $customer->get_billing_last_name());
+                $name = '' !== $name ? $name : (string) $customer->get_display_name();
+                $email = (string) $customer->get_email();
+                if ('' !== $name || '' !== $email) {
+                    return array(
+                        'name'  => $name,
+                        'email' => $email,
+                        'phone' => (string) $customer->get_billing_phone(),
+                    );
+                }
+            } catch (Exception $error) {
+                // Deleted account: fall through to what the booking stored.
+            }
+        }
+
+        return array(
+            'name'  => (string) $_passger->user_name,
+            'email' => (string) $_passger->user_email,
+            'phone' => (string) $_passger->user_phone,
+        );
+    }
     function passenger_list($_passger, $class_name, $sl, $default_billing_fields, $wc_custom_checkout_fields, $bus_id, $mage_meta, $t, $passenger_index, $group = null)
     {
         $user_id = $_passger->user_id;
@@ -1135,8 +1199,6 @@ class AdminPassengerListClass
         $per_price     = isset($_passger->$per_price_key) ? $_passger->$per_price_key : 0;
         $pin          = $_passger->order_id . "-" . $_passger->booking_id . "-" . $_passger->user_id . "-" . $_passger->bus_id;
 
-        // Get an instance of the WC_Customer Object from the user ID
-        $customer = new WC_Customer($user_id);
         $mage_meta = get_post_custom($_passger->bus_id);
 
         $status_label = wbbm_ticket_status_name($_passger->status);
@@ -1200,15 +1262,10 @@ class AdminPassengerListClass
             </td>
 
             <td class="col-customer">
-                <?php
-                $billing_first_name = $customer->get_billing_first_name();
-                $billing_last_name  = $customer->get_billing_last_name();
-                $user_email   = $customer->get_email();
-                $billing_phone = $customer->get_billing_phone();
-                ?>
-                <div style="font-weight: 600; color: var(--sh-text-main); margin-bottom: 2px;"><?php echo $billing_first_name . ' ' . $billing_last_name; ?></div>
-                <div class="wbbm-list-sub-meta" style="font-size:12px;"><?php echo $user_email; ?></div>
-                <div class="wbbm-list-sub-meta" style="font-size:12px;"><?php echo $billing_phone; ?></div>
+                <?php $wbbm_customer = $this->customer_details($_passger); ?>
+                <div style="font-weight: 600; color: var(--sh-text-main); margin-bottom: 2px;"><?php echo esc_html($wbbm_customer['name']); ?></div>
+                <div class="wbbm-list-sub-meta" style="font-size:12px;"><?php echo esc_html($wbbm_customer['email']); ?></div>
+                <div class="wbbm-list-sub-meta" style="font-size:12px;"><?php echo esc_html($wbbm_customer['phone']); ?></div>
             </td>
 
             <td class="col-journey">
