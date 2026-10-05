@@ -4,7 +4,7 @@
  * Plugin Name: Multipurpose Ticket Booking Manager (Bus/Train/Ferry/Boat/Shuttle)
  * Plugin URI: http://mage-people.com
  * Description: A Complete Ticket Booking System for WordPress & WooCommerce
- * Version: 5.0.2
+ * Version: 5.0.3
  * Requires PHP: 7.4
  * Author: MagePeople Team
  * Author URI: http://www.mage-people.com/
@@ -16,7 +16,36 @@
 
 if (!defined('ABSPATH')) {
     die;
-} // Cannot access pages directly.
+} // Cannot access pages directly. 
+
+require_once __DIR__ . '/vendor/appneck/wordpress-sdk/appneck-wordpress-sdk/appneck-sdk.php';
+appneck_sdk_load_latest();
+
+$GLOBALS['my_plugin_sdk'] = \Appneck\Sdk\Sdk::bootstrap(
+    'pk_pC6HrXZ84h1aqGkxvpvyTl4yX9Om1oHH',  // your API key
+    'sk_67sB2USNrtwSksRxy97W9RSi6ClRyN4mzURTaIdO99736wYx',                   // your product secret
+    'https://appneck.com',                  // the Appneck server URL
+    __FILE__                                // so the SDK can hook activation/deactivation
+);
+
+// --- Announcements (optional) ---------------------------------
+
+// render_on_screen() registers the admin_notices hook itself, so call
+// it once — don't wrap it in add_action( 'admin_notices', … ).
+
+$GLOBALS['my_plugin_sdk']
+    ->announcement_notices()
+    ->render_on_screen( 'toplevel_page_your-plugin' );
+
+// --- Deactivation survey (optional) ---------------------------
+
+// Optional. The survey is already running — this only overrides the
+// product name if it was auto-detected wrongly from your plugin header.
+
+$GLOBALS['my_plugin_sdk']
+    ->deactivation_survey()
+    ->set_product_name( 'Multipurpose Ticket Booking Manager' );
+
 
 add_action('before_woocommerce_init', static function () {
     if (class_exists('Automattic\\WooCommerce\\Utilities\\FeaturesUtil')) {
