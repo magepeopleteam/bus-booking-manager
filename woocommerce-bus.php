@@ -94,7 +94,7 @@ function wbbm_booking_list_table_create()
 // run the install scripts upon plugin activation
 register_activation_hook(__FILE__, 'wbbm_booking_list_table_create');
 // Stamp written once the installer has run; bump to re-run it after a release.
-define('WBBM_INSTALL_VERSION', '5.0.2');
+define('WBBM_INSTALL_VERSION', '5.0.3');
 /**
  * Run the installer on sites where the activation hook never fired.
  *

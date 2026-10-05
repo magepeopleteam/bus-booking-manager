@@ -2,7 +2,7 @@
 Contributors: magepeopleteam, aamahin
 Tags: Bus Booking Manager, bus ticket booking for wordpress
 Requires at least: 4.5
-Stable tag: 5.0.2
+Stable tag: 5.0.3
 Version: 5.0.2
 Tested up to: 6.9
 WC requires at least: 3.0
@@ -153,8 +153,8 @@ Upload the Bus Booking Manager to your blog, Activate it, then use shortcode as 
 
 == Changelog ==
 
-= 5.0.2 =
-*Date - 23 September 2026*
+= 5.0.3 =
+*Date - 5 October 2026*
 
 **New Features:**
 - Added a native, custom payment checkout (Stripe and PayPal) alongside WooCommerce, letting bookings be taken without sending customers through the full WooCommerce cart/checkout flow.
@@ -164,14 +164,19 @@ Upload the Bus Booking Manager to your blog, Activate it, then use shortcode as 
 - Added a modernized search form UI and script.
 
 **Improvements:**
-- Consolidated bus types, stops, pickup points, features, and extension resources into a responsive Bus Configuration screen.
-- Added accessible no-JavaScript-compatible add/edit modals and capability-bound CRUD handling.
 - Reorganized the admin menu into tabbed hub screens: Bookings (passenger list, counter sales, tickets, reports) and Settings (plugin settings plus the guided Quick Setup wizard) each now live under one page.
 - Replaced the Appsero integration with the Appneck SDK for licensing and telemetry.
 
 **Bug Fixes / Security:**
 - Removed an unreachable legacy passenger-list handler that accepted `$_GET` values straight into SQL updates with no nonce or capability check.
 - Fixed an unescaped bus id/date pagination link that allowed markup injection.
+
+= 5.0.2 =
+*Date - 29 August 2026*
+
+**Improvements:**
+- Consolidated bus types, stops, pickup points, features, and extension resources into a responsive Bus Configuration screen.
+- Added accessible no-JavaScript-compatible add/edit modals and capability-bound CRUD handling.
 
 = 1.0 =
 *Initial Release Date - 24 Sep 2018*
