@@ -2,8 +2,8 @@
 Contributors: magepeopleteam, aamahin
 Tags: Bus Booking Manager, bus ticket booking for wordpress
 Requires at least: 4.5
-Stable tag: 5.0.2
-Version: 5.0.2
+Stable tag: 5.0.4
+Version: 5.0.4
 Tested up to: 6.9
 WC requires at least: 3.0
 WC tested up to: 10.0
@@ -131,14 +131,9 @@ By default showing 20 bus per page. If you want to change it and set limit input
 
 
 
-## Privacy Policy
-Multipurpose Ticket Booking Manager (Bus/Train/Ferry/Boat/Shuttle) uses [Appsero](https://appsero.com) SDK to collect some telemetry data upon user's confirmation. This helps us to troubleshoot problems faster & make product improvements.
-
-Appsero SDK **does not gather any data by default.** The SDK only starts gathering basic telemetry data **when a user allows it via the admin notice**. We collect the data to ensure a great user experience for all our users.
-
-Integrating Appsero SDK **DOES NOT IMMEDIATELY** start gathering data, **without confirmation from users in any case.**
-
-Learn more about how [Appsero collects and uses this data](https://appsero.com/privacy-policy/).
+## Privacy Policy 
+This Plugin uses [Appneck](https://appneck.com) SDK to collect some telemetry data upon the user's confirmation to troubleshoot problems faster & make product improvements.
+Appneck SDK *does not gather any data by default.* The SDK only starts gathering basic telemetry data *when a user allows it via the admin notice. We collect the data to ensure a great user experience for all our users. Integrating Appneck SDK **DOES NOT IMMEDIATELY* start gathering data, *without confirmation from users in any case.*
 
 **CHECKOUT OUR OTHER PLUGINS** 
 👉[Tour & Travel Booking Manager For WooCommerce](https://wordpress.org/plugins/tour-booking-manager/)
@@ -157,6 +152,30 @@ Upload the Bus Booking Manager to your blog, Activate it, then use shortcode as 
 
 
 == Changelog ==
+
+= 5.0.4 =
+*Date - 6 October 2026*
+
+**Improvements:**
+- Updated the bundled Appneck SDK to the latest version.
+
+= 5.0.3 =
+*Date - 5 October 2026*
+
+**New Features:**
+- Added a native, custom payment checkout (Stripe and PayPal) alongside WooCommerce, letting bookings be taken without sending customers through the full WooCommerce cart/checkout flow.
+- Added Offline (counter/manual) booking so admins can record cash/bank-transfer bookings directly from the front end without an online payment.
+- Added a new Booking List admin screen for bookings taken through the custom payment flow, with a confirm-payment action for pending offline bookings.
+- Added a framed WooCommerce checkout and order-confirmation view for the booking drawer, so checkout no longer inherits a theme's header, footer, or fixed navigation.
+- Added a modernized search form UI and script.
+
+**Improvements:**
+- Reorganized the admin menu into tabbed hub screens: Bookings (passenger list, counter sales, tickets, reports) and Settings (plugin settings plus the guided Quick Setup wizard) each now live under one page.
+- Replaced the Appsero integration with the Appneck SDK for licensing and telemetry.
+
+**Bug Fixes / Security:**
+- Removed an unreachable legacy passenger-list handler that accepted `$_GET` values straight into SQL updates with no nonce or capability check.
+- Fixed an unescaped bus id/date pagination link that allowed markup injection.
 
 = 5.0.2 =
 *Date - 29 August 2026*
