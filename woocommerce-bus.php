@@ -4,7 +4,7 @@
  * Plugin Name: Multipurpose Ticket Booking Manager (Bus/Train/Ferry/Boat/Shuttle)
  * Plugin URI: http://mage-people.com
  * Description: A Complete Ticket Booking System for WordPress & WooCommerce
- * Version: 5.0.3
+ * Version: 5.0.4
  * Requires PHP: 7.4
  * Author: MagePeople Team
  * Author URI: http://www.mage-people.com/
@@ -94,7 +94,7 @@ function wbbm_booking_list_table_create()
 // run the install scripts upon plugin activation
 register_activation_hook(__FILE__, 'wbbm_booking_list_table_create');
 // Stamp written once the installer has run; bump to re-run it after a release.
-define('WBBM_INSTALL_VERSION', '5.0.3');
+define('WBBM_INSTALL_VERSION', '5.0.4');
 /**
  * Run the installer on sites where the activation hook never fired.
  *

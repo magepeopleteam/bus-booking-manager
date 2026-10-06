@@ -2,8 +2,8 @@
 Contributors: magepeopleteam, aamahin
 Tags: Bus Booking Manager, bus ticket booking for wordpress
 Requires at least: 4.5
-Stable tag: 5.0.3
-Version: 5.0.2
+Stable tag: 5.0.4
+Version: 5.0.4
 Tested up to: 6.9
 WC requires at least: 3.0
 WC tested up to: 10.0
@@ -152,6 +152,12 @@ Upload the Bus Booking Manager to your blog, Activate it, then use shortcode as 
 
 
 == Changelog ==
+
+= 5.0.4 =
+*Date - 6 October 2026*
+
+**Improvements:**
+- Updated the bundled Appneck SDK to the latest version.
 
 = 5.0.3 =
 *Date - 5 October 2026*
