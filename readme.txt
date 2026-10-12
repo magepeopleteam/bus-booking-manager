@@ -1,5 +1,5 @@
 === Multipurpose Ticket Booking Manager (Bus/Train/Ferry/Boat/Shuttle) ===
-Contributors: magepeopleteam, aamahin
+Contributors: magepeopleteam, aamahin, raselsha
 Tags: Bus Booking Manager, bus ticket booking for wordpress
 Requires at least: 4.5
 Stable tag: 5.0.4
