@@ -21,7 +21,7 @@ if (!defined('ABSPATH')) {
 require_once __DIR__ . '/vendor/appneck/wordpress-sdk/appneck-wordpress-sdk/appneck-sdk.php';
 appneck_sdk_load_latest();
 
-$GLOBALS['my_plugin_sdk'] = \Appneck\Sdk\Sdk::bootstrap(
+$GLOBALS['bus_booking_manager_appneck_sdk'] = \Appneck\Sdk\Sdk::bootstrap(
     'pk_pC6HrXZ84h1aqGkxvpvyTl4yX9Om1oHH',  // your API key
     'sk_67sB2USNrtwSksRxy97W9RSi6ClRyN4mzURTaIdO99736wYx',                   // your product secret
     'https://appneck.com',                  // the Appneck server URL
@@ -33,7 +33,7 @@ $GLOBALS['my_plugin_sdk'] = \Appneck\Sdk\Sdk::bootstrap(
 // render_on_screen() registers the admin_notices hook itself, so call
 // it once — don't wrap it in add_action( 'admin_notices', … ).
 
-$GLOBALS['my_plugin_sdk']
+$GLOBALS['bus_booking_manager_appneck_sdk']
     ->announcement_notices()
     ->render_on_screen( 'toplevel_page_your-plugin' );
 
@@ -42,7 +42,7 @@ $GLOBALS['my_plugin_sdk']
 // Optional. The survey is already running — this only overrides the
 // product name if it was auto-detected wrongly from your plugin header.
 
-$GLOBALS['my_plugin_sdk']
+$GLOBALS['bus_booking_manager_appneck_sdk']
     ->deactivation_survey()
     ->set_product_name( 'Multipurpose Ticket Booking Manager' );
 
